@@ -20,8 +20,11 @@
 	<page path="/harvester/admin/" view="xforms/admin.xhtml"/>
 	
 	<!-- ****************
-	* PUBLIC INTERFACE *
+	* PUBLIC APIs *
 	***************** -->
+	
+	<page path="/harvester/ingest" view="xpl/ingest.xpl"/>
+	
 	
 	<epilogue url="oxf:/config/epilogue.xpl"/>
 </config>

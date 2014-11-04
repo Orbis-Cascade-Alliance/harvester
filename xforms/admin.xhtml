@@ -1,0 +1,91 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/">
+	<head>
+		<title>NWDA: OAI-PMH Harvester</title>
+		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
+		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css" />
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+		<script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico" />
+		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png" />
+		<link rel="stylesheet" href="/apps/harvester/xforms/css/style.css" />
+
+		<xforms:model>
+			<xforms:instance id="control-instance">
+				<controls xmlns="">
+					<set>http://digital.boisestate.edu/oai/oai.php?verb=ListRecords&amp;metadataPrefix=oai_dc&amp;set=p15948coll5</set>
+				</controls>
+			</xforms:instance>
+
+			<xforms:instance id="controls">
+				<controls xmlns="">
+					<ark></ark>
+					<collection></collection>
+				</controls>
+			</xforms:instance>
+
+			<xforms:instance id="feeds" xxforms:exclude-result-prefixes="#all">
+				<xi:include href="../feeds.xml"></xi:include>
+			</xforms:instance>
+
+			<xforms:instance id="feed" xxforms:exclude-result-prefixes="#all">
+				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"></OAI-PMH>
+			</xforms:instance>
+
+			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
+				<rdf:RDF></rdf:RDF>
+			</xforms:instance>
+
+			<!-- ************************* SUBMISSIONS ************************** -->
+			<xforms:submission id="get-feed" serialization="none" method="get" action="{instance('control-instance')/set}" replace="instance" instance="feed">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get OAI-PMH set.</xforms:message>
+				<xforms:action ev:event="xforms-submit-done">
+					<xforms:insert nodeset="instance('rdf')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/oai-to-rdf.xpl', ('data', 'controls'), (instance('feed'), instance('controls')), 'data')"
+					></xforms:insert>
+				</xforms:action>
+			</xforms:submission>
+
+
+		</xforms:model>
+	</head>
+
+
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<h1>NWDA: OAI-PMH Harvester</h1>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Repository</th>
+								<th>ID</th>
+								<th>CMS Type</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<xforms:repeat nodeset="instance('feeds')/feed">
+								<tr>
+									<td><xforms:output ref="name"></xforms:output></td>
+									<td><xforms:output ref="id"></xforms:output></td>
+									<td><xforms:output ref="type"></xforms:output></td>
+									<td><xforms:trigger appearance="minimal">
+											<xforms:label><span class="glyphicon glyphicon-refresh"></span></xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:setvalue ref="instance('controls')/collection" value="context()/id"></xforms:setvalue>
+												<xforms:send submission="get-feed"></xforms:send>
+											</xforms:action>
+										</xforms:trigger>
+									</td>
+								</tr>
+							</xforms:repeat>
+						</tbody>
+					</table>
+					<fr:xforms-inspector></fr:xforms-inspector>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
