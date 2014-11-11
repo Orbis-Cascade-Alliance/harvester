@@ -31,7 +31,7 @@
 	<page path="/harvester/" view="xpl/views/pages/index.xpl"/>
 	
 	<!-- SPARQL -->
-	<page path="/harvester/query" view="xpl/controllers/conneg-sparql.xpl"/>
+	<page path="/harvester/query" model="xpl/controllers/conneg-sparql.xpl"/>
 	
 	<!-- ****************
 	* INGEST APIs *
