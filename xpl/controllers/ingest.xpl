@@ -2,7 +2,7 @@
 <p:pipeline xmlns:p="http://www.orbeon.com/oxf/pipeline" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms">
 
 	<p:param type="input" name="data"/>
-	<p:param type="output" name="data"/>
+	<!--<p:param type="output" name="data"/>-->
 
 	<p:processor name="oxf:request">
 		<p:input name="config">
