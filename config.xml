@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
+	<exist>http://localhost:8080/exist/rest/db/nwda/test.rdf</exist>
 	<sparql>
-		<query/>
-		<store/>
-		<update/>
+		<query>http://localhost:3030/nwda/query</query>
+		<store>http://localhost:3030/nwda/data</store>
+		<update>http://localhost:3030/nwda/update</update>
 	</sparql>
 </config>

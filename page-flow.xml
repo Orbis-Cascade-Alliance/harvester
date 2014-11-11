@@ -19,12 +19,23 @@
 	***************** -->
 	<page path="/harvester/admin/" view="xforms/admin.xhtml"/>
 	
+	
+	
+	<page path="/harvester/ingest" view="xpl/controllers/ingest.xpl"/>
+	
 	<!-- ****************
-	* PUBLIC APIs *
+	* PUBLIC INTERFACE *
 	***************** -->
+	<!-- **** PAGES **** -->			
+	<page path="/harvester/sparql" view="xpl/views/pages/sparql.xpl"/>
+	<page path="/harvester/" view="xpl/views/pages/index.xpl"/>
 	
-	<page path="/harvester/ingest" view="xpl/ingest.xpl"/>
+	<!-- SPARQL -->
+	<page path="/harvester/query" view="xpl/controllers/conneg-sparql.xpl"/>
 	
+	<!-- ****************
+	* INGEST APIs *
+	***************** -->
 	
 	<epilogue url="oxf:/config/epilogue.xpl"/>
 </config>

@@ -11,6 +11,14 @@
 		<name>Boise State University Library, Special Collections and Archives</name>
 		<id>nwda:bsu</id>
 		<url>http://digital.boisestate.edu/oai/oai.php</url>
+		<metadataPrefix>oai_dc</metadataPrefix>
 		<type>contentdm</type>
+	</feed>
+	<feed>
+		<name>University of Montana, Mansfield Library, Archives and Special Collections</name>
+		<id>nwda:mtg</id>
+		<url>http://scholarworks.umt.edu/do/oai/</url>
+		<metadataPrefix>dcs</metadataPrefix>
+		<type>digitalcommons</type>
 	</feed>
 </feeds>

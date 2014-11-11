@@ -21,7 +21,7 @@
 			<xforms:instance id="controls">
 				<controls xmlns="">
 					<ark></ark>
-					<collection></collection>
+					<repository></repository>
 				</controls>
 			</xforms:instance>
 
@@ -41,7 +41,7 @@
 			<xforms:submission id="get-feed" serialization="none" method="get" action="{instance('control-instance')/set}" replace="instance" instance="feed">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get OAI-PMH set.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
-					<xforms:insert nodeset="instance('rdf')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/oai-to-rdf.xpl', ('data', 'controls'), (instance('feed'), instance('controls')), 'data')"
+					<xforms:insert nodeset="instance('rdf')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/views/serializations/oai/rdf.xpl', ('data', 'controls'), (instance('feed'), instance('controls')), 'data')"
 					></xforms:insert>
 				</xforms:action>
 			</xforms:submission>
@@ -74,7 +74,7 @@
 									<td><xforms:trigger appearance="minimal">
 											<xforms:label><span class="glyphicon glyphicon-refresh"></span></xforms:label>
 											<xforms:action ev:event="DOMActivate">
-												<xforms:setvalue ref="instance('controls')/collection" value="context()/id"></xforms:setvalue>
+												<xforms:setvalue ref="instance('controls')/repository" value="context()/id"></xforms:setvalue>
 												<xforms:send submission="get-feed"></xforms:send>
 											</xforms:action>
 										</xforms:trigger>

@@ -7,7 +7,7 @@
 	
 	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="data" href="aggregate('content', #data, #controls)"/>
-		<p:input name="config" href="../xslt/oai-to-rdf.xsl"/>
+		<p:input name="config" href="../../../../ui/xslt/serializations/oai/rdf.xsl"/>
 		<p:output name="data" ref="data"/>
 	</p:processor>
 </p:pipeline>
