@@ -26,13 +26,16 @@
 	<page path="/harvester/sparql" view="xpl/views/pages/sparql.xpl"/>
 	<page path="/harvester/" view="xpl/views/pages/index.xpl"/>
 	
-	<!-- SPARQL -->
+	<!-- **** SERIALIZATIONS **** -->	
+	<page path="/harvester/feed" model="xpl/models/sparql/atom.xpl" view="xpl/views/serializations/sparql/atom.xpl"/>
+	
+	<!-- **** SPARQL **** -->
 	<page path="/harvester/query" view="xpl/controllers/conneg-sparql.xpl"/>
 	
 	<!-- ****************
 	* INGEST APIs *
 	***************** -->
-	<page path="/harvester/ingest" model="xpl/controllers/ingest.xpl"/>
+	<page path="/harvester/ingest" view="xpl/controllers/ingest.xpl"/>
 	
 	<epilogue url="oxf:/config/epilogue.xpl"/>
 </config>

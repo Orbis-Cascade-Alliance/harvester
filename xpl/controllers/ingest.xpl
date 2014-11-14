@@ -2,7 +2,7 @@
 <p:pipeline xmlns:p="http://www.orbeon.com/oxf/pipeline" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms">
 
 	<p:param type="input" name="data"/>
-	<!--<p:param type="output" name="data"/>-->
+	<p:param type="output" name="data"/>
 
 	<p:processor name="oxf:request">
 		<p:input name="config">
@@ -113,7 +113,7 @@
 		</p:processor>
 	</p:for-each>
 	
-	<p:processor name="oxf:unsafe-xslt">
+	<!--<p:processor name="oxf:unsafe-xslt">
 		<p:input name="data" href="#response"/>		
 		<p:input name="config">
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -143,10 +143,10 @@
 				<content-type>text/plain</content-type>				
 			</config>
 		</p:input>
-	</p:processor>
+	</p:processor>-->
 
-	<!--<p:processor name="oxf:identity">
+	<p:processor name="oxf:identity">
 		<p:input name="data" href="#response"/>
 		<p:output name="data" ref="data"/>
-	</p:processor>-->
+	</p:processor>
 </p:pipeline>

@@ -32,6 +32,8 @@
 	<xsl:template name="body">
 		<xsl:variable name="default-query"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX dpla:	<http://dp.la/terms/>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
 
 SELECT * WHERE {
 ?s ?p ?o
