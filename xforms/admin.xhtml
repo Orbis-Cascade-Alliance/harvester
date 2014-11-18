@@ -15,6 +15,8 @@
 			<xforms:instance id="control-instance">
 				<controls xmlns="">
 					<set>http://digital.boisestate.edu/oai/oai.php?verb=ListRecords&amp;metadataPrefix=oai_dc&amp;set=p15948coll5</set>
+					<prefix></prefix>
+					<object></object>
 				</controls>
 			</xforms:instance>
 
@@ -24,10 +26,11 @@
 					<repository></repository>
 				</controls>
 			</xforms:instance>
-
-			<xforms:instance id="feeds" xxforms:exclude-result-prefixes="#all">
-				<xi:include href="../feeds.xml"></xi:include>
+			
+			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
+				<xi:include href="../config.xml"/>
 			</xforms:instance>
+			
 
 			<xforms:instance id="feed" xxforms:exclude-result-prefixes="#all">
 				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"></OAI-PMH>
@@ -36,9 +39,39 @@
 			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
 				<rdf:RDF></rdf:RDF>
 			</xforms:instance>
+			
+			<!-- sparql update -->
+			<xforms:instance id="sparqlUpdate-template">
+				<query>
+					<![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+DELETE {?s ?p ?o} WHERE {?s PREFIX OBJECT . ?s ?p ?o}]]>
+				</query>
+			</xforms:instance>
+			
+			<xforms:instance id="sparqlUpdate">
+				<query>
+					<![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+DELETE {?s ?p ?o} WHERE { 
+{?cho dcterms:relation <http://nwda.orbiscascade.org/ark:/80444/xv43658> . 
+?ore edm:aggregatedCHO ?cho .
+?ore edm:object ?s .
+?s ?p ?o}
+UNION {?cho dcterms:relation <http://nwda.orbiscascade.org/ark:/80444/xv43658> . 
+?s edm:aggregatedCHO ?cho . ?s ?p ?o }
+UNION { ?s dcterms:relation <http://nwda.orbiscascade.org/ark:/80444/xv43658> . 
+?s ?p ?o }
+}]]>
+				</query>
+			</xforms:instance>
 
 			<!-- ************************* SUBMISSIONS ************************** -->
 			<xforms:submission id="get-feed" serialization="none" method="get" action="{instance('control-instance')/set}" replace="instance" instance="feed">
+				<xforms:header>
+					<xforms:name>User-Agent</xforms:name>
+					<xforms:value>XForms/harvester.orbiscascade.org</xforms:value>
+				</xforms:header>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get OAI-PMH set.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:insert nodeset="instance('rdf')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/views/serializations/oai/rdf.xpl', ('data', 'controls'), (instance('feed'), instance('controls')), 'data')"
@@ -46,7 +79,18 @@
 				</xforms:action>
 			</xforms:submission>
 
-
+			<!-- SPARQL queries -->
+			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
+				ref="instance('sparqlResponse')" replace="instance" method="get">
+				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
+			</xforms:submission>
+			
+			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlUpdate')" serialization="text/plain" replace="none" method="post"
+				mediatype="application/sparql-update">
+				<xforms:action ev:event="xforms-submit-error">
+					<xforms:message level="modal">SPARQL update failed.</xforms:message>
+				</xforms:action>
+			</xforms:submission>
 		</xforms:model>
 	</head>
 
@@ -56,7 +100,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					<h1>NWDA: OAI-PMH Harvester</h1>
-					<table class="table">
+					<!--<table class="table">
 						<thead>
 							<tr>
 								<th>Repository</th>
@@ -82,7 +126,17 @@
 								</tr>
 							</xforms:repeat>
 						</tbody>
-					</table>
+					</table>-->
+					
+					<xforms:trigger>
+						<xforms:label>Remove</xforms:label>
+						<xforms:action ev:event="DOMActivate">
+							
+							<!--<xforms:setvalue ref="instance('sparqlUpdate')" value="replace(instance('sparqlUpdate-template'), 'URI', context()/@rdf:about)"/>-->
+							<xforms:send submission="delete-graph"/>
+						</xforms:action>
+					</xforms:trigger>
+					
 					<fr:xforms-inspector></fr:xforms-inspector>
 				</div>
 			</div>

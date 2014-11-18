@@ -62,31 +62,27 @@
 		<!-- generate URL Generator config -->
 		<p:processor name="oxf:unsafe-xslt">
 			<p:input name="request" href="#request"/>
-			<p:input name="data" href="aggregate('content', current(), ../../feeds.xml)"/>
+			<p:input name="data" href="current()"/>
 			<p:input name="config">
 				<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<xsl:output indent="yes"/>
-
-					<xsl:param name="repository" select="doc('input:request')/request/parameters/parameter[name='repository']/value"/>
-					<xsl:variable name="set" select="/content/set"/>
-
 					<xsl:template match="/">
-						<xsl:apply-templates select="/content//feed[id=$repository]"/>
-					</xsl:template>
-					
-					<xsl:template match="feed">
 						<config>
 							<url>
-								<xsl:value-of select="concat(url, '?verb=ListRecords&amp;metadataPrefix=', metadataPrefix, '&amp;set=', $set)"/>
+								<xsl:value-of select="/set"/>
 							</url>
 							<mode>xml</mode>
 							<content-type>application/xml</content-type>
+							<header>
+								<name>User-Agent</name>
+								<value>XForms/harvester.orbiscascade.org</value>
+							</header>
 							<encoding>utf-8</encoding>
 						</config>
 					</xsl:template>
 				</xsl:stylesheet>
 			</p:input>
-			<p:output name="data" id="url-generator-config"/>
+			<p:output name="data" id="url-generator-config"/>			
 		</p:processor>
 
 		<!-- get OAI-PMH feed -->
@@ -101,6 +97,8 @@
 			<p:input name="controls" href="#controls"/>
 			<p:input name="config" href="../views/serializations/oai/rdf.xpl"/>
 			<p:output name="data" id="rdf"/>
+			<!--<p:output name="data" ref="response"/>-->
+			
 		</p:processor>
 
 		<!-- use XForms submission processor to post data to endpoint -->
