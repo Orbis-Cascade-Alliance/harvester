@@ -33,9 +33,9 @@
 			<dcterms:title>
 				<xsl:value-of select="dc:title"/>
 			</dcterms:title>
-			<xsl:apply-templates select="dc:date|dc:type|dc:creator|dc:language|dc:contributor|dc:rights|dc:format|dc:subject"/>
+			<xsl:apply-templates select="dc:date|dc:type|dc:creator|dc:language|dc:contributor|dc:rights|dc:format|dc:subject|dc:description"/>
 			<dcterms:relation rdf:resource="http://nwda.orbiscascade.org/{$ark}"/>
-			<dcterms:isPartOf rdf:resource="http://nwda.orbiscascade.org/contacts#{$repository}"/>
+			<dcterms:isPartOf rdf:resource="http://nwda.orbiscascade.org/contact#{$repository}"/>
 		</dpla:SourceResource>
 
 		<!-- handle images -->
@@ -47,9 +47,9 @@
 			<edm:dataProvider rdf:resource="http://harvester.orbiscascade.org"/>
 			<edm:provider rdf:resource="http://nwda.orbiscascade.org"/>
 			<xsl:call-template name="views"/>
-			<dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
+			<dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
 				<xsl:value-of select="current-dateTime()"/>
-			</dcterms:created>
+			</dcterms:modified>
 		</ore:Aggregation>
 	</xsl:template>
 
@@ -73,7 +73,7 @@
 		</dcterms:date>
 	</xsl:template>
 
-	<xsl:template match="dc:format|dc:type|dc:language|dc:creator|dc:contributor|dc:rights|dc:subject">
+	<xsl:template match="dc:format|dc:type|dc:language|dc:creator|dc:contributor|dc:rights|dc:subject|dc:description">
 		<xsl:element name="dcterms:{local-name()}" namespace="http://purl.org/dc/terms/">
 			<xsl:value-of select="."/>
 		</xsl:element>
@@ -99,7 +99,7 @@
 			<!-- University of Montana -->
 			<xsl:when test="$repository='mtg'">
 				<xsl:if test="dc:description[contains(., '.jpg')]">
-					<edm:object rdf:resource="{dc:description[contains(., '.jpg')]}"/>
+					<edm:preview rdf:resource="{dc:description[contains(., '.jpg')]}"/>
 				</xsl:if>
 			</xsl:when>
 		</xsl:choose>

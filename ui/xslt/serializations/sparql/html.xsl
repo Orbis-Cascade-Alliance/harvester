@@ -43,20 +43,28 @@
 			<div class="row">
 				<div class="col-md-12">
 					<h1>Results</h1>
-					<table class="table table-striped">
-						<thead>
-							<tr>
-								<xsl:for-each select="//res:result[1]/res:binding">
-									<th>
-										<xsl:value-of select="@name"/>
-									</th>
-								</xsl:for-each>
-							</tr>
-						</thead>
-						<tbody>
-							<xsl:apply-templates select="descendant::res:result"/>
-						</tbody>
-					</table>
+					
+					<xsl:choose>
+						<xsl:when test="count(//res:result) = 0">
+							<p>No results found for query.</p>
+						</xsl:when>
+						<xsl:otherwise>
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<xsl:for-each select="//res:result[1]/res:binding">
+											<th>
+												<xsl:value-of select="@name"/>
+											</th>
+										</xsl:for-each>
+									</tr>
+								</thead>
+								<tbody>
+									<xsl:apply-templates select="descendant::res:result"/>
+								</tbody>
+							</table>
+						</xsl:otherwise>
+					</xsl:choose>
 				</div>
 			</div>
 		</div>

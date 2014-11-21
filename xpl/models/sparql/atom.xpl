@@ -68,18 +68,31 @@ SELECT (count(?s) as ?numFound) WHERE {
 				<!-- config variables -->
 				<xsl:variable name="sparql_endpoint" select="/config/sparql/query"/>
 				<xsl:variable name="query">
-					<![CDATA[ PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+					<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX dpla:	<http://dp.la/terms/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
+PREFIX ore:	<http://www.openarchives.org/ore/terms/>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
 
-SELECT ?cho ?title WHERE {
-?cho dcterms:title ?title
-} LIMIT 10 OFFSET XYZ]]>
+SELECT ?cho ?title ?repository ?description ?modified ?thumbnail WHERE {
+  ?cho a dpla:SourceResource ;
+        dcterms:title ?title ;
+        dcterms:isPartOf ?repository .
+  OPTIONAL {?cho dcterms:description ?description}
+  ?agg edm:aggregatedCHO ?cho ;
+       dcterms:modified ?modified .
+   OPTIONAL {?agg edm:preview ?thumbnail}
+} ORDER BY DESC(?modified)
+LIMIT %LIMIT%
+OFFSET %OFFSET%]]>
 				</xsl:variable>
-				
+				<xsl:variable name="limit">10</xsl:variable>
 				<xsl:variable name="offset">
 					<xsl:choose>
 						<xsl:when test="string-length($page) &gt; 0 and $page castable as xs:integer and number($page) > 0">
-							<xsl:value-of select="($page - 1) * 10"/>
+							<xsl:value-of select="($page - 1) * $limit"/>
 						</xsl:when>
 						<xsl:otherwise>0</xsl:otherwise>
 					</xsl:choose>
@@ -87,7 +100,7 @@ SELECT ?cho ?title WHERE {
 				
 
 				<xsl:variable name="service">
-					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'XYZ', $offset)), '&amp;output=xml')"/>					
+					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%LIMIT%', $limit), '%OFFSET%', $offset)), '&amp;output=xml')"/>					
 				</xsl:variable>
 
 				<xsl:template match="/">

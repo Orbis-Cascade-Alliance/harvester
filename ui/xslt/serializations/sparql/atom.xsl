@@ -47,13 +47,23 @@
 			<title>
 				<xsl:value-of select="res:binding[@name='title']/res:literal"/>
 			</title>
-			<!--<summary>
-				<xsl:value-of select="str[@name='definition']"/>
-			</summary>-->
-			<link href="{res:binding[@name='cho']/res:uri}"/>			
-			<!--<updated>
-				<xsl:value-of select="date[@name='timestamp']"/>
-			</updated>-->
+			<author>
+				<name><xsl:value-of select="res:binding[@name='repository']/res:uri"/></name>
+			</author>
+			<link href="{res:binding[@name='cho']/res:uri}"/>		
+			
+			<updated>
+				<xsl:value-of select="res:binding[@name='modified']/res:literal"/>
+			</updated>
+			<xsl:if test="res:binding[@name='thumbnail'] or res:binding[@name='description']">
+				<content type="html">
+					<![CDATA[
+     <img alt="thumbnail" src="]]><xsl:value-of select="res:binding[@name='thumbnail']/res:uri"/><![CDATA["/>]]>
+					<xsl:for-each select="res:binding[@name='description']">
+						<![CDATA[<p>]]><xsl:value-of select="res:literal"/><![CDATA[</p>]]>
+					</xsl:for-each>
+				</content>
+			</xsl:if>
 		</entry>
 	</xsl:template>
 </xsl:stylesheet>
