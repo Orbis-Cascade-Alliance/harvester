@@ -8,20 +8,21 @@
 
 	<!-- request params -->
 	<xsl:param name="page" select="doc('input:request')/request/parameters/parameter[name='page']/value"/>
+	<xsl:param name="limit" as="xs:integer">10</xsl:param>
 	<xsl:variable name="offset">
 		<xsl:choose>
 			<xsl:when test="string-length($page) &gt; 0 and $page castable as xs:integer and number($page) > 0">
-				<xsl:value-of select="($page - 1) * 10"/>
+				<xsl:value-of select="($page - 1) * $limit"/>
 			</xsl:when>
 			<xsl:otherwise>0</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>	
-	<xsl:param name="rows" as="xs:integer">10</xsl:param>
+	
 
 	<xsl:template match="/">
 		<xsl:variable name="numFound" select="descendant::res:binding[@name='numFound']/res:literal"/>
-		<xsl:variable name="last" select="ceiling($numFound div $rows)"/>
-		<xsl:variable name="next" select="($offset div 10) + 2"/>
+		<xsl:variable name="last" select="ceiling($numFound div $limit)"/>
+		<xsl:variable name="next" select="($offset div $limit) + 2"/>
 
 		<feed xmlns="http://www.w3.org/2005/Atom">
 			<title>Orbis Cascade Alliance: Cultural Heritage Objects</title>

@@ -33,7 +33,17 @@
 			<dcterms:title>
 				<xsl:value-of select="dc:title"/>
 			</dcterms:title>
-			<xsl:apply-templates select="dc:date|dc:type|dc:creator|dc:language|dc:contributor|dc:rights|dc:format|dc:subject|dc:description"/>
+			<xsl:apply-templates select="dc:date|dc:type|dc:creator|dc:language|dc:contributor|dc:rights|dc:format|dc:subject"/>
+			<xsl:if test="dc:description">
+				<dcterms:description>
+					<xsl:for-each select="dc:description">
+						<xsl:value-of select="."/>
+						<xsl:if test="not(position()=last())">
+							<xsl:text> </xsl:text>
+						</xsl:if>
+					</xsl:for-each>
+				</dcterms:description>
+			</xsl:if>			
 			<dcterms:relation rdf:resource="http://nwda.orbiscascade.org/{$ark}"/>
 			<dcterms:isPartOf rdf:resource="http://nwda.orbiscascade.org/contact#{$repository}"/>
 		</dpla:SourceResource>
@@ -73,7 +83,7 @@
 		</dcterms:date>
 	</xsl:template>
 
-	<xsl:template match="dc:format|dc:type|dc:language|dc:creator|dc:contributor|dc:rights|dc:subject|dc:description">
+	<xsl:template match="dc:format|dc:type|dc:language|dc:creator|dc:contributor|dc:rights|dc:subject">
 		<xsl:element name="dcterms:{local-name()}" namespace="http://purl.org/dc/terms/">
 			<xsl:value-of select="."/>
 		</xsl:element>
