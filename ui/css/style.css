@@ -8,6 +8,7 @@ body {
 }
 .navbar {
 	margin-bottom:0;
+	
 }
 /*
   .navbar-brand {
@@ -22,14 +23,11 @@ body {
 	background-color: #F7F7F9;
 	border: 1px solid #E1E1E8;
 	border-radius: 4px;
-	margin-bottom: 14px;
-	padding: 9px 14px;
+	margin:10px 0;
+	padding: 10px;
 }
 .table-dl td {
 	padding:5px;
-}
-.content {
-	padding-bottom:10px;
 }
 /*
   ***************************************

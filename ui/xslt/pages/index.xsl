@@ -25,9 +25,17 @@
 	<xsl:template name="body">
 		<div class="container-fluid content">
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-md-9">
 					<h1>NWDA</h1>
 					<p>placeholder</p>
+				</div>		
+				<div class="col-md-3">
+					<div class="highlight">
+						<h3>Data Export</h3>
+						<a href="feed">
+							<img src="{$display_path}ui/images/atom-large.png" alt="Atom"/>
+						</a>
+					</div>
 				</div>				
 			</div>
 		</div>
