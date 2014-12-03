@@ -34,7 +34,14 @@
 				<div class="row">
 					<div class="col-md-12">
 						<h1>Cultural Heritage Objects</h1>
-						<xsl:apply-templates select="descendant::res:result"/>
+						<xsl:choose>
+							<xsl:when test="count(descendant::res:result) = 0">
+								<p>There are no objects associated with this ARK.</p>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:apply-templates select="descendant::res:result"/>
+							</xsl:otherwise>
+						</xsl:choose>
 					</div>
 				</div>
 			</div>
