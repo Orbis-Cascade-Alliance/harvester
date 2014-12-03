@@ -72,7 +72,7 @@ PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
 PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
 SELECT ?cho ?title ?ark ?repository ?description ?date ?thumbnail ?depiction WHERE {
-  ?cho a dpla:SourceResource ;
+  ?cho dcterms:relation <URI> ;
         dcterms:title ?title ;
         dcterms:relation ?ark ;
         dcterms:isPartOf ?repository .
