@@ -53,6 +53,26 @@ body {
 }
 /*
   ***************************************
+  CHO Display
+  ***************************************
+ */
+.cho-container{
+	background-color: #F7F7F9;
+	border: 1px solid #E1E1E8;
+	border-radius: 4px;
+	margin:10px;
+	padding: 10px;
+	height:200px;
+}
+.cho-thumb {
+	max-height:120px;
+	padding:2px;
+	border: 1px solid #E1E1E8;
+	border-radius: 4px;
+	background-color:white;
+}
+/*
+  ***************************************
   SPARQL
   ***************************************
  */

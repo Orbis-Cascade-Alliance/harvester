@@ -36,7 +36,7 @@
 			<xsl:apply-templates select="dc:date|dc:type|dc:creator|dc:language|dc:contributor|dc:rights|dc:format|dc:subject"/>
 			<xsl:if test="dc:description">
 				<dcterms:description>
-					<xsl:for-each select="dc:description">
+					<xsl:for-each select="dc:description[not(contains(., '.jpg'))]">
 						<xsl:value-of select="."/>
 						<xsl:if test="not(position()=last())">
 							<xsl:text> </xsl:text>

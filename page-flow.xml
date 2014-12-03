@@ -28,7 +28,8 @@
 	
 	<!-- **** SERIALIZATIONS **** -->	
 	<page path="/harvester/feed" model="xpl/models/sparql/atom.xpl" view="xpl/views/serializations/sparql/atom.xpl"/>
-	<page path="/harvester/apis/ask" model="xpl/models/sparql/ask.xpl" view="xpl/views/serializations/sparql/ask.xpl"/>
+	<page path="/harvester/apis/ask" model="xpl/models/sparql/ask.xpl" view="xpl/views/apis/ask.xpl"/>
+	<page path="/harvester/apis/get" view="xpl/controllers/conneg-get.xpl"/>
 	
 	<!-- **** SPARQL **** -->
 	<page path="/harvester/query" view="xpl/controllers/conneg-sparql.xpl"/>

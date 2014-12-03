@@ -47,10 +47,21 @@
 					<config>
 						<status-code>406</status-code>
 						<content-type>text/plain</content-type>
-						<header>
-							<name>Accept</name>
-							<value>text/html, text/csv, text/plain, application/sparql-results+xml, application/sparql-results+json</value>
-						</header>
+						<xsl:choose>
+							<xsl:when test="contains(/request/request-url, '/query')">
+								<header>
+									<name>Accept</name>
+									<value>text/html, text/csv, text/plain, application/sparql-results+xml, application/sparql-results+json</value>
+								</header>
+							</xsl:when>
+							<xsl:when test="contains(/request/request-url, '/apis/get')">
+								<header>
+									<name>Accept</name>
+									<value>text/html, application/sparql-results+xml, application/sparql-results+json</value>
+								</header>
+							</xsl:when>
+						</xsl:choose>
+						
 						
 					</config>
 				</xsl:template>
