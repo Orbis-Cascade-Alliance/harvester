@@ -37,9 +37,12 @@ PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
 PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
+PREFIX vcard:	<http://www.w3.org/2006/vcard/ns#>
+PREFIX arch:	<http://purl.org/archival/vocab/arch#>
+PREFIX nwda:	<https://github.com/ewg118/nwda-editor#>
 
 SELECT * WHERE {
-?s ?p ?o
+  ?s ?p ?o
 } LIMIT 100]]></xsl:variable>
 
 		<div class="container-fluid content">

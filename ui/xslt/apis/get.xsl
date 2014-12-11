@@ -2,13 +2,13 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:res="http://www.w3.org/2005/sparql-results#" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:saxon="http://saxon.sf.net/"
 	version="2.0">
 	<xsl:include href="../templates.xsl"/>
-	
+
 	<xsl:variable name="display_path">../</xsl:variable>
-	
+
 	<xsl:template match="/">
 		<xsl:apply-templates select="descendant::res:sparql"/>
 	</xsl:template>
-	
+
 	<xsl:template match="res:sparql">
 		<html lang="en">
 			<head>
@@ -28,25 +28,35 @@
 			</body>
 		</html>
 	</xsl:template>
-	
-	<xsl:template name="body">	
-			<div class="container-fluid content">
-				<div class="row">
-					<div class="col-md-12">
-						<h1>Cultural Heritage Objects</h1>
-						<xsl:choose>
-							<xsl:when test="count(descendant::res:result) = 0">
-								<p>There are no objects associated with this ARK.</p>
-							</xsl:when>
-							<xsl:otherwise>
-								<xsl:apply-templates select="descendant::res:result"/>
-							</xsl:otherwise>
-						</xsl:choose>
-					</div>
+
+	<xsl:template name="body">
+		<div class="container-fluid content">
+			<div class="row">
+				<div class="col-md-12">
+					<h1>Cultural Heritage Objects</h1>
+					
+					<xsl:choose>
+						<xsl:when test="count(descendant::res:result) = 0">
+							<p>There are no objects associated with this ARK.</p>
+						</xsl:when>
+						<xsl:otherwise>
+							<h2>
+								<a href="{descendant::res:binding[@name='repo_uri'][1]/res:uri}">
+									<xsl:value-of select="descendant::res:binding[@name='repository'][1]/res:literal"/>
+								</a>
+								<xsl:text>: </xsl:text>
+								<a href="{descendant::res:binding[@name='ark'][1]/res:uri}">
+									<xsl:value-of select="descendant::res:binding[@name='ark'][1]/res:uri"/>
+								</a>
+							</h2>
+							<xsl:apply-templates select="descendant::res:result"/>
+						</xsl:otherwise>
+					</xsl:choose>
 				</div>
 			</div>
+		</div>
 	</xsl:template>
-	
+
 	<xsl:template match="res:result">
 		<div class="col-lg-2 col-md-3 col-sm-6">
 			<div class="cho-container text-center">
@@ -60,8 +70,8 @@
 					<xsl:value-of select="res:binding[@name='title']/res:literal"/>
 				</a>
 			</div>
-			
-			
+
+
 			<!--<xsl:if test="res:binding[@name='description']">
 				<br/>
 				<div><xsl:copy-of select="saxon:parse(concat('&lt;div&gt;', res:binding[@name='description']/res:literal, '&lt;/div&gt;'))"/></div>
@@ -69,5 +79,5 @@
 			</xsl:if>-->
 		</div>
 	</xsl:template>
-	
+
 </xsl:stylesheet>

@@ -37,6 +37,7 @@
 	<!-- ****************
 	* INGEST APIs *
 	***************** -->
+	<!--<page path="/harvester/test" model="xpl/controllers/test.xpl"/>-->
 	<page path="/harvester/ingest" model="xpl/controllers/ingest.xpl"/>
 	
 	<epilogue url="oxf:/config/epilogue.xpl"/>

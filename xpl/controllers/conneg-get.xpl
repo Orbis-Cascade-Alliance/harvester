@@ -71,16 +71,17 @@ PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
 PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
-SELECT ?cho ?title ?ark ?repository ?description ?date ?thumbnail ?depiction WHERE {
+SELECT ?cho ?title ?ark ?repo_uri ?repository ?description ?date ?thumbnail ?depiction WHERE {
   ?cho dcterms:relation <URI> ;
         dcterms:title ?title ;
         dcterms:relation ?ark ;
-        dcterms:isPartOf ?repository .
+        dcterms:isPartOf ?repo_uri .
   OPTIONAL {?cho dcterms:description ?description}
   OPTIONAL {?cho dcterms:date ?date}
   ?agg edm:aggregatedCHO ?cho .
    OPTIONAL {?agg edm:preview ?thumbnail}
    OPTIONAL {?agg edm:isShownAt ?depiction}
+   ?repo_uri foaf:name ?repository
 }]]>
 				</xsl:variable>
 				

@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
 	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/">
+	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:res="http://www.w3.org/2005/sparql-results#">
 	<head>
 		<title>NWDA: OAI-PMH Harvester</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
@@ -14,10 +14,20 @@
 		<xforms:model>
 			<xforms:instance id="control-instance">
 				<controls xmlns="">
-					<set>http://digital.boisestate.edu/oai/oai.php?verb=ListRecords&amp;metadataPrefix=oai_dc&amp;set=p15948coll5</set>
-					<prefix></prefix>
-					<object></object>
+					<status></status>
 				</controls>
+			</xforms:instance>
+
+			<xforms:instance id="repository-list" xxforms:exclude-result-prefixes="#all">
+				<repositories xmlns=""></repositories>
+			</xforms:instance>
+
+			<xforms:instance id="repository-template" xxforms:exclude-result-prefixes="#all">
+				<repository xmlns="">
+					<name></name>
+					<uri></uri>
+					<count></count>
+				</repository>
 			</xforms:instance>
 
 			<xforms:instance id="controls">
@@ -26,11 +36,11 @@
 					<repository></repository>
 				</controls>
 			</xforms:instance>
-			
+
 			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
-				<xi:include href="../config.xml"/>
+				<xi:include href="../config.xml"></xi:include>
 			</xforms:instance>
-			
+
 
 			<xforms:instance id="feed" xxforms:exclude-result-prefixes="#all">
 				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"></OAI-PMH>
@@ -39,35 +49,41 @@
 			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
 				<rdf:RDF></rdf:RDF>
 			</xforms:instance>
-			
+
 			<!-- sparql update -->
-			<xforms:instance id="sparqlUpdate-template">
+			<xforms:instance id="purge-repositories-template">
 				<query>
-					<![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
-PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
-DELETE {?s ?p ?o} WHERE {?s PREFIX OBJECT . ?s ?p ?o}]]>
-				</query>
-			</xforms:instance>
-			
-			<xforms:instance id="sparqlUpdate">
-				<query>
-					<![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
-PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
-DELETE {?s ?p ?o} WHERE { 
-{?cho dcterms:relation <http://nwda.orbiscascade.org/ark:/80444/xv43658> . 
-?ore edm:aggregatedCHO ?cho .
-?ore edm:object ?s .
-?s ?p ?o}
-UNION {?cho dcterms:relation <http://nwda.orbiscascade.org/ark:/80444/xv43658> . 
-?s edm:aggregatedCHO ?cho . ?s ?p ?o }
-UNION { ?s dcterms:relation <http://nwda.orbiscascade.org/ark:/80444/xv43658> . 
-?s ?p ?o }
-}]]>
+					<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX arch:	<http://purl.org/archival/vocab/arch#>
+DELETE {?s ?p ?o} WHERE { ?s rdf:type arch:Archive . ?s ?p ?o }]]>
 				</query>
 			</xforms:instance>
 
+			<xforms:instance id="list-repositories">
+				<query>
+					<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
+PREFIX arch:	<http://purl.org/archival/vocab/arch#>
+
+SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
+  ?uri a arch:Archive ;
+         foaf:name ?name
+  OPTIONAL { ?cho dcterms:isPartOf ?uri}
+} GROUP BY ?uri ?name ORDER BY ?name]]>
+				</query>
+			</xforms:instance>
+
+			<xforms:instance id="sparqlQuery">
+				<query></query>
+			</xforms:instance>
+
+			<xforms:instance id="sparqlResponse">
+				<query></query>
+			</xforms:instance>
+
 			<!-- ************************* SUBMISSIONS ************************** -->
-			<xforms:submission id="get-feed" serialization="none" method="get" action="{instance('control-instance')/set}" replace="instance" instance="feed">
+			<!--<xforms:submission id="get-feed" serialization="none" method="get" action="{instance('control-instance')/set}" replace="instance" instance="feed">
 				<xforms:header>
 					<xforms:name>User-Agent</xforms:name>
 					<xforms:value>XForms/harvester.orbiscascade.org</xforms:value>
@@ -77,20 +93,61 @@ UNION { ?s dcterms:relation <http://nwda.orbiscascade.org/ark:/80444/xv43658> .
 					<xforms:insert nodeset="instance('rdf')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/views/serializations/oai/rdf.xpl', ('data', 'controls'), (instance('feed'), instance('controls')), 'data')"
 					></xforms:insert>
 				</xforms:action>
+			</xforms:submission>-->
+
+			<xforms:submission id="get-repository-rdf" serialization="none" method="get" action="{instance('config')/repository_rdf}" replace="instance" instance="rdf">
+				<xforms:header>
+					<xforms:name>User-Agent</xforms:name>
+					<xforms:value>XForms/harvester.orbiscascade.org</xforms:value>
+				</xforms:header>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get repository RDF from NWDA.</xforms:message>
+				<xforms:action ev:event="xforms-submit-done">
+					<!-- post RDF and then refresh the repository list -->
+					<xforms:send submission="post-rdf"></xforms:send>
+					<xforms:action ev:event="xforms-sumit-done">
+						<xforms:delete nodeset="instance('repository-list')/repository"></xforms:delete>
+						<xforms:setvalue ref="instance('sparqlQuery')" value="instance('list-repositories')"></xforms:setvalue>
+						<xforms:send submission="submit-sparqlQuery"></xforms:send>
+						<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
+							<xforms:insert context="instance('repository-list')" nodeset="./child::node()[last()]" origin="instance('repository-template')"></xforms:insert>
+							<xforms:setvalue ref="instance('repository-list')/repository[last()]/name" value="context()/res:binding[@name='name']/res:literal"></xforms:setvalue>
+							<xforms:setvalue ref="instance('repository-list')/repository[last()]/uri" value="context()/res:binding[@name='uri']/res:uri"></xforms:setvalue>
+							<xforms:setvalue ref="instance('repository-list')/repository[last()]/count" value="context()/res:binding[@name='count']/res:literal"></xforms:setvalue>
+						</xforms:action>
+					</xforms:action>
+				</xforms:action>
+			</xforms:submission>
+
+			<xforms:submission id="post-rdf" action="{instance('config')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post" mediatype="application/rdf+xml">
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Successfully posted to endpoint.</xforms:setvalue>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Post to endpoint failed.</xforms:message>
 			</xforms:submission>
 
 			<!-- SPARQL queries -->
-			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
-				ref="instance('sparqlResponse')" replace="instance" method="get">
+			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml" ref="instance('sparqlResponse')"
+				replace="instance" method="get">
 				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
 			</xforms:submission>
-			
-			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlUpdate')" serialization="text/plain" replace="none" method="post"
+
+			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlQuery')" serialization="text/plain" replace="none" method="post"
 				mediatype="application/sparql-update">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
 				</xforms:action>
 			</xforms:submission>
+
+			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
+			<!-- get the list of repositories from the SPARQL endpoint on xforms-model-construct-done -->
+			<xforms:action ev:event="xforms-model-construct-done">
+				<xforms:setvalue ref="instance('sparqlQuery')" value="instance('list-repositories')"></xforms:setvalue>
+				<xforms:send submission="submit-sparqlQuery"></xforms:send>
+				<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
+					<xforms:insert context="instance('repository-list')" nodeset="./child::node()[last()]" origin="instance('repository-template')"></xforms:insert>
+					<xforms:setvalue ref="instance('repository-list')/repository[last()]/name" value="context()/res:binding[@name='name']/res:literal"></xforms:setvalue>
+					<xforms:setvalue ref="instance('repository-list')/repository[last()]/uri" value="context()/res:binding[@name='uri']/res:uri"></xforms:setvalue>
+					<xforms:setvalue ref="instance('repository-list')/repository[last()]/count" value="context()/res:binding[@name='count']/res:literal"></xforms:setvalue>
+				</xforms:action>
+			</xforms:action>
 		</xforms:model>
 	</head>
 
@@ -99,45 +156,62 @@ UNION { ?s dcterms:relation <http://nwda.orbiscascade.org/ark:/80444/xv43658> .
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-12">
+					<xforms:group ref=".[string-length(instance('control-instance')/status) &gt; 0]">
+						<div class="bg-info alert">
+							<p>
+								<span class="glyphicon glyphicon-info-sign"></span>
+								<strong>Status:</strong>
+								<xforms:output ref="instance('control-instance')/status"></xforms:output>
+							</p>
+						</div>
+					</xforms:group>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
 					<h1>NWDA: OAI-PMH Harvester</h1>
-					<!--<table class="table">
-						<thead>
-							<tr>
-								<th>Repository</th>
-								<th>ID</th>
-								<th>CMS Type</th>
-								<th>Actions</th>
-							</tr>
-						</thead>
-						<tbody>
-							<xforms:repeat nodeset="instance('feeds')/feed">
-								<tr>
-									<td><xforms:output ref="name"></xforms:output></td>
-									<td><xforms:output ref="id"></xforms:output></td>
-									<td><xforms:output ref="type"></xforms:output></td>
-									<td><xforms:trigger appearance="minimal">
-											<xforms:label><span class="glyphicon glyphicon-refresh"></span></xforms:label>
-											<xforms:action ev:event="DOMActivate">
-												<xforms:setvalue ref="instance('controls')/repository" value="context()/id"></xforms:setvalue>
-												<xforms:send submission="get-feed"></xforms:send>
-											</xforms:action>
-										</xforms:trigger>
-									</td>
-								</tr>
-							</xforms:repeat>
-						</tbody>
-					</table>-->
-					
-					<xforms:trigger>
-						<xforms:label>Remove</xforms:label>
+				</div>
+				<div class="col-md-9">					
+					<xforms:group ref="instance('repository-list')">
+						<xforms:group ref=".[count(repository) &gt; 0]">
+							<h2>Repository</h2>
+							<table class="table">
+								<thead>
+									<tr>
+										<th style="width:80%;font-weight:bold">Repository</th>										
+										<th style="width:10%;font-weight:bold">CHOs</th>
+										<th style="width:10%;font-weight:bold">Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<xforms:repeat nodeset="repository">
+										<tr>
+											<td><a href="{uri}" target="_blank"><xforms:output ref="name"></xforms:output></a></td>
+											<td><xforms:output ref="count"></xforms:output></td>
+											<td>placeholder</td>
+										</tr>
+									</xforms:repeat>
+								</tbody>
+							</table>
+						</xforms:group>
+						<xforms:group ref=".[count(repository) = 0]">
+							<p>No repository records found in SPARQL endpoint.</p>
+						</xforms:group>
+					</xforms:group>
+					<!--<fr:xforms-inspector></fr:xforms-inspector>-->
+				</div>
+				<div class="col-md-3">
+					<h2>Actions</h2>
+					<xforms:trigger appearance="minimal">
+						<xforms:label><span class="glyphicon glyphicon-refresh"></span> Refresh Repository Metadata</xforms:label>
 						<xforms:action ev:event="DOMActivate">
-							
-							<!--<xforms:setvalue ref="instance('sparqlUpdate')" value="replace(instance('sparqlUpdate-template'), 'URI', context()/@rdf:about)"/>-->
-							<xforms:send submission="delete-graph"/>
+							<!-- submit SPARQL/Update to purge arch:Archive triples -->
+							<xforms:setvalue ref="instance('sparqlQuery')" value="instance('purge-repositories-template')"></xforms:setvalue>
+							<xforms:send submission="delete-graph"></xforms:send>
+							<!-- then get repository RDF from NWDA and repost to SPARQL endpoint -->
+							<xforms:send submission="get-repository-rdf"></xforms:send>
 						</xforms:action>
 					</xforms:trigger>
-					
-					<fr:xforms-inspector></fr:xforms-inspector>
 				</div>
 			</div>
 		</div>

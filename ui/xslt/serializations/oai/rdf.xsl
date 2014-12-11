@@ -17,7 +17,7 @@
 
 			<xsl:choose>
 				<xsl:when test="string($ark)">
-					<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation=$ark]"/>
+					<xsl:apply-templates select="descendant::oai_dc:dc[contains(dc:relation, $ark)]"/>					
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:apply-templates select="descendant::oai_dc:dc[contains(dc:relation, 'ark:/')]"/>
@@ -44,7 +44,7 @@
 					</xsl:for-each>
 				</dcterms:description>
 			</xsl:if>			
-			<dcterms:relation rdf:resource="http://nwda.orbiscascade.org/{$ark}"/>
+			<dcterms:relation rdf:resource="{if (contains($ark, 'http://')) then $ark else concat('http://nwda.orbiscascade.org/', $ark)}"/>
 			<dcterms:isPartOf rdf:resource="http://nwda.orbiscascade.org/contact#{$repository}"/>
 		</dpla:SourceResource>
 
