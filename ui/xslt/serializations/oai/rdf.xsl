@@ -9,7 +9,6 @@
 	<xsl:param name="ark" select="/content/controls/ark"/>
 
 	<xsl:template match="/">
-
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
 			xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
 			xmlns:dpla="http://dp.la/terms/">
@@ -17,16 +16,17 @@
 
 			<xsl:choose>
 				<xsl:when test="string($ark)">
-					<xsl:apply-templates select="descendant::oai_dc:dc[contains(dc:relation, $ark)]"/>					
+					<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation[contains(., $ark)]]"/>					
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:apply-templates select="descendant::oai_dc:dc[contains(dc:relation, 'ark:/')]"/>
+					<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation[contains(., 'ark:/')]]"/>
 				</xsl:otherwise>
 			</xsl:choose>
 		</rdf:RDF>
 	</xsl:template>
 
 	<xsl:template match="oai_dc:dc">
+		<xsl:variable name="relation" select="dc:relation[matches(., 'ark:/')]"/>
 		<xsl:variable name="cho_uri" select="dc:identifier[matches(., 'https?://')]"/>
 
 		<dpla:SourceResource rdf:about="{$cho_uri}">
@@ -34,6 +34,7 @@
 				<xsl:value-of select="dc:title"/>
 			</dcterms:title>
 			<xsl:apply-templates select="dc:date|dc:type|dc:creator|dc:language|dc:contributor|dc:rights|dc:format|dc:subject"/>
+			
 			<xsl:if test="dc:description">
 				<dcterms:description>
 					<xsl:for-each select="dc:description[not(contains(., '.jpg'))]">
@@ -43,20 +44,25 @@
 						</xsl:if>
 					</xsl:for-each>
 				</dcterms:description>
-			</xsl:if>			
-			<dcterms:relation rdf:resource="{if (contains($ark, 'http://')) then $ark else concat('http://nwda.orbiscascade.org/', $ark)}"/>
+			</xsl:if>		
+			
+			<dcterms:relation rdf:resource="{if (contains($relation, 'http://')) then $relation else concat('http://nwda.orbiscascade.org/', $relation)}"/>
 			<dcterms:isPartOf rdf:resource="http://nwda.orbiscascade.org/contact#{$repository}"/>
 		</dpla:SourceResource>
 
 		<!-- handle images -->
-		<xsl:call-template name="resources"/>
+		<xsl:call-template name="resources">
+			<xsl:with-param name="cho_uri" select="$cho_uri"/>
+		</xsl:call-template>
 
 		<!-- ore:Aggregation -->
 		<ore:Aggregation>
 			<edm:aggregatedCHO rdf:resource="{$cho_uri}"/>
 			<edm:dataProvider rdf:resource="http://harvester.orbiscascade.org"/>
 			<edm:provider rdf:resource="http://nwda.orbiscascade.org"/>
-			<xsl:call-template name="views"/>
+			<xsl:call-template name="views">
+				<xsl:with-param name="cho_uri" select="$cho_uri"/>
+			</xsl:call-template>
 			<dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
 				<xsl:value-of select="current-dateTime()"/>
 			</dcterms:modified>
@@ -91,7 +97,18 @@
 
 	<!-- edm:WebResource -->
 	<xsl:template name="resources">
+		<xsl:param name="cho_uri"/>
 		<xsl:choose>
+			<!-- contentDM institutions -->
+			<xsl:when test="$repository='waps'">
+				<!-- get thumbnail -->
+				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}">
+					<edm:rights>placeholder</edm:rights>
+				</edm:WebResource>
+				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}">
+					<edm:rights>placeholder</edm:rights>
+				</edm:WebResource>
+			</xsl:when>			
 			<!-- University of Montana -->
 			<xsl:when test="$repository='mtg'">
 				<xsl:if test="dc:description[contains(., '.jpg')]">
@@ -105,7 +122,14 @@
 
 	<!-- views -->
 	<xsl:template name="views">
+		<xsl:param name="cho_uri"/>
 		<xsl:choose>
+			<!-- contentDM institutions -->
+			<xsl:when test="$repository='waps'">
+				<!-- get thumbnail -->
+				<edm:preview rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}"/>
+				<edm:isShownAt rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}"/>
+			</xsl:when>
 			<!-- University of Montana -->
 			<xsl:when test="$repository='mtg'">
 				<xsl:if test="dc:description[contains(., '.jpg')]">

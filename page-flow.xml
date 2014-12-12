@@ -37,7 +37,19 @@
 	<!-- ****************
 	* INGEST APIs *
 	***************** -->
-	<!--<page path="/harvester/test" model="xpl/controllers/test.xpl"/>-->
+	<!-- getRDF accepts the mandatory sets parameter, with multiple sets from the same repository separated by |, 
+		the mandatory repository parameter which must match the main agency code, and the mandatory ark parameter.
+		It will perform a check on all sets to determine whether CHOs are available -->
+	<page path="/harvester/check" view="xpl/controllers/check.xpl"/>
+	
+	<!-- getRDF accepts the mandatory sets parameter, with multiple sets from the same repository separated by |, 
+		the mandatory repository parameter which must match the main agency code, and the optional ark parameter.
+		It will generate transform OAI sets into RDF for view. It will not post data -->
+	<page path="/harvester/getRDF" view="xpl/controllers/getRDF.xpl"/>
+	
+	<!-- ingest accepts the mandatory sets parameter, with multiple sets from the same repository separated by |, 
+		the mandatory repository parameter which must match the main agency code, and the optional ark parameter.
+		It will generate transform OAI sets into RDF. It will purge existing triples associated with CHOs with SPARQL/Update and post data into the endpoint. -->
 	<page path="/harvester/ingest" model="xpl/controllers/ingest.xpl"/>
 	
 	<epilogue url="oxf:/config/epilogue.xpl"/>
