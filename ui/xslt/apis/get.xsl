@@ -66,7 +66,7 @@
 			<div class="cho-container text-center">
 				<xsl:choose>
 					<xsl:when test="res:binding[@name='thumbnail'] and res:binding[@name='depiction']">
-						<a href="{res:binding[@name='reference']}" class="thumbImage" title="{res:binding[@name='title']/res:literal}">
+						<a href="{res:binding[@name='depiction']}" class="thumbImage" title="{res:binding[@name='title']/res:literal}">
 							<img src="{res:binding[@name='thumbnail']/res:uri}" alt="thumbnail" class="cho-thumb"/>
 						</a>
 						<br/>
