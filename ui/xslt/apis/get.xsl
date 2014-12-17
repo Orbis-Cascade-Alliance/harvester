@@ -4,6 +4,9 @@
 	<xsl:include href="../templates.xsl"/>
 
 	<xsl:variable name="display_path">../</xsl:variable>
+	<xsl:variable name="repositoryLabel" select="descendant::res:binding[@name='repository'][1]/res:literal"/>
+	<xsl:variable name="repositoryUri" select="descendant::res:binding[@name='repo_uri'][1]/res:uri"/>
+	<xsl:variable name="ark" select="descendant::res:binding[@name='ark'][1]/res:uri"/>
 
 	<xsl:template match="/">
 		<xsl:apply-templates select="descendant::res:sparql"/>
@@ -37,22 +40,14 @@
 		<div class="container-fluid content">
 			<div class="row">
 				<div class="col-md-12">
-					<h1>Cultural Heritage Objects</h1>
-
 					<xsl:choose>
 						<xsl:when test="count(descendant::res:result) = 0">
 							<p>There are no objects associated with this ARK.</p>
 						</xsl:when>
 						<xsl:otherwise>
-							<h2>
-								<a href="{descendant::res:binding[@name='repo_uri'][1]/res:uri}">
-									<xsl:value-of select="descendant::res:binding[@name='repository'][1]/res:literal"/>
-								</a>
-								<xsl:text>: </xsl:text>
-								<a href="{descendant::res:binding[@name='ark'][1]/res:uri}">
-									<xsl:value-of select="descendant::res:binding[@name='ark'][1]/res:uri"/>
-								</a>
-							</h2>
+							<!-- use the ark URI to get the EAD/XML in response with the xsl document() function, apply template on archdesc/did -->
+							<xsl:apply-templates select="document(concat('oxf:', '/apps/harvester/NTE2pc35.xml'))//*[local-name()='archdesc']/*[local-name()='did']"/>
+							<h3>Associated Cultural Heritage Objects</h3>
 							<xsl:apply-templates select="descendant::res:result"/>
 						</xsl:otherwise>
 					</xsl:choose>
@@ -61,6 +56,7 @@
 		</div>
 	</xsl:template>
 
+	<!-- styling for an individual result -->
 	<xsl:template match="res:result">
 		<div class="col-lg-2 col-md-3 col-sm-6">
 			<div class="cho-container text-center">
@@ -81,14 +77,65 @@
 						res:binding[@name='title']/res:literal"/>
 				</a>
 			</div>
-
-
-			<!--<xsl:if test="res:binding[@name='description']">
-				<br/>
-				<div><xsl:copy-of select="saxon:parse(concat('&lt;div&gt;', res:binding[@name='description']/res:literal, '&lt;/div&gt;'))"/></div>
-				
-			</xsl:if>-->
 		</div>
+	</xsl:template>
+
+	<!-- templates for processing the archdesc/did in the EAD file into the collection overview metadata -->
+	<xsl:template match="did">
+		<h2>Overview of Collection</h2>
+		<h3>
+			<a href="{$ark}">
+				<xsl:value-of select="unittitle"/>
+			</a>
+		</h3>
+		<dl class="dl-horizontal">
+			<dt>Creator:</dt>
+			<dd>
+				<xsl:value-of select="origination"/>
+			</dd>
+			<xsl:if test="unitdate">
+				<dt>Dates:</dt>
+				<dd>
+					<xsl:value-of select="unitdate"/>
+				</dd>
+			</xsl:if>
+			<xsl:if test="physdesc/extent">
+				<dt>Quantity:</dt>
+				<dd>
+					<xsl:value-of select="physdesc/extent"/>
+				</dd>
+			</xsl:if>
+			<xsl:if test="unitid">
+				<dt>Collection Number:</dt>
+				<dd>
+					<xsl:value-of select="unitid"/>
+				</dd>
+			</xsl:if>
+			<xsl:if test="abstract">
+				<dt>Summary:</dt>
+				<dd>
+					<xsl:value-of select="abstract"/>
+				</dd>
+			</xsl:if>
+			<dt>Repository:</dt>
+			<dd>
+				<a href="{$repositoryUri}">
+					<xsl:value-of select="$repositoryLabel"/>
+				</a>
+			</dd>
+			<xsl:if test="langmaterial">
+				<dt>Languages:</dt>
+				<dd>
+					<xsl:value-of select="langmaterial"/>
+				</dd>
+			</xsl:if>
+			<xsl:if test="sponsor">
+				<dt>Sponsor:</dt>
+				<dd>
+					<xsl:value-of select="sponsor"/>
+				</dd>
+			</xsl:if>
+		</dl>
 	</xsl:template>
 
 </xsl:stylesheet>
