@@ -3,10 +3,11 @@
 	version="2.0">
 	<xsl:include href="../templates.xsl"/>
 
+	<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
+
 	<xsl:variable name="display_path">../</xsl:variable>
 	<xsl:variable name="repositoryLabel" select="descendant::res:binding[@name='repository'][1]/res:literal"/>
-	<xsl:variable name="repositoryUri" select="descendant::res:binding[@name='repo_uri'][1]/res:uri"/>
-	<xsl:variable name="ark" select="descendant::res:binding[@name='ark'][1]/res:uri"/>
+	<xsl:variable name="repositoryUri" select="descendant::res:binding[@name='repo_uri'][1]/res:uri"/>	
 
 	<xsl:template match="/">
 		<xsl:apply-templates select="descendant::res:sparql"/>

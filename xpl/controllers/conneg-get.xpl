@@ -71,16 +71,15 @@ PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
 PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
-SELECT ?cho ?title ?ark ?repo_uri ?repository ?description ?date ?thumbnail ?depiction WHERE {
-  ?cho dcterms:relation <URI> ;
-        dcterms:title ?title ;
-        dcterms:relation ?ark ;
-        dcterms:isPartOf ?repo_uri .
+SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depiction WHERE {
+  ?cho dcterms:isPartOf <URI> ;
+        dcterms:title ?title 
   OPTIONAL {?cho dcterms:description ?description}
   OPTIONAL {?cho dcterms:date ?date}
-  ?agg edm:aggregatedCHO ?cho .
+  ?agg edm:aggregatedCHO ?cho ;
+     edm:dataProvider ?repo_uri .
    OPTIONAL {?agg edm:preview ?thumbnail}
-   OPTIONAL {?agg edm:isShownAt ?depiction}
+   OPTIONAL {?agg edm:object ?depiction}
    ?repo_uri foaf:name ?repository
 }]]>
 				</xsl:variable>
@@ -192,6 +191,7 @@ SELECT ?cho ?title ?ark ?repo_uri ?repository ?description ?date ?thumbnail ?dep
 				</p:when>				
 				<p:when test="content-type='html'">
 					<p:processor name="oxf:pipeline">
+						<p:input name="request" href="#request"/>
 						<p:input name="data" href="#model"/>
 						<p:input name="config" href="../views/apis/get.xpl"/>		
 						<p:output name="data" ref="data"/>

@@ -22,6 +22,13 @@
 					<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation[contains(., 'ark:/')]]"/>
 				</xsl:otherwise>
 			</xsl:choose>
+			
+			<xsl:if test="descendant::oai:resumptionToken">
+				<xsl:call-template name="recurse">
+					<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>
+					<xsl:with-param name="set" select="descendant::oai:request"/>
+				</xsl:call-template>
+			</xsl:if>
 		</rdf:RDF>
 	</xsl:template>
 
@@ -46,8 +53,7 @@
 				</dcterms:description>
 			</xsl:if>		
 			
-			<dcterms:relation rdf:resource="{if (contains($relation, 'http://')) then $relation else concat('http://nwda.orbiscascade.org/', $relation)}"/>
-			<dcterms:isPartOf rdf:resource="http://nwda.orbiscascade.org/contact#{$repository}"/>
+			<dcterms:isPartOf rdf:resource="{if (contains($relation, 'http://')) then $relation else concat('http://nwda.orbiscascade.org/', $relation)}"/>			
 		</dpla:SourceResource>
 
 		<!-- handle images -->
@@ -58,7 +64,8 @@
 		<!-- ore:Aggregation -->
 		<ore:Aggregation>
 			<edm:aggregatedCHO rdf:resource="{$cho_uri}"/>
-			<edm:dataProvider rdf:resource="http://harvester.orbiscascade.org"/>
+			<edm:isShownAt rdf:resource="{$cho_uri}"/>
+			<edm:dataProvider rdf:resource="http://nwda.orbiscascade.org/contact#{$repository}"/>
 			<edm:provider rdf:resource="http://nwda.orbiscascade.org"/>
 			<xsl:call-template name="views">
 				<xsl:with-param name="cho_uri" select="$cho_uri"/>
@@ -128,7 +135,7 @@
 			<xsl:when test="$repository='waps'">
 				<!-- get thumbnail -->
 				<edm:preview rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}"/>
-				<edm:isShownAt rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}"/>
+				<edm:object rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}"/>
 			</xsl:when>
 			<!-- University of Montana -->
 			<xsl:when test="$repository='mtg'">
@@ -137,6 +144,31 @@
 				</xsl:if>
 			</xsl:when>
 		</xsl:choose>
+	</xsl:template>
+	
+	<xsl:template name="recurse">
+		<xsl:param name="token"/>
+		<xsl:param name="set"/>
+		
+		<xsl:variable name="oai" as="node()*">
+			<xsl:copy-of select="document(concat($set, '?verb=ListRecords&amp;resumptionToken=', $token))"/>
+		</xsl:variable>
+		
+			<xsl:choose>
+				<xsl:when test="string($ark)">
+					<xsl:apply-templates select="$oai/descendant::oai_dc:dc[dc:relation[contains(., $ark)]]"/>					
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates select="$oai/descendant::oai_dc:dc[dc:relation[contains(., 'ark:/')]]"/>
+				</xsl:otherwise>
+			</xsl:choose>
+			
+			<xsl:if test="$oai/descendant::oai:resumptionToken">
+				<xsl:call-template name="recurse">
+					<xsl:with-param name="token" select="$oai/descendant::oai:resumptionToken"/>
+					<xsl:with-param name="set" select="$set"/>
+				</xsl:call-template>
+			</xsl:if>
 	</xsl:template>
 
 </xsl:stylesheet>
