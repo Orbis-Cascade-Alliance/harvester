@@ -18,6 +18,7 @@
 	* ADMIN INTERFACE *
 	***************** -->
 	<page path="/harvester/admin/" view="xforms/admin.xhtml"/>
+	<page path="/harvester/admin/import" view="xforms/import.xhtml"/>
 	
 	<!-- ****************
 	* PUBLIC INTERFACE *
