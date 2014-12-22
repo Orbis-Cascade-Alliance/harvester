@@ -6,6 +6,7 @@
 	<xsl:output indent="yes" encoding="UTF-8"/>
 
 	<xsl:param name="repository" select="/content/controls/repository"/>
+	<xsl:param name="set" select="/content/controls/set"/>
 	<xsl:param name="ark" select="/content/controls/ark"/>
 
 	<xsl:template match="/">
@@ -53,7 +54,8 @@
 				</dcterms:description>
 			</xsl:if>		
 			
-			<dcterms:isPartOf rdf:resource="{if (contains($relation, 'http://')) then $relation else concat('http://nwda.orbiscascade.org/', $relation)}"/>			
+			<dcterms:isPartOf rdf:resource="{if (contains($relation, 'http://')) then $relation else concat('http://nwda.orbiscascade.org/', $relation)}"/>
+			<dcterms:relation rdf:resource="{$set}"/>
 		</dpla:SourceResource>
 
 		<!-- handle images -->

@@ -36,19 +36,23 @@
 	<p:for-each href="#sets" select="//set" id="response" root="response">
 		<!-- generate the controls to include the repository ID and ARK URI -->
 		<p:processor name="oxf:unsafe-xslt">
-			<p:input name="data" href="#request"/>
+			<p:input name="request" href="#request"/>
+			<p:input name="data" href="current()"/>
 			<p:input name="config">
 				<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<xsl:output indent="yes"/>
-
-					<xsl:param name="repository" select="/request/parameters/parameter[name='repository']/value"/>
-					<xsl:param name="ark" select="/request/parameters/parameter[name='ark']/value"/>
-
+					
+					<xsl:param name="repository" select="doc('input:request')/request/parameters/parameter[name='repository']/value"/>
+					<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
+					
 					<xsl:template match="/">
 						<controls>
 							<ark>
 								<xsl:value-of select="$ark"/>
 							</ark>
+							<set>
+								<xsl:value-of select="/set"/>
+							</set>
 							<repository>
 								<xsl:value-of select="$repository"/>
 							</repository>

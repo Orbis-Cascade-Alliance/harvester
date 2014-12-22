@@ -1,0 +1,141 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:res="http://www.w3.org/2005/sparql-results#">
+	<head>
+		<title>OAI-PMH Harvester: Batch Import</title>
+		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
+		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css" />
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+		<script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico" />
+		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png" />
+		<link rel="stylesheet" href="/apps/harvester/xforms/css/style.css" />
+
+		<xforms:model>
+			<xforms:instance id="control-instance">
+				<controls xmlns="">
+					<status></status>
+					<set/>
+				</controls>
+			</xforms:instance>
+
+			<xforms:instance id="repository-list" xxforms:exclude-result-prefixes="#all">
+				<repositories xmlns=""></repositories>
+			</xforms:instance>
+
+			<xforms:instance id="repository-template" xxforms:exclude-result-prefixes="#all">
+				<repository/>
+			</xforms:instance>
+
+			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
+				<xi:include href="../config.xml"></xi:include>
+			</xforms:instance>
+
+			<xforms:instance id="feed" xxforms:exclude-result-prefixes="#all">
+				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"></OAI-PMH>
+			</xforms:instance>
+
+			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
+				<rdf:RDF></rdf:RDF>
+			</xforms:instance>
+
+			<!-- sparql update -->
+			<xforms:instance id="purge-repositories-template">
+				<query>
+					<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX arch:	<http://purl.org/archival/vocab/arch#>
+DELETE {?s ?p ?o} WHERE { ?s rdf:type arch:Archive . ?s ?p ?o }]]>
+				</query>
+			</xforms:instance>
+
+			<xforms:instance id="list-repositories">
+				<query>
+					<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
+PREFIX arch:	<http://purl.org/archival/vocab/arch#>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+
+SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
+  ?uri a arch:Archive ;
+         foaf:name ?name
+  OPTIONAL { ?cho edm:dataProvider ?uri}
+} GROUP BY ?uri ?name ORDER BY ?name]]>
+				</query>
+			</xforms:instance>
+
+			<xforms:instance id="sparqlQuery">
+				<query></query>
+			</xforms:instance>
+
+			<xforms:instance id="sparqlResponse">
+				<query></query>
+			</xforms:instance>
+
+			<!-- ************************* SUBMISSIONS ************************** -->
+			
+			<xforms:submission id="get-feed" serialization="none" method="get" action="{instance('control-instance')/set}" replace="instance" instance="feed">
+				<xforms:header>
+					<xforms:name>User-Agent</xforms:name>
+					<xforms:value>XForms/harvester.orbiscascade.org</xforms:value>
+				</xforms:header>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get OAI-PMH set.</xforms:message>
+				<xforms:action ev:event="xforms-submit-done">
+					<xforms:insert nodeset="instance('rdf')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/views/serializations/oai/rdf.xpl', ('data', 'controls'), (instance('feed'), instance('controls')), 'data')"
+					></xforms:insert>
+				</xforms:action>
+			</xforms:submission>
+
+
+			<xforms:submission id="post-rdf" action="{instance('config')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post" mediatype="application/rdf+xml">
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Successfully posted to endpoint.</xforms:setvalue>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Post to endpoint failed.</xforms:message>
+			</xforms:submission>
+
+			<!-- SPARQL queries -->
+			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml" ref="instance('sparqlResponse')"
+				replace="instance" method="get">
+				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
+			</xforms:submission>
+
+			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlQuery')" serialization="text/plain" replace="none" method="post"
+				mediatype="application/sparql-update">
+				<xforms:action ev:event="xforms-submit-error">
+					<xforms:message level="modal">SPARQL update failed.</xforms:message>
+				</xforms:action>
+			</xforms:submission>
+
+			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
+			<!-- get the list of repositories from the SPARQL endpoint on xforms-model-construct-done -->
+			<xforms:action ev:event="xforms-model-construct-done">
+				<xforms:setvalue ref="instance('sparqlQuery')" value="instance('list-repositories')"></xforms:setvalue>
+				<xforms:send submission="submit-sparqlQuery"></xforms:send>				
+			</xforms:action>
+		</xforms:model>
+	</head>
+
+
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<xforms:group ref=".[string-length(instance('control-instance')/status) &gt; 0]">
+						<div class="bg-info alert">
+							<p>
+								<span class="glyphicon glyphicon-info-sign"></span>
+								<strong>Status:</strong>
+								<xforms:output ref="instance('control-instance')/status"></xforms:output>
+							</p>
+						</div>
+					</xforms:group>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<h1>OAI-PMH Harvester: Batch Import</h1>
+					<fr:xforms-inspector></fr:xforms-inspector>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

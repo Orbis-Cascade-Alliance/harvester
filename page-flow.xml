@@ -13,12 +13,7 @@
     The full text of the license is available at http://www.gnu.org/copyleft/lesser.html
 -->
 <config xmlns="http://www.orbeon.com/oxf/controller" xmlns:oxf="http://www.orbeon.com/oxf/processors">
-
-	<!-- ****************
-	* ADMIN INTERFACE *
-	***************** -->
-	<page path="/harvester/admin/" view="xforms/admin.xhtml"/>
-	<page path="/harvester/admin/import" view="xforms/import.xhtml"/>
+	
 	
 	<!-- ****************
 	* PUBLIC INTERFACE *
@@ -36,22 +31,28 @@
 	<page path="/harvester/query" view="xpl/controllers/conneg-sparql.xpl"/>
 	
 	<!-- ****************
-	* INGEST APIs *
+	* ADMIN INTERFACE *
+	***************** -->
+	<page path="/harvester/admin/" view="xforms/admin.xhtml"/>
+	<page path="/harvester/admin/import" view="xforms/import.xhtml"/>
+	
+	<!-- ****************
+	* INGEST APIs (Under ADMIN)*
 	***************** -->
 	<!-- getRDF accepts the mandatory sets parameter, with multiple sets from the same repository separated by |, 
 		the mandatory repository parameter which must match the main agency code, and the mandatory ark parameter.
 		It will perform a check on all sets to determine whether CHOs are available -->
-	<page path="/harvester/check" view="xpl/controllers/check.xpl"/>
+	<page path="/harvester/admin/check" view="xpl/controllers/check.xpl"/>
 	
 	<!-- getRDF accepts the mandatory sets parameter, with multiple sets from the same repository separated by |, 
 		the mandatory repository parameter which must match the main agency code, and the optional ark parameter.
 		It will generate transform OAI sets into RDF for view. It will not post data -->
-	<page path="/harvester/getRDF" view="xpl/controllers/getRDF.xpl"/>
+	<page path="/harvester/admin/getRDF" view="xpl/controllers/getRDF.xpl"/>
 	
 	<!-- ingest accepts the mandatory sets parameter, with multiple sets from the same repository separated by |, 
 		the mandatory repository parameter which must match the main agency code, and the optional ark parameter.
 		It will generate transform OAI sets into RDF. It will purge existing triples associated with CHOs with SPARQL/Update and post data into the endpoint. -->
-	<page path="/harvester/ingest" model="xpl/controllers/ingest.xpl"/>
+	<page path="/harvester/admin/ingest" view="xpl/controllers/ingest.xpl"/>
 	
 	<epilogue url="oxf:/config/epilogue.xpl"/>
 </config>

@@ -59,7 +59,7 @@
 		</p:processor>
 
 		<!-- generate URL Generator config -->
-		<p:processor name="oxf:unsafe-xslt">			
+		<p:processor name="oxf:unsafe-xslt">
 			<p:input name="data" href="current()"/>
 			<p:input name="config">
 				<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -80,7 +80,7 @@
 					</xsl:template>
 				</xsl:stylesheet>
 			</p:input>
-			<p:output name="data" id="url-generator-config"/>			
+			<p:output name="data" id="url-generator-config"/>
 		</p:processor>
 
 		<!-- get OAI-PMH feed -->
@@ -94,16 +94,59 @@
 			<p:input name="data" href="#oai-pmh"/>
 			<p:input name="controls" href="#controls"/>
 			<p:input name="config">
-				<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema"  xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-					xmlns:dc="http://purl.org/dc/elements/1.1/" exclude-result-prefixes="#all">					
-					<xsl:param name="set" select="doc('input:controls')/controls/set"/>
+				<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" exclude-result-prefixes="#all">
 					<xsl:param name="ark" select="doc('input:controls')/controls/ark"/>
-					
-					<xsl:template match="/">			
-						<set>							
-							<url><xsl:value-of select="$set"/></url>
-							<count><xsl:value-of select="count(descendant::oai_dc:dc[dc:relation[contains(., $ark)]])"/></count>
+
+					<xsl:template match="/">
+						<xsl:variable name="count">
+							<xsl:choose>
+								<xsl:when test="descendant::oai:resumptionToken">
+									<xsl:call-template name="recurse">
+										<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>
+										<xsl:with-param name="count" select="count(descendant::oai_dc:dc[dc:relation[contains(., $ark)]])"/>
+										<xsl:with-param name="set" select="descendant::oai:request"/>
+									</xsl:call-template>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="count(descendant::oai_dc:dc[dc:relation[contains(., $ark)]])"/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>
+
+
+						<set>
+							<url>
+								<xsl:value-of select="doc('input:controls')/controls/set"/>
+							</url>
+							<count>
+								<xsl:value-of select="$count"/>
+							</count>
 						</set>
+					</xsl:template>
+
+					<xsl:template name="recurse">
+						<xsl:param name="token"/>
+						<xsl:param name="count"/>
+						<xsl:param name="set"/>
+
+						<xsl:variable name="oai" as="node()*">
+							<xsl:copy-of select="document(concat($set, '?verb=ListRecords&amp;resumptionToken=', $token))"/>
+						</xsl:variable>
+
+						<xsl:choose>
+							<xsl:when test="$oai/descendant::oai:resumptionToken">
+								<xsl:call-template name="recurse">
+									<xsl:with-param name="token" select="$oai/descendant::oai:resumptionToken"/>
+									<xsl:with-param name="count" select="$count + count($oai/descendant::oai_dc:dc[dc:relation[contains(., $ark)]])"/>
+									<xsl:with-param name="set" select="$set"/>
+								</xsl:call-template>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$count + count($oai/descendant::oai_dc:dc[dc:relation[contains(., $ark)]])"/>
+							</xsl:otherwise>
+						</xsl:choose>
+
 					</xsl:template>
 				</xsl:stylesheet>
 			</p:input>

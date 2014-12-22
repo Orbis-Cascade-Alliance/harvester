@@ -2,7 +2,7 @@
 <p:pipeline xmlns:p="http://www.orbeon.com/oxf/pipeline" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms">
 
 	<p:param type="input" name="data"/>
-	<!--<p:param type="output" name="data"/>-->
+	<p:param type="output" name="data"/>
 
 	<p:processor name="oxf:request">
 		<p:input name="config">
@@ -36,19 +36,23 @@
 	<p:for-each href="#sets" select="//set" id="response" root="response">
 		<!-- generate the controls to include the repository ID and ARK URI -->
 		<p:processor name="oxf:unsafe-xslt">
-			<p:input name="data" href="#request"/>
+			<p:input name="request" href="#request"/>
+			<p:input name="data" href="current()"/>
 			<p:input name="config">
 				<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<xsl:output indent="yes"/>
 
-					<xsl:param name="repository" select="/request/parameters/parameter[name='repository']/value"/>
-					<xsl:param name="ark" select="/request/parameters/parameter[name='ark']/value"/>
+					<xsl:param name="repository" select="doc('input:request')/request/parameters/parameter[name='repository']/value"/>
+					<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
 
 					<xsl:template match="/">
 						<controls>
 							<ark>
 								<xsl:value-of select="$ark"/>
 							</ark>
+							<set>
+								<xsl:value-of select="/set"/>
+							</set>
 							<repository>
 								<xsl:value-of select="$repository"/>
 							</repository>
@@ -101,35 +105,76 @@
 		
 		<!-- generate the SPARQL/Update delete query-->
 		<p:processor name="oxf:unsafe-xslt">
-			<p:input name="data" href="#request"/>
+			<p:input name="request" href="#request"/>
+			<p:input name="data" href="current()"/>
 			<p:input name="config">
 				<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					
-					<xsl:param name="ark" select="/request/parameters/parameter[name='ark']/value"/>
+					<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
+					<xsl:param name="set" select="/set"/>
 					
 					<xsl:template match="/">
+						
+						<!-- the following query creates a UNION of triples to delete in the following cascading order:
+							1. Get CHOs which are dcterms:isPartOf the finding aid (if ARK is provided) and dcterms:relation of the set, traverse through graph, delete the edm:object object (edm:WebResource).
+							2. Get CHOs which are dcterms:isPartOf the finding aid (if ARK is provided) and dcterms:relation of the set, traverse through graph, delete the edm:preview object (edm:WebResource).
+							3. Get CHOs which are dcterms:isPartOf the finding aid (if ARK is provided) and dcterms:relation of the set, delete triples with associated ore:Aggregation object linked via edm:aggregatedCHO property.
+							4. Finally, delete the dpla:SourceResource linked via dcterms:isPartOf to the finding aid ARK URI (if provided), or dcterms:relation of the set if the ARK is not provided. -->
+						
 						<xsl:variable name="template">
-							<![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
+							<xsl:choose>
+								<!-- if the ARK URI is provided, delete triples with a combination of dcterms:isPartOf the ARK URI and dcterms:relation with the set URI -->
+								<xsl:when test="string($ark)">
+									<![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 DELETE {?s ?p ?o} WHERE { 
-{?cho dcterms:relation <URI> . 
+{?cho dcterms:isPartOf <ARK> ;
+  dcterms:relation <SET> .
 ?ore edm:aggregatedCHO ?cho .
 ?ore edm:object ?s .
 ?s ?p ?o}
-UNION {?cho dcterms:relation <URI> . 
+UNION {?cho dcterms:isPartOf <ARK> ;
+  dcterms:relation <SET> .
+?ore edm:aggregatedCHO ?cho .
+?ore edm:preview ?s .
+?s ?p ?o}
+UNION {?cho dcterms:isPartOf <ARK> ;
+  dcterms:relation <SET> .
 ?s edm:aggregatedCHO ?cho . ?s ?p ?o }
-UNION { ?s dcterms:relation <URI> . 
+UNION {?s dcterms:isPartOf <ARK> ;
+  dcterms:relation <SET> .
 ?s ?p ?o }
 }]]>
+								</xsl:when>
+								<!-- if the ARK is not provided, delete all triples associated with the set, as it is presumed all ARKs from the set will be harvested -->
+								<xsl:otherwise>
+									<![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+DELETE {?s ?p ?o} WHERE { 
+{?cho dcterms:relation <SET> .
+?ore edm:aggregatedCHO ?cho .
+?ore edm:object ?s .
+?s ?p ?o}
+UNION {?cho dcterms:relation <SET> .
+?ore edm:aggregatedCHO ?cho .
+?ore edm:preview ?s .
+?s ?p ?o}
+UNION {?cho dcterms:relation <SET> .
+?s edm:aggregatedCHO ?cho . ?s ?p ?o }
+UNION {?s dcterms:relation <SET> .
+?s ?p ?o }
+}]]>
+								</xsl:otherwise>
+							</xsl:choose>							
 						</xsl:variable>
 						
 						<query>
-							<xsl:value-of select="replace($template, 'URI', concat('http://nwda.orbiscascade.org/', $ark))"/>
+							<xsl:value-of select="replace(replace($template, 'SET', $set), 'ARK', concat('http://nwda.orbiscascade.org/', $ark))"/>
 						</query>
 					</xsl:template>
 				</xsl:stylesheet>
 			</p:input>
-			<p:output name="data" id="sparql-update"/>
+			<p:output name="data" id="sparql-update"/>			
 		</p:processor>
 		
 		<!-- use XForms submission to delete triples -->
@@ -164,29 +209,11 @@ UNION { ?s dcterms:relation <URI> .
 				<xsl:output indent="yes"/>
 				
 				<xsl:template match="/">
-					<html xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-						<head>
-							<title>202 Accepted</title>
-						</head>
-						<body>
-							<h1>202 Accepted</h1>
-							<p>The process has been accepted.</p>
-						</body>
-					</html>
+					<response>success</response>
 				</xsl:template>
 			</xsl:stylesheet>
 		</p:input>
-		<p:output name="data" id="body"/>
-	</p:processor>
-
-	<p:processor name="oxf:http-serializer">
-		<p:input name="data" href="#body"/>
-		<p:input name="config">
-			<config>
-				<status-code>202</status-code>
-				<content-type>text/plain</content-type>				
-			</config>
-		</p:input>
+		<p:output name="data" ref="data"/>		
 	</p:processor>
 
 	<!--<p:processor name="oxf:identity">

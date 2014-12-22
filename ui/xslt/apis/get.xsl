@@ -6,6 +6,7 @@
 	<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
 
 	<xsl:variable name="display_path">../</xsl:variable>
+	<xsl:variable name="url">http://nwda.orbiscascade.org/</xsl:variable>
 	<xsl:variable name="repositoryLabel" select="descendant::res:binding[@name='repository'][1]/res:literal"/>
 	<xsl:variable name="repositoryUri" select="descendant::res:binding[@name='repo_uri'][1]/res:uri"/>	
 
@@ -85,7 +86,7 @@
 	<xsl:template match="did">
 		<h2>Overview of Collection</h2>
 		<h3>
-			<a href="{$ark}">
+			<a href="{concat($url, $ark)}">
 				<xsl:value-of select="unittitle"/>
 			</a>
 		</h3>
