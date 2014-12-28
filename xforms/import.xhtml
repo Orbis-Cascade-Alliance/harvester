@@ -305,7 +305,7 @@ SELECT ?uri ?name WHERE {
 								</div>
 							</xforms:repeat>
 							<!-- display the Ingest trigger if there is at least one set with a positive number of associated CHOs -->
-							<xforms:group ref=".[set[count &gt; 0]]">
+							<xforms:group ref=".[set[count &gt; 0] and oai-valid='true']">
 								<xforms:trigger>
 									<xforms:label>Ingest CHOs</xforms:label>
 									<xforms:action ev:event="DOMActivate">
