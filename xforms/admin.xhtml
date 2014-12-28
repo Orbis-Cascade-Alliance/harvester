@@ -203,16 +203,24 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 				</div>
 				<div class="col-md-3">
 					<h2>Actions</h2>
-					<xforms:trigger appearance="minimal">
-						<xforms:label><span class="glyphicon glyphicon-refresh"></span> Refresh Repository Metadata</xforms:label>
-						<xforms:action ev:event="DOMActivate">
-							<!-- submit SPARQL/Update to purge arch:Archive triples -->
-							<xforms:setvalue ref="instance('sparqlQuery')" value="instance('purge-repositories-template')"></xforms:setvalue>
-							<xforms:send submission="delete-graph"></xforms:send>
-							<!-- then get repository RDF from NWDA and repost to SPARQL endpoint -->
-							<xforms:send submission="get-repository-rdf"></xforms:send>
-						</xforms:action>
-					</xforms:trigger>
+					<ul>
+						<li>
+							<xforms:trigger appearance="minimal">
+								<xforms:label><span class="glyphicon glyphicon-refresh"></span>Refresh Repository Metadata</xforms:label>
+								<xforms:action ev:event="DOMActivate">
+									<!-- submit SPARQL/Update to purge arch:Archive triples -->
+									<xforms:setvalue ref="instance('sparqlQuery')" value="instance('purge-repositories-template')"></xforms:setvalue>
+									<xforms:send submission="delete-graph"></xforms:send>
+									<!-- then get repository RDF from NWDA and repost to SPARQL endpoint -->
+									<xforms:send submission="get-repository-rdf"></xforms:send>
+								</xforms:action>
+							</xforms:trigger>
+						</li>
+						<li>
+							<a href="import"><span class="glyphicon glyphicon-import"></span>Batch Import</a>
+						</li>
+					</ul>
+					
 				</div>
 			</div>
 		</div>

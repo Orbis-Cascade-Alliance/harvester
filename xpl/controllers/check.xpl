@@ -96,7 +96,9 @@
 			<p:input name="config">
 				<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
 					xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" exclude-result-prefixes="#all">
-					<xsl:param name="ark" select="doc('input:controls')/controls/ark"/>
+					
+					<!-- allow the specification of an ARK to count specific instances, otherwise find the count of any CHO with an associated ARK URI -->
+					<xsl:param name="ark" select="if (string(doc('input:controls')/controls/ark)) then doc('input:controls')/controls/ark else 'ark:/'"/>
 
 					<xsl:template match="/">
 						<xsl:variable name="count">
@@ -113,8 +115,7 @@
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>
-
-
+						
 						<set>
 							<url>
 								<xsl:value-of select="doc('input:controls')/controls/set"/>
