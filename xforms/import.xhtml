@@ -278,7 +278,7 @@ SELECT ?uri ?name WHERE {
 									<xforms:dispatch ev:event="DOMActivate" target="initiate-validation-dialog" name="fr-show"></xforms:dispatch>
 								</xforms:trigger>
 							</xforms:group>
-							<xforms:group ref=".[set[count &gt; 0]]">
+							<xforms:group ref=".[set[oai-valid=true() and count &gt; 0]]">
 								<p>Ingestion control follows the set list.</p>
 							</xforms:group>
 							<xforms:repeat nodeset="set">
@@ -305,7 +305,7 @@ SELECT ?uri ?name WHERE {
 								</div>
 							</xforms:repeat>
 							<!-- display the Ingest trigger if there is at least one set with a positive number of associated CHOs -->
-							<xforms:group ref=".[set[count &gt; 0] and oai-valid='true']">
+							<xforms:group ref=".[set[oai-valid=true() and count &gt; 0]]">
 								<xforms:trigger>
 									<xforms:label>Ingest CHOs</xforms:label>
 									<xforms:action ev:event="DOMActivate">
