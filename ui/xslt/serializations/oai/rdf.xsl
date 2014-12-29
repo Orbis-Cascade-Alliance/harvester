@@ -5,6 +5,7 @@
 	xmlns:ore="http://www.openarchives.org/ore/terms/" exclude-result-prefixes="oai_dc oai xs" version="2.0">
 	<xsl:output indent="yes" encoding="UTF-8"/>
 
+	<xsl:param name="mode" select="doc('input:request')/request/parameters/parameter[name='mode']/value"/>
 	<xsl:param name="repository" select="/content/controls/repository"/>
 	<xsl:param name="set" select="/content/controls/set"/>
 	<xsl:param name="ark" select="/content/controls/ark"/>
@@ -16,20 +17,36 @@
 			<!-- either process only those objects with a matching $ark when the process is instantiated by the finding aid upload, or process all objects that contain an ARK URI in dc:relations when bulk harvesting -->
 
 			<xsl:choose>
-				<xsl:when test="string($ark)">
-					<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation[contains(., $ark)]]"/>					
+				<xsl:when test="$mode='test'">
+					<xsl:choose>
+						<xsl:when test="string($ark)">
+							<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation[contains(., $ark)]][position() &lt;= 10]"/>					
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation[contains(., 'ark:/')]][position() &lt;= 10]"/>
+						</xsl:otherwise>
+					</xsl:choose>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation[contains(., 'ark:/')]]"/>
+					<xsl:choose>
+						<xsl:when test="string($ark)">
+							<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation[contains(., $ark)]]"/>					
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation[contains(., 'ark:/')]]"/>
+						</xsl:otherwise>
+					</xsl:choose>
 				</xsl:otherwise>
 			</xsl:choose>
 			
-			<xsl:if test="descendant::oai:resumptionToken">
-				<xsl:call-template name="recurse">
-					<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>
-					<xsl:with-param name="set" select="descendant::oai:request"/>
-				</xsl:call-template>
-			</xsl:if>
+			<xsl:if test="not($mode='test')">
+				<xsl:if test="descendant::oai:resumptionToken">
+					<xsl:call-template name="recurse">
+						<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>
+						<xsl:with-param name="set" select="descendant::oai:request"/>
+					</xsl:call-template>
+				</xsl:if>
+			</xsl:if>			
 		</rdf:RDF>
 	</xsl:template>
 
