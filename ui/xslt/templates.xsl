@@ -12,13 +12,15 @@
 						<span class="icon-bar"/>
 						<span class="icon-bar"/>
 					</button>
-					<a class="navbar-brand logo-nav" href="{$display_path}./">NWDA</a>
+					<a class="navbar-brand logo-nav" href="{$display_path}./">
+						<xsl:value-of select="//config/title"/>
+					</a>
 				</div>
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
 						<li>
 							<a href="{$display_path}sparql">SPARQL</a>
-						</li>						
+						</li>
 					</ul>
 					<!--<div class="col-sm-3 col-md-3 pull-right">
 						<form class="navbar-form" role="search" action="{$display_path}id/" method="get">
