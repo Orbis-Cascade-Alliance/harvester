@@ -229,12 +229,15 @@ SELECT ?uri ?name WHERE {
 				<div class="col-md-12">
 					<h1>OAI-PMH Harvester: Batch Import</h1>
 					<a href="../admin/"><span class="glyphicon glyphicon-arrow-left"></span>Return to Admin</a>
-					<!-- Case 1: Display the upload form when the upload-valid is false or has not been set -->
-					<xforms:group ref=".[instance('control-instance')/upload-valid='false' or not(string(instance('control-instance')/upload-valid))]">
-						<p>The batch import process accepts a simple XML file with a root element of 'sets' and children of 'set' that contain two required elements: 'url' of the OAI-PMH set and
-							'repository', which must conform to the EAD documents @mainagencycode within the &lt;eadid&gt;. The @mainagencycode is identical to the code used by the repository metadata
-							RDF URIs, which, in turn, is used as the edm:dataProvider in the ore:Aggregation in the Harvester CHO triples.</p>
-						<pre style="width:50%;margin:auto"><![CDATA[<sets>
+					
+					<xforms:switch>
+						<xforms:case id="import-form">
+							<!-- Case 1: Display the upload form when the upload-valid is false or has not been set -->
+							<xforms:group ref=".[instance('control-instance')/upload-valid='false' or not(string(instance('control-instance')/upload-valid))]">
+								<p>The batch import process accepts a simple XML file with a root element of 'sets' and children of 'set' that contain two required elements: 'url' of the OAI-PMH set and
+									'repository', which must conform to the EAD documents @mainagencycode within the &lt;eadid&gt;. The @mainagencycode is identical to the code used by the repository metadata
+									RDF URIs, which, in turn, is used as the edm:dataProvider in the ore:Aggregation in the Harvester CHO triples.</p>
+								<pre style="width:50%;margin:auto"><![CDATA[<sets>
 	<set>
 		<url>{oai-pmh set URL}</url>
 		<repository>{@mainagencycode}</repository>
@@ -244,78 +247,84 @@ SELECT ?uri ?name WHERE {
 		<repository>{@mainagencycode}</repository>
 	</set>
 </sets>]]></pre>
-						<p>To proceed with the import, upload a conformant XML file for further validation and processing.</p>
-						<h2>Upload Set List</h2>
-						<fr:upload ref="instance('file')">
-							<xforms:filename ref="@filename"></xforms:filename>
-							<xforms:mediatype ref="@mediatype"></xforms:mediatype>
-							<xxforms:size ref="@size"></xxforms:size>
-						</fr:upload>
-						<br />
-						<fr:button>
-							<xforms:label>Upload</xforms:label>
-							<xforms:action ev:event="DOMActivate">
-								<xforms:send submission="upload-file"></xforms:send>
-								<!--get the temp file written to disk-->
-								<xforms:action ev:event="xforms-submit-done">
-									<xforms:setvalue ref="instance('load-sets-config')/url" value="substring-before(instance('file'), '?')"></xforms:setvalue>
-									<xforms:insert nodeset="instance('sets')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/load-sets.xpl', 'file', instance('load-sets-config'), 'data')"></xforms:insert>
-									<xforms:setvalue ref="instance('control-instance')/upload-valid" if="count(instance('sets')/set) &gt; 0">true</xforms:setvalue>
-									<xforms:setvalue ref="instance('control-instance')/upload-valid" if="count(instance('sets')/set) = 0">false</xforms:setvalue>
-								</xforms:action>
-							</xforms:action>
-						</fr:button>
-					</xforms:group>
-					<!-- Case 2: If the uploaded XML file is well-formed and contains at least one set node, display the list of sets and the validation controls -->
-					<xforms:group ref=".[instance('control-instance')/upload-valid='true']">
-						<xforms:group ref="instance('sets')">
-							<h2>Set List</h2>
-							<!-- only display the Validate control if validation has not already been performed -->
-							<xforms:group ref=".[not(set[count &gt; 0])]">
-								<xforms:trigger>
-									<xforms:label>Validate</xforms:label>
-									<!-- show the validation dialog -->
-									<xforms:dispatch ev:event="DOMActivate" target="initiate-validation-dialog" name="fr-show"></xforms:dispatch>
-								</xforms:trigger>
-							</xforms:group>
-							<xforms:group ref=".[set[oai-valid=true() and count &gt; 0]]">
-								<p>Ingestion control follows the set list.</p>
-							</xforms:group>
-							<xforms:repeat nodeset="set">
-								<!-- divs for each set are color-coded with Bootstrap classes to indicate success, failure, or warning (OAI-PMH is valid, but there are 0 CHOs) -->
-								<xforms:var name="class"
-									select="if(oai-valid=false() or repository-valid=false()) then 'text-danger' else if (count = 0) then 'text-warning' else if (count &gt; 0) then 'text-success' else ''"></xforms:var>
-								<div class="highlight">
-									<dl class="dl-horizontal {$class}">
-										<dt>URL:</dt>
-										<dd><xforms:output ref="url"></xforms:output></dd>
-										<dt>Repository:</dt>
-										<dd><xforms:output ref="repository"></xforms:output></dd>
-										<xforms:group ref=".[count]">
-											<dt>Count:</dt>
-											<dd><xforms:group ref=".[count=0]"><span class="glyphicon glyphicon-warning-sign"></span></xforms:group><xforms:output ref="count"></xforms:output></dd>
-										</xforms:group>
-										<xforms:group ref=".[string-length(error-code) &gt; 0]">
-											<dt>Error:</dt>
-											<dd><span class="glyphicon glyphicon-warning-sign"></span><xforms:output
-													value="if (error-code = '0') then 'Invalid repository code.' else if (error-code = '1') then 'OAI-PMH set URL does not yield well-formed XML.' else if (error-code='2') then 'Set URL yields XML, but not valid OAI-PMH.' else ''"
-												></xforms:output></dd>
-										</xforms:group>
-									</dl>
-								</div>
-							</xforms:repeat>
-							<!-- display the Ingest trigger if there is at least one set with a positive number of associated CHOs -->
-							<xforms:group ref=".[set[oai-valid=true() and count &gt; 0]]">
-								<xforms:trigger>
-									<xforms:label>Ingest CHOs</xforms:label>
+								<p>To proceed with the import, upload a conformant XML file for further validation and processing.</p>
+								<h2>Upload Set List</h2>
+								<fr:upload ref="instance('file')">
+									<xforms:filename ref="@filename"></xforms:filename>
+									<xforms:mediatype ref="@mediatype"></xforms:mediatype>
+									<xxforms:size ref="@size"></xxforms:size>
+								</fr:upload>
+								<br />
+								<fr:button>
+									<xforms:label>Upload</xforms:label>
 									<xforms:action ev:event="DOMActivate">
-										<!-- show the ingestion dialog -->
-										<xforms:dispatch ev:event="DOMActivate" target="initiate-ingestion-dialog" name="fr-show"></xforms:dispatch>
+										<xforms:send submission="upload-file"></xforms:send>
+										<!--get the temp file written to disk-->
+										<xforms:action ev:event="xforms-submit-done">
+											<xforms:setvalue ref="instance('load-sets-config')/url" value="substring-before(instance('file'), '?')"></xforms:setvalue>
+											<xforms:insert nodeset="instance('sets')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/load-sets.xpl', 'file', instance('load-sets-config'), 'data')"></xforms:insert>
+											<xforms:setvalue ref="instance('control-instance')/upload-valid" if="count(instance('sets')/set) &gt; 0">true</xforms:setvalue>
+											<xforms:setvalue ref="instance('control-instance')/upload-valid" if="count(instance('sets')/set) = 0">false</xforms:setvalue>
+										</xforms:action>
 									</xforms:action>
-								</xforms:trigger>
+								</fr:button>
 							</xforms:group>
-						</xforms:group>
-					</xforms:group>
+							<!-- Case 2: If the uploaded XML file is well-formed and contains at least one set node, display the list of sets and the validation controls -->
+							<xforms:group ref=".[instance('control-instance')/upload-valid='true']">
+								<xforms:group ref="instance('sets')">
+									<h2>Set List</h2>
+									<!-- only display the Validate control if validation has not already been performed -->
+									<xforms:group ref=".[not(set[count &gt; 0])]">
+										<xforms:trigger>
+											<xforms:label>Validate</xforms:label>
+											<!-- show the validation dialog -->
+											<xforms:dispatch ev:event="DOMActivate" target="initiate-validation-dialog" name="fr-show"></xforms:dispatch>
+										</xforms:trigger>
+									</xforms:group>
+									<xforms:group ref=".[set[not(oai-valid=false()) and count &gt; 0]]">
+										<p>Ingestion control follows the set list.</p>
+									</xforms:group>
+									<xforms:repeat nodeset="set">
+										<!-- divs for each set are color-coded with Bootstrap classes to indicate success, failure, or warning (OAI-PMH is valid, but there are 0 CHOs) -->
+										<xforms:var name="class"
+											select="if(oai-valid=false() or repository-valid=false()) then 'text-danger' else if (count = 0) then 'text-warning' else if (count &gt; 0) then 'text-success' else ''"></xforms:var>
+										<div class="highlight">
+											<dl class="dl-horizontal {$class}">
+												<dt>URL:</dt>
+												<dd><xforms:output ref="url"></xforms:output></dd>
+												<dt>Repository:</dt>
+												<dd><xforms:output ref="repository"></xforms:output></dd>
+												<xforms:group ref=".[count]">
+													<dt>Count:</dt>
+													<dd><xforms:group ref=".[count=0]"><span class="glyphicon glyphicon-warning-sign"></span></xforms:group><xforms:output ref="count"></xforms:output></dd>
+												</xforms:group>
+												<xforms:group ref=".[string-length(error-code) &gt; 0]">
+													<dt>Error:</dt>
+													<dd><span class="glyphicon glyphicon-warning-sign"></span><xforms:output
+														value="if (error-code = '0') then 'Invalid repository code.' else if (error-code = '1') then 'OAI-PMH set URL does not yield well-formed XML.' else if (error-code='2') then 'Set URL yields XML, but not valid OAI-PMH.' else ''"
+														></xforms:output></dd>
+												</xforms:group>
+											</dl>
+										</div>
+									</xforms:repeat>
+									<!-- display the Ingest trigger if there is at least one set with a positive number of associated CHOs -->
+									<xforms:group ref=".[set[not(oai-valid=false()) and count &gt; 0]]">
+										<xforms:trigger>
+											<xforms:label>Ingest CHOs</xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<!-- show the ingestion dialog -->
+												<xforms:dispatch ev:event="DOMActivate" target="initiate-ingestion-dialog" name="fr-show"></xforms:dispatch>
+											</xforms:action>
+										</xforms:trigger>
+									</xforms:group>
+								</xforms:group>
+							</xforms:group>
+						</xforms:case>
+						<xforms:case id="import-complete">
+							<p>The ingestion process has been completed.</p>
+						</xforms:case>
+					</xforms:switch>
+					
 					<!-- ***
 						initiate-validation-dialog: this is the dialog to initiate the validation process.
 						Options: Negative choice: close dialog, cancel validation
@@ -350,7 +359,7 @@ SELECT ?uri ?name WHERE {
 									<xforms:action if="instance('repository-list')/repository = $repository">
 										<xforms:send submission="get-feed"></xforms:send>
 									</xforms:action>
-								</xforms:action>
+								</xforms:action>								
 								<!--<xxforms:hide dialog="progress-dialog"></xxforms:hide>-->
 							</xforms:action>
 						</fr:positive-choice>
@@ -367,7 +376,7 @@ SELECT ?uri ?name WHERE {
 							<fr:label>Yes</fr:label>
 							<xforms:action ev:event="DOMActivate">
 								<!-- iterate through sets with a count greater than 0 -->								
-								<xforms:action xxforms:iterate="instance('sets')/set[number(count) &gt; 0]">
+								<xforms:action xxforms:iterate="instance('sets')/set[number(count) &gt; 0 and not(oai-valid=false())]">
 									<xforms:var name="set" select="context()/url"></xforms:var>
 									<!-- Step 1: set the SPARQL query template and submit the SPARQL/Update to purge triples associated with each set -->
 									<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('purge-set-template'), 'SET', $set)"></xforms:setvalue>
@@ -379,6 +388,9 @@ SELECT ?uri ?name WHERE {
 										<xforms:send submission="get-rdf"> </xforms:send>
 									</xforms:action>
 								</xforms:action>
+								
+								<!-- toggle the case when the ingestion process is complete -->
+								<xforms:toggle case="import-complete"/>
 							</xforms:action>
 						</fr:positive-choice>
 					</fr:alert-dialog>
