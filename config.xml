@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 	<url>http://localhost:8080/orbeon/harvester/</url>
+	<title>Orbis Cascade Harvester</title>
 	<repository_rdf>http://localhost:8080/orbeon/nwda/repositories.rdf</repository_rdf>
 	<sparql>
 		<query>http://localhost:3030/nwda/query</query>

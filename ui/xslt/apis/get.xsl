@@ -4,20 +4,35 @@
 	<xsl:include href="../templates.xsl"/>
 
 	<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
+	<xsl:param name="page" as="xs:integer">
+		<xsl:choose>
+			<xsl:when test="string-length(doc('input:request')/request/parameters/parameter[name='page']/value) &gt; 0 and doc('input:request')/request/parameters/parameter[name='page']/value castable
+				as xs:integer and number(doc('input:request')/request/parameters/parameter[name='page']/value) > 0">
+				<xsl:value-of select="doc('input:request')/request/parameters/parameter[name='page']/value"/>
+			</xsl:when>
+			<xsl:otherwise>1</xsl:otherwise>
+		</xsl:choose>
+	</xsl:param>
 
 	<xsl:variable name="display_path">../</xsl:variable>
 	<xsl:variable name="url">http://nwda.orbiscascade.org/</xsl:variable>
 	<xsl:variable name="repositoryLabel" select="descendant::res:binding[@name='repository'][1]/res:literal"/>
-	<xsl:variable name="repositoryUri" select="descendant::res:binding[@name='repo_uri'][1]/res:uri"/>	
+	<xsl:variable name="repositoryUri" select="descendant::res:binding[@name='repo_uri'][1]/res:uri"/>
+
+	<!-- pagination -->
+	<xsl:variable name="limit" as="xs:integer">100</xsl:variable>
+	<xsl:variable name="offset" select="($page - 1) * $limit"/>
+
+	<xsl:variable name="numFound" select="descendant::res:sparql[2]//res:binding[@name='numFound']/res:literal"/>
 
 	<xsl:template match="/">
-		<xsl:apply-templates select="descendant::res:sparql"/>
+		<xsl:apply-templates select="descendant::res:sparql[1]" mode="root"/>
 	</xsl:template>
 
-	<xsl:template match="res:sparql">
+	<xsl:template match="res:sparql" mode="root">
 		<html lang="en">
 			<head>
-				<title>NWDA Harvester: Cultural Heritage Objects</title>
+				<title><xsl:value-of select="/content/config/title"/>: Cultural Heritage Objects</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1"/>
 				<!-- bootstrap -->
 				<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"/>
@@ -50,6 +65,7 @@
 							<!-- use the ark URI to get the EAD/XML in response with the xsl document() function, apply template on archdesc/did -->
 							<xsl:apply-templates select="document(concat('oxf:', '/apps/harvester/NTE2pc35.xml'))//*[local-name()='archdesc']/*[local-name()='did']"/>
 							<h3>Associated Cultural Heritage Objects</h3>
+							<xsl:call-template name="pagination"/>
 							<xsl:apply-templates select="descendant::res:result"/>
 						</xsl:otherwise>
 					</xsl:choose>
@@ -138,6 +154,81 @@
 				</dd>
 			</xsl:if>
 		</dl>
+	</xsl:template>
+
+	<!-- pagination template -->
+	<xsl:template name="pagination">
+		<xsl:variable name="previous" select="$page - 1"/>
+		<xsl:variable name="current" select="$page"/>
+		<xsl:variable name="next" select="$page + 1"/>
+		<xsl:variable name="total" select="ceiling($numFound div $limit)"/>
+
+		<div class="row">
+			<div class="col-md-6">
+				<xsl:variable name="startRecord" select="$offset + 1"/>
+				<xsl:variable name="endRecord">
+					<xsl:choose>
+						<xsl:when test="$numFound &gt; ($offset + $limit)">
+							<xsl:value-of select="$offset + $limit"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="$numFound"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:variable>
+				<p>Records <b><xsl:value-of select="$startRecord"/></b> to <b><xsl:value-of select="$endRecord"/></b> of <b><xsl:value-of select="$numFound"/></b></p>
+			</div>
+			<!-- paging functionality -->
+			<div class="col-md-6">
+				<div class="btn-toolbar" role="toolbar">
+					<div class="btn-group pull-right">
+						<xsl:choose>
+							<xsl:when test="$offset &gt;= $limit">
+								<a class="btn btn-default pagingBtn" role="button" title="First" href="?ark={$ark}">
+									<span class="glyphicon glyphicon-fast-backward"/>
+								</a>
+								<a class="btn btn-default pagingBtn" role="button" title="Previous" href="?ark={$ark}&amp;page={$previous}">
+									<span class="glyphicon glyphicon-backward"/>
+								</a>
+							</xsl:when>
+							<xsl:otherwise>
+								<a class="btn btn-default disabled" role="button" title="First" href="?ark={$ark}">
+									<span class="glyphicon glyphicon-fast-backward"/>
+								</a>
+								<a class="btn btn-default disabled" role="button" title="Previous" href="?ark={$ark}&amp;page={$previous}">
+									<span class="glyphicon glyphicon-backward"/>
+								</a>
+							</xsl:otherwise>
+						</xsl:choose>
+						<!-- current page -->
+						<button type="button" class="btn btn-default active">
+							<b>
+								<xsl:value-of select="$current"/>
+							</b>
+						</button>
+						<!-- next page -->
+						<xsl:choose>
+							<xsl:when test="$numFound - $offset &gt; $limit">
+								<a class="btn btn-default pagingBtn" role="button" title="Next" href="?ark={$ark}&amp;page={$next}">
+									<span class="glyphicon glyphicon-forward"/>
+								</a>
+								<a class="btn btn-default pagingBtn" role="button" href="?ark={$ark}&amp;page={$total}">
+									<span class="glyphicon glyphicon-fast-forward"/>
+								</a>
+							</xsl:when>
+							<xsl:otherwise>
+								<a class="btn btn-default disabled" role="button" title="Next" href="?ark={$ark}&amp;page={$next}">
+									<span class="glyphicon glyphicon-forward"/>
+								</a>
+								<a class="btn btn-default disabled" role="button" href="?ark={$ark}&amp;page={$total}">
+									<span class="glyphicon glyphicon-fast-forward"/>
+								</a>
+							</xsl:otherwise>
+						</xsl:choose>
+					</div>
+				</div>
+			</div>
+		</div>
 	</xsl:template>
 
 </xsl:stylesheet>

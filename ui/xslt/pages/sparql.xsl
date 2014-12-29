@@ -7,7 +7,7 @@
 	<xsl:template match="/">
 		<html lang="en">
 			<head>
-				<title>NWDA Harvester: SPARQL</title>
+				<title><xsl:value-of select="/config/title"/>: SPARQL</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1"/>
 				<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"/>
 				<!-- bootstrap -->
@@ -68,8 +68,8 @@ SELECT * WHERE {
 							<button type="submit" class="btn btn-default">Submit</button>
 						</div>
 						<div class="col-md-6">
-							<p class="text-info">This endpoint (<xsl:value-of select="concat(/config/url, 'query')"/>) supports content negotiation for the following content types:
-									<i>text/html</i>, <i>text/csv</i>, <i>text/plain</i>, <i>application/sparql-results+json</i>, and <i>application/sparql-results+xml</i></p>
+							<p class="text-info">This endpoint (<xsl:value-of select="concat(/config/url, 'query')"/>) supports content negotiation for the following content types: <i>text/html</i>,
+									<i>text/csv</i>, <i>text/plain</i>, <i>application/sparql-results+json</i>, and <i>application/sparql-results+xml</i></p>
 						</div>
 					</form>
 				</div>

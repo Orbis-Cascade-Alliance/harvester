@@ -20,7 +20,7 @@
 	***************** -->
 	<!-- **** PAGES **** -->			
 	<page path="/harvester/sparql" view="xpl/views/pages/sparql.xpl"/>
-	<page path="/harvester/" view="xpl/views/pages/index.xpl"/>
+	<page path="/harvester/" model="xpl/models/sparql/index.xpl" view="xpl/views/pages/index.xpl"/>
 	
 	<!-- **** SERIALIZATIONS **** -->	
 	<page path="/harvester/feed" model="xpl/models/sparql/atom.xpl" view="xpl/views/serializations/sparql/atom.xpl"/>
