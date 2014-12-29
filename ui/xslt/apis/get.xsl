@@ -65,7 +65,13 @@
 							<!-- use the ark URI to get the EAD/XML in response with the xsl document() function, apply template on archdesc/did -->
 							<xsl:apply-templates select="document(concat('oxf:', '/apps/harvester/NTE2pc35.xml'))//*[local-name()='archdesc']/*[local-name()='did']"/>
 							<h3>Associated Cultural Heritage Objects</h3>
-							<xsl:call-template name="pagination"/>
+							
+							<!-- display the pagination toolbar only if there are multiple pages -->
+							<xsl:if test="$numFound &gt; 100">
+								<xsl:call-template name="pagination"/>
+							</xsl:if>							
+							
+							<!-- call template for results -->
 							<xsl:apply-templates select="descendant::res:result"/>
 						</xsl:otherwise>
 					</xsl:choose>
