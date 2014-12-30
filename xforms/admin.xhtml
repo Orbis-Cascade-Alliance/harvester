@@ -294,6 +294,22 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 							value="concat('oxf:/apps/harvester/download/',  $repository, '.rdf')"/>
 						<xforms:insert nodeset="instance('dump')"
 							origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/write-rdf.xpl', ('doc', 'configuration'), (instance('rdf'), instance('save-config')), 'data')"/>
+						
+						<!-- generate and write TTL -->
+						<xforms:insert nodeset="instance('ttl')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/views/serializations/rdf/ttl.xpl', 'data', instance('rdf'), 'data')"
+							></xforms:insert>
+						<xforms:setvalue ref="instance('save-config')/url"
+							value="concat('oxf:/apps/harvester/download/',  $repository, '.ttl')"/>
+						<xforms:insert nodeset="instance('dump')"
+							origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/write-text.xpl', ('doc', 'configuration'), (instance('ttl'), instance('save-config')), 'data')"/>
+						
+						<!-- generate and write JSON-LD -->
+						<xforms:insert nodeset="instance('json')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/views/serializations/rdf/json-ld.xpl', 'data', instance('rdf'), 'data')"
+							></xforms:insert>
+						<xforms:setvalue ref="instance('save-config')/url"
+							value="concat('oxf:/apps/harvester/download/',  $repository, '.jsonld')"/>
+						<xforms:insert nodeset="instance('dump')"
+							origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/write-text.xpl', ('doc', 'configuration'), (instance('json'), instance('save-config')), 'data')"/>
 					</xforms:action>
 				</xforms:action>
 			</fr:positive-choice>
