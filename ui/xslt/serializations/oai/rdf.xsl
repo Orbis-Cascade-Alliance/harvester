@@ -62,8 +62,9 @@
 			
 			<xsl:if test="dc:description">
 				<dcterms:description>
+					
 					<xsl:for-each select="dc:description[not(contains(., '.jpg'))]">
-						<xsl:value-of select="."/>
+						<xsl:value-of select="normalize-space(.)"/>
 						<xsl:if test="not(position()=last())">
 							<xsl:text> </xsl:text>
 						</xsl:if>

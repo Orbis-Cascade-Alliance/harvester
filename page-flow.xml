@@ -12,7 +12,7 @@
 
     The full text of the license is available at http://www.gnu.org/copyleft/lesser.html
 -->
-<config xmlns="http://www.orbeon.com/oxf/controller" xmlns:oxf="http://www.orbeon.com/oxf/processors">
+<config xmlns="http://www.orbeon.com/oxf/controller" xmlns:oxf="http://www.orbeon.com/oxf/processors" matcher="oxf:perl5-matcher">
 	
 	
 	<!-- ****************
@@ -29,6 +29,9 @@
 	
 	<!-- **** SPARQL **** -->
 	<page path="/harvester/query" view="xpl/controllers/conneg-sparql.xpl"/>
+	
+	<!-- **** DATA DUMPS **** -->
+	<!--<page path="/harvester/download/(.*)\.rdf" model="xpl/models/sparql/download.xpl" view="xpl/views/serializations/sparql/rdf.xpl"/>-->
 	
 	<!-- ****************
 	* ADMIN INTERFACE *

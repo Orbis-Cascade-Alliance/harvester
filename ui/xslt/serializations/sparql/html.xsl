@@ -93,6 +93,9 @@
 						</xsl:choose>
 					</a>
 				</xsl:when>
+				<xsl:when test="res:bnode">
+					<xsl:value-of select="concat('_:', res:bnode)"/>
+				</xsl:when>
 				<xsl:otherwise>
 					<xsl:value-of select="res:literal"/>
 					<xsl:if test="res:literal/@xml:lang">

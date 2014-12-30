@@ -1,0 +1,3 @@
+NOTE: This readme was generated to facilitate the addition of this folder in Github.
+
+This is the location of RDF/XML, TTL, and JSON-LD data dumps for each Orbis Cascade repository. The dumps are generated via the Admin interface in the XForms backend.

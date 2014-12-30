@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:res="http://www.w3.org/2005/sparql-results#"  exclude-result-prefixes="#all" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:res="http://www.w3.org/2005/sparql-results#" exclude-result-prefixes="#all"
+	version="2.0">
 	<xsl:include href="../templates.xsl"/>
 	<xsl:variable name="display_path">./</xsl:variable>
 
 	<xsl:template match="/">
 		<html lang="en">
 			<head>
-				<title><xsl:value-of select="/content/config/title"/></title>
+				<title>
+					<xsl:value-of select="/content/config/title"/>
+				</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1"/>
 				<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"/>
 				<!-- bootstrap -->
@@ -31,6 +34,9 @@
 					</h1>
 					<p>Placeholder for project description.</p>
 					<h2>Partners</h2>
+					<p>
+						<a href="{/content/config/repository_rdf}"><span class="glyphicon glyphicon-download-alt"/>Download Orbis Cascade repository RDF/XML</a>
+					</p>
 					<table class="table table-striped">
 						<thead>
 							<tr>
@@ -44,22 +50,22 @@
 							<xsl:apply-templates select="descendant::res:result[res:binding[@name='count']/res:literal &gt; 0]"/>
 						</tbody>
 					</table>
-				</div>		
+				</div>
 				<div class="col-md-3">
 					<div class="highlight">
 						<h3>Updates</h3>
 						<p>The Atom feed provides access to recently updated Cultural Heritage Objects in the system.</p>
 						<p>
 							<a href="feed">
-							<img src="{$display_path}ui/images/atom-large.png" alt="Atom"/>
+								<img src="{$display_path}ui/images/atom-large.png" alt="Atom"/>
 							</a>
 						</p>
 					</div>
-				</div>				
+				</div>
 			</div>
 		</div>
 	</xsl:template>
-	
+
 	<!-- handle each matching res:result as an individual table row -->
 	<xsl:template match="res:result">
 		<tr>
@@ -71,7 +77,7 @@
 			<td class="text-center">
 				<xsl:value-of select="format-number(res:binding[@name='count']/res:literal, '###,###')"/>
 			</td>
-			<td class="text-center"></td>
+			<td class="text-center"/>
 		</tr>
 	</xsl:template>
 </xsl:stylesheet>
