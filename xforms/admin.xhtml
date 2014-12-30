@@ -15,6 +15,7 @@
 			<xforms:instance id="control-instance">
 				<controls xmlns="">
 					<status></status>
+					<repository/>
 				</controls>
 			</xforms:instance>
 
@@ -212,10 +213,23 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 								</thead>
 								<tbody>
 									<xforms:repeat nodeset="repository">
+										<xforms:var name="uri" select="uri"/>
 										<tr>
-											<td><a href="{uri}" target="_blank"><xforms:output ref="name"></xforms:output></a></td>
+											<td><a href="{$uri}" target="_blank"><xforms:output ref="name"></xforms:output></a></td>
 											<td><xforms:output ref="count"></xforms:output></td>
-											<td>placeholder</td>
+											<td>
+												<xforms:group ref=".[count &gt; 0]">
+													<xforms:trigger appearance="minimal">
+														<xforms:label><span class="glyphicon glyphicon-export"></span></xforms:label>
+														<xforms:hint>Generate RDF dump</xforms:hint>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:setvalue ref="instance('control-instance')/repository" value="substring-after($uri, '#')"/>
+															<xforms:dispatch target="generate-rdf-file-dialog" name="fr-show"></xforms:dispatch>
+														</xforms:action>
+													</xforms:trigger>
+												</xforms:group>
+												
+											</td>
 										</tr>
 									</xforms:repeat>
 								</tbody>
@@ -248,7 +262,7 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 						<li>
 							<xforms:trigger appearance="minimal">
 								<xforms:label><span class="glyphicon glyphicon-export"></span>Generate RDF Dumps</xforms:label>
-								<xforms:dispatch ev:event="DOMActivate" target="generate-rdf-dialog" name="fr-show"></xforms:dispatch>
+								<xforms:dispatch ev:event="DOMActivate" target="generate-rdf-dump-dialog" name="fr-show"></xforms:dispatch>
 							</xforms:trigger>
 						</li>
 					</ul>
@@ -257,7 +271,7 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 			</div>
 		</div>
 		
-		<fr:alert-dialog id="generate-rdf-dialog">
+		<fr:alert-dialog id="generate-rdf-dump-dialog">
 			<fr:label>Generate RDF</fr:label>
 			<fr:message>Do you wish to generate new RDF dumps now? This may take several minutes.</fr:message>
 			<fr:negative-choice>
@@ -269,8 +283,8 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 					<!-- iterate through repositories with a count greater than 0 -->								
 					<xforms:action xxforms:iterate="instance('repository-list')/repository[number(count) &gt; 0]">
 						<!-- call XPL to get the RDF/XML, generated from SPARQL -->
-						<!--<xforms:var name="repository" select="substring-after(context()/repository, '#')"></xforms:var>-->
-						<xforms:var name="repository">mtg</xforms:var>						
+						<xforms:var name="repository" select="substring-after(context()/uri, '#')"></xforms:var>
+						<!--<xforms:var name="repository">mtg</xforms:var>-->						
 						<xforms:setvalue ref="instance('repository-config')" value="$repository"/>
 						<xforms:insert nodeset="instance('rdf')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/models/sparql/rdf.xpl', 'data', instance('repository-config'), 'data')"
 							></xforms:insert>
@@ -281,6 +295,37 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 						<xforms:insert nodeset="instance('dump')"
 							origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/write-rdf.xpl', ('doc', 'configuration'), (instance('rdf'), instance('save-config')), 'data')"/>
 					</xforms:action>
+				</xforms:action>
+			</fr:positive-choice>
+		</fr:alert-dialog>
+		
+		<fr:alert-dialog id="generate-rdf-file-dialog">
+			<fr:label>Generate RDF</fr:label>
+			<fr:message>Do you wish to generate new RDF dump for this repository now? This may take several minutes.</fr:message>
+			<fr:negative-choice>
+				<fr:label>No</fr:label>
+			</fr:negative-choice>
+			<fr:positive-choice>
+				<fr:label>Yes</fr:label>
+				<xforms:action ev:event="DOMActivate">
+					<!-- call XPL to get the RDF/XML, generated from SPARQL -->					
+					<xforms:setvalue ref="instance('repository-config')" value="instance('control-instance')/repository"/>
+					<xforms:insert nodeset="instance('rdf')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/models/sparql/rdf.xpl', 'data', instance('repository-config'), 'data')"
+						></xforms:insert>
+					
+					<!-- write RDF/XML file to the dump folder -->
+					<xforms:setvalue ref="instance('save-config')/url"
+						value="concat('oxf:/apps/harvester/download/',  instance('control-instance')/repository, '.rdf')"/>
+					<xforms:insert nodeset="instance('dump')"
+						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/write-rdf.xpl', ('doc', 'configuration'), (instance('rdf'), instance('save-config')), 'data')"/>
+					
+					<!-- generate and write TTL -->
+					<!--<xforms:insert nodeset="instance('ttl')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/views/serializations/rdf/ttl.xpl', 'data', instance('rdf'), 'data')"
+						></xforms:insert>
+					<xforms:setvalue ref="instance('save-config')/url"
+						value="concat('oxf:/apps/harvester/download/',  instance('control-instance')/repository, '.ttl')"/>
+					<xforms:insert nodeset="instance('dump')"
+						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/write-rdf.xpl', ('doc', 'configuration'), (instance('rdf'), instance('save-config')), 'data')"/>-->
 				</xforms:action>
 			</fr:positive-choice>
 		</fr:alert-dialog>

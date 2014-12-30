@@ -20,20 +20,20 @@
 				<xsl:when test="$mode='test'">
 					<xsl:choose>
 						<xsl:when test="string($ark)">
-							<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation[contains(., $ark)]][position() &lt;= 10]"/>					
+							<xsl:apply-templates select="descendant::oai:metadata/*[dc:relation[contains(., $ark)]][position() &lt;= 10]"/>					
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation[contains(., 'ark:/')]][position() &lt;= 10]"/>
+							<xsl:apply-templates select="descendant::oai:metadata/*[dc:relation[contains(., 'ark:/')]][position() &lt;= 10]"/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
 						<xsl:when test="string($ark)">
-							<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation[contains(., $ark)]]"/>					
+							<xsl:apply-templates select="descendant::oai:metadata/*[dc:relation[contains(., $ark)]]"/>					
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:apply-templates select="descendant::oai_dc:dc[dc:relation[contains(., 'ark:/')]]"/>
+							<xsl:apply-templates select="descendant::oai:metadata/*[dc:relation[contains(., 'ark:/')]]"/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:otherwise>
@@ -50,7 +50,7 @@
 		</rdf:RDF>
 	</xsl:template>
 
-	<xsl:template match="oai_dc:dc">
+	<xsl:template match="oai:metadata/*">
 		<xsl:variable name="relation" select="dc:relation[matches(., 'ark:/')]"/>
 		<xsl:variable name="cho_uri" select="dc:identifier[matches(., 'https?://')]"/>
 
@@ -127,7 +127,7 @@
 		<xsl:param name="cho_uri"/>
 		<xsl:choose>
 			<!-- contentDM institutions -->
-			<xsl:when test="$repository='waps'">
+			<xsl:when test="$repository='waps' or $repository='idbb'">
 				<!-- get thumbnail -->
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}">
 					<edm:rights>placeholder</edm:rights>
@@ -152,7 +152,7 @@
 		<xsl:param name="cho_uri"/>
 		<xsl:choose>
 			<!-- contentDM institutions -->
-			<xsl:when test="$repository='waps'">
+			<xsl:when test="$repository='waps' or $repository='idbb'">
 				<!-- get thumbnail -->
 				<edm:preview rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}"/>
 				<edm:object rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}"/>
@@ -176,10 +176,10 @@
 		
 			<xsl:choose>
 				<xsl:when test="string($ark)">
-					<xsl:apply-templates select="$oai/descendant::oai_dc:dc[dc:relation[contains(., $ark)]]"/>					
+					<xsl:apply-templates select="$oai/descendant::oai:metadata/*[dc:relation[contains(., $ark)]]"/>					
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:apply-templates select="$oai/descendant::oai_dc:dc[dc:relation[contains(., 'ark:/')]]"/>
+					<xsl:apply-templates select="$oai/descendant::oai:metadata/*[dc:relation[contains(., 'ark:/')]]"/>
 				</xsl:otherwise>
 			</xsl:choose>
 			
