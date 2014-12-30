@@ -36,7 +36,8 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
   ?uri a arch:Archive ;
          foaf:name ?name
   OPTIONAL { ?cho edm:dataProvider ?uri}
-} GROUP BY ?uri ?name ORDER BY ?name]]>
+
+} GROUP BY ?uri ?name ORDER BY ?name ]]>
 				</xsl:variable>
 				
 				<xsl:variable name="service">

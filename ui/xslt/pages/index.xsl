@@ -5,6 +5,7 @@
 	<xsl:variable name="display_path">./</xsl:variable>
 
 	<xsl:template match="/">
+		
 		<html lang="en">
 			<head>
 				<title>
@@ -68,6 +69,8 @@
 
 	<!-- handle each matching res:result as an individual table row -->
 	<xsl:template match="res:result">
+		<xsl:variable name="repository" select="substring-after(res:binding[@name='uri']/res:uri, '#')"/>
+		
 		<tr>
 			<td>
 				<a href="{res:binding[@name='uri']/res:uri}">
@@ -77,7 +80,31 @@
 			<td class="text-center">
 				<xsl:value-of select="format-number(res:binding[@name='count']/res:literal, '###,###')"/>
 			</td>
-			<td class="text-center"/>
+			<td class="text-center">				
+				<!-- display links and filesizes for data dumps -->
+				<xsl:apply-templates select="/content/files/file[substring-before(., '.') = $repository]">
+					<!-- sort by extension in ascending order -->
+					<xsl:sort select="substring-after(., '.')" order="ascending"/>
+				</xsl:apply-templates>
+			</td>
 		</tr>
+	</xsl:template>
+	
+	<xsl:template match="file">
+		<xsl:if test="substring-after(., '.') = 'rdf'">
+			<a href="download/{.}">RDF/XML</a>
+		</xsl:if>
+		<xsl:if test="substring-after(., '.') = 'jsonld'">
+			<a href="download/{.}">JSON-LD</a>
+		</xsl:if>
+		<xsl:if test="substring-after(., '.') = 'ttl'">
+			<a href="download/{.}">RDF/TTL</a>
+		</xsl:if>
+		<xsl:text> (</xsl:text>		
+		<xsl:value-of select="format-number(@size div 1024, '###,###')"/>
+		<xsl:text> KB)</xsl:text>
+		<xsl:if test="not(position()=last())">
+			<br/>
+		</xsl:if>
 	</xsl:template>
 </xsl:stylesheet>

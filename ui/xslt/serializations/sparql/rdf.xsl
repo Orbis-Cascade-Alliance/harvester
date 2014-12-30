@@ -76,10 +76,15 @@
 		<xsl:param name="results"/>
 		
 		<xsl:element name="{$class}">
-			<!-- do not associate the URI if the class is not ore:Aggregation. ore:Aggregation is a blank node and will be dealt with by DPLA -->
-			<xsl:if test="not($class='ore:Aggregation')">
-				<xsl:attribute name="rdf:about" select="$uri"/>
-			</xsl:if>
+			<!-- do not associate the URI if the class is not ore:Aggregation. ore:Aggregation is a blank node and will be dealt with by DPLA, but insert rdf:nodeID -->
+			<xsl:choose>
+				<xsl:when test="$class='ore:Aggregation'">
+					<xsl:attribute name="rdf:nodeID" select="generate-id($results)"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="rdf:about" select="$uri"/>
+				</xsl:otherwise>
+			</xsl:choose>			
 			<xsl:apply-templates select="$results/res:result[not(res:binding[@name='p']/res:uri='http://www.w3.org/1999/02/22-rdf-syntax-ns#type')]"/>
 		</xsl:element>
 	</xsl:template>
