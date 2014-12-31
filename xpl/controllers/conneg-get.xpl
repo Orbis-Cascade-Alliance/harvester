@@ -33,8 +33,8 @@
 						<xsl:when test="string(//header[name[.='accept']]/value)">
 							<xsl:variable name="content-type" select="//header[name[.='accept']]/value"/>
 							<xsl:choose>
-								<xsl:when test="$content-type='application/sparql-results+json' or $content-type='application/json'">json</xsl:when>
-								<xsl:when test="$content-type='application/sparql-results+xml' or $content-type='application/xml'">xml</xsl:when>
+								<xsl:when test="$content-type='application/sparql-results+json'">json</xsl:when>
+								<xsl:when test="$content-type='application/sparql-results+xml'">xml</xsl:when>
 								<xsl:when test="contains($content-type, 'text/html') or $content-type='*/*' or not(string($content-type))">html</xsl:when>
 								<xsl:otherwise>error</xsl:otherwise>
 							</xsl:choose>
