@@ -20,7 +20,7 @@
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 				<xsl:output indent="yes"/>
 				<xsl:param name="output" select="/request/parameters/parameter[name='format']/value"/>
-				<xsl:variable name="content-type">
+				<xsl:variable name="type">
 					<xsl:choose>
 						<xsl:when test="string($output)">
 							<xsl:choose>
@@ -35,7 +35,7 @@
 							<xsl:choose>
 								<xsl:when test="$content-type='application/sparql-results+json' or $content-type='application/json'">json</xsl:when>
 								<xsl:when test="$content-type='application/sparql-results+xml' or $content-type='application/xml'">xml</xsl:when>
-								<xsl:when test="contains($content-type, 'text/html') or $content-type='*/*'">html</xsl:when>
+								<xsl:when test="contains($content-type, 'text/html') or $content-type='*/*' or not(string($content-type))">html</xsl:when>
 								<xsl:otherwise>error</xsl:otherwise>
 							</xsl:choose>
 						</xsl:when>
@@ -45,7 +45,7 @@
 				
 				<xsl:template match="/">
 					<content-type>
-						<xsl:value-of select="$content-type"/>
+						<xsl:value-of select="$type"/>
 					</content-type>
 				</xsl:template>
 			</xsl:stylesheet>
