@@ -70,7 +70,7 @@
 				<!-- if the content type yields to HTML, then use the page URL param to set the offset -->
 				<xsl:variable name="query">
 					<xsl:choose>
-						<xsl:when test="contains($content-type, 'text/html') or $content-type='*/*'">
+						<xsl:when test="contains($content-type, 'text/html') or $content-type='*/*' or not(string($content-type))">
 							<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX dpla:	<http://dp.la/terms/>
@@ -149,7 +149,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 				
 				<xsl:variable name="service">
 					<xsl:choose>
-						<xsl:when test="contains($content-type, 'text/html') or $content-type='*/*'">
+						<xsl:when test="contains($content-type, 'text/html') or $content-type='*/*' or not(string($content-type))">
 							<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace(replace($query, '%LIMIT%', $limit), '%OFFSET%', $offset), 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=', $output-normalized)"/>
 						</xsl:when>
 						<xsl:otherwise>
