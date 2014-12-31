@@ -46,36 +46,6 @@
 			<xforms:instance id="feed" xxforms:exclude-result-prefixes="#all">
 				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"></OAI-PMH>
 			</xforms:instance>
-			
-			<!-- generate RDF dumps -->			
-			<xforms:instance id="repository-config" xxforms:exclude-result-prefixes="#all">
-				<repository xmlns=""></repository>
-			</xforms:instance>
-			
-			<xforms:instance id="save-config">
-				<config xmlns="">
-					<url/>
-					<content-type>text/plain</content-type>
-					<make-directories>false</make-directories>
-					<append>false</append>
-				</config>
-			</xforms:instance>
-			
-			<xforms:instance id="dump">
-				<dump xmlns=""/>
-			</xforms:instance>
-
-			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
-				<rdf:RDF></rdf:RDF>
-			</xforms:instance>
-			
-			<xforms:instance id="ttl" xxforms:exclude-result-prefixes="#all">
-				<content></content>
-			</xforms:instance>
-			
-			<xforms:instance id="json" xxforms:exclude-result-prefixes="#all">
-				<content></content>
-			</xforms:instance>
 
 			<!-- sparql update -->
 			<xforms:instance id="purge-repositories-template">
@@ -163,6 +133,26 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
 				</xforms:action>
 			</xforms:submission>
+			
+			<!-- Generation of RDF/XML TTL and JSON-LD dumps -->
+			<xforms:submission id="generate-rdf-xml" serialization="none" method="get" action="/harvester/admin/generateXML?repository={instance('control-instance')/repository}" replace="none">
+				<xforms:action ev:event="xforms-submit-error">
+					<xforms:message level="modal">RDF/XML generation failed.</xforms:message>
+				</xforms:action>
+			</xforms:submission>
+			
+			<xforms:submission id="generate-ttl" serialization="none" method="get" action="/harvester/admin/generateTTL?repository={instance('control-instance')/repository}" replace="none">
+				<xforms:action ev:event="xforms-submit-error">
+					<xforms:message level="modal">TTL generation failed.</xforms:message>
+				</xforms:action>
+			</xforms:submission>
+			
+			<xforms:submission id="generate-json-ld" serialization="none" method="get" action="/harvester/admin/generateJSON?repository={instance('control-instance')/repository}" replace="none">
+				<xforms:action ev:event="xforms-submit-error">
+					<xforms:message level="modal">JSON-LD generation failed.</xforms:message>
+				</xforms:action>
+			</xforms:submission>
+
 
 			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
 			<!-- get the list of repositories from the SPARQL endpoint on xforms-model-construct-done -->
@@ -282,34 +272,15 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 				<xforms:action ev:event="DOMActivate">
 					<!-- iterate through repositories with a count greater than 0 -->								
 					<xforms:action xxforms:iterate="instance('repository-list')/repository[number(count) &gt; 0]">
-						<!-- call XPL to get the RDF/XML, generated from SPARQL -->
-						<xforms:var name="repository" select="substring-after(context()/uri, '#')"></xforms:var>
-						<!--<xforms:var name="repository">mtg</xforms:var>-->						
-						<xforms:setvalue ref="instance('repository-config')" value="$repository"/>
-						<xforms:insert nodeset="instance('rdf')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/models/sparql/rdf.xpl', 'data', instance('repository-config'), 'data')"
-							></xforms:insert>
+						<xforms:var name="repository" select="substring-after(context()/uri, '#')"></xforms:var>	
+						<xforms:setvalue ref="instance('control-instance')/repository" value="$repository"/>						
 						
-						<!-- write RDF/XML file to the dump folder -->
-						<xforms:setvalue ref="instance('save-config')/url"
-							value="concat('oxf:/apps/harvester/download/',  $repository, '.rdf')"/>
-						<xforms:insert nodeset="instance('dump')"
-							origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/write-rdf.xpl', ('doc', 'configuration'), (instance('rdf'), instance('save-config')), 'data')"/>
+						<!-- generate RDF/XML via web service -->
+						<xforms:send submission="generate-rdf-xml"/>
 						
-						<!-- generate and write TTL -->
-						<xforms:insert nodeset="instance('ttl')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/views/serializations/rdf/ttl.xpl', 'data', instance('rdf'), 'data')"
-							></xforms:insert>
-						<xforms:setvalue ref="instance('save-config')/url"
-							value="concat('oxf:/apps/harvester/download/',  $repository, '.ttl')"/>
-						<xforms:insert nodeset="instance('dump')"
-							origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/write-text.xpl', ('doc', 'configuration'), (instance('ttl'), instance('save-config')), 'data')"/>
-						
-						<!-- generate and write JSON-LD -->
-						<xforms:insert nodeset="instance('json')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/views/serializations/rdf/json-ld.xpl', 'data', instance('rdf'), 'data')"
-							></xforms:insert>
-						<xforms:setvalue ref="instance('save-config')/url"
-							value="concat('oxf:/apps/harvester/download/',  $repository, '.jsonld')"/>
-						<xforms:insert nodeset="instance('dump')"
-							origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/write-text.xpl', ('doc', 'configuration'), (instance('json'), instance('save-config')), 'data')"/>
+						<!-- Empty GET submissions to generate TTL and JSON-LD through XPL -->
+						<xforms:send submission="generate-ttl"/>
+						<xforms:send submission="generate-json-ld"/>
 					</xforms:action>
 				</xforms:action>
 			</fr:positive-choice>
@@ -323,33 +294,13 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 			</fr:negative-choice>
 			<fr:positive-choice>
 				<fr:label>Yes</fr:label>
-				<xforms:action ev:event="DOMActivate">
-					<!-- call XPL to get the RDF/XML, generated from SPARQL -->					
-					<xforms:setvalue ref="instance('repository-config')" value="instance('control-instance')/repository"/>
-					<xforms:insert nodeset="instance('rdf')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/models/sparql/rdf.xpl', 'data', instance('repository-config'), 'data')"
-						></xforms:insert>
+				<xforms:action ev:event="DOMActivate">					
+					<!-- generate RDF/XML via web service -->
+					<xforms:send submission="generate-rdf-xml"/>
 					
-					<!-- write RDF/XML file to the dump folder -->
-					<xforms:setvalue ref="instance('save-config')/url"
-						value="concat('oxf:/apps/harvester/download/',  instance('control-instance')/repository, '.rdf')"/>
-					<xforms:insert nodeset="instance('dump')"
-						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/write-rdf.xpl', ('doc', 'configuration'), (instance('rdf'), instance('save-config')), 'data')"/>
-					
-					<!-- generate and write TTL -->
-					<xforms:insert nodeset="instance('ttl')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/views/serializations/rdf/ttl.xpl', 'data', instance('rdf'), 'data')"
-						></xforms:insert>
-					<xforms:setvalue ref="instance('save-config')/url"
-						value="concat('oxf:/apps/harvester/download/',  instance('control-instance')/repository, '.ttl')"/>
-					<xforms:insert nodeset="instance('dump')"
-						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/write-text.xpl', ('doc', 'configuration'), (instance('ttl'), instance('save-config')), 'data')"/>
-					
-					<!-- generate and write JSON-LD -->
-					<xforms:insert nodeset="instance('json')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/views/serializations/rdf/json-ld.xpl', 'data', instance('rdf'), 'data')"
-						></xforms:insert>
-					<xforms:setvalue ref="instance('save-config')/url"
-						value="concat('oxf:/apps/harvester/download/',  instance('control-instance')/repository, '.jsonld')"/>
-					<xforms:insert nodeset="instance('dump')"
-						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/write-text.xpl', ('doc', 'configuration'), (instance('json'), instance('save-config')), 'data')"/>
+					<!-- Empty GET submissions to generate TTL and JSON-LD through XPL -->
+					<xforms:send submission="generate-ttl"/>
+					<xforms:send submission="generate-json-ld"/>
 				</xforms:action>
 			</fr:positive-choice>
 		</fr:alert-dialog>
