@@ -19,6 +19,7 @@
 	* PUBLIC INTERFACE *
 	***************** -->
 	<!-- **** PAGES **** -->			
+	<page path="/harvester/documentation" model="config.xml" view="xpl/views/pages/documentation.xpl"/>
 	<page path="/harvester/sparql" view="xpl/views/pages/sparql.xpl"/>
 	<page path="/harvester/" model="xpl/models/sparql/index.xpl" view="xpl/views/pages/index.xpl"/>
 	

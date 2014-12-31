@@ -21,6 +21,9 @@
 						<li>
 							<a href="{$display_path}sparql">SPARQL</a>
 						</li>
+						<li>
+							<a href="{$display_path}documentation">Documentation</a>
+						</li>
 					</ul>
 					<!--<div class="col-sm-3 col-md-3 pull-right">
 						<form class="navbar-form" role="search" action="{$display_path}id/" method="get">
