@@ -39,7 +39,7 @@ PREFIX ore:	<http://www.openarchives.org/ore/terms/>
 PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
 PREFIX vcard:	<http://www.w3.org/2006/vcard/ns#>
 PREFIX arch:	<http://purl.org/archival/vocab/arch#>
-PREFIX nwda:	<https://github.com/ewg118/nwda-editor#>
+PREFIX nwda:	<https://github.com/Orbis-Cascade-Alliance/nwda-editor#>
 
 SELECT * WHERE {
   ?s ?p ?o
