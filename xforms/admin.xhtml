@@ -15,7 +15,7 @@
 			<xforms:instance id="control-instance">
 				<controls xmlns="">
 					<status></status>
-					<repository/>
+					<repository></repository>
 				</controls>
 			</xforms:instance>
 
@@ -45,6 +45,10 @@
 
 			<xforms:instance id="feed" xxforms:exclude-result-prefixes="#all">
 				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"></OAI-PMH>
+			</xforms:instance>
+
+			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
+				<rdf:RDF></rdf:RDF>
 			</xforms:instance>
 
 			<!-- sparql update -->
@@ -100,19 +104,27 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 				</xforms:header>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get repository RDF from NWDA.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
-					<!-- post RDF and then refresh the repository list -->
-					<xforms:send submission="post-rdf"></xforms:send>
-					<xforms:action ev:event="xforms-sumit-done">
-						<xforms:delete nodeset="instance('repository-list')/repository"></xforms:delete>
-						<xforms:setvalue ref="instance('sparqlQuery')" value="instance('list-repositories')"></xforms:setvalue>
-						<xforms:send submission="submit-sparqlQuery"></xforms:send>
-						<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
-							<xforms:insert context="instance('repository-list')" nodeset="./child::node()[last()]" origin="instance('repository-template')"></xforms:insert>
-							<xforms:setvalue ref="instance('repository-list')/repository[last()]/name" value="context()/res:binding[@name='name']/res:literal"></xforms:setvalue>
-							<xforms:setvalue ref="instance('repository-list')/repository[last()]/uri" value="context()/res:binding[@name='uri']/res:uri"></xforms:setvalue>
-							<xforms:setvalue ref="instance('repository-list')/repository[last()]/count" value="context()/res:binding[@name='count']/res:literal"></xforms:setvalue>
+					<!-- first purge triples if the RDF has been successfully loaded -->
+					<!-- submit SPARQL/Update to purge arch:Archive triples -->
+					<xforms:setvalue ref="instance('sparqlQuery')" value="instance('purge-repositories-template')"></xforms:setvalue>
+					<xforms:send submission="delete-graph"></xforms:send>
+					
+					<xforms:action ev:event="xforms-submit-done">
+						<!-- post RDF and then refresh the repository list -->
+						<xforms:send submission="post-rdf"></xforms:send>
+						<xforms:action ev:event="xforms-sumit-done">
+							<xforms:delete nodeset="instance('repository-list')/repository"></xforms:delete>
+							<xforms:setvalue ref="instance('sparqlQuery')" value="instance('list-repositories')"></xforms:setvalue>
+							<xforms:send submission="submit-sparqlQuery"></xforms:send>
+							<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
+								<xforms:insert context="instance('repository-list')" nodeset="./child::node()[last()]" origin="instance('repository-template')"></xforms:insert>
+								<xforms:setvalue ref="instance('repository-list')/repository[last()]/name" value="context()/res:binding[@name='name']/res:literal"></xforms:setvalue>
+								<xforms:setvalue ref="instance('repository-list')/repository[last()]/uri" value="context()/res:binding[@name='uri']/res:uri"></xforms:setvalue>
+								<xforms:setvalue ref="instance('repository-list')/repository[last()]/count" value="context()/res:binding[@name='count']/res:literal"></xforms:setvalue>
+							</xforms:action>
 						</xforms:action>
 					</xforms:action>
+					
 				</xforms:action>
 			</xforms:submission>
 
@@ -133,20 +145,20 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
 				</xforms:action>
 			</xforms:submission>
-			
+
 			<!-- Generation of RDF/XML TTL and JSON-LD dumps -->
 			<xforms:submission id="generate-rdf-xml" serialization="none" method="get" action="/harvester/admin/generateXML?repository={instance('control-instance')/repository}" replace="none">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:message level="modal">RDF/XML generation failed.</xforms:message>
 				</xforms:action>
 			</xforms:submission>
-			
+
 			<xforms:submission id="generate-ttl" serialization="none" method="get" action="/harvester/admin/generateTTL?repository={instance('control-instance')/repository}" replace="none">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:message level="modal">TTL generation failed.</xforms:message>
 				</xforms:action>
 			</xforms:submission>
-			
+
 			<xforms:submission id="generate-json-ld" serialization="none" method="get" action="/harvester/admin/generateJSON?repository={instance('control-instance')/repository}" replace="none">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:message level="modal">JSON-LD generation failed.</xforms:message>
@@ -189,21 +201,21 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 				<div class="col-md-12">
 					<h1>NWDA: OAI-PMH Harvester</h1>
 				</div>
-				<div class="col-md-9">					
+				<div class="col-md-9">
 					<xforms:group ref="instance('repository-list')">
 						<xforms:group ref=".[count(repository) &gt; 0]">
 							<h2>Repository</h2>
 							<table class="table">
 								<thead>
 									<tr>
-										<th style="width:80%;font-weight:bold">Repository</th>										
+										<th style="width:80%;font-weight:bold">Repository</th>
 										<th style="width:10%;font-weight:bold">CHOs</th>
 										<th style="width:10%;font-weight:bold">Actions</th>
 									</tr>
 								</thead>
 								<tbody>
 									<xforms:repeat nodeset="repository">
-										<xforms:var name="uri" select="uri"/>
+										<xforms:var name="uri" select="uri"></xforms:var>
 										<tr>
 											<td><a href="{$uri}" target="_blank"><xforms:output ref="name"></xforms:output></a></td>
 											<td><xforms:output ref="count"></xforms:output></td>
@@ -213,12 +225,11 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 														<xforms:label><span class="glyphicon glyphicon-export"></span></xforms:label>
 														<xforms:hint>Generate RDF dump</xforms:hint>
 														<xforms:action ev:event="DOMActivate">
-															<xforms:setvalue ref="instance('control-instance')/repository" value="substring-after($uri, '#')"/>
+															<xforms:setvalue ref="instance('control-instance')/repository" value="substring-after($uri, '#')"></xforms:setvalue>
 															<xforms:dispatch target="generate-rdf-file-dialog" name="fr-show"></xforms:dispatch>
 														</xforms:action>
 													</xforms:trigger>
 												</xforms:group>
-												
 											</td>
 										</tr>
 									</xforms:repeat>
@@ -237,10 +248,7 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 						<li>
 							<xforms:trigger appearance="minimal">
 								<xforms:label><span class="glyphicon glyphicon-refresh"></span>Refresh Repository Metadata</xforms:label>
-								<xforms:action ev:event="DOMActivate">
-									<!-- submit SPARQL/Update to purge arch:Archive triples -->
-									<xforms:setvalue ref="instance('sparqlQuery')" value="instance('purge-repositories-template')"></xforms:setvalue>
-									<xforms:send submission="delete-graph"></xforms:send>
+								<xforms:action ev:event="DOMActivate">									
 									<!-- then get repository RDF from NWDA and repost to SPARQL endpoint -->
 									<xforms:send submission="get-repository-rdf"></xforms:send>
 								</xforms:action>
@@ -256,11 +264,10 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 							</xforms:trigger>
 						</li>
 					</ul>
-					
 				</div>
 			</div>
 		</div>
-		
+
 		<fr:alert-dialog id="generate-rdf-dump-dialog">
 			<fr:label>Generate RDF</fr:label>
 			<fr:message>Do you wish to generate new RDF dumps now? This may take several minutes.</fr:message>
@@ -270,22 +277,22 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 			<fr:positive-choice>
 				<fr:label>Yes</fr:label>
 				<xforms:action ev:event="DOMActivate">
-					<!-- iterate through repositories with a count greater than 0 -->								
+					<!-- iterate through repositories with a count greater than 0 -->
 					<xforms:action xxforms:iterate="instance('repository-list')/repository[number(count) &gt; 0]">
-						<xforms:var name="repository" select="substring-after(context()/uri, '#')"></xforms:var>	
-						<xforms:setvalue ref="instance('control-instance')/repository" value="$repository"/>						
-						
+						<xforms:var name="repository" select="substring-after(context()/uri, '#')"></xforms:var>
+						<xforms:setvalue ref="instance('control-instance')/repository" value="$repository"></xforms:setvalue>
+
 						<!-- generate RDF/XML via web service -->
-						<xforms:send submission="generate-rdf-xml"/>
-						
+						<xforms:send submission="generate-rdf-xml"></xforms:send>
+
 						<!-- Empty GET submissions to generate TTL and JSON-LD through XPL -->
-						<xforms:send submission="generate-ttl"/>
-						<xforms:send submission="generate-json-ld"/>
+						<xforms:send submission="generate-ttl"></xforms:send>
+						<xforms:send submission="generate-json-ld"></xforms:send>
 					</xforms:action>
 				</xforms:action>
 			</fr:positive-choice>
 		</fr:alert-dialog>
-		
+
 		<fr:alert-dialog id="generate-rdf-file-dialog">
 			<fr:label>Generate RDF</fr:label>
 			<fr:message>Do you wish to generate new RDF dump for this repository now? This may take several minutes.</fr:message>
@@ -294,13 +301,13 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 			</fr:negative-choice>
 			<fr:positive-choice>
 				<fr:label>Yes</fr:label>
-				<xforms:action ev:event="DOMActivate">					
+				<xforms:action ev:event="DOMActivate">
 					<!-- generate RDF/XML via web service -->
-					<xforms:send submission="generate-rdf-xml"/>
-					
+					<xforms:send submission="generate-rdf-xml"></xforms:send>
+
 					<!-- Empty GET submissions to generate TTL and JSON-LD through XPL -->
-					<xforms:send submission="generate-ttl"/>
-					<xforms:send submission="generate-json-ld"/>
+					<xforms:send submission="generate-ttl"></xforms:send>
+					<xforms:send submission="generate-json-ld"></xforms:send>
 				</xforms:action>
 			</fr:positive-choice>
 		</fr:alert-dialog>
