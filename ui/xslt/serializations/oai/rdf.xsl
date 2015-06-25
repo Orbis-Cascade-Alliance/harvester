@@ -52,7 +52,8 @@
 
 	<xsl:template match="oai:metadata/*">
 		<xsl:variable name="relation" select="dc:relation[matches(., 'ark:/')]"/>
-		<xsl:variable name="cho_uri" select="dc:identifier[matches(., 'https?://')]"/>
+<!--		<xsl:variable name="cho_uri" select="dc:identifier[matches(., 'https?://')]"/> -->
+		<xsl:variable name="cho_uri" select="dc:identifier[matches(., 'https?://') and not(matches(., '.jpg$'))]"/>
 
 		<dpla:SourceResource rdf:about="{$cho_uri}">
 			<dcterms:title>
@@ -144,6 +145,14 @@
 					</edm:WebResource>
 				</xsl:if>
 			</xsl:when>
+			<!-- Omeka -->
+			<xsl:when test="$repository='orphs'">
+				<xsl:if test="dc:identifier[matches(., '.jpg$')]">
+					<edm:WebResource rdf:about="{dc:identifier[matches(., '.jpg$')]}">
+						<edm:rights>placeholder</edm:rights>
+					</edm:WebResource>
+				</xsl:if>
+			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
 
@@ -161,6 +170,12 @@
 			<xsl:when test="$repository='mtg'">
 				<xsl:if test="dc:description[contains(., '.jpg')]">
 					<edm:preview rdf:resource="{dc:description[contains(., '.jpg')]}"/>
+				</xsl:if>
+			</xsl:when>
+			<!-- Omeka -->
+			<xsl:when test="$repository='orphs'">
+				<xsl:if test="dc:identifier[matches(., '.jpg$')]">
+					<edm:preview rdf:resource="{dc:identifier[matches(., '.jpg$')]}"/>
 				</xsl:if>
 			</xsl:when>
 		</xsl:choose>
