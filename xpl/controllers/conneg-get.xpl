@@ -12,7 +12,7 @@
 		</p:input>
 		<p:output name="data" id="request"/>
 	</p:processor>
-	
+
 	<!-- read request header for content-type -->
 	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="data" href="#request"/>
@@ -42,7 +42,7 @@
 						<xsl:otherwise>html</xsl:otherwise>
 					</xsl:choose>
 				</xsl:variable>
-				
+
 				<xsl:template match="/">
 					<content-type>
 						<xsl:value-of select="$type"/>
@@ -52,21 +52,21 @@
 		</p:input>
 		<p:output name="data" id="conneg-config"/>
 	</p:processor>
-	
+
 	<!-- generator config for URL generator -->
 	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="request" href="#request"/>
 		<p:input name="data" href="../../config.xml"/>
 		<p:input name="config">
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-				<!-- url params -->				
+				<!-- url params -->
 				<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
 				<xsl:param name="output" select="doc('input:request')/request/parameters/parameter[name='format']/value"/>
 				<xsl:param name="page" select="doc('input:request')/request/parameters/parameter[name='page']/value"/>
-				
+
 				<!-- get content type -->
 				<xsl:variable name="content-type" select="doc('input:request')/request//header[name[.='accept']]/value"/>
-				
+
 				<!-- if the content type yields to HTML, then use the page URL param to set the offset -->
 				<xsl:variable name="query">
 					<xsl:choose>
@@ -110,7 +110,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
    ?repo_uri foaf:name ?repository
 }LIMIT %LIMIT%
 OFFSET %OFFSET%]]>
-						</xsl:when>						
+						</xsl:when>
 						<xsl:otherwise>
 							<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
@@ -131,9 +131,9 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
    ?repo_uri foaf:name ?repository
 }]]>
 						</xsl:otherwise>
-					</xsl:choose>					
+					</xsl:choose>
 				</xsl:variable>
-				
+
 				<xsl:variable name="limit">100</xsl:variable>
 				<xsl:variable name="offset">
 					<xsl:choose>
@@ -143,7 +143,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 						<xsl:otherwise>0</xsl:otherwise>
 					</xsl:choose>
 				</xsl:variable>
-				
+
 				<xsl:variable name="output-normalized">
 					<xsl:choose>
 						<xsl:when test="string($output)">
@@ -154,7 +154,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 								<xsl:otherwise>xml</xsl:otherwise>
 							</xsl:choose>
 						</xsl:when>
-						<xsl:when test="string(doc('input:request')/request//header[name[.='accept']]/value)">							
+						<xsl:when test="string(doc('input:request')/request//header[name[.='accept']]/value)">
 							<xsl:choose>
 								<xsl:when test="$content-type='application/sparql-results+json'">json</xsl:when>
 								<xsl:otherwise>xml</xsl:otherwise>
@@ -163,24 +163,36 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 						<xsl:otherwise>xml</xsl:otherwise>
 					</xsl:choose>
 				</xsl:variable>
-				
+
 				<!-- config variables -->
 				<xsl:variable name="sparql_endpoint" select="/config/sparql/query"/>
-				
+
 				<xsl:variable name="service">
 					<xsl:choose>
 						<xsl:when test="$output = 'xml' or $output = 'json'">
-							<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=', $output-normalized)"/>
+							<xsl:variable name="limit-param" select="doc('input:request')/request/parameters/parameter[name='limit']/value"/>
+							<xsl:choose>
+								<xsl:when test="$limit-param castable as xs:integer and $limit-param &gt; 0">
+									<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(concat(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark)), ' LIMIT ',
+										$limit-param)), '&amp;output=', $output-normalized)"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=',
+										$output-normalized)"/>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:when>
 						<xsl:when test="contains($content-type, 'text/html') or $content-type='*/*' or not(string($content-type))">
-							<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace(replace($query, '%LIMIT%', $limit), '%OFFSET%', $offset), 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=', $output-normalized)"/>
+							<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace(replace($query, '%LIMIT%', $limit), '%OFFSET%', $offset), 'URI',
+								concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=', $output-normalized)"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=', $output-normalized)"/>
+							<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=',
+								$output-normalized)"/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:variable>
-				
+
 				<xsl:template match="/">
 					<config>
 						<url>
@@ -202,26 +214,26 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 		</p:input>
 		<p:output name="data" id="url-generator-config"/>
 	</p:processor>
-	
+
 	<!-- get the data from fuseki -->
 	<p:processor name="oxf:url-generator">
 		<p:input name="config" href="#url-generator-config"/>
 		<p:output name="data" id="url-data"/>
 	</p:processor>
-	
+
 	<p:processor name="oxf:exception-catcher">
 		<p:input name="data" href="#url-data"/>
 		<p:output name="data" id="url-data-checked"/>
 	</p:processor>
-	
+
 	<!-- Check whether we had an exception -->
 	<p:choose href="#url-data-checked">
 		<p:when test="//*/@status-code != '200'">
 			<p:processor name="oxf:pipeline">
 				<p:input name="data" href="#url-data"/>
-				<p:input name="config" href="error.xpl"/>		
+				<p:input name="config" href="error.xpl"/>
 				<p:output name="data" ref="data"/>
-			</p:processor>			
+			</p:processor>
 		</p:when>
 		<p:otherwise>
 			<!-- Just return the document -->
@@ -229,7 +241,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 				<p:input name="data" href="#url-data-checked"/>
 				<p:output name="data" id="model"/>
 			</p:processor>
-			
+
 			<p:choose href="#conneg-config">
 				<p:when test="content-type='xml'">
 					<p:processor name="oxf:xml-converter">
@@ -257,7 +269,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 						</p:input>
 						<p:output name="data" ref="data"/>
 					</p:processor>
-				</p:when>				
+				</p:when>
 				<p:when test="content-type='html'">
 					<!-- generator config for pagination -->
 					<p:processor name="oxf:unsafe-xslt">
@@ -265,10 +277,10 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 						<p:input name="data" href="../../config.xml"/>
 						<p:input name="config">
 							<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-								
+
 								<!-- request parameters -->
 								<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
-								
+
 								<!-- config variables -->
 								<xsl:variable name="sparql_endpoint" select="/config/sparql/query"/>
 								<xsl:variable name="query">
@@ -279,11 +291,12 @@ SELECT (count(?cho) as ?numFound) WHERE {
   ?cho dcterms:isPartOf <URI>
 }]]>
 								</xsl:variable>
-								
+
 								<xsl:variable name="service">
-									<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=xml')"/>					
+									<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=xml')"
+									/>
 								</xsl:variable>
-								
+
 								<xsl:template match="/">
 									<config>
 										<url>
@@ -297,27 +310,27 @@ SELECT (count(?cho) as ?numFound) WHERE {
 						</p:input>
 						<p:output name="data" id="numFound-config"/>
 					</p:processor>
-					
+
 					<p:processor name="oxf:url-generator">
 						<p:input name="config" href="#numFound-config"/>
 						<p:output name="data" id="numFound"/>
 					</p:processor>
-					
+
 					<p:processor name="oxf:pipeline">
 						<p:input name="request" href="#request"/>
 						<p:input name="data" href="aggregate('sparql', #model, #numFound)"/>
-						<p:input name="config" href="../views/apis/get.xpl"/>		
+						<p:input name="config" href="../views/apis/get.xpl"/>
 						<p:output name="data" ref="data"/>
 					</p:processor>
 				</p:when>
 				<p:otherwise>
 					<p:processor name="oxf:pipeline">
 						<p:input name="data" href="#data"/>
-						<p:input name="config" href="406-not-acceptable.xpl"/>		
+						<p:input name="config" href="406-not-acceptable.xpl"/>
 						<p:output name="data" ref="data"/>
 					</p:processor>
 				</p:otherwise>
 			</p:choose>
 		</p:otherwise>
-	</p:choose> 
+	</p:choose>
 </p:pipeline>
