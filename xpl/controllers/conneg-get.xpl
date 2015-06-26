@@ -171,14 +171,31 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 					<xsl:choose>
 						<xsl:when test="$output = 'xml' or $output = 'json'">
 							<xsl:variable name="limit-param" select="doc('input:request')/request/parameters/parameter[name='limit']/value"/>
+							<xsl:variable name="offset-param" select="doc('input:request')/request/parameters/parameter[name='offset']/value"/>
 							<xsl:choose>
 								<xsl:when test="$limit-param castable as xs:integer and $limit-param &gt; 0">
-									<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(concat(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark)), ' LIMIT ',
-										$limit-param)), '&amp;output=', $output-normalized)"/>
+									<xsl:choose>
+										<xsl:when test="$offset-param castable as xs:integer and $offset-param &gt;= 0">
+											<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(concat(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark)), '
+												LIMIT ', $limit-param, ' OFFSET ', $offset-param)), '&amp;output=', $output-normalized)"/>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(concat(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark)), '
+												LIMIT ', $limit-param)), '&amp;output=', $output-normalized)"/>
+										</xsl:otherwise>
+									</xsl:choose>
 								</xsl:when>
 								<xsl:otherwise>
-									<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=',
-										$output-normalized)"/>
+									<xsl:choose>
+										<xsl:when test="$offset-param castable as xs:integer and $offset-param &gt;= 0">
+											<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(concat(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark)), '
+												OFFSET ', $offset-param)), '&amp;output=', $output-normalized)"/>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark))),
+												'&amp;output=', $output-normalized)"/>
+										</xsl:otherwise>
+									</xsl:choose>
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:when>
