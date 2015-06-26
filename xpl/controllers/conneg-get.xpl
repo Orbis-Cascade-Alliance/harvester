@@ -70,6 +70,26 @@
 				<!-- if the content type yields to HTML, then use the page URL param to set the offset -->
 				<xsl:variable name="query">
 					<xsl:choose>
+						<xsl:when test="$output = 'xml' or $output = 'json'">
+							<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX dpla:	<http://dp.la/terms/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
+PREFIX ore:	<http://www.openarchives.org/ore/terms/>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
+SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depiction WHERE {
+  ?cho dcterms:isPartOf <URI> ;
+        dcterms:title ?title 
+  OPTIONAL {?cho dcterms:description ?description}
+  OPTIONAL {?cho dcterms:date ?date}
+  ?agg edm:aggregatedCHO ?cho ;
+     edm:dataProvider ?repo_uri .
+   OPTIONAL {?agg edm:preview ?thumbnail}
+   OPTIONAL {?agg edm:object ?depiction}
+   ?repo_uri foaf:name ?repository
+}]]>
+						</xsl:when>
 						<xsl:when test="contains($content-type, 'text/html') or $content-type='*/*' or not(string($content-type))">
 							<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
@@ -90,7 +110,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
    ?repo_uri foaf:name ?repository
 }LIMIT %LIMIT%
 OFFSET %OFFSET%]]>
-						</xsl:when>
+						</xsl:when>						
 						<xsl:otherwise>
 							<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
@@ -149,6 +169,9 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 				
 				<xsl:variable name="service">
 					<xsl:choose>
+						<xsl:when test="$output = 'xml' or $output = 'json'">
+							<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=', $output-normalized)"/>
+						</xsl:when>
 						<xsl:when test="contains($content-type, 'text/html') or $content-type='*/*' or not(string($content-type))">
 							<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace(replace($query, '%LIMIT%', $limit), '%OFFSET%', $offset), 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=', $output-normalized)"/>
 						</xsl:when>

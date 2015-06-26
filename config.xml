@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 	<url>http://harvester.orbiscascade.org/</url>
+	<nwda>http://nwdaec2.orbiscascade.org/</nwda>
 	<title>Orbis Cascade Harvester</title>
 	<repository_rdf>http://nwda.orbiscascade.org:8080/orbeon/nwda/repositories.rdf</repository_rdf>
 	<sparql>

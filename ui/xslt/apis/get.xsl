@@ -15,7 +15,7 @@
 	</xsl:param>
 
 	<xsl:variable name="display_path">../</xsl:variable>
-	<xsl:variable name="url">http://nwda.orbiscascade.org/</xsl:variable>
+	<xsl:variable name="url" select="/content/config/nwda"/>
 	<xsl:variable name="repositoryLabel" select="descendant::res:binding[@name='repository'][1]/res:literal"/>
 	<xsl:variable name="repositoryUri" select="descendant::res:binding[@name='repo_uri'][1]/res:uri"/>
 
@@ -24,6 +24,7 @@
 	<xsl:variable name="offset" select="($page - 1) * $limit"/>
 
 	<xsl:variable name="numFound" select="descendant::res:sparql[2]//res:binding[@name='numFound']/res:literal"/>
+	
 
 	<xsl:template match="/">
 		<xsl:apply-templates select="descendant::res:sparql[1]" mode="root"/>
@@ -63,7 +64,10 @@
 						</xsl:when>
 						<xsl:otherwise>
 							<!-- use the ark URI to get the EAD/XML in response with the xsl document() function, apply template on archdesc/did -->
-							<xsl:apply-templates select="document(concat('oxf:', '/apps/harvester/NTE2pc35.xml'))//*[local-name()='archdesc']/*[local-name()='did']"/>
+							<xsl:if test="doc-available(concat($url, $ark, '/xml'))">
+								<xsl:apply-templates select="document(concat($url, $ark, '/xml'))//*[local-name()='archdesc']/*[local-name()='did']"/>
+							</xsl:if>
+							
 							<h3>Associated Cultural Heritage Objects</h3>
 							
 							<!-- display the pagination toolbar only if there are multiple pages -->
