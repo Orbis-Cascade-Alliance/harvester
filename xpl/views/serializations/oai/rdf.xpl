@@ -15,7 +15,7 @@
 	</p:processor>
 	
 	<p:processor name="oxf:unsafe-xslt">
-		<p:input name="data" href="aggregate('content', #data, #controls)"/>
+		<p:input name="data" href="aggregate('content', #data, #controls, ../../../../config.xml)"/>
 		<p:input name="request" href="#request"/>
 		<p:input name="config" href="../../../../ui/xslt/serializations/oai/rdf.xsl"/>
 		<p:output name="data" ref="data"/>

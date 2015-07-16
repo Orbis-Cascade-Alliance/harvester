@@ -25,6 +25,7 @@
 				<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
 				<!-- config variables -->
 				<xsl:variable name="sparql_endpoint" select="/config/sparql/query"/>
+				<xsl:variable name="production_server" select="/config/production_server"/>
 				<xsl:variable name="query">
 					<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
@@ -32,7 +33,7 @@ ASK {?s dcterms:isPartOf <URI>}]]>
 				</xsl:variable>
 				
 				<xsl:variable name="service">
-					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=xml')"/>					
+					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat($production_server, $ark))), '&amp;output=xml')"/>					
 				</xsl:variable>
 				
 				<xsl:template match="/">

@@ -166,6 +166,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 
 				<!-- config variables -->
 				<xsl:variable name="sparql_endpoint" select="/config/sparql/query"/>
+				<xsl:variable name="production_server" select="/config/production_server"/>
 
 				<xsl:variable name="service">
 					<xsl:choose>
@@ -176,11 +177,11 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 								<xsl:when test="$limit-param castable as xs:integer and $limit-param &gt; 0">
 									<xsl:choose>
 										<xsl:when test="$offset-param castable as xs:integer and $offset-param &gt;= 0">
-											<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(concat(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark)), '
+											<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(concat(replace($query, 'URI', concat($production_server, $ark)), '
 												LIMIT ', $limit-param, ' OFFSET ', $offset-param)), '&amp;output=', $output-normalized)"/>
 										</xsl:when>
 										<xsl:otherwise>
-											<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(concat(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark)), '
+											<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(concat(replace($query, 'URI', concat($production_server, $ark)), '
 												LIMIT ', $limit-param)), '&amp;output=', $output-normalized)"/>
 										</xsl:otherwise>
 									</xsl:choose>
@@ -188,11 +189,11 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 								<xsl:otherwise>
 									<xsl:choose>
 										<xsl:when test="$offset-param castable as xs:integer and $offset-param &gt;= 0">
-											<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(concat(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark)), '
+											<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(concat(replace($query, 'URI', concat($production_server, $ark)), '
 												OFFSET ', $offset-param)), '&amp;output=', $output-normalized)"/>
 										</xsl:when>
 										<xsl:otherwise>
-											<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark))),
+											<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat($production_server, $ark))),
 												'&amp;output=', $output-normalized)"/>
 										</xsl:otherwise>
 									</xsl:choose>
@@ -201,10 +202,10 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 						</xsl:when>
 						<xsl:when test="contains($content-type, 'text/html') or $content-type='*/*' or not(string($content-type))">
 							<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace(replace($query, '%LIMIT%', $limit), '%OFFSET%', $offset), 'URI',
-								concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=', $output-normalized)"/>
+								concat($production_server, $ark))), '&amp;output=', $output-normalized)"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=',
+							<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat($production_server, $ark))), '&amp;output=',
 								$output-normalized)"/>
 						</xsl:otherwise>
 					</xsl:choose>
@@ -300,6 +301,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 
 								<!-- config variables -->
 								<xsl:variable name="sparql_endpoint" select="/config/sparql/query"/>
+								<xsl:variable name="production_server" select="/config/production_server"/>
 								<xsl:variable name="query">
 									<![CDATA[ PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
@@ -310,7 +312,7 @@ SELECT (count(?cho) as ?numFound) WHERE {
 								</xsl:variable>
 
 								<xsl:variable name="service">
-									<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat('http://nwda.orbiscascade.org/', $ark))), '&amp;output=xml')"
+									<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, 'URI', concat($production_server, $ark))), '&amp;output=xml')"
 									/>
 								</xsl:variable>
 

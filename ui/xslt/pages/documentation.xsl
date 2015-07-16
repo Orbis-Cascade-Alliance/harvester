@@ -59,7 +59,7 @@
 	<dcterms:language>eng;</dcterms:language>
 	<dcterms:description>Six firefighters ride on a fire engine pulled by three horses. The firefighters are putting on their uniforms as the engine is in motion. Sign on engine reads "B.F.D." The
 		phrase "Topping Photo 1910" is handwritten on the photograph.</dcterms:description>
-	<dcterms:isPartOf rdf:resource="http://nwda.orbiscascade.org/ark:/80444/xv61544"/>
+	<dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv61544"/>
 	<dcterms:relation rdf:resource="http://digital.boisestate.edu/oai/oai.php?verb=ListRecords&amp;metadataPrefix=oai_qdc&amp;set=roach"/>
 </dpla:SourceResource>
 <edm:WebResource rdf:about="http://digital.boisestate.edu/utils/getthumbnail/collection/roach/id/79">
@@ -71,8 +71,8 @@
 <ore:Aggregation>
 	<edm:aggregatedCHO rdf:resource="http://digital.boisestate.edu/cdm/ref/collection/roach/id/79"/>
 	<edm:isShownAt rdf:resource="http://digital.boisestate.edu/cdm/ref/collection/roach/id/79"/>
-	<edm:dataProvider rdf:resource="http://nwda.orbiscascade.org/contact#idbb"/>
-	<edm:provider rdf:resource="http://nwda.orbiscascade.org"/>
+	<edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#idbb"/>
+	<edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
 	<edm:preview rdf:resource="http://digital.boisestate.edu/utils/getthumbnail/collection/roach/id/79"/>
 	<edm:object rdf:resource="http://digital.boisestate.edu/utils/getstream/collection/roach/id/79"/>
 	<dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2014-12-30T22:14:20.112-05:00</dcterms:modified>

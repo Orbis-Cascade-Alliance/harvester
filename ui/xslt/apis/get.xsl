@@ -15,9 +15,19 @@
 	</xsl:param>
 
 	<xsl:variable name="display_path">../</xsl:variable>
-	<xsl:variable name="url" select="/content/config/nwda"/>
+	<xsl:variable name="url" select="/content/config/production_server"/>
 	<xsl:variable name="repositoryLabel" select="descendant::res:binding[@name='repository'][1]/res:literal"/>
 	<xsl:variable name="repositoryUri" select="descendant::res:binding[@name='repo_uri'][1]/res:uri"/>
+
+	<!-- get the did of the related finding aid -->
+	<xsl:variable name="did" as="element()*">
+		<node>
+			<xsl:if test="doc-available(concat($url, $ark, '/xml'))">
+				<xsl:copy-of select="document(concat($url, $ark, '/xml'))//*[local-name()='archdesc']/*[local-name()='did']"/>
+			</xsl:if>
+		</node>
+	</xsl:variable>
+	
 
 	<!-- pagination -->
 	<xsl:variable name="limit" as="xs:integer">100</xsl:variable>
@@ -33,7 +43,7 @@
 	<xsl:template match="res:sparql" mode="root">
 		<html lang="en">
 			<head>
-				<title><xsl:value-of select="/content/config/title"/>: Cultural Heritage Objects</title>
+				<title><xsl:value-of select="/content/config/title"/>: </title>
 				<meta name="viewport" content="width=device-width, initial-scale=1"/>
 				<!-- bootstrap -->
 				<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"/>
@@ -64,9 +74,7 @@
 						</xsl:when>
 						<xsl:otherwise>
 							<!-- use the ark URI to get the EAD/XML in response with the xsl document() function, apply template on archdesc/did -->
-							<xsl:if test="doc-available(concat($url, $ark, '/xml'))">
-								<xsl:apply-templates select="document(concat($url, $ark, '/xml'))//*[local-name()='archdesc']/*[local-name()='did']"/>
-							</xsl:if>
+							<xsl:apply-templates select="$did//*[local-name()='did']"/>
 							
 							<h3>Associated Cultural Heritage Objects</h3>
 							
@@ -109,40 +117,40 @@
 	</xsl:template>
 
 	<!-- templates for processing the archdesc/did in the EAD file into the collection overview metadata -->
-	<xsl:template match="did">
+	<xsl:template match="*:did">
 		<h2>Overview of Collection</h2>
 		<h3>
 			<a href="{concat($url, $ark)}">
-				<xsl:value-of select="unittitle"/>
+				<xsl:value-of select="*:unittitle"/>
 			</a>
 		</h3>
 		<dl class="dl-horizontal">
 			<dt>Creator:</dt>
 			<dd>
-				<xsl:value-of select="origination"/>
+				<xsl:value-of select="*:origination"/>
 			</dd>
-			<xsl:if test="unitdate">
+			<xsl:if test="*:unitdate">
 				<dt>Dates:</dt>
 				<dd>
-					<xsl:value-of select="unitdate"/>
+					<xsl:value-of select="*:unitdate"/>
 				</dd>
 			</xsl:if>
-			<xsl:if test="physdesc/extent">
+			<xsl:if test="*:physdesc/*:extent">
 				<dt>Quantity:</dt>
 				<dd>
-					<xsl:value-of select="physdesc/extent"/>
+					<xsl:value-of select="*:physdesc/*:extent"/>
 				</dd>
 			</xsl:if>
-			<xsl:if test="unitid">
+			<xsl:if test="*:unitid">
 				<dt>Collection Number:</dt>
 				<dd>
-					<xsl:value-of select="unitid"/>
+					<xsl:value-of select="*:unitid"/>
 				</dd>
 			</xsl:if>
-			<xsl:if test="abstract">
+			<xsl:if test="*:abstract">
 				<dt>Summary:</dt>
 				<dd>
-					<xsl:value-of select="abstract"/>
+					<xsl:value-of select="*:abstract"/>
 				</dd>
 			</xsl:if>
 			<dt>Repository:</dt>
@@ -151,16 +159,16 @@
 					<xsl:value-of select="$repositoryLabel"/>
 				</a>
 			</dd>
-			<xsl:if test="langmaterial">
+			<xsl:if test="*:langmaterial">
 				<dt>Languages:</dt>
 				<dd>
-					<xsl:value-of select="langmaterial"/>
+					<xsl:value-of select="*:langmaterial"/>
 				</dd>
 			</xsl:if>
-			<xsl:if test="sponsor">
+			<xsl:if test="*:sponsor">
 				<dt>Sponsor:</dt>
 				<dd>
-					<xsl:value-of select="sponsor"/>
+					<xsl:value-of select="*:sponsor"/>
 				</dd>
 			</xsl:if>
 		</dl>

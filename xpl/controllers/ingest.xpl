@@ -105,13 +105,13 @@
 		
 		<!-- generate the SPARQL/Update delete query-->
 		<p:processor name="oxf:unsafe-xslt">
-			<p:input name="request" href="#request"/>
-			<p:input name="data" href="current()"/>
+			<p:input name="request" href="#request"/>			
+			<p:input name="data" href="aggregate('content', current(), ../../config.xml)"/>
 			<p:input name="config">
 				<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-					
+					<xsl:variable name="production_server" select="/content/config/production_server"/>
 					<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
-					<xsl:param name="set" select="/set"/>
+					<xsl:param name="set" select="/content/set"/>
 					
 					<xsl:template match="/">
 						
@@ -169,7 +169,7 @@ UNION {?s dcterms:relation <SET> .
 						</xsl:variable>
 						
 						<query>
-							<xsl:value-of select="replace(replace($template, 'SET', $set), 'ARK', concat('http://nwda.orbiscascade.org/', $ark))"/>
+							<xsl:value-of select="replace(replace($template, 'SET', $set), 'ARK', concat($production_server, $ark))"/>
 						</query>
 					</xsl:template>
 				</xsl:stylesheet>

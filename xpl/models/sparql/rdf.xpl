@@ -25,17 +25,18 @@
 				<xsl:variable name="repository" select="/content/repository"/>
 				<!-- config variables -->
 				<xsl:variable name="sparql_endpoint" select="/content/config/sparql/query"/>
+				<xsl:variable name="production_server" select="/content/config/production_server"/>
 				<xsl:variable name="query">
 					<![CDATA[PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 SELECT ?s ?p ?o WHERE {
-  ?agg edm:dataProvider <http://nwda.orbiscascade.org/contact#%REPOSITORY%> ;
+  ?agg edm:dataProvider <%PROD%contact#%REPOSITORY%> ;
        edm:aggregatedCHO ?s .
   ?s ?p ?o
 }]]>
 				</xsl:variable>
 				
 				<xsl:variable name="service">
-					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, '%REPOSITORY%', $repository)), '&amp;output=xml')"/>					
+					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%REPOSITORY%', $repository)), '%PROD%', $production_server), '&amp;output=xml')"/>					
 				</xsl:variable>
 				
 				<xsl:template match="/">
@@ -66,16 +67,17 @@ SELECT ?s ?p ?o WHERE {
 				<xsl:variable name="repository" select="/content/repository"/>
 				<!-- config variables -->
 				<xsl:variable name="sparql_endpoint" select="/content/config/sparql/query"/>
+				<xsl:variable name="production_server" select="/content/config/production_server"/>
 				<xsl:variable name="query">
 					<![CDATA[PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 SELECT ?s ?p ?o WHERE {
-  ?s edm:dataProvider <http://nwda.orbiscascade.org/contact#%REPOSITORY%> .
+  ?s edm:dataProvider <%PROD%contact#%REPOSITORY%> .
   ?s ?p ?o
 }]]>
 				</xsl:variable>
 				
 				<xsl:variable name="service">
-					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, '%REPOSITORY%', $repository)), '&amp;output=xml')"/>					
+					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%REPOSITORY%', $repository)), '%PROD%', $production_server), '&amp;output=xml')"/>					
 				</xsl:variable>
 				
 				<xsl:template match="/">
@@ -106,10 +108,11 @@ SELECT ?s ?p ?o WHERE {
 				<xsl:variable name="repository" select="/content/repository"/>
 				<!-- config variables -->
 				<xsl:variable name="sparql_endpoint" select="/content/config/sparql/query"/>
+				<xsl:variable name="production_server" select="/content/config/production_server"/>
 				<xsl:variable name="query">
 					<![CDATA[PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 SELECT ?s ?p ?o WHERE {
-  ?agg edm:dataProvider <http://nwda.orbiscascade.org/contact#%REPOSITORY%> .
+  ?agg edm:dataProvider <%PROD%contact#%REPOSITORY%> .
   {?agg edm:preview ?s}
   UNION {?agg edm:object ?s}
   ?s ?p ?o
@@ -117,7 +120,7 @@ SELECT ?s ?p ?o WHERE {
 				</xsl:variable>
 				
 				<xsl:variable name="service">
-					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, '%REPOSITORY%', $repository)), '&amp;output=xml')"/>					
+					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%REPOSITORY%', $repository)), '%PROD%', $production_server), '&amp;output=xml')"/>					
 				</xsl:variable>
 				
 				<xsl:template match="/">

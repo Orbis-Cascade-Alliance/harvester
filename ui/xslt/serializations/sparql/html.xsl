@@ -21,7 +21,7 @@
 	<xsl:template match="/">
 		<html lang="en">
 			<head>
-				<title>NWDA Harvester: SPARQL Results</title>
+				<title>Archives West Harvester: SPARQL Results</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1"/>
 				<!-- bootstrap -->
 				<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"/>
