@@ -36,7 +36,7 @@ SELECT ?s ?p ?o WHERE {
 				</xsl:variable>
 				
 				<xsl:variable name="service">
-					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%REPOSITORY%', $repository)), '%PROD%', $production_server), '&amp;output=xml')"/>					
+					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%REPOSITORY%', $repository), '%PROD%', $production_server)), '&amp;output=xml')"/>					
 				</xsl:variable>
 				
 				<xsl:template match="/">
@@ -77,7 +77,7 @@ SELECT ?s ?p ?o WHERE {
 				</xsl:variable>
 				
 				<xsl:variable name="service">
-					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%REPOSITORY%', $repository)), '%PROD%', $production_server), '&amp;output=xml')"/>					
+					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%REPOSITORY%', $repository), '%PROD%', $production_server)), '&amp;output=xml')"/>					
 				</xsl:variable>
 				
 				<xsl:template match="/">
@@ -120,7 +120,7 @@ SELECT ?s ?p ?o WHERE {
 				</xsl:variable>
 				
 				<xsl:variable name="service">
-					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%REPOSITORY%', $repository)), '%PROD%', $production_server), '&amp;output=xml')"/>					
+					<xsl:value-of select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%REPOSITORY%', $repository), '%PROD%', $production_server)), '&amp;output=xml')"/>					
 				</xsl:variable>
 				
 				<xsl:template match="/">
