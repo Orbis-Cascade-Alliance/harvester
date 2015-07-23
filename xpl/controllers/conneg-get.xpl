@@ -134,7 +134,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 					</xsl:choose>
 				</xsl:variable>
 
-				<xsl:variable name="limit">100</xsl:variable>
+				<xsl:variable name="limit" select="/config/limit"/>
 				<xsl:variable name="offset">
 					<xsl:choose>
 						<xsl:when test="string-length($page) &gt; 0 and $page castable as xs:integer and number($page) > 0">

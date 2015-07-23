@@ -27,14 +27,14 @@
 			</xsl:if>
 		</node>
 	</xsl:variable>
-	
+
 
 	<!-- pagination -->
-	<xsl:variable name="limit" as="xs:integer">100</xsl:variable>
+	<xsl:variable name="limit" as="xs:integer" select="/content/config/limit"/>
 	<xsl:variable name="offset" select="($page - 1) * $limit"/>
 
 	<xsl:variable name="numFound" select="descendant::res:sparql[2]//res:binding[@name='numFound']/res:literal"/>
-	
+
 
 	<xsl:template match="/">
 		<xsl:apply-templates select="descendant::res:sparql[1]" mode="root"/>
@@ -78,13 +78,16 @@
 							
 							<h3>Associated Cultural Heritage Objects</h3>
 							
+
 							<!-- display the pagination toolbar only if there are multiple pages -->
-							<xsl:if test="$numFound &gt; 100">
+							<xsl:if test="$numFound &gt; $limit">
 								<xsl:call-template name="pagination"/>
-							</xsl:if>							
-							
+							</xsl:if>
+
 							<!-- call template for results -->
-							<xsl:apply-templates select="descendant::res:result"/>
+							<div class="row">
+								<xsl:apply-templates select="descendant::res:result"/>
+							</div>
 						</xsl:otherwise>
 					</xsl:choose>
 				</div>
@@ -107,6 +110,10 @@
 						<img src="{res:binding[@name='thumbnail']/res:uri}" alt="thumbnail" class="cho-thumb"/>
 						<br/>
 					</xsl:when>
+					<xsl:otherwise>
+						<img src="{$display_path}ui/images/fileicon.png" alt="no image" class="cho-thumb"/>
+						<br/>
+					</xsl:otherwise>
 				</xsl:choose>
 				<a href="{res:binding[@name='cho']/res:uri}" target="_blank" title="{res:binding[@name='title']/res:literal}">
 					<xsl:value-of select="if (string-length(res:binding[@name='title']/res:literal) &gt; 50) then concat(substring(res:binding[@name='title']/res:literal, 1, 50), '...') else
@@ -200,49 +207,78 @@
 			<div class="col-md-6">
 				<div class="btn-toolbar" role="toolbar">
 					<div class="btn-group pull-right">
-						<xsl:choose>
-							<xsl:when test="$offset &gt;= $limit">
-								<a class="btn btn-default pagingBtn" role="button" title="First" href="?ark={$ark}">
-									<span class="glyphicon glyphicon-fast-backward"/>
-								</a>
-								<a class="btn btn-default pagingBtn" role="button" title="Previous" href="?ark={$ark}&amp;page={$previous}">
-									<span class="glyphicon glyphicon-backward"/>
-								</a>
-							</xsl:when>
-							<xsl:otherwise>
-								<a class="btn btn-default disabled" role="button" title="First" href="?ark={$ark}">
-									<span class="glyphicon glyphicon-fast-backward"/>
-								</a>
-								<a class="btn btn-default disabled" role="button" title="Previous" href="?ark={$ark}&amp;page={$previous}">
-									<span class="glyphicon glyphicon-backward"/>
-								</a>
-							</xsl:otherwise>
-						</xsl:choose>
+						<!-- first page -->
+						<xsl:if test="$current &gt; 1">
+							<a class="btn btn-default" role="button" title="First" href="?ark={$ark}">
+								<span class="glyphicon glyphicon-fast-backward"/>
+								<xsl:text> 1</xsl:text>
+							</a>
+							<a class="btn btn-default" role="button" title="Previous" href="?ark={$ark}&amp;page={$current - 1}">								
+								<xsl:text>Previous </xsl:text>
+								<span class="glyphicon glyphicon-backward"/>									
+							</a>
+						</xsl:if>
+						<xsl:if test="$current &gt; 5">
+							<button type="button" class="btn btn-default disabled">
+								<xsl:text>...</xsl:text>
+							</button>
+						</xsl:if>
+						<xsl:if test="$current &gt; 4">
+							<a class="btn btn-default" role="button" href="?ark={$ark}&amp;page={$current - 3}">
+								<xsl:value-of select="$current - 3"/>
+								<xsl:text> </xsl:text>
+							</a>
+						</xsl:if>
+						<xsl:if test="$current &gt; 3">
+							<a class="btn btn-default" role="button" href="?ark={$ark}&amp;page={$current - 2}">
+								<xsl:value-of select="$current - 2"/>
+								<xsl:text> </xsl:text>
+							</a>
+						</xsl:if>
+						<xsl:if test="$current &gt; 2">
+							<a class="btn btn-default" role="button" href="?ark={$ark}&amp;page={$current - 1}">
+								<xsl:value-of select="$current - 1"/>
+								<xsl:text> </xsl:text>
+							</a>
+						</xsl:if>
 						<!-- current page -->
 						<button type="button" class="btn btn-default active">
 							<b>
 								<xsl:value-of select="$current"/>
 							</b>
 						</button>
-						<!-- next page -->
-						<xsl:choose>
-							<xsl:when test="$numFound - $offset &gt; $limit">
-								<a class="btn btn-default pagingBtn" role="button" title="Next" href="?ark={$ark}&amp;page={$next}">
-									<span class="glyphicon glyphicon-forward"/>
-								</a>
-								<a class="btn btn-default pagingBtn" role="button" href="?ark={$ark}&amp;page={$total}">
-									<span class="glyphicon glyphicon-fast-forward"/>
-								</a>
-							</xsl:when>
-							<xsl:otherwise>
-								<a class="btn btn-default disabled" role="button" title="Next" href="?ark={$ark}&amp;page={$next}">
-									<span class="glyphicon glyphicon-forward"/>
-								</a>
-								<a class="btn btn-default disabled" role="button" href="?ark={$ark}&amp;page={$total}">
-									<span class="glyphicon glyphicon-fast-forward"/>
-								</a>
-							</xsl:otherwise>
-						</xsl:choose>
+						<xsl:if test="$total &gt; ($current + 1)">
+							<a class="btn btn-default" role="button" title="Next" href="?ark={$ark}&amp;page={$current + 1}">
+								<xsl:value-of select="$current + 1"/>
+							</a>
+						</xsl:if>
+						<xsl:if test="$total &gt; ($current + 2)">
+							<a class="btn btn-default" role="button" title="Next" href="?ark={$ark}&amp;page={$current + 2}">
+								<xsl:value-of select="$current + 2"/>
+							</a>
+						</xsl:if>
+						<xsl:if test="$total &gt; ($current + 3)">
+							<a class="btn btn-default" role="button" title="Next" href="?ark={$ark}&amp;page={$current + 3}">
+								<xsl:value-of select="$current + 3"/>
+							</a>
+						</xsl:if>
+						<xsl:if test="$total &gt; ($current + 4)">
+							<button type="button" class="btn btn-default disabled">
+								<xsl:text>...</xsl:text>
+							</button>
+						</xsl:if>
+						<!-- last page -->
+						<xsl:if test="$current &lt; $total">
+							<a class="btn btn-default" role="button" title="Next" href="?ark={$ark}&amp;page={$current + 1}">								
+								<xsl:text>Next </xsl:text>
+								<span class="glyphicon glyphicon-forward"/>									
+							</a>
+							<a class="btn btn-default" role="button" title="Last" href="?ark={$ark}&amp;page={$total}">
+								<xsl:value-of select="$total"/>
+								<xsl:text> </xsl:text>
+								<span class="glyphicon glyphicon-fast-forward"/>									
+							</a>
+						</xsl:if>						
 					</div>
 				</div>
 			</div>

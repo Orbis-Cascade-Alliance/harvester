@@ -9,4 +9,5 @@
 		<store>http://localhost:3030/nwda/data</store>
 		<update>http://localhost:3030/nwda/update</update>
 	</sparql>
+	<limit>24</limit>
 </config>
