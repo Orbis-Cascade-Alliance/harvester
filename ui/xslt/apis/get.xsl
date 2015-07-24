@@ -14,7 +14,8 @@
 		</xsl:choose>
 	</xsl:param>
 
-	<xsl:variable name="display_path">../</xsl:variable>
+    <!-- <xsl:variable name="display_path">../</xsl:variable> -->
+	<xsl:variable name="display_path" select="/content/config/url"/>
 	<xsl:variable name="url" select="/content/config/production_server"/>
 	<xsl:variable name="repositoryLabel" select="descendant::res:binding[@name='repository'][1]/res:literal"/>
 	<xsl:variable name="repositoryUri" select="descendant::res:binding[@name='repo_uri'][1]/res:uri"/>
