@@ -118,6 +118,26 @@
 					<p:output name="data" ref="response"/>
 				</p:processor>
 			</p:when>
+			<p:when test="/*[not(namespace-uri() = 'http://www.openarchives.org/OAI/2.0/')]">
+				<!-- Extract the message -->
+				<p:processor name="oxf:xslt">
+					<p:input name="data" href="#url-data-checked"/>
+					<p:input name="controls" href="#controls"/>
+					<p:input name="config">
+						<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all">
+							<xsl:template match="/">
+								<set>
+									<url>
+										<xsl:value-of select="doc('input:controls')/controls/set"/>
+									</url>
+									<error type="other">The response is XML, but not OAI-PMH.</error>
+								</set>
+							</xsl:template>
+						</xsl:stylesheet>
+					</p:input>
+					<p:output name="data" ref="response"/>
+				</p:processor>
+			</p:when>
 			<p:when test="//*[local-name()='error'][namespace-uri()='http://www.openarchives.org/OAI/2.0/']">
 				<p:processor name="oxf:xslt">
 					<p:input name="data" href="#url-data-checked"/>
