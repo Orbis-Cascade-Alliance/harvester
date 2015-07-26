@@ -106,12 +106,12 @@
 								<xsl:when test="descendant::oai:resumptionToken">
 									<xsl:call-template name="recurse">
 										<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>
-										<xsl:with-param name="count" select="count(descendant::oai_dc:dc[dc:relation[contains(., $ark)]])"/>
+										<xsl:with-param name="count" select="count(descendant::oai:metadata[descendant::dc:relation[contains(., $ark)]])"/>
 										<xsl:with-param name="set" select="descendant::oai:request"/>
 									</xsl:call-template>
 								</xsl:when>
 								<xsl:otherwise>
-									<xsl:value-of select="count(descendant::oai_dc:dc[dc:relation[contains(., $ark)]])"/>
+									<xsl:value-of select="count(descendant::oai:metadata[descendant::dc:relation[contains(., $ark)]])"/>
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>

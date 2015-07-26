@@ -99,6 +99,7 @@
 		<p:processor name="oxf:pipeline">
 			<p:input name="data" href="#oai-pmh"/>
 			<p:input name="controls" href="#controls"/>
+			<p:input name="request" href="#request"/>
 			<p:input name="config" href="../views/serializations/oai/rdf.xpl"/>
 			<p:output name="data" ref="response"/>
 		</p:processor>
