@@ -53,7 +53,7 @@
 
 	<xsl:template match="oai:metadata/*">
 		<xsl:variable name="relation" select="dc:relation[matches(., 'ark:/')]"/>
-		<xsl:variable name="cho_uri" select="dc:identifier[matches(., 'https?://') and not(matches(., '.jpe?g$'))]"/>
+		<xsl:variable name="cho_uri" select="dc:identifier[matches(., 'https?://') and not(matches(., '.jpe?g$'))][1]"/>
 
 		<xsl:variable name="ark">
 			<xsl:analyze-string select="$relation" regex=".*(ark:/[0-9]{{5}}/[A-Za-z0-9]+)">
@@ -136,7 +136,7 @@
 		<xsl:param name="cho_uri"/>
 		<xsl:choose>
 			<!-- contentDM institutions -->
-			<xsl:when test="$repository='waps' or $repository='idbb'">
+			<xsl:when test="$repository='waps' or $repository='idbb' or $repository='US-ula' or $repository='US-uuml'">
 				<!-- get thumbnail -->
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}">
 					<edm:rights>placeholder</edm:rights>
@@ -169,7 +169,7 @@
 		<xsl:param name="cho_uri"/>
 		<xsl:choose>
 			<!-- contentDM institutions -->
-			<xsl:when test="$repository='waps' or $repository='idbb'">
+			<xsl:when test="$repository='waps' or $repository='idbb' or $repository='US-ula' or $repository='US-uuml'">
 				<!-- get thumbnail -->
 				<edm:preview rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}"/>
 				<edm:object rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}"/>

@@ -1,0 +1,799 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:ore="http://www.openarchives.org/ore/terms/"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:edm="http://www.europeana.eu/schemas/edm/"
+         xmlns:dpla="http://dp.la/terms/"
+         xmlns:dcterms="http://purl.org/dc/terms/"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/14">
+        <dcterms:description>&lt;p&gt;In this letter Bedient comments upon Auditorium, a poem Goedicke drafted for the manuscript that would be published under the title Invisible Horses.&lt;/p&gt; &lt;p&gt;Calvin Bedient is a professor of English Literature at the University of California, Los Angeles, who is known for both his cricitism of 20th century poetry and his poetry.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Letter from Cal Bedient dated October 23, 1993</dcterms:title>
+        <dcterms:creator>Bedient, Calvin</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>Calvin Bedient</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>Invisible Horses</dcterms:subject>
+        <dcterms:subject>letters</dcterms:subject>
+        <dcterms:date>1993-10-23T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/26">
+        <dcterms:description>&lt;p&gt;In these handwritten drafts of a poem titled "The Outer Banks," one begins to see the framework of the finished poem. Gone are the overt references to specific assassinations, such as Whitman's lilacs in commemoration of Lincoln's death and the image of Robert Kennedy's funeral train. Instead, the poem is framed with the speaks descent to the Outer Banks and her realization that "we must build more on less," arising out of a more generalized sense of loss and dissolution.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>June 1968 notebook entry</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:date>1968-06-01T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/30">
+        <dcterms:description>&lt;p&gt;This handwritten entry contains the initial drafts of "This Music Has Holes in It," which was published in Goedicke's thirteenth book of poems, The Baseball Field at Night. Goedicke also writes about the first anniversary of September 11th and the task of revising the current set of poems she is working on, such as "Night Notes" and "Cloud Chamber and Circumference."&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Notebook entry dated September 11, 2002</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:date>2002-09-11T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/29">
+        <dcterms:description>&lt;p&gt;This handwritten entry contains the initial drafts of "This Music Has Holes in It," which was published in Goedicke's thirteenth book of poems, The Baseball Field at Night. Goedicke also expresses concern that the United States will initiate a war against Iraq.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Notebook entry dated September 10, 2002</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:date>2002-09-10T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/21">
+        <dcterms:description>&lt;p&gt;This letter was written to Emilie Buchwald of Milkweed Press after Milkweed passed on the manuscript for As Earth Begins to End. Here, Goedicke recounts the changes in her revised manuscript. This item may be found in Box 2, Folder 11.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Letter to Emilie Buchwald</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>letters</dcterms:subject>
+        <dcterms:subject>As Earth Begins to End</dcterms:subject>
+        <dcterms:date>1998-08-14T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/28">
+        <dcterms:description>&lt;p&gt;This handwritten entry contains drafts of two poems: "The Outer Banks" and "To a Sailor." "The Outer Banks" was published in For the Four Corners, Goedicke's second book of poems in 1976. In the prior entry, Goedicke expresses concern over the fact that her lover, "R," had yet to arrive at the Outer Banks of North Carolina.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Notebook entry dated June 11, 1968</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:date>1968-06-11T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/15">
+        <dcterms:description>&lt;p&gt;In November of 1988, Patricia Goedicke delivered a lecture at the University of Kansas in Lawrence about the function of sound and silence in poetry. These are the handwritten notes for that lecture, which emerged from an imitation workshop she taught centering on the works of Emily Dickinson and Denise Levertov. Goedicke delivered a very similar lecture in 1982 at The Midnight Sun Writers' Conference in Fairbanks, Alaska. These notes may be found in Mss 739, Series V, Midnight Sun Writers' Conference lecture notes, 1983, 1988.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>University of Kansas lecture notes</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:subject>Creative writing (Higher education)</dcterms:subject>
+        <dcterms:date>1988-11-01T08:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/13">
+        <dcterms:description>&lt;p&gt;These drafts of poems by Goedicke contain comments by Bedient. These poems were part of a manuscript that would be published under the title Invisible Horses.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Comments by Cal Bedient on poems by Patricia Goedicke</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>Calvin Bedient</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>Invisible Horses</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:contributor>Bedient, Calvin</dcterms:contributor>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/8">
+        <dcterms:description>&lt;p&gt;These notes are for a reading by Patricia Goedicke on March 5, 2000 for the 2nd Wind Reading Series held by the University of Montana Creative Writing department in Missoula, Montana. In this reading, Goedicke reads one poem from each of her books to date and frames them within the general theme of loss. These notes may be found in Mss 739, Series I, Subseries 4, Montana readings, 1982-2005.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Reading notes for 2nd Wind 2000</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:subject>American literature--Montana</dcterms:subject>
+        <dcterms:date>2000-03-05T08:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/24">
+        <dcterms:description>&lt;p&gt;These drafts, ordered from most recent to oldest, reflect the many changes to Goedicke's meditation on presenence and absence, sound and silence. Based on the notes at the top of each draft, the poem has been read by Sally, Sarah, and Melissa. These are most likely Sally Moore, Sarah Gridley, and Melissa Kwasny. It should also be noted that the poem underwent further revisions before it appeared in The Baseball Field at Night.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Drafts of This Music Has Holes in It</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:date>2002-01-01T08:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/11">
+        <dcterms:description>&lt;p&gt;In these early notes for The Man Who Loved Beauty, Leonard Wallace Robinson sketches the general relationship between the main character and his wife. While these notes begin in the third person, they move to the first person by page two.&lt;/p&gt; &lt;p&gt;Leonard Wallace Robinson, husband of poet Patricia Goedicke, published two novels and two books of poetry. Robinson was a long time editor in New York City before moving to Mexico with Goedicke. The couple eventually settled in Missoula, Montana in 1981, where Goedicke taught Creative Writing at the University of Montana, Missoula.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Notes for The Man Who Loved Beauty, Section 1</dcterms:title>
+        <dcterms:creator>Robinson, Leonard Wallace</dcterms:creator>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:subject>Leonard Wallace Robinson</dcterms:subject>
+        <dcterms:subject>The Man Who Loved Beauty</dcterms:subject>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/17">
+        <dcterms:description>&lt;p&gt;Patricia Goedicke retired from the University of Montana in 2003. As one of her last acts as professor, she gave a commencement speech in which she elaborated upon the importance of the imagination in understanding each other and the world we live in. These materials may be found in Mss 739, Series IV, Commencement speech, 2003.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>2003 commencement speech to the University of Montana</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:subject>Creative writing (Higher education)</dcterms:subject>
+        <dcterms:subject>American literature--21st century</dcterms:subject>
+        <dcterms:date>2003-05-17T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/19">
+        <dcterms:description>&lt;p&gt;In this letter to Sam Hamill at Copper Canyon Press, officially submits her manuscript to Copper Canyon for publication. As stated in the letter, she had previously submitted the manuscript to Milkweed Press, who published her prior three books, to no success. Copper Canyon ultimately agreed to publish As Earth Begins to End, which was one of Goedicke's most acclaimed works.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Letter to Sam Hamill</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>letters</dcterms:subject>
+        <dcterms:subject>As Earth Begins to End</dcterms:subject>
+        <dcterms:date>1999-01-18T08:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/32">
+        <dcterms:description>&lt;p&gt;These notes are for Patricia Goedicke's reading at the Woodstock Poetry Festival. Most of the poems Goedicke read at the festival were from Invisible Horses and As Earth Begins to End. The notes contain brief comments about these two books as well as the poems read.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Reading notes for Woodstock Poetry Fesitval 2001</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:subject>As Earth Begins to End</dcterms:subject>
+        <dcterms:date>2001-08-01T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/3">
+        <dcterms:description>&lt;p&gt;The pages featured here include the title page from Robinson's 1976 manuscript and a passage from pages 111-113 of the published novel from Harper and Row.&lt;/p&gt; &lt;p&gt;Leonard Wallace Robinson, husband of poet Patricia Goedicke, published two novels and two books of poetry. Robinson was a long time editor in New York City before moving to Mexico with Goedicke. The couple eventually settled in Missoula, Montana in 1981, where Goedicke taught Creative Writing at the University of Montana, Missoula.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>The Man Who Loved Beauty final draft 1976</dcterms:title>
+        <dcterms:creator>Robinson, Leonard Wallace</dcterms:creator>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:subject>Leonard Wallace Robinson</dcterms:subject>
+        <dcterms:date>1976-04-04T08:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/9">
+        <dcterms:description>&lt;p&gt;These notes are for a reading by Patricia Goedicke on October 7, 2001 for the 2nd Wind Reading Series held by the University of Montana Creative Writing department in Missoula, Montana. The notes for this reading reflect the backdrop of the September 11 attacks just weeks prior to the reading. These notes may be found in Mss 739, Series I, Subseries 4, Montana readings, 1982-2005.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Reading notes for 2nd Wind 2001</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:subject>American literature--Montana</dcterms:subject>
+        <dcterms:date>2001-10-07T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/18">
+        <dcterms:description>&lt;p&gt;For All the Sad Rain appeared first in The Slackwater Review in 1984 before appearing as the prelude to The Wind of Our Going, published in 1985. These drafts range in date from 1978-1983.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Drafts of For All the Sad Rain</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/5">
+        <dcterms:description>&lt;p&gt;Drafts of The Movie about the Dead Cellist by Patricia Goedicke. This poem by Goedicke appeared in As Earth Begins to End. Some drafts in this file document comments made by the Rattlesnake Ladies' Salon, a group of female writers from Missoula that included Goedicke, Dee McNamer, Kate Gadbow, Sandra Alcosser, and others.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Movie about the Dead Cellist</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:subject>American literature--Montana</dcterms:subject>
+        <dcterms:date>1992-07-01T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/16">
+        <dcterms:description>&lt;p&gt;This is draft table of contents within a file of correspondence to and from Copper Canyon Press from 1998-1999. The notes on the second version of the table contain Goedicke's comments and notes to Michael Wiegers, an editor at Copper Canyon. These materials may be found in Mss 739, Series I, As Earth Begins to End correspondence (1998-1999).&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>As Earth Begins to End table of contents</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:subject>As Earth Begins to End</dcterms:subject>
+        <dcterms:date>1999-01-01T08:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/12">
+        <dcterms:description>&lt;p&gt;In this letter Bedient comments upon a number of poems Goedicke drafted for the manuscript that would be published under the title Invisible Horses.&lt;/p&gt; &lt;p&gt;Calvin Bedient is a professor of English Literature at the University of California, Los Angeles, who is known for both his cricitism of 20th century poetry and his poetry.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Letter from Cal Bedient dated April 27, 1992</dcterms:title>
+        <dcterms:creator>Bedient, Calvin</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>Calvin Bedient</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>Invisible Horses</dcterms:subject>
+        <dcterms:subject>letters</dcterms:subject>
+        <dcterms:date>1992-04-27T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/10">
+        <dcterms:description>&lt;p&gt;This is the letter and enclosed poems Patricia Goedicke (then Patricia McKenna) sent to Robert Frost in 1952 and Frost's reply. McKenna was a student at Middlebury College when the letter was sent, and judging by the date, the letter was sent during the Breadloaf Writers' Conference. In his reply, Frost specifically comments upon what he feels to be the strengths and weaknesses of the poem titled "Building."&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Patricia Goedicke, Robert Frost letter</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>letters</dcterms:subject>
+        <dcterms:subject>Creative writing (Higher education)</dcterms:subject>
+        <dcterms:subject>Robert Frost</dcterms:subject>
+        <dcterms:date>1952-08-01T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:contributor>Frost, Robert, 1874-1963</dcterms:contributor>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/7">
+        <dcterms:description>&lt;p&gt;In this handwritten entry, Patricia Goedicke writes of her husband's death and reflects upon its impact on a a poem titled "Third Rail," which she continues to draft later in the entry.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Notebook entry dated May 11, 1999</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:subject>American literature--Montana</dcterms:subject>
+        <dcterms:subject>Leonard Wallace Robinson</dcterms:subject>
+        <dcterms:date>1999-05-11T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/25">
+        <dcterms:description>&lt;p&gt;This statement of intent for As Earth Begins to End was sent to Michael Wiegers of Copper Canyon Press on February 28, 1999.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Statement of intent for As Earth Begins to End</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:subject>As Earth Begins to End</dcterms:subject>
+        <dcterms:date>1999-02-28T08:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/33">
+        <dcterms:description>&lt;p&gt;This recording is a practice reading for Patricia Goedicke's opening lecture for ENCR 411, Advanced Creative Writing: Poetry. In it, Goedicke discusses her understanding of poetry, its relation to human experience, and how one might go about creating and crafting one's work. Goedicke's husband, Leonard Wallace Robinson can be heard making occasional commentary. A transcript of this audio file is not yet available.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Practice for opening lecture of advanced poetry writing class (ENCR 411)</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>sound recordings</dcterms:subject>
+        <dcterms:date>1994-01-01T08:00:00Z</dcterms:date>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:type>Sound</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>audio/mp3</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/4">
+        <dcterms:description>&lt;p&gt;A statement to Milkweed Press regarding the themes and completion of Invisible Horses, Patricia Goedicke's 11th book of poems.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Statement of Plans for Invisible Horses</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>Invisible Horses</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:date>1995-05-18T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/31">
+        <dcterms:description>&lt;p&gt;This is a copy of a letter Goedicke addressed to her friend Pat Grean. In it she describes her initial feelings toward Leonard Robinson, as well as her thoughts about her marriage to Victor Goedicke. The letter was written from the MacDowell Colony, where Goedicke and Robinson met.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Letter to Pat Grean, July 15, 1968</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>letters</dcterms:subject>
+        <dcterms:date>1968-07-15T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/2">
+        <dcterms:description>&lt;p&gt;Handwritten draft of Goedicke's poem "Letter to Hugo from Wells College".&lt;/p&gt; &lt;p&gt;This is an homage of sorts in the epistolary style Hugo used in 31 Letters and 13 Dreams. Goedicke was a professor of Creative Writing at the University of Montana from 1981-2003; Hugo was a professor of Creative Writing at the University of Montana from 1964-1982.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Letter to Hugo from Wells College</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>letters</dcterms:subject>
+        <dcterms:subject>American literature--Montana</dcterms:subject>
+        <dcterms:date>1985-01-01T08:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/27">
+        <dcterms:description>&lt;p&gt;These handwritten drafts of "The Outer Banks" were written while Goedicke was at the MacDowell Colony in 1968. It was during this stay that Goedicke met Leonard Wallace Robinson, who she would marry in 1971.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>July 2, 1968 notebook entry</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:date>1968-07-02T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/6">
+        <dcterms:description>&lt;p&gt;These notes for Patricia Goedicke's opening lecture for her Graduate workshop in 2002 (ENCR 511) at the University of Montana summarize her influences as a writer, her general aesthetic with regards to writing, as well as the general structure of the course. Appended to the front is an assignment asking her students to describe their own poetic aesthetics.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Opening lecture for 2002 Graduate workshop</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:subject>Creative writing (Higher education)</dcterms:subject>
+        <dcterms:subject>American literature--Montana</dcterms:subject>
+        <dcterms:date>2002-01-01T08:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/1">
+        <dcterms:description>&lt;p&gt;This extended, handwritten journal entry by Patricia Goedicke contains Goedicke's commentary on all her published poems to date, including poems that would appear in Paul Bunyan's Bearskin two years later.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Notebook dated April 17, 1990</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>documents</dcterms:subject>
+        <dcterms:subject>American literature--Montana</dcterms:subject>
+        <dcterms:subject>American literature--Poetry</dcterms:subject>
+        <dcterms:date>1990-05-01T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/20">
+        <dcterms:description>&lt;p&gt;This email includes Goedicke's email to Copper Canyon publishing regarding last minute changes to her manuscript for As Earth Begins to End and Weigers' reply and general response to the manuscript.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Email from Michael Wiegers to Patricia Goedicke</dcterms:title>
+        <dcterms:creator>Wiegers, Michael</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>letters</dcterms:subject>
+        <dcterms:subject>As Earth Begins to End</dcterms:subject>
+        <dcterms:date>1999-06-21T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:contributor>Goedicke, Patricia</dcterms:contributor>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/23">
+        <dcterms:description>&lt;p&gt;In this letter to Michael Wiegers and Sam Hamill Goedicke asks for feedback regarding new editions to her manuscript.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Letter to Michael Wiegers and Sam Hamill</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>letters</dcterms:subject>
+        <dcterms:subject>As Earth Begins to End</dcterms:subject>
+        <dcterms:date>1999-03-15T08:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <dpla:SourceResource rdf:about="http://scholarworks.umt.edu/goedicke/22">
+        <dcterms:description>&lt;p&gt;This letter to Michael Wiegers of Copper Canyon Press was written as Leonard Robinson's condition was rapidly deteriorating. The letter reflects Copper Canyon's publishing process, particular with regards to the editorial process and the publicity surrounding the work.&lt;/p&gt; &lt;p&gt;Patricia Goedicke, wife of author Leonard Wallace Robinson, was a poet and professor of Creative Writing at the Unviersity of Montana from 1981-2003. Goedicke authored 13 books of poetry from 1968-2008, the last book published posthumously.&lt;/p&gt; For more information about the Patricia Goedicke and Leonard Wallace Robinson Papers, connect to the online guide: http://nwda-db.wsulibs.wsu.edu/findaid/ark:/80444/xv43658</dcterms:description>
+        <dcterms:title>Letter to Michael Wiegers</dcterms:title>
+        <dcterms:creator>Goedicke, Patricia</dcterms:creator>
+        <dcterms:subject>Patricia Goedicke</dcterms:subject>
+        <dcterms:subject>American literature--20th century</dcterms:subject>
+        <dcterms:subject>letters</dcterms:subject>
+        <dcterms:subject>As Earth Begins to End</dcterms:subject>
+        <dcterms:date>1999-04-29T07:00:00Z</dcterms:date>
+        <dcterms:type>Text</dcterms:type>
+        <dcterms:type>Book</dcterms:type>
+        <dcterms:rights>Copyright to this collection is held by the Maureen and Mike Mansfield Library, University of Montana-Missoula. For further information please contact Archives and Special Collections at the University of Montana, Mansfield Library: http://www.lib.umt.edu/asc</dcterms:rights>
+        <dcterms:format>application/pdf</dcterms:format>
+        <dcterms:isPartOf rdf:resource="http://archiveswest.orbiscascade.org/ark:/80444/xv43658"/>
+        <dcterms:relation rdf:resource="http://scholarworks.umt.edu/do/oai/?verb=ListRecords&amp;metadataPrefix=dcs&amp;set=publication:goedicke"/>
+        <dcterms:language>eng</dcterms:language>
+    </dpla:SourceResource>
+    <ore:Aggregation rdf:nodeID="d43e10644">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/14"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/14"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e10767">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/26"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/26"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e10890">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/30"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/30"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e11013">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/29"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/29"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e11136">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/21"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/21"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e11259">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/28"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/28"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e11382">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/15"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/15"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e11505">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/13"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/13"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e11628">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/8"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/8"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e11751">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/24"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/24"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e11874">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/11"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/11"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e11997">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/17"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/17"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e12120">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/19"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/19"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e12243">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/32"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/32"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e12366">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/3"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/3"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e12489">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/9"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/9"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e12612">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/18"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/18"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e12735">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/5"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/5"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e12858">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/16"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/16"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e12981">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/12"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/12"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e13104">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/10"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/10"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e13227">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/7"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/7"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e13350">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/25"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/25"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e13473">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/33"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/33"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e13596">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/4"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/4"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e13719">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/31"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/31"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e13842">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/2"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/2"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e13965">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/27"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/27"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e14088">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/6"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/6"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e14211">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/1"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/1"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e14334">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/20"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/20"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e14457">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/23"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/23"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+    <ore:Aggregation rdf:nodeID="d43e14580">
+        <edm:aggregatedCHO rdf:resource="http://scholarworks.umt.edu/goedicke/22"/>
+        <edm:isShownAt rdf:resource="http://scholarworks.umt.edu/goedicke/22"/>
+        <edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#mtu"/>
+        <edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
+        <dcterms:modified>2015-07-30T16:35:39.567-07:00</dcterms:modified>
+    </ore:Aggregation>
+</rdf:RDF>
