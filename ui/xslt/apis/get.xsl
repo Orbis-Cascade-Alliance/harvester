@@ -14,7 +14,7 @@
 		</xsl:choose>
 	</xsl:param>
 
-    <!-- <xsl:variable name="display_path">../</xsl:variable> -->
+	<!-- <xsl:variable name="display_path">../</xsl:variable> -->
 	<xsl:variable name="display_path" select="/content/config/url"/>
 	<xsl:variable name="url" select="/content/config/production_server"/>
 	<xsl:variable name="repositoryLabel" select="descendant::res:binding[@name='repository'][1]/res:literal"/>
@@ -76,9 +76,9 @@
 						<xsl:otherwise>
 							<!-- use the ark URI to get the EAD/XML in response with the xsl document() function, apply template on archdesc/did -->
 							<xsl:apply-templates select="$did//*[local-name()='did']"/>
-							
+
 							<h3>Associated Cultural Heritage Objects</h3>
-							
+
 
 							<!-- display the pagination toolbar only if there are multiple pages -->
 							<xsl:if test="$numFound &gt; $limit">
@@ -100,22 +100,17 @@
 	<xsl:template match="res:result">
 		<div class="col-lg-2 col-md-3 col-sm-6">
 			<div class="cho-container text-center">
-				<xsl:choose>
-					<xsl:when test="res:binding[@name='thumbnail'] and res:binding[@name='depiction']">
-						<a href="{res:binding[@name='depiction']}" class="thumbImage" title="{res:binding[@name='title']/res:literal}">
+				<a href="{res:binding[@name='cho']/res:uri}" target="_blank" title="{res:binding[@name='title']/res:literal}">
+					<xsl:choose>
+						<xsl:when test="res:binding[@name='thumbnail']">
 							<img src="{res:binding[@name='thumbnail']/res:uri}" alt="thumbnail" class="cho-thumb"/>
-						</a>
-						<br/>
-					</xsl:when>
-					<xsl:when test="res:binding[@name='thumbnail'] and not(res:binding[@name='depiction'])">
-						<img src="{res:binding[@name='thumbnail']/res:uri}" alt="thumbnail" class="cho-thumb"/>
-						<br/>
-					</xsl:when>
-					<xsl:otherwise>
-						<img src="{$display_path}ui/images/fileicon.png" alt="no image" class="cho-thumb"/>
-						<br/>
-					</xsl:otherwise>
-				</xsl:choose>
+						</xsl:when>
+						<xsl:otherwise>
+							<img src="{$display_path}ui/images/fileicon.png" alt="no image" class="cho-thumb"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</a>
+				<br/>
 				<a href="{res:binding[@name='cho']/res:uri}" target="_blank" title="{res:binding[@name='title']/res:literal}">
 					<xsl:value-of select="if (string-length(res:binding[@name='title']/res:literal) &gt; 50) then concat(substring(res:binding[@name='title']/res:literal, 1, 50), '...') else
 						res:binding[@name='title']/res:literal"/>
@@ -214,9 +209,9 @@
 								<span class="glyphicon glyphicon-fast-backward"/>
 								<xsl:text> 1</xsl:text>
 							</a>
-							<a class="btn btn-default" role="button" title="Previous" href="?ark={$ark}&amp;page={$current - 1}">								
+							<a class="btn btn-default" role="button" title="Previous" href="?ark={$ark}&amp;page={$current - 1}">
 								<xsl:text>Previous </xsl:text>
-								<span class="glyphicon glyphicon-backward"/>									
+								<span class="glyphicon glyphicon-backward"/>
 							</a>
 						</xsl:if>
 						<xsl:if test="$current &gt; 5">
@@ -270,16 +265,16 @@
 						</xsl:if>
 						<!-- last page -->
 						<xsl:if test="$current &lt; $total">
-							<a class="btn btn-default" role="button" title="Next" href="?ark={$ark}&amp;page={$current + 1}">								
+							<a class="btn btn-default" role="button" title="Next" href="?ark={$ark}&amp;page={$current + 1}">
 								<xsl:text>Next </xsl:text>
-								<span class="glyphicon glyphicon-forward"/>									
+								<span class="glyphicon glyphicon-forward"/>
 							</a>
 							<a class="btn btn-default" role="button" title="Last" href="?ark={$ark}&amp;page={$total}">
 								<xsl:value-of select="$total"/>
 								<xsl:text> </xsl:text>
-								<span class="glyphicon glyphicon-fast-forward"/>									
+								<span class="glyphicon glyphicon-fast-forward"/>
 							</a>
-						</xsl:if>						
+						</xsl:if>
 					</div>
 				</div>
 			</div>
