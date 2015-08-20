@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Changes:
+
+    08/20/15    KEF     Don't use a <dc:identifier> URL beginning with 
+                        "http://kagi" as the cho_uri.  This is a hack to keep
+                        WSU's audio server URLs from being picked.  Would be
+                        better to generalize to filtering out all URLs without
+                        "cdm/ref" in them for ContentDM users, but that would be
+                        a lot of code that I'm not ready to introduce.
+-->
+
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
 	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:ore="http://www.openarchives.org/ore/terms/"
@@ -53,7 +64,7 @@
 
 	<xsl:template match="oai:metadata/*">
 		<xsl:variable name="relation" select="dc:relation[matches(., 'ark:/')]"/>
-		<xsl:variable name="cho_uri" select="dc:identifier[matches(., 'https?://') and not(matches(., '.jpe?g$'))][1]"/>
+		<xsl:variable name="cho_uri" select="dc:identifier[not (matches(., 'https?://kaga')) and matches(., 'https?://') and not(matches(., '.jpe?g$'))][1]"/>
 
 		<xsl:variable name="ark">
 			<xsl:analyze-string select="$relation" regex=".*(ark:/[0-9]{{5}}/[A-Za-z0-9]+)">
