@@ -82,7 +82,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
   ?cho dcterms:isPartOf <URI> ;
         dcterms:title ?title 
   OPTIONAL {?cho dcterms:description ?description}
-  OPTIONAL {?cho dcterms:date ?date}
+  OPTIONAL {?cho dcterms:date ?date . FILTER (datatype(?date) = xsd:gYear)}
   ?agg edm:aggregatedCHO ?cho ;
      edm:dataProvider ?repo_uri .
    OPTIONAL {?agg edm:preview ?thumbnail}
@@ -102,7 +102,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
   ?cho dcterms:isPartOf <URI> ;
         dcterms:title ?title 
   OPTIONAL {?cho dcterms:description ?description}
-  OPTIONAL {?cho dcterms:date ?date}
+  OPTIONAL {?cho dcterms:date ?date . FILTER (datatype(?date) = xsd:gYear)}
   ?agg edm:aggregatedCHO ?cho ;
      edm:dataProvider ?repo_uri .
    OPTIONAL {?agg edm:preview ?thumbnail}
@@ -123,7 +123,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
   ?cho dcterms:isPartOf <URI> ;
         dcterms:title ?title 
   OPTIONAL {?cho dcterms:description ?description}
-  OPTIONAL {?cho dcterms:date ?date}
+  OPTIONAL {?cho dcterms:date ?date . FILTER (datatype(?date) = xsd:gYear)}
   ?agg edm:aggregatedCHO ?cho ;
      edm:dataProvider ?repo_uri .
    OPTIONAL {?agg edm:preview ?thumbnail}
