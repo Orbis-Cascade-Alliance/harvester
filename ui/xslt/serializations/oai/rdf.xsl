@@ -8,6 +8,10 @@
                         better to generalize to filtering out all URLs without
                         "cdm/ref" in them for ContentDM users, but that would be
                         a lot of code that I'm not ready to introduce.
+    09/16/15    KEF     Added custom code for Willamette, which uses a proxy of
+                        sorts in front of their contentDM system, such that the
+                        public URL for the object isn't standard and needs custom
+                        image URLs.
 -->
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
@@ -172,6 +176,16 @@
 					</edm:WebResource>
 				</xsl:if>
 			</xsl:when>
+			<!-- Willamette - contentDM but with different CHO URI style -->
+			<xsl:when test="$repository='orsaw'">
+				<!-- get thumbnail -->
+				<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getthumbnail/collection/$1/id/$2')}">
+					<edm:rights>placeholder</edm:rights>
+				</edm:WebResource>
+				<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}">
+					<edm:rights>placeholder</edm:rights>
+				</edm:WebResource>
+			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
 
@@ -196,6 +210,12 @@
 				<xsl:if test="dc:identifier[matches(., '.jpg$')]">
 					<edm:preview rdf:resource="{dc:identifier[matches(., '.jpg$')]}"/>
 				</xsl:if>
+			</xsl:when>
+			<!-- Willamette - contentDM but with different CHO URI style -->
+			<xsl:when test="$repository='orsaw'">
+				<!-- get thumbnail -->
+				<edm:preview rdf:resource="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getthumbnail/collection/$1/id/$2')}"/>
+				<edm:object rdf:resource="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}"/>
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>

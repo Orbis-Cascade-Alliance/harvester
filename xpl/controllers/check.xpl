@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Changes:
+
+    09/23/15    KEF     The count was only tallying the first page for Willamette,
+                        which has a complicated set-up with a proxy to their
+                        CDM server.  It looks like the code in the recurse
+                        template was using an overly-restrictive namespace 
+                        mapping.  I changed it to the same mapping that is
+                        used in the initial page count and all is now well.
+-->
 <p:pipeline xmlns:p="http://www.orbeon.com/oxf/pipeline" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms">
 
 	<p:param type="input" name="data"/>
@@ -218,12 +228,12 @@
 									<xsl:when test="$oai/descendant::oai:resumptionToken">
 										<xsl:call-template name="recurse">
 											<xsl:with-param name="token" select="$oai/descendant::oai:resumptionToken"/>
-											<xsl:with-param name="count" select="$count + count($oai/descendant::oai_dc:dc[dc:relation[contains(., $ark)]])"/>
+											<xsl:with-param name="count" select="$count + count($oai/descendant::oai:metadata/*[dc:relation[contains(., $ark)]])"/>
 											<xsl:with-param name="set" select="$set"/>
 										</xsl:call-template>
 									</xsl:when>
 									<xsl:otherwise>
-										<xsl:value-of select="$count + count($oai/descendant::oai_dc:dc[dc:relation[contains(., $ark)]])"/>
+										<xsl:value-of select="$count + count($oai/descendant::oai:metadata/*[dc:relation[contains(., $ark)]])"/>
 									</xsl:otherwise>
 								</xsl:choose>
 
