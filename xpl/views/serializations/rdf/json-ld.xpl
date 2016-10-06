@@ -11,8 +11,21 @@
 	<p:param type="input" name="data"/>
 	<p:param type="output" name="data"/>
 	
+	<!-- document needs to be parsed back into application/xml -->	
 	<p:processor name="oxf:unsafe-xslt">		
 		<p:input name="data" href="#data"/>		
+		<p:input name="config">
+			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:saxon="http://saxon.sf.net/">
+				<xsl:template match="/">
+					<xsl:copy-of select="saxon:parse(/document)/*"/>
+				</xsl:template>				
+			</xsl:stylesheet>
+		</p:input>
+		<p:output name="data" id="xml"/>	
+	</p:processor>
+	
+	<p:processor name="oxf:unsafe-xslt">		
+		<p:input name="data" href="#xml"/>		
 		<p:input name="config" href="../../../../ui/xslt/serializations/rdf/json-ld.xsl"/>
 		<p:output name="data" id="model"/>		
 	</p:processor>

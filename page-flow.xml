@@ -33,9 +33,10 @@
 	<page path="/harvester/query" view="xpl/controllers/conneg-sparql.xpl"/>
 	
 	<!-- **** DATA DUMPS **** -->
-	<page path="/harvester/download/(.*)\.rdf" view="oxf:/apps/harvester/download/${1}.rdf"/>
-	<page path="/harvester/download/(.*)\.jsonld" view="xpl/controllers/serialize-json-ld.xpl"/>
-	<page path="/harvester/download/(.*)\.ttl" view="xpl/controllers/serialize-ttl.xpl"/>
+	<page path="/harvester/void.rdf" view="xpl/views/serializations/sparql/void.xpl"/>
+	<page path="/harvester/void.ttl" model="xpl/views/serializations/sparql/void.xpl" view="xpl/views/serializations/rdf/ttl.xpl"/>
+	<page path="/harvester/void.jsonld" model="xpl/views/serializations/sparql/void.xpl" view="xpl/views/serializations/rdf/json-ld.xpl"/>
+	<page path="/harvester/download/[\d]+\.(?:ttl|rdf|jsonld)" view="xpl/models/sparql/aggregate.xpl"/>
 	
 	<!-- ****************
 	* ADMIN INTERFACE *
@@ -67,9 +68,9 @@
 	
 	<!-- pass the repository request parameter to the pipeline to load the RDF/XML and execute the transformation and serialization (into a file) of RDF/XML, TTL, or JSON-LD 
 	The XForms Submissions are GET, but have no output (seralization='none'). The process is much more efficient handled in the XPL workflow than through XForms controls in the web interface -->
-	<page path="/harvester/admin/generateXML" model="xpl/controllers/generate-rdfxml.xpl"/>
+	<!--<page path="/harvester/admin/generateXML" model="xpl/controllers/generate-rdfxml.xpl"/>
 	<page path="/harvester/admin/generateTTL" model="xpl/controllers/generate-ttl.xpl"/>
-	<page path="/harvester/admin/generateJSON" model="xpl/controllers/generate-json.xpl"/>
+	<page path="/harvester/admin/generateJSON" model="xpl/controllers/generate-json.xpl"/>-->
 	
 	<epilogue url="oxf:/config/epilogue.xpl"/>
 </config>

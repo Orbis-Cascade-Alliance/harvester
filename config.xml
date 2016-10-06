@@ -12,4 +12,5 @@
 		<update>http://localhost:3030/nwda/update</update>
 	</sparql>
 	<limit>24</limit>
+	<dpla_limit>10000</dpla_limit>
 </config>

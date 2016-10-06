@@ -41,9 +41,8 @@
 					<table class="table table-striped">
 						<thead>
 							<tr>
-								<th style="width:60%">Repository</th>
-								<th style="width:10%" class="text-center">Count</th>
-								<th class="text-center">Downloads</th>
+								<th style="width:80%">Repository</th>
+								<th style="width:20%" class="text-center">Count</th>								
 							</tr>
 						</thead>
 						<tbody>
@@ -54,12 +53,38 @@
 				</div>
 				<div class="col-md-3">
 					<div class="highlight">
+						<h3>Export</h3>
+						<p>Data dumps in the DPLA Metadata Application Profile (RDF) are available in three serializations.</p>
+						<table class="table-dl">
+							<tr>
+								<td>
+									<img src="{$display_path}ui/images/rdf-large.gif"/>
+								</td>
+								<td>
+									<strong>Linked Data (VoID): </strong>
+									<a href="void.jsonld">JSON-LD</a>, <a href="void.ttl">TTL</a>, <a href="void.rdf">RDF/XML</a>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="highlight">
 						<h3>Updates</h3>
 						<p>The Atom feed provides access to recently updated Cultural Heritage Objects in the system.</p>
+						<table class="table-dl">
+							<tr>
+								<td>
+									<a href="feed">
+										<img src="{$display_path}ui/images/atom-large.png" alt="Atom"/>
+									</a>
+								</td>
+								<td>
+									<strong>Atom: </strong>
+									<a href="feed">XML</a>
+								</td>
+							</tr>
+						</table>
 						<p>
-							<a href="feed">
-								<img src="{$display_path}ui/images/atom-large.png" alt="Atom"/>
-							</a>
+							
 						</p>
 					</div>
 				</div>
@@ -80,31 +105,8 @@
 			<td class="text-center">
 				<xsl:value-of select="format-number(res:binding[@name='count']/res:literal, '###,###')"/>
 			</td>
-			<td class="text-center">				
-				<!-- display links and filesizes for data dumps -->
-				<xsl:apply-templates select="/content/files/file[substring-before(., '.') = $repository]">
-					<!-- sort by extension in ascending order -->
-					<xsl:sort select="substring-after(., '.')" order="ascending"/>
-				</xsl:apply-templates>
-			</td>
 		</tr>
 	</xsl:template>
 	
-	<xsl:template match="file">
-		<xsl:if test="substring-after(., '.') = 'rdf'">
-			<a href="download/{.}">RDF/XML</a>
-		</xsl:if>
-		<xsl:if test="substring-after(., '.') = 'jsonld'">
-			<a href="download/{.}">JSON-LD</a>
-		</xsl:if>
-		<xsl:if test="substring-after(., '.') = 'ttl'">
-			<a href="download/{.}">RDF/TTL</a>
-		</xsl:if>
-		<xsl:text> (</xsl:text>		
-		<xsl:value-of select="format-number(@size div 1024, '###,###')"/>
-		<xsl:text> KB)</xsl:text>
-		<xsl:if test="not(position()=last())">
-			<br/>
-		</xsl:if>
-	</xsl:template>
+	
 </xsl:stylesheet>
