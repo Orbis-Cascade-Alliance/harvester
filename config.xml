@@ -3,6 +3,8 @@
 	<url>http://harvester.orbiscascade.org/</url>
 	<production_server>http://archiveswest.orbiscascade.org/</production_server>
 	<title>Archives West Harvester</title>
+	<description>These are the cultural heritage objects aggregated by the Orbis Cascade Alliance.</description>
+	<publisher>Orbis Cascade Alliance</publisher>
 	<repository_rdf>http://archiveswest.orbiscascade.org:8080/orbeon/nwda/repositories.rdf</repository_rdf>
 	<sparql>
 		<query>http://localhost:3030/nwda/query</query>
