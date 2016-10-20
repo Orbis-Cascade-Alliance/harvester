@@ -56,6 +56,7 @@
 		the mandatory repository parameter which must match the main agency code, and the optional ark parameter.
 		It will generate transform OAI sets into RDF for view. It will not post data -->
 	<page path="/harvester/admin/getRDF" view="xpl/controllers/getRDF.xpl"/>
+	<page path="/harvester/getRDF" view="xpl/controllers/getRDF.xpl"/>
 	
 	<!-- ingest accepts the mandatory sets parameter, with multiple sets from the same repository separated by |, 
 		the mandatory repository parameter which must match the main agency code, and the optional ark parameter.
