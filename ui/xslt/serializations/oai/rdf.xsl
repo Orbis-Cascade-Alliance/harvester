@@ -102,7 +102,7 @@
 				<xsl:value-of select="dc:title"/>
 			</dcterms:title>
 			<xsl:apply-templates
-				select="dc:date | dc:type | dc:creator | dc:language | dc:contributor | dc:rights | dc:format | dc:subject | dc:coverage | dc:extent | dc:coverage | dc:spatial"/>
+				select="dc:date[1] | dc:type | dc:creator | dc:language | dc:contributor | dc:rights | dc:format | dc:subject | dc:coverage | dc:extent | dc:coverage | dc:spatial"/>
 
 			<xsl:if test="dc:description">
 				<dcterms:description>
