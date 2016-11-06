@@ -1,6 +1,7 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
-	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:res="http://www.w3.org/2005/sparql-results#">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:res="http://www.w3.org/2005/sparql-results#">
 	<head>
 		<title>OAI-PMH Harvester: Admin</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
@@ -40,16 +41,16 @@
 			</xforms:instance>
 
 			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
-				<xi:include href="../config.xml"></xi:include>
+				<xi:include href="../config.xml"/>
 			</xforms:instance>
 
 
 			<xforms:instance id="feed" xxforms:exclude-result-prefixes="#all">
-				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"></OAI-PMH>
+				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"/>
 			</xforms:instance>
 
 			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
-				<rdf:RDF></rdf:RDF>
+				<rdf:RDF/>
 			</xforms:instance>
 
 			<!-- sparql update -->
@@ -93,7 +94,7 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 			</xforms:instance>
 
 			<xforms:instance id="sparqlResponse">
-				<sparql/>
+				<sparql></sparql>
 			</xforms:instance>
 
 			<!-- ************************* SUBMISSIONS ************************** -->
@@ -109,7 +110,8 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 				</xforms:action>
 			</xforms:submission>-->
 
-			<xforms:submission id="get-repository-rdf" serialization="none" method="get" action="{instance('config')/repository_rdf}" replace="instance" instance="rdf">
+			<xforms:submission id="get-repository-rdf" serialization="none" method="get" action="{instance('config')/repository_rdf}" replace="instance"
+				instance="rdf">
 				<xforms:header>
 					<xforms:name>User-Agent</xforms:name>
 					<xforms:value>XForms/harvester.orbiscascade.org</xforms:value>
@@ -118,21 +120,23 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 				<xforms:action ev:event="xforms-submit-done">
 					<!-- first purge triples if the RDF has been successfully loaded -->
 					<!-- submit SPARQL/Update to purge arch:Archive triples -->
-					<xforms:setvalue ref="instance('sparqlQuery')" value="instance('sparql-update-templates')/query[@id='purge-repositories']"></xforms:setvalue>
-					<xforms:send submission="delete-graph"></xforms:send>
+					<xforms:setvalue ref="instance('sparqlQuery')" value="instance('sparql-update-templates')/query[@id='purge-repositories']"/>
+					<xforms:send submission="delete-graph"/>
 
 					<xforms:action ev:event="xforms-submit-done">
 						<!-- post RDF and then refresh the repository list -->
-						<xforms:send submission="post-rdf"></xforms:send>
+						<xforms:send submission="post-rdf"/>
 						<xforms:action ev:event="xforms-sumit-done">
-							<xforms:delete nodeset="instance('repository-list')/repository"></xforms:delete>
-							<xforms:setvalue ref="instance('sparqlQuery')" value="instance('list-repositories')"></xforms:setvalue>
-							<xforms:send submission="submit-sparqlQuery"></xforms:send>
+							<xforms:delete nodeset="instance('repository-list')/repository"/>
+							<xforms:setvalue ref="instance('sparqlQuery')" value="instance('list-repositories')"/>
+							<xforms:send submission="submit-sparqlQuery"/>
 							<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
-								<xforms:insert context="instance('repository-list')" nodeset="./child::node()[last()]" origin="instance('repository-template')"></xforms:insert>
-								<xforms:setvalue ref="instance('repository-list')/repository[last()]/name" value="context()/res:binding[@name='name']/res:literal"></xforms:setvalue>
-								<xforms:setvalue ref="instance('repository-list')/repository[last()]/uri" value="context()/res:binding[@name='uri']/res:uri"></xforms:setvalue>
-								<xforms:setvalue ref="instance('repository-list')/repository[last()]/count" value="context()/res:binding[@name='count']/res:literal"></xforms:setvalue>
+								<xforms:insert context="instance('repository-list')" nodeset="./child::node()[last()]" origin="instance('repository-template')"/>
+								<xforms:setvalue ref="instance('repository-list')/repository[last()]/name"
+									value="context()/res:binding[@name='name']/res:literal"/>
+								<xforms:setvalue ref="instance('repository-list')/repository[last()]/uri" value="context()/res:binding[@name='uri']/res:uri"/>
+								<xforms:setvalue ref="instance('repository-list')/repository[last()]/count"
+									value="context()/res:binding[@name='count']/res:literal"/>
 							</xforms:action>
 						</xforms:action>
 					</xforms:action>
@@ -140,19 +144,20 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 				</xforms:action>
 			</xforms:submission>
 
-			<xforms:submission id="post-rdf" action="{instance('config')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post" mediatype="application/rdf+xml">
+			<xforms:submission id="post-rdf" action="{instance('config')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post"
+				mediatype="application/rdf+xml">
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Successfully posted to endpoint.</xforms:setvalue>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Post to endpoint failed.</xforms:message>
 			</xforms:submission>
 
 			<!-- SPARQL queries -->
-			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml" ref="instance('sparqlResponse')"
-				replace="instance" method="get">
+			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
+				ref="instance('sparqlResponse')" replace="instance" method="get">
 				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
 			</xforms:submission>
 
-			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlQuery')" serialization="text/plain" replace="none" method="post"
-				mediatype="application/sparql-update">
+			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlQuery')" serialization="text/plain"
+				replace="none" method="post" mediatype="application/sparql-update">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
 				</xforms:action>
@@ -161,13 +166,13 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
 			<!-- get the list of repositories from the SPARQL endpoint on xforms-model-construct-done -->
 			<xforms:action ev:event="xforms-model-construct-done">
-				<xforms:setvalue ref="instance('sparqlQuery')" value="instance('list-repositories')"></xforms:setvalue>
-				<xforms:send submission="submit-sparqlQuery"></xforms:send>
+				<xforms:setvalue ref="instance('sparqlQuery')" value="instance('list-repositories')"/>
+				<xforms:send submission="submit-sparqlQuery"/>
 				<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
-					<xforms:insert context="instance('repository-list')" nodeset="./child::node()[last()]" origin="instance('repository-template')"></xforms:insert>
-					<xforms:setvalue ref="instance('repository-list')/repository[last()]/name" value="context()/res:binding[@name='name']/res:literal"></xforms:setvalue>
-					<xforms:setvalue ref="instance('repository-list')/repository[last()]/uri" value="context()/res:binding[@name='uri']/res:uri"></xforms:setvalue>
-					<xforms:setvalue ref="instance('repository-list')/repository[last()]/count" value="context()/res:binding[@name='count']/res:literal"></xforms:setvalue>
+					<xforms:insert context="instance('repository-list')" nodeset="./child::node()[last()]" origin="instance('repository-template')"/>
+					<xforms:setvalue ref="instance('repository-list')/repository[last()]/name" value="context()/res:binding[@name='name']/res:literal"/>
+					<xforms:setvalue ref="instance('repository-list')/repository[last()]/uri" value="context()/res:binding[@name='uri']/res:uri"/>
+					<xforms:setvalue ref="instance('repository-list')/repository[last()]/count" value="context()/res:binding[@name='count']/res:literal"/>
 				</xforms:action>
 			</xforms:action>
 		</xforms:model>
@@ -183,7 +188,7 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 							<p>
 								<span class="glyphicon glyphicon-info-sign"></span>
 								<strong>Status:</strong>
-								<xforms:output ref="instance('control-instance')/status"></xforms:output>
+								<xforms:output ref="instance('control-instance')/status"/>
 							</p>
 						</div>
 					</xforms:group>
@@ -207,20 +212,27 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 								</thead>
 								<tbody>
 									<xforms:repeat nodeset="repository">
-										<xforms:var name="uri" select="uri"></xforms:var>
+										<xforms:var name="uri" select="uri"/>
 										<tr>
-											<td><a href="{$uri}" target="_blank"><xforms:output ref="name"></xforms:output></a></td>
-											<td><xforms:output ref="count"></xforms:output></td>
+											<td>
+												<xforms:trigger appearance="minimal">
+													<xforms:label value="name"/>
+													<xforms:action ev:event="DOMActivate">
+														<xforms:load show="new" resource="{$uri}"/>
+													</xforms:action>
+												</xforms:trigger>
+											</td>
+											<td><xforms:output ref="count"/></td>
 											<td>
 												<xforms:group ref=".[number(count) &gt; 0]">
 													<xforms:trigger appearance="minimal">
 														<xforms:label><span class="glyphicon glyphicon-remove"></span></xforms:label>
 														<xforms:hint>Purge triples from this repository</xforms:hint>
 														<xforms:action ev:event="DOMActivate">
-															<xforms:setvalue ref="instance('control-instance')/repository-uri" value="$uri"></xforms:setvalue>
-															<xforms:dispatch target="delete-chos-dialog" name="fr-show"></xforms:dispatch>
+															<xforms:setvalue ref="instance('control-instance')/repository-uri" value="$uri"/>
+															<xforms:dispatch target="delete-chos-dialog" name="fr-show"/>
 														</xforms:action>
-													</xforms:trigger>													
+													</xforms:trigger>
 												</xforms:group>
 											</td>
 										</tr>
@@ -242,7 +254,7 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 								<xforms:label><span class="glyphicon glyphicon-refresh"></span>Refresh Repository Metadata</xforms:label>
 								<xforms:action ev:event="DOMActivate">
 									<!-- then get repository RDF from NWDA and repost to SPARQL endpoint -->
-									<xforms:send submission="get-repository-rdf"></xforms:send>
+									<xforms:send submission="get-repository-rdf"/>
 								</xforms:action>
 							</xforms:trigger>
 						</li>
@@ -251,12 +263,11 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 						</li>
 						<li>
 							<a href="import"><span class="glyphicon glyphicon-import"></span>Batch Import OAI-PMH</a>
-						</li>						
+						</li>
 					</ul>
 				</div>
 			</div>
 		</div>
-
 		<fr:alert-dialog id="delete-chos-dialog">
 			<fr:label>Delete Cultural Heritage Objects</fr:label>
 			<fr:message>Do you wish to purge all triples associated with Cultural Heritage Objects from this repository?</fr:message>
@@ -268,25 +279,22 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 				<xforms:action ev:event="DOMActivate">
 					<!-- iterate through repositories with a count greater than 0 -->
 					<xforms:setvalue ref="instance('sparqlQuery')"
-						value="replace(instance('sparql-update-templates')/query[@id='purge-chos-from-repo'], 'URI', instance('control-instance')/repository-uri)"></xforms:setvalue>
-					<xforms:send submission="delete-graph"></xforms:send>
-
+						value="replace(instance('sparql-update-templates')/query[@id='purge-chos-from-repo'], 'URI', instance('control-instance')/repository-uri)"/>
+					<xforms:send submission="delete-graph"/>
 					<!-- refresh the repository list -->
 					<xforms:action ev:event="xforms-submit-done">
-						<xforms:setvalue ref="instance('control-instance')/status">CHOs successfully deleted from triplestore.</xforms:setvalue>
-						
-						<xforms:delete nodeset="instance('repository-list')/*"/>
-						<xforms:setvalue ref="instance('sparqlQuery')" value="instance('list-repositories')"></xforms:setvalue>
-						<xforms:send submission="submit-sparqlQuery"></xforms:send>
+						<xforms:setvalue ref="instance('control-instance')/status">CHOs successfully deleted from triplestore.</xforms:setvalue> <xforms:delete
+							nodeset="instance('repository-list')/*"/>
+						<xforms:setvalue ref="instance('sparqlQuery')" value="instance('list-repositories')"/>
+						<xforms:send submission="submit-sparqlQuery"/>
 						<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
-							<xforms:insert context="instance('repository-list')" nodeset="./child::node()[last()]" origin="instance('repository-template')"></xforms:insert>
-							<xforms:setvalue ref="instance('repository-list')/repository[last()]/name" value="context()/res:binding[@name='name']/res:literal"></xforms:setvalue>
-							<xforms:setvalue ref="instance('repository-list')/repository[last()]/uri" value="context()/res:binding[@name='uri']/res:uri"></xforms:setvalue>
-							<xforms:setvalue ref="instance('repository-list')/repository[last()]/count" value="context()/res:binding[@name='count']/res:literal"></xforms:setvalue>
+							<xforms:insert context="instance('repository-list')" nodeset="./child::node()[last()]" origin="instance('repository-template')"/>
+							<xforms:setvalue ref="instance('repository-list')/repository[last()]/name" value="context()/res:binding[@name='name']/res:literal"/>
+							<xforms:setvalue ref="instance('repository-list')/repository[last()]/uri" value="context()/res:binding[@name='uri']/res:uri"/>
+							<xforms:setvalue ref="instance('repository-list')/repository[last()]/count" value="context()/res:binding[@name='count']/res:literal"
+							/>
 						</xforms:action>
-					</xforms:action>
-
-				</xforms:action>
+					</xforms:action> </xforms:action>
 			</fr:positive-choice>
 		</fr:alert-dialog>
 	</body>
