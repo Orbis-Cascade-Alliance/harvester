@@ -18,14 +18,26 @@
 	xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
 	xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dpla="http://dp.la/terms/"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:ore="http://www.openarchives.org/ore/terms/"
-	exclude-result-prefixes="oai_dc oai xs harvester" xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester" version="2.0">
+	xmlns:atom="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/"
+	xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester"
+	exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx" version="2.0">
 	<xsl:output indent="yes" encoding="UTF-8"/>
 
+	<!-- request parameters -->
 	<xsl:param name="mode" select="doc('input:request')/request/parameters/parameter[name = 'mode']/value"/>
 	<xsl:param name="repository" select="/content/controls/repository"/>
 	<xsl:param name="set" select="/content/controls/set"/>
 	<xsl:param name="ark" select="/content/controls/ark"/>
 	<xsl:param name="production_server" select="/content/config/production_server"/>
+
+	<!-- load Google Sheets Atom feeds into variables for normalization -->
+	<xsl:variable name="places" as="element()*">
+		<xsl:copy-of select="document(/content/config/sheets/places)/*"/>
+	</xsl:variable>
+
+	<xsl:variable name="subjects" as="element()*">
+		<xsl:copy-of select="document(/content/config/sheets/subjects)/*"/>
+	</xsl:variable>
 
 	<xsl:template match="/">
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
@@ -78,7 +90,7 @@
 				</xsl:matching-substring>
 			</xsl:analyze-string>
 		</xsl:variable>
-		
+
 		<!-- parse content type -->
 		<xsl:variable name="content-type">
 			<xsl:if test="dc:format[contains(., '/')][1]">
@@ -87,9 +99,9 @@
 						<xsl:value-of select="regex-group(1)"/>
 					</xsl:matching-substring>
 				</xsl:analyze-string>
-			</xsl:if>			
+			</xsl:if>
 		</xsl:variable>
-		
+
 		<!-- parse rights statement from dc:rights -->
 		<xsl:variable name="rights">
 			<xsl:if test="dc:rights[starts-with(normalize-space(.), 'http://rightsstatements.org')]">
@@ -197,16 +209,16 @@
 			<xsl:if test="starts-with(normalize-space(.), 'http://rightsstatements.org')">
 				<dcterms:rights rdf:resource="{normalize-space(.)}"/>
 			</xsl:if>
-		</xsl:for-each>				
+		</xsl:for-each>
 	</xsl:template>
-	
+
 	<!-- evaluate languages, ensure they are valid to xs:lanugate -->
 	<xsl:template match="dc:language">
 		<xsl:for-each select="tokenize(., ';')">
 			<dcterms:language>
 				<xsl:value-of select="lower-case(normalize-space(.))"/>
 			</dcterms:language>
-		</xsl:for-each>	
+		</xsl:for-each>
 	</xsl:template>
 
 	<!-- ******
@@ -216,10 +228,9 @@
 	<xsl:template match="dc:*">
 		<!-- handle multiple terms joined by semicolons -->
 		<xsl:variable name="property" select="local-name()"/>
-		<xsl:for-each select="tokenize(., ';')">
+		<xsl:for-each select="tokenize(normalize-space(.), ';')">
 			<!-- ignore 0 length strings -->
 			<xsl:if test="string-length(normalize-space(.)) &gt; 0">
-
 				<!-- conditionals for ignoring or processing specific properties differently -->
 				<xsl:choose>
 					<xsl:when test="$property = 'format'">
@@ -233,7 +244,36 @@
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
-							<xsl:value-of select="normalize-space(.)"/>
+							<!-- normalization -->
+							<xsl:choose>
+								<xsl:when test="$property = 'subject'">
+									<xsl:variable name="label" select="normalize-space(.)"/>
+									
+									<xsl:choose>
+										<xsl:when test="$subjects//atom:entry[gsx:label=$label]">
+											<xsl:attribute name="rdf:resource" select="$subjects//atom:entry[gsx:label=$label]/gsx:uri"/>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="normalize-space(.)"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</xsl:when>
+								<xsl:when test="$property = 'spatial' or $property='coverage'">
+									<xsl:variable name="label" select="normalize-space(.)"/>
+									
+									<xsl:choose>
+										<xsl:when test="$places//atom:entry[gsx:label=$label]">
+											<xsl:attribute name="rdf:resource" select="$places//atom:entry[gsx:label=$label]/gsx:uri"/>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="normalize-space(.)"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="normalize-space(.)"/>
+								</xsl:otherwise>
+							</xsl:choose>
 						</xsl:element>
 					</xsl:otherwise>
 				</xsl:choose>
@@ -249,7 +289,8 @@
 
 		<xsl:choose>
 			<!-- contentDM institutions -->
-			<xsl:when test="$repository = 'waps' or $repository = 'idbb' or $repository = 'US-ula' or $repository = 'US-uuml' or $repository = 'wauar' or $repository='wabewwuh'">
+			<xsl:when
+				test="$repository = 'waps' or $repository = 'idbb' or $repository = 'US-ula' or $repository = 'US-uuml' or $repository = 'wauar' or $repository = 'wabewwuh'">
 				<!-- get thumbnail -->
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}">
 					<xsl:if test="string-length($content-type) &gt; 0">
@@ -259,7 +300,7 @@
 					</xsl:if>
 					<xsl:if test="string($rights)">
 						<edm:rights rdf:resource="{$rights}"/>
-					</xsl:if>					
+					</xsl:if>
 				</edm:WebResource>
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}">
 					<xsl:if test="string-length($content-type) &gt; 0">
@@ -334,7 +375,8 @@
 		<xsl:param name="cho_uri"/>
 		<xsl:choose>
 			<!-- contentDM institutions -->
-			<xsl:when test="$repository = 'waps' or $repository = 'idbb' or $repository = 'US-ula' or $repository = 'US-uuml' or $repository = 'wauar' or $repository='wabewwuh'">
+			<xsl:when
+				test="$repository = 'waps' or $repository = 'idbb' or $repository = 'US-ula' or $repository = 'US-uuml' or $repository = 'wauar' or $repository = 'wabewwuh'">
 				<!-- get thumbnail -->
 				<edm:preview rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}"/>
 				<edm:object rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}"/>
@@ -395,7 +437,6 @@
 			<xsl:when test="$val castable as xs:gYearMonth">http://www.w3.org/2001/XMLSchema#gYearMonth</xsl:when>
 			<xsl:when test="$val castable as xs:gYear">http://www.w3.org/2001/XMLSchema#gYear</xsl:when>
 		</xsl:choose>
-
 	</xsl:function>
 
 </xsl:stylesheet>

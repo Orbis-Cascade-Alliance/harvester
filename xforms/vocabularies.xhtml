@@ -1,0 +1,165 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"
+	xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:res="http://www.w3.org/2005/sparql-results#">
+	<head>
+		<title>OAI-PMH Harvester: Ingest Vocabularies</title>
+		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
+		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css" />
+		<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+		<script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico" />
+		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png" />
+		<link rel="stylesheet" href="/apps/harvester/xforms/css/style.css" />
+
+		<xforms:model>
+			<xforms:instance id="control-instance" xxforms:exclude-result-prefixes="#all">
+				<controls xmlns="">
+					<status></status>
+					<spreadsheet_url></spreadsheet_url>
+				</controls>
+			</xforms:instance>
+			
+			<xforms:instance id="type" xxforms:exclude-result-prefixes="#all">
+				<type xmlns=""/>
+			</xforms:instance>
+
+			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
+				<xi:include href="../config.xml"/>
+			</xforms:instance>
+
+			<xforms:instance id="feed" xxforms:exclude-result-prefixes="#all">
+				<feed xmlns="http://www.w3.org/2005/Atom"/>
+			</xforms:instance>
+
+			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
+				<rdf:RDF/>
+			</xforms:instance>
+
+			<!-- sparql update -->
+			<xforms:instance id="sparql-update-templates">
+				<queries xmlns="">
+					<query id="purge-vocabs">
+						<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX arch:	<http://purl.org/archival/vocab/arch#>
+DELETE {?s ?p ?o} WHERE { ?s rdf:type arch:Archive . ?s ?p ?o }]]>
+					</query>
+				</queries>
+			</xforms:instance>
+
+			<xforms:instance id="sparqlQuery">
+				<query xmlns=""></query>
+			</xforms:instance>
+
+			<xforms:instance id="sparqlResponse">
+				<sparql></sparql>
+			</xforms:instance>
+
+			<!-- ************************* SUBMISSIONS ************************** -->
+			<!-- Google Sheets -->
+			<xforms:submission id="load-worksheet" serialization="none" method="get" action="{instance('control-instance')/spreadsheet_url}" instance="feed"
+				replace="instance">
+				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to receive Atom from Google Drive for the worksheet ID.</xforms:message>
+				<!-- if a feed is successfully received, set the id for the workshop -->
+				<xforms:action ev:event="xforms-submit-done">
+					<xforms:insert nodeset="instance('rdf')"
+						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/views/serializations/atom/rdf.xpl', ('data', 'controls'), (instance('feed'), instance('type')), 'data')"></xforms:insert>
+					<!-- if there is at least one entry, execute transformation into RDF -->
+					<!--<xforms:action if="count(instance('feed')//atom:entry) &gt; 0">
+						<xforms:insert nodeset="instance('rdf')"
+							origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/views/serializations/atom/rdf.xpl', ('data', 'controls'), (instance('feed'), instance('type')), 'data')"></xforms:insert>
+					</xforms:action>-->
+				</xforms:action>
+			</xforms:submission>
+
+			<!-- RDF -->
+			<xforms:submission id="post-rdf" action="{instance('config')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post"
+				mediatype="application/rdf+xml">
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Successfully posted to endpoint.</xforms:setvalue>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Post to endpoint failed.</xforms:message>
+			</xforms:submission>
+
+			<!-- SPARQL queries -->
+			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
+				ref="instance('sparqlResponse')" replace="instance" method="get">
+				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
+			</xforms:submission>
+
+			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlQuery')" serialization="text/plain"
+				replace="none" method="post" mediatype="application/sparql-update">
+				<xforms:action ev:event="xforms-submit-error">
+					<xforms:message level="modal">SPARQL update failed.</xforms:message>
+				</xforms:action>
+			</xforms:submission>
+
+			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
+			<!-- get the list of repositories from the SPARQL endpoint on xforms-model-construct-done -->
+			<!--<xforms:action ev:event="xforms-model-construct-done">
+				
+			</xforms:action>-->
+		</xforms:model>
+	</head>
+
+
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<xforms:group ref=".[string-length(instance('control-instance')/status) &gt; 0]">
+						<div class="bg-info alert">
+							<p>
+								<span class="glyphicon glyphicon-info-sign"></span>
+								<strong>Status:</strong>
+								<xforms:output ref="instance('control-instance')/status"/>
+							</p>
+						</div>
+					</xforms:group>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<h1>Archvies West: Ingest Vocabuaries from Google Sheets</h1>
+					<xforms:group ref="instance('config')/sheets">
+						<table class="table">
+							<thead>
+								<tr>
+									<th style="width:25%">Entity Type</th>
+									<th style="width:50%">URL</th>
+									<th style="width:25%">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								<xforms:repeat nodeset="*">
+									<xforms:var name="url" select="."/>
+									<xforms:var name="type" select="name()"/>
+									
+									<tr>
+										<td>
+											<xforms:output value="$type"/>
+										</td>
+										<td>
+											<xforms:output value="$url"/>
+										</td>
+										<td>
+											<xforms:trigger appearance="minimal">
+												<xforms:label><span class="glyphicon glyphicon-refresh"/></xforms:label>
+												<xforms:hint>Re-ingest vocabulary</xforms:hint>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:setvalue ref="instance('control-instance')/spreadsheet_url" value="$url"/>
+													<xforms:setvalue ref="instance('type')" value="$type"/>
+													<xforms:send submission="load-worksheet"/>
+												</xforms:action>
+											</xforms:trigger>
+										</td>
+									</tr>
+								</xforms:repeat>
+							</tbody>
+						</table>
+					</xforms:group>
+					<fr:xforms-inspector></fr:xforms-inspector>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
