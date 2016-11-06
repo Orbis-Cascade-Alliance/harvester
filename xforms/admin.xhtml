@@ -220,15 +220,7 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 															<xforms:setvalue ref="instance('control-instance')/repository-uri" value="$uri"></xforms:setvalue>
 															<xforms:dispatch target="delete-chos-dialog" name="fr-show"></xforms:dispatch>
 														</xforms:action>
-													</xforms:trigger>
-													<xforms:trigger appearance="minimal">
-														<xforms:label><span class="glyphicon glyphicon-export"></span></xforms:label>
-														<xforms:hint>Generate RDF dump</xforms:hint>
-														<xforms:action ev:event="DOMActivate">
-															<xforms:setvalue ref="instance('control-instance')/repository-code" value="substring-after($uri, '#')"></xforms:setvalue>
-															<xforms:dispatch target="generate-rdf-file-dialog" name="fr-show"></xforms:dispatch>
-														</xforms:action>
-													</xforms:trigger>
+													</xforms:trigger>													
 												</xforms:group>
 											</td>
 										</tr>
