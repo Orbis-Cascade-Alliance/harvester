@@ -158,26 +158,6 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 				</xforms:action>
 			</xforms:submission>
 
-			<!-- Generation of RDF/XML TTL and JSON-LD dumps -->
-			<xforms:submission id="generate-rdf-xml" serialization="none" method="get" action="/harvester/admin/generateXML?repository={instance('control-instance')/repository-code}" replace="none">
-				<xforms:action ev:event="xforms-submit-error">
-					<xforms:message level="modal">RDF/XML generation failed.</xforms:message>
-				</xforms:action>
-			</xforms:submission>
-
-			<xforms:submission id="generate-ttl" serialization="none" method="get" action="/harvester/admin/generateTTL?repository={instance('control-instance')/repository-code}" replace="none">
-				<xforms:action ev:event="xforms-submit-error">
-					<xforms:message level="modal">TTL generation failed.</xforms:message>
-				</xforms:action>
-			</xforms:submission>
-
-			<xforms:submission id="generate-json-ld" serialization="none" method="get" action="/harvester/admin/generateJSON?repository={instance('control-instance')/repository-code}" replace="none">
-				<xforms:action ev:event="xforms-submit-error">
-					<xforms:message level="modal">JSON-LD generation failed.</xforms:message>
-				</xforms:action>
-			</xforms:submission>
-
-
 			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
 			<!-- get the list of repositories from the SPARQL endpoint on xforms-model-construct-done -->
 			<xforms:action ev:event="xforms-model-construct-done">
@@ -275,43 +255,15 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 							</xforms:trigger>
 						</li>
 						<li>
-							<a href="import"><span class="glyphicon glyphicon-import"></span>Batch Import</a>
+							<a href="vocabularies"><span class="glyphicon glyphicon-import"></span>Ingest Vocabulary RDF</a>
 						</li>
 						<li>
-							<xforms:trigger appearance="minimal">
-								<xforms:label><span class="glyphicon glyphicon-export"></span>Generate RDF Dumps</xforms:label>
-								<xforms:dispatch ev:event="DOMActivate" target="generate-rdf-dump-dialog" name="fr-show"></xforms:dispatch>
-							</xforms:trigger>
-						</li>
+							<a href="import"><span class="glyphicon glyphicon-import"></span>Batch Import OAI-PMH</a>
+						</li>						
 					</ul>
 				</div>
 			</div>
 		</div>
-
-		<fr:alert-dialog id="generate-rdf-dump-dialog">
-			<fr:label>Generate RDF</fr:label>
-			<fr:message>Do you wish to generate new RDF dumps now? This may take several minutes.</fr:message>
-			<fr:negative-choice>
-				<fr:label>No</fr:label>
-			</fr:negative-choice>
-			<fr:positive-choice>
-				<fr:label>Yes</fr:label>
-				<xforms:action ev:event="DOMActivate">
-					<!-- iterate through repositories with a count greater than 0 -->
-					<xforms:action xxforms:iterate="instance('repository-list')/repository[number(count) &gt; 0]">
-						<xforms:var name="repository" select="substring-after(context()/uri, '#')"></xforms:var>
-						<xforms:setvalue ref="instance('control-instance')/repository-code" value="$repository"></xforms:setvalue>
-
-						<!-- generate RDF/XML via web service -->
-						<xforms:send submission="generate-rdf-xml"></xforms:send>
-
-						<!-- Empty GET submissions to generate TTL and JSON-LD through XPL -->
-						<xforms:send submission="generate-ttl"></xforms:send>
-						<xforms:send submission="generate-json-ld"></xforms:send>
-					</xforms:action>
-				</xforms:action>
-			</fr:positive-choice>
-		</fr:alert-dialog>
 
 		<fr:alert-dialog id="delete-chos-dialog">
 			<fr:label>Delete Cultural Heritage Objects</fr:label>
@@ -342,25 +294,6 @@ SELECT ?uri ?name (COUNT(?cho) AS ?count) WHERE {
 						</xforms:action>
 					</xforms:action>
 
-				</xforms:action>
-			</fr:positive-choice>
-		</fr:alert-dialog>
-
-		<fr:alert-dialog id="generate-rdf-file-dialog">
-			<fr:label>Generate RDF</fr:label>
-			<fr:message>Do you wish to generate new RDF dump for this repository now? This may take several minutes.</fr:message>
-			<fr:negative-choice>
-				<fr:label>No</fr:label>
-			</fr:negative-choice>
-			<fr:positive-choice>
-				<fr:label>Yes</fr:label>
-				<xforms:action ev:event="DOMActivate">
-					<!-- generate RDF/XML via web service -->
-					<xforms:send submission="generate-rdf-xml"></xforms:send>
-
-					<!-- Empty GET submissions to generate TTL and JSON-LD through XPL -->
-					<xforms:send submission="generate-ttl"></xforms:send>
-					<xforms:send submission="generate-json-ld"></xforms:send>
 				</xforms:action>
 			</fr:positive-choice>
 		</fr:alert-dialog>
