@@ -103,9 +103,10 @@ DELETE {?s ?p ?o} WHERE { ?s rdf:type arch:Archive . ?s ?p ?o }]]>
 
 
 	<body>
-		<div class="container-fluid">
+		<div class="container-fluid">			
 			<div class="row">
 				<div class="col-md-12">
+					<p><a href="../admin/"><span class="glyphicon glyphicon-arrow-left"></span>Return to Admin</a></p>
 					<xforms:group ref=".[string-length(instance('control-instance')/status) &gt; 0]">
 						<div class="bg-info alert">
 							<p>
@@ -115,10 +116,6 @@ DELETE {?s ?p ?o} WHERE { ?s rdf:type arch:Archive . ?s ?p ?o }]]>
 							</p>
 						</div>
 					</xforms:group>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12">
 					<h1>Archvies West: Ingest Vocabuaries from Google Sheets</h1>
 					<xforms:group ref="instance('config')/sheets">
 						<table class="table">
