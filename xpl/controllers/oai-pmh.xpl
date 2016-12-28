@@ -53,6 +53,7 @@
 				<p:input name="data" href="#request"/>
 				<p:input name="config">
 					<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xsl:param name="set" select="/request/parameters/parameter[name='set']/value"/>
 						<xsl:param name="resumptionToken" select="/request/parameters/parameter[name='resumptionToken']/value"/>
 						<xsl:param name="from" select="/request/parameters/parameter[name='from']/value"/>
 						<xsl:param name="until" select="/request/parameters/parameter[name='until']/value"/>				
@@ -60,6 +61,12 @@
 						<xsl:template match="/">
 							<valid>
 								<xsl:choose>
+									<xsl:when test="not($set = 'primo')">
+										<error code="badArgument" xmlns="http://www.openarchives.org/OAI/2.0/">Invalid Set</error>
+									</xsl:when>
+									<xsl:when test="string($resumptionToken) and not($resumptionToken castable as xs:integer)">
+										<error code="badResumptionToken" xmlns="http://www.openarchives.org/OAI/2.0/">Invalid resumptionToken</error>
+									</xsl:when>
 									<xsl:when test="string($resumptionToken) and not($resumptionToken castable as xs:integer)">
 										<error code="badResumptionToken" xmlns="http://www.openarchives.org/OAI/2.0/">Invalid resumptionToken</error>
 									</xsl:when>

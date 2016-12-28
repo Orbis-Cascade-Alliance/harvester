@@ -45,6 +45,7 @@
 		</xsl:choose>
 	</xsl:variable>
 
+	<!-- construct OAI-PMH response -->
 	<xsl:template match="/">
 		<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -65,6 +66,8 @@
 				</xsl:if>
 				<xsl:value-of select="concat($url, 'oai-pmh/')"/>
 			</request>
+			
+			<!-- conditional to validate and respond, based on the $verb -->
 			<xsl:choose>
 				<xsl:when test="$verb = 'Identify'">
 					<Identify>
@@ -134,14 +137,9 @@
 										</xsl:when>
 										<xsl:otherwise>
 											<xsl:element name="{$verb}" namespace="http://www.openarchives.org/OAI/2.0/">
-												<xsl:choose>
-													<xsl:when test="$verb='ListRecords'">
-														<xsl:apply-templates select="descendant::dpla:SourceResource" mode="ListRecords"/>
-													</xsl:when>
-													<xsl:when test="$verb='ListIdentifiers'">
-														<xsl:apply-templates select="descendant::dpla:SourceResource" mode="ListIdentifiers"/>
-													</xsl:when>
-												</xsl:choose>
+												<xsl:apply-templates select="descendant::ore:Aggregation">
+													<xsl:with-param name="verb" select="$verb"/>
+												</xsl:apply-templates>
 												
 												<xsl:call-template name="resumptionToken"/>
 											</xsl:element>
@@ -180,7 +178,9 @@
 									<xsl:choose>
 										<xsl:when test="$metadataPrefix = 'oai_dc'">
 											<GetRecord>
-												<xsl:apply-templates select="descendant::dpla:SourceResource" mode="ListRecords"/>
+												<xsl:apply-templates select="descendant::ore:Aggregation">
+													<xsl:with-param name="verb" select="$verb"/>
+												</xsl:apply-templates>
 											</GetRecord>
 										</xsl:when>
 										<xsl:otherwise>
@@ -205,75 +205,8 @@
 			</xsl:choose>
 		</OAI-PMH>
 	</xsl:template>
-
-	<xsl:template match="dpla:SourceResource" mode="ListIdentifiers">
-		<xsl:variable name="uri" select="@rdf:about"/>
-
-		<header>
-			<identifier>
-				<xsl:value-of select="$uri"/>
-			</identifier>
-			<datestamp>
-				<xsl:value-of select="//ore:Aggregation[edm:isShownAt/dpla:SourceResource[@rdf:about = $uri]]/dcterms:modified"/>
-			</datestamp>
-			<setSpec>primo</setSpec>
-		</header>
-	</xsl:template>
-
-	<xsl:template match="dpla:SourceResource" mode="ListRecords">
-		<xsl:param name="datestamp"/>
-		
-		<xsl:variable name="uri" select="@rdf:about"/>
-		<record>
-			<header>
-				<identifier>
-					<xsl:value-of select="$uri"/>
-				</identifier>
-				<datestamp>
-					<xsl:value-of select="$datestamp"/>
-				</datestamp>
-				<setSpec>primo</setSpec>
-			</header>
-			<metadata>
-				<oai_dc:dc>
-					<dc:title>
-						<xsl:value-of select="dcterms:title"/>
-					</dc:title>
-					<dc:publisher>
-						<xsl:value-of select="$publisher"/>
-					</dc:publisher>
-					<dc:identifier>
-						<xsl:value-of select="$uri"/>
-					</dc:identifier>
-					<!--<xsl:if test="string(str[@name = 'unitdate_display'])">
-						<dcterms:date>
-							<xsl:value-of select="str[@name = 'unitdate_display']"/>
-						</dcterms:date>
-					</xsl:if>
-					<xsl:if test="string(str[@name = 'extent_display'])">
-						<dcterms:extent>
-							<xsl:value-of select="str[@name = 'extent_display']"/>
-						</dcterms:extent>
-					</xsl:if>
-					<xsl:for-each select="arr[@name = 'language_facet']/str">
-						<dc:language>
-							<xsl:value-of select="."/>
-						</dc:language>
-					</xsl:for-each>
-					<xsl:for-each select="arr[@name = 'subject_facet']/str">
-						<dc:subject>
-							<xsl:value-of select="."/>
-						</dc:subject>
-					</xsl:for-each>
-					<xsl:for-each select="arr[@name = 'geogname_uri']/str">
-						<dcterms:coverage rdf:resource="{.}"/>
-					</xsl:for-each>
-					<dc:rights>Open for public research.</dc:rights>-->
-				</oai_dc:dc>
-			</metadata>
-		</record>
-	</xsl:template>
 	
+	<!-- generate resumptionToken from the $limit defined in the config and the $offset, an integer value for SPARQL that stands as a resumptionToken -->
 	<xsl:template name="resumptionToken">
 		<xsl:if test="$offset &lt; $count">
 			<resumptionToken completeListSize="{$count}" cursor="{$offset}">
@@ -281,5 +214,77 @@
 			</resumptionToken>
 		</xsl:if>
 	</xsl:template>
+
+	<!-- *************** TEMPLATES FOR PROCESSING RDF BACK INTO OAI-PMH METADATA **************** -->
+	<xsl:template match="ore:Aggregation">
+		<header>
+			<identifier>
+				<xsl:value-of select="descendant::dpla:SourceResource/@rdf:about"/>
+			</identifier>
+			<datestamp>
+				<xsl:value-of select="dcterms:modified"/>
+			</datestamp>
+			<setSpec>primo</setSpec>
+		</header>
+	</xsl:template>
+
+	<xsl:template match="ore:Aggregation">	
+		<xsl:param name="verb"/>	
+				
+		<record>
+			<header>
+				<identifier>
+					<xsl:choose>
+						<xsl:when test="$verb = 'GetIdentifiers'">
+							<xsl:value-of select="edm:object/@rdf:resource"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="descendant::dpla:SourceResource/@rdf:about"/>
+						</xsl:otherwise>
+					</xsl:choose>
+					
+				</identifier>
+				<datestamp>
+					<xsl:value-of select="dcterms:modified"/>
+				</datestamp>
+				<setSpec>primo</setSpec>
+			</header>
+			
+			<xsl:if test="$verb = 'GetRecord' or $verb = 'ListRecords'">
+				<metadata>
+					<xsl:apply-templates select="descendant::dpla:SourceResource">
+						<xsl:with-param name="publisher" select="edm:dataProvider/@rdf:resource"/>
+					</xsl:apply-templates>				
+				</metadata>
+			</xsl:if>			
+		</record>
+	</xsl:template>
+	
+	<xsl:template match="dpla:SourceResource">
+		<xsl:param name="publisher"/>
+		
+		<oai_dc:dc>			
+			<xsl:apply-templates select="*"/>		
+			<dc:publisher>
+				<xsl:value-of select="$publisher"/>
+			</dc:publisher>
+			<dc:identifier>
+				<xsl:value-of select="@rdf:about"/>
+			</dc:identifier>
+		</oai_dc:dc>
+	</xsl:template>
+	
+	<xsl:template match="*">
+		<xsl:element name="dc:{local-name()}" namespace="http://purl.org/dc/elements/1.1/">
+			<xsl:choose>
+				<xsl:when test="@rdf:resource">
+					<xsl:value-of select="@rdf:resource"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="."/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:element>
+	</xsl:template>	
 	
 </xsl:stylesheet>
