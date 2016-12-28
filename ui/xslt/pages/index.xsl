@@ -82,6 +82,17 @@
 									<a href="feed">XML</a>
 								</td>
 							</tr>
+							<tr>
+								<td>
+									<a href="feed">
+										<img src="{$display_path}ui/images/oai-pmh.png" alt="OAI-PMH"/>
+									</a>
+								</td>
+								<td>
+									<strong>OAI-PMH: </strong>
+									<a href="oai-pmh/?verb=Identify">Identify</a><xsl:text>, </xsl:text><a href="oai-pmh/?verb=ListRecords&amp;set=primo&amp;metadataPrefix=oai_dc">ListRecords</a>
+								</td>
+							</tr>
 						</table>
 						<p>
 							
