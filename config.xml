@@ -17,4 +17,5 @@
 	</sheets>
 	<limit>24</limit>
 	<dpla_limit>10000</dpla_limit>
+	<oai-pmh_limit>100</oai-pmh_limit>
 </config>
