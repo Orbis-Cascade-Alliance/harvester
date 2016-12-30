@@ -50,26 +50,10 @@
 
 			<xsl:choose>
 				<xsl:when test="$mode = 'test'">
-					<xsl:choose>
-						<xsl:when test="string($ark)">
-							<xsl:apply-templates
-								select="descendant::oai:metadata[position() &lt;= 10]/*[dc:relation[contains(., $ark)]][dc:identifier[matches(., 'https?://')]]"
-							/>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:apply-templates select="descendant::oai:metadata[position() &lt;= 10]/*[dc:identifier[matches(., 'https?://')]]"/>
-						</xsl:otherwise>
-					</xsl:choose>
+					<xsl:apply-templates select="descendant::oai:record[not(oai:header/@status = 'deleted')][position() &lt;= 10]"/>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:choose>
-						<xsl:when test="string($ark)">
-							<xsl:apply-templates select="descendant::oai:metadata/*[dc:relation[contains(., $ark)]][dc:identifier[matches(., 'https?://')]]"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:apply-templates select="descendant::oai:metadata/*[dc:identifier[matches(., 'https?://')]]"/>
-						</xsl:otherwise>
-					</xsl:choose>
+					<xsl:apply-templates select="descendant::oai:record[not(oai:header/@status = 'deleted')]"/>
 				</xsl:otherwise>
 			</xsl:choose>
 
@@ -82,6 +66,26 @@
 				</xsl:if>
 			</xsl:if>
 		</rdf:RDF>
+	</xsl:template>
+
+	<xsl:template match="oai:record">
+		<xsl:choose>
+			<xsl:when test="string($ark)">
+				<xsl:apply-templates select="oai:metadata/*[dc:relation[contains(., $ark)]][dc:identifier[matches(., 'https?://')]]"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:apply-templates select="oai:metadata/*[dc:identifier[matches(., 'https?://')]]"/>
+			</xsl:otherwise>
+		</xsl:choose>
+
+		<xsl:if test="not($mode = 'test') and not($mode = 'form')">
+			<xsl:if test="descendant::oai:resumptionToken">
+				<xsl:call-template name="recurse">
+					<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>
+					<xsl:with-param name="set" select="descendant::oai:request"/>
+				</xsl:call-template>
+			</xsl:if>
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="oai:metadata/*">
@@ -176,8 +180,8 @@
 					</xsl:call-template>
 				</xsl:when>
 				<!-- handle spatial/coverage with lat,long value -->
-				<xsl:when test="matches(*[local-name()='coverage'], '-?\d+\.\d+,-?\d+\.\d+')">
-					<xsl:variable name="coords" select="*[local-name()='coverage'][matches(., '-?\d+\.\d+,-?\d+\.\d+')]"/>
+				<xsl:when test="matches(*[local-name() = 'coverage'], '-?\d+\.\d+,-?\d+\.\d+')">
+					<xsl:variable name="coords" select="*[local-name() = 'coverage'][matches(., '-?\d+\.\d+,-?\d+\.\d+')]"/>
 					<xsl:analyze-string select="$coords" regex="(-?\d+\.\d+),(-?\d+\.\d+)">
 						<xsl:matching-substring>
 							<xsl:call-template name="place">
@@ -185,10 +189,10 @@
 								<xsl:with-param name="long" select="regex-group(2)"/>
 							</xsl:call-template>
 						</xsl:matching-substring>
-					</xsl:analyze-string>					
+					</xsl:analyze-string>
 				</xsl:when>
-				<xsl:when test="matches(*[local-name()='spatial'], '-?\d+\.\d+,-?\d+\.\d+')">
-					<xsl:variable name="coords" select="*[local-name()='spatial'][matches(., '-?\d+\.\d+,-?\d+\.\d+')]"/>
+				<xsl:when test="matches(*[local-name() = 'spatial'], '-?\d+\.\d+,-?\d+\.\d+')">
+					<xsl:variable name="coords" select="*[local-name() = 'spatial'][matches(., '-?\d+\.\d+,-?\d+\.\d+')]"/>
 					<xsl:analyze-string select="$coords" regex="(-?\d+\.\d+),(-?\d+\.\d+)">
 						<xsl:matching-substring>
 							<xsl:call-template name="place">
@@ -196,10 +200,10 @@
 								<xsl:with-param name="long" select="regex-group(2)"/>
 							</xsl:call-template>
 						</xsl:matching-substring>
-					</xsl:analyze-string>					
+					</xsl:analyze-string>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:apply-templates select="*[local-name()='spatial']|*[local-name()='coverage']"/>
+					<xsl:apply-templates select="*[local-name() = 'spatial'] | *[local-name() = 'coverage']"/>
 				</xsl:otherwise>
 			</xsl:choose>
 

@@ -6,7 +6,7 @@
 	xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/" exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="../../templates.xsl"/>
-	<xsl:variable name="display_path"/>
+	<xsl:variable name="display_path">../</xsl:variable>
 
 	<xsl:variable name="namespaces" as="item()*">
 		<namespaces>
@@ -22,6 +22,13 @@
 			<namespace prefix="xsd" uri="http://www.w3.org/2001/XMLSchema#"/>
 		</namespaces>
 	</xsl:variable>
+	
+	<xsl:variable name="hasCoords" as="xs:boolean">
+		<xsl:choose>
+			<xsl:when test="descendant::geo:lat and descendant::geo:long">true</xsl:when>
+			<xsl:otherwise>false</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
 
 	<xsl:template match="/">
 		<html lang="en">
@@ -30,10 +37,14 @@
 				<meta name="viewport" content="width=device-width, initial-scale=1"/>
 				<!-- bootstrap -->
 				<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/result_functions.js"/>
 				<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
 				<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
 				<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
+				<xsl:if test="$hasCoords = true()">
+					<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"/>
+					<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"/>
+					<script type="text/javascript" src="{$display_path}ui/javascript/display_functions.js"/>
+				</xsl:if>
 			</head>
 			<body>
 				<xsl:call-template name="header"/>
@@ -48,6 +59,17 @@
 			<div class="row">
 				<div class="col-md-12">
 					<xsl:apply-templates select="descendant::ore:Aggregation"/>
+
+					<xsl:if test="$hasCoords = true()">
+						<div class="hidden">
+							<span id="lat">
+								<xsl:value-of select="descendant::geo:lat"/>
+							</span>
+							<span id="long">
+								<xsl:value-of select="descendant::geo:long"/>
+							</span>
+						</div>
+					</xsl:if>
 
 				</div>
 			</div>
@@ -67,12 +89,36 @@
 		<h1>
 			<xsl:value-of select="dcterms:title"/>
 		</h1>
-		<div class="col-md-6">
-			<dl class="dl-horizontal"><xsl:apply-templates select="*[not(name() = 'dcterms:title')]"/></dl>
-		</div>
-		<div class="col-md-6">
-			<img src="{$reference}" alt="image" style="max-width:100%"/>
-		</div>
+		
+		<xsl:choose>
+			<xsl:when test="$hasCoords = true()">
+				<div class="col-md-12">
+					<dl class="dl-horizontal">
+						<xsl:apply-templates select="*[not(name() = 'dcterms:title')]">
+							<xsl:sort select="local-name()"/>
+						</xsl:apply-templates>
+					</dl>
+				</div>
+				<div class="col-md-6">
+					<img src="{$reference}" alt="image" style="max-width:100%"/>
+				</div>
+				<div class="col-md-6">
+					<div id="map"/>
+				</div>				
+			</xsl:when>
+			<xsl:otherwise>
+				<div class="col-md-6">
+					<dl class="dl-horizontal">
+						<xsl:apply-templates select="*[not(name() = 'dcterms:title')]">
+							<xsl:sort select="local-name()"/>
+						</xsl:apply-templates>
+					</dl>
+				</div>
+				<div class="col-md-6">
+					<img src="{$reference}" alt="image" style="max-width:100%"/>
+				</div>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template match="*">
