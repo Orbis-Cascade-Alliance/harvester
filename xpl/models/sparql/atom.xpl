@@ -79,7 +79,7 @@ PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
 SELECT ?cho ?title ?repository ?description ?modified ?thumbnail WHERE {
   ?cho a dpla:SourceResource ;
         dcterms:title ?title ;
-        dcterms:isPartOf ?repository .
+        dcterms:relation ?repository .
   OPTIONAL {?cho dcterms:description ?description}
   ?agg edm:aggregatedCHO ?cho ;
        dcterms:modified ?modified .

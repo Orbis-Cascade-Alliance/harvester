@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:res="http://www.w3.org/2005/sparql-results#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
-	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
-	xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/"
-	xmlns:foaf="http://xmlns.com/foaf/0.1/" exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda foaf dpla ore" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.openarchives.org/OAI/2.0/"
+	xmlns:digest="org.apache.commons.codec.digest.DigestUtils" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:res="http://www.w3.org/2005/sparql-results#"
+	xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:prov="http://www.w3.org/ns/prov#"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#"
+	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda foaf dpla ore digest prov geo" version="2.0">
 
 	<xsl:variable name="url" select="//config/url"/>
 	<xsl:variable name="publisher" select="//config/publisher"/>
 	<xsl:variable name="publisher_email" select="//config/publisher_email"/>
 	<xsl:variable name="publisher_code" select="//config/publisher_code"/>
-	
+	<xsl:variable name="repositoryIdentifier" select="substring-before(substring-after($url, 'http://'), '/')"/>
 
 	<!-- request params -->
 	<xsl:param name="verb" select="doc('input:request')/request/parameters/parameter[name = 'verb']/value"/>
@@ -20,7 +22,7 @@
 	<xsl:param name="from" select="doc('input:request')/request/parameters/parameter[name = 'from']/value"/>
 	<xsl:param name="until" select="doc('input:request')/request/parameters/parameter[name = 'until']/value"/>
 	<xsl:param name="resumptionToken" select="doc('input:request')/request/parameters/parameter[name = 'resumptionToken']/value"/>
-	
+
 	<!-- pagination -->
 	<xsl:variable name="limit" select="//config/oai-pmh_limit" as="xs:integer"/>
 	<xsl:variable name="count" select="//count" as="xs:integer"/>
@@ -32,7 +34,7 @@
 			<xsl:otherwise>0</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
-	
+
 	<xsl:variable name="resumptionToken-valid" as="xs:boolean">
 		<xsl:choose>
 			<xsl:when test="string($resumptionToken)">
@@ -66,7 +68,7 @@
 				</xsl:if>
 				<xsl:value-of select="concat($url, 'oai-pmh/')"/>
 			</request>
-			
+
 			<!-- conditional to validate and respond, based on the $verb -->
 			<xsl:choose>
 				<xsl:when test="$verb = 'Identify'">
@@ -90,7 +92,7 @@
 							<oai-identifier>
 								<scheme>oai</scheme>
 								<repositoryIdentifier>
-									<xsl:value-of select="substring-before(substring-after(//url, 'http://'), '/')"/>
+									<xsl:value-of select="$repositoryIdentifier"/>
 								</repositoryIdentifier>
 								<delimiter>:</delimiter>
 								<sampleIdentifier>
@@ -140,7 +142,7 @@
 												<xsl:apply-templates select="descendant::ore:Aggregation">
 													<xsl:with-param name="verb" select="$verb"/>
 												</xsl:apply-templates>
-												
+
 												<xsl:call-template name="resumptionToken"/>
 											</xsl:element>
 										</xsl:otherwise>
@@ -155,7 +157,7 @@
 							<error code="badArgument">No metadata prefix</error>
 						</xsl:otherwise>
 					</xsl:choose>
-				</xsl:when>				
+				</xsl:when>
 				<xsl:when test="$verb = 'GetRecord'">
 					<xsl:choose>
 						<xsl:when test="$identifier">
@@ -205,7 +207,7 @@
 			</xsl:choose>
 		</OAI-PMH>
 	</xsl:template>
-	
+
 	<!-- generate resumptionToken from the $limit defined in the config and the $offset, an integer value for SPARQL that stands as a resumptionToken -->
 	<xsl:template name="resumptionToken">
 		<xsl:if test="$offset &lt; $count">
@@ -228,9 +230,9 @@
 		</header>
 	</xsl:template>
 
-	<xsl:template match="ore:Aggregation">	
-		<xsl:param name="verb"/>	
-				
+	<xsl:template match="ore:Aggregation">
+		<xsl:param name="verb"/>
+
 		<record>
 			<header>
 				<identifier>
@@ -239,32 +241,35 @@
 							<xsl:value-of select="edm:object/@rdf:resource"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:value-of select="descendant::dpla:SourceResource/@rdf:about"/>
+							<xsl:variable name="uri" select="string(descendant::dpla:SourceResource/@rdf:about)"/>
+							<xsl:if test="string(normalize-space($uri))">
+								<xsl:value-of select="concat('oai:', $repositoryIdentifier, ':', digest:md5Hex(normalize-space($uri)))"/>
+							</xsl:if>
 						</xsl:otherwise>
 					</xsl:choose>
-					
+
 				</identifier>
 				<datestamp>
-					<xsl:value-of select="dcterms:modified"/>
+					<xsl:value-of select="substring(prov:generatedAtTime, 1, 10)"/>
 				</datestamp>
 				<setSpec>primo</setSpec>
 			</header>
-			
+
 			<xsl:if test="$verb = 'GetRecord' or $verb = 'ListRecords'">
 				<metadata>
 					<xsl:apply-templates select="descendant::dpla:SourceResource">
 						<xsl:with-param name="publisher" select="edm:dataProvider/@rdf:resource"/>
-					</xsl:apply-templates>				
+					</xsl:apply-templates>
 				</metadata>
-			</xsl:if>			
+			</xsl:if>
 		</record>
 	</xsl:template>
-	
+
 	<xsl:template match="dpla:SourceResource">
 		<xsl:param name="publisher"/>
-		
-		<oai_dc:dc>			
-			<xsl:apply-templates select="*"/>		
+
+		<oai_dc:dc>
+			<xsl:apply-templates select="*"/>
 			<dc:publisher>
 				<xsl:value-of select="$publisher"/>
 			</dc:publisher>
@@ -273,7 +278,17 @@
 			</dc:identifier>
 		</oai_dc:dc>
 	</xsl:template>
-	
+
+	<xsl:template match="dcterms:coverage[edm:Place]">
+		<dc:coverage>
+			<xsl:apply-templates select="edm:Place"/>
+		</dc:coverage>		
+	</xsl:template>
+
+	<xsl:template match="edm:Place">
+		<xsl:value-of select="concat(geo:lat, ',', geo:long)"/>
+	</xsl:template>
+
 	<xsl:template match="*">
 		<xsl:element name="dc:{local-name()}" namespace="http://purl.org/dc/elements/1.1/">
 			<xsl:choose>
@@ -285,6 +300,6 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:element>
-	</xsl:template>	
-	
+	</xsl:template>
+
 </xsl:stylesheet>

@@ -19,9 +19,10 @@
 PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
+PREFIX prov:	<http://www.w3.org/ns/prov#>
 SELECT * WHERE {
   ?aggregation a ore:Aggregation ;
-       dcterms:modified ?mod ;
+       prov:generatedAtTime ?mod ;
        edm:isShownAt ?uri
 } ORDER BY ASC(?mod) LIMIT 1]]>
 				</xsl:variable>

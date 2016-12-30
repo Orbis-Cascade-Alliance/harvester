@@ -13,6 +13,7 @@
 			<namespace prefix="ore" uri="http://www.openarchives.org/ore/terms/"/>
 			<namespace prefix="foaf" uri="http://xmlns.com/foaf/0.1/"/>
 			<namespace prefix="geo" uri="http://www.w3.org/2003/01/geo/wgs84_pos#"/>
+			<namespace prefix="prov" uri="http://www.w3.org/ns/prov#"/>
 			<namespace prefix="rdf" uri="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
 			<namespace prefix="xsd" uri="http://www.w3.org/2001/XMLSchema#"/>
 		</namespaces>

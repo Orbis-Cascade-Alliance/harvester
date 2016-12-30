@@ -29,7 +29,7 @@
 				<xsl:variable name="query">
 					<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
-ASK {?s dcterms:isPartOf <URI>}]]>
+ASK {?s dcterms:relation <URI>}]]>
 				</xsl:variable>
 				
 				<xsl:variable name="service">

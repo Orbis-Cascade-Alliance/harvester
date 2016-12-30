@@ -99,7 +99,7 @@ PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
 PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
 SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depiction WHERE {
-  ?cho dcterms:isPartOf <URI> ;
+  ?cho dcterms:relation <URI> ;
         dcterms:title ?title 
   OPTIONAL {?cho dcterms:description ?description}
   OPTIONAL {?cho dcterms:date ?date . FILTER (datatype(?date) = xsd:gYear)}
@@ -120,7 +120,7 @@ PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
 PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
 SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depiction WHERE {
-  ?cho dcterms:isPartOf <URI> ;
+  ?cho dcterms:relation <URI> ;
         dcterms:title ?title 
   OPTIONAL {?cho dcterms:description ?description}
   OPTIONAL {?cho dcterms:date ?date . FILTER (datatype(?date) = xsd:gYear)}
@@ -307,7 +307,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 PREFIX dcterms:	<http://purl.org/dc/terms/>
 
 SELECT (count(?cho) as ?numFound) WHERE {
-  ?cho dcterms:isPartOf <URI>
+  ?cho dcterms:relation <URI>
 }]]>
 								</xsl:variable>
 

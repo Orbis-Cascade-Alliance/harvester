@@ -116,33 +116,34 @@
 					<xsl:template match="/">
 						
 						<!-- the following query creates a UNION of triples to delete in the following cascading order:
-							1. Get CHOs which are dcterms:isPartOf the finding aid (if ARK is provided) and dcterms:relation of the set, traverse through graph, delete the edm:object object (edm:WebResource).
-							2. Get CHOs which are dcterms:isPartOf the finding aid (if ARK is provided) and dcterms:relation of the set, traverse through graph, delete the edm:preview object (edm:WebResource).
-							3. Get CHOs which are dcterms:isPartOf the finding aid (if ARK is provided) and dcterms:relation of the set, delete triples with associated ore:Aggregation object linked via edm:aggregatedCHO property.
+							1. Get CHOs which are dcterms:relation the finding aid (if ARK is provided) and dcterms:isPartOf of the set, traverse through graph, delete the edm:object object (edm:WebResource).
+							2. Get CHOs which are dcterms:relation the finding aid (if ARK is provided) and dcterms:isPartOf of the set, traverse through graph, delete the edm:preview object (edm:WebResource).
+							3. Get CHOs which are dcterms:relation the finding aid (if ARK is provided) and dcterms:isPartOf of the set, delete triples with associated ore:Aggregation object linked via edm:aggregatedCHO property.
 							4. Finally, delete the dpla:SourceResource linked via dcterms:isPartOf to the finding aid ARK URI (if provided), or dcterms:relation of the set if the ARK is not provided. -->
 						
 						<xsl:variable name="template">
 							<xsl:choose>
-								<!-- if the ARK URI is provided, delete triples with a combination of dcterms:isPartOf the ARK URI and dcterms:relation with the set URI -->
+								<!-- if the ARK URI is provided, delete triples with a combination of dcterms:relation the ARK URI and dcterms:isPartOf with the set URI -->
 								<xsl:when test="string($ark)">
 									<![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX prov:	<http://www.w3.org/ns/prov#>
 DELETE {?s ?p ?o} WHERE { 
-{?cho dcterms:isPartOf <ARK> ;
-  dcterms:relation <SET> .
+{?cho dcterms:relation <ARK> ;
+  dcterms:isPartOf <SET> .
 ?ore edm:aggregatedCHO ?cho .
 ?ore edm:object ?s .
 ?s ?p ?o}
-UNION {?cho dcterms:isPartOf <ARK> ;
-  dcterms:relation <SET> .
+UNION {?cho dcterms:relation <ARK> ;
+  dcterms:isPartOf <SET> .
 ?ore edm:aggregatedCHO ?cho .
 ?ore edm:preview ?s .
 ?s ?p ?o}
-UNION {?cho dcterms:isPartOf <ARK> ;
-  dcterms:relation <SET> .
+UNION {?cho dcterms:relation <ARK> ;
+  dcterms:isPartOf <SET> .
 ?s edm:aggregatedCHO ?cho . ?s ?p ?o }
-UNION {?s dcterms:isPartOf <ARK> ;
-  dcterms:relation <SET> .
+UNION {?s dcterms:relation <ARK> ;
+  dcterms:isPartOf <SET> .
 ?s ?p ?o }
 }]]>
 								</xsl:when>
@@ -150,19 +151,14 @@ UNION {?s dcterms:isPartOf <ARK> ;
 								<xsl:otherwise>
 									<![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX prov:	<http://www.w3.org/ns/prov#>
 DELETE {?s ?p ?o} WHERE { 
-{?cho dcterms:relation <SET> .
-?ore edm:aggregatedCHO ?cho .
-?ore edm:object ?s .
-?s ?p ?o}
-UNION {?cho dcterms:relation <SET> .
-?ore edm:aggregatedCHO ?cho .
-?ore edm:preview ?s .
-?s ?p ?o}
-UNION {?cho dcterms:relation <SET> .
-?s edm:aggregatedCHO ?cho . ?s ?p ?o }
-UNION {?s dcterms:relation <SET> .
-?s ?p ?o }
+{?agg prov:wasDerivedFrom <SET> ;
+    edm:preview ?s . ?s ?p ?o}
+UNION {?agg prov:wasDerivedFrom <SET> ;
+    edm:object ?s . ?s ?p ?o}
+UNION {?s dcterms:isPartOf <SET> . ?s ?p ?o }
+UNION {?s prov:wasDerivedFrom <SET> . ?s ?p ?o }
 }]]>
 								</xsl:otherwise>
 							</xsl:choose>							

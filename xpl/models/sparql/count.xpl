@@ -30,7 +30,7 @@
 					<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
 SELECT (count(?cho) as ?count) WHERE {
-?cho dcterms:isPartOf <URI>}]]>
+?cho dcterms:relation <URI>}]]>
 				</xsl:variable>
 				
 				<xsl:variable name="service">
