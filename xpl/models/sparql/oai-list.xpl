@@ -24,6 +24,8 @@
 		<p:input name="config">
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 				<xsl:param name="resumptionToken" select="doc('input:request')/request/parameters/parameter[name = 'resumptionToken']/value"/>
+				<xsl:param name="set" select="doc('input:request')/request/parameters/parameter[name = 'set']/value"/>
+				
 				<xsl:param name="offset">
 					<xsl:choose>
 						<xsl:when test="$resumptionToken castable as xs:integer and $resumptionToken &gt; 0">
@@ -48,13 +50,15 @@ PREFIX vcard:	<http://www.w3.org/2006/vcard/ns#>
 PREFIX arch:	<http://purl.org/archival/vocab/arch#>
 PREFIX nwda:	<https://github.com/Orbis-Cascade-Alliance/nwda-editor#>
 PREFIX prov:	<http://www.w3.org/ns/prov#>
+PREFIX doap:	<http://usefulinc.com/ns/doap#>
 
 DESCRIBE * WHERE {
   ?cho a dpla:SourceResource
        { SELECT * WHERE {
          ?agg a ore:Aggregation ;
                 edm:isShownAt ?cho ;
-                prov:generatedAtTime ?mod }         
+                prov:generatedAtTime ?mod;
+                doap:audience "primo" }         
        }
 } ORDER BY DESC(?mod) OFFSET %OFFSET% LIMIT %LIMIT% ]]>
 				</xsl:variable>

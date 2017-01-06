@@ -44,6 +44,7 @@
 
 					<xsl:param name="repository" select="doc('input:request')/request/parameters/parameter[name='repository']/value"/>
 					<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
+					<xsl:param name="target" select="doc('input:request')/request/parameters/parameter[name='target']/value"/>
 
 					<xsl:template match="/">
 						<controls>
@@ -56,6 +57,9 @@
 							<repository>
 								<xsl:value-of select="$repository"/>
 							</repository>
+							<target>
+								<xsl:value-of select="if (string($target)) then $target else 'both'"/>
+							</target>
 						</controls>
 					</xsl:template>
 				</xsl:stylesheet>

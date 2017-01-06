@@ -26,10 +26,12 @@
 				<xsl:variable name="sparql_endpoint" select="/config/sparql/query"/>
 
 				<xsl:variable name="query"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX dpla:	<http://dp.la/terms/>
+PREFIX ore:	<http://www.openarchives.org/ore/terms/>
+PREFIX doap:	<http://usefulinc.com/ns/doap#>
 
-SELECT (count(?cho) as ?count) WHERE {
-  ?cho a dpla:SourceResource
+SELECT (count(?agg) as ?count) WHERE {
+  ?agg a ore:Aggregation ;
+  	doap:audience "primo"
 }]]>
 				</xsl:variable>
 

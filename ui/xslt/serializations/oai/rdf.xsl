@@ -14,14 +14,14 @@
                         image URLs.
 -->
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
-	xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dpla="http://dp.la/terms/"
-	xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/"
-	xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:atom="http://www.w3.org/2005/Atom"
-	xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:prov="http://www.w3.org/ns/prov#"
-	xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester"
-	xmlns:digest="org.apache.commons.codec.digest.DigestUtils" exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dpla="http://dp.la/terms/" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:edm="http://www.europeana.eu/schemas/edm/"
+	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/"
+	xmlns:prov="http://www.w3.org/ns/prov#" xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"
+	xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester" xmlns:digest="org.apache.commons.codec.digest.DigestUtils"
+	exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest" version="2.0">
 	<xsl:output indent="yes" encoding="UTF-8"/>
 
 	<!-- request parameters -->
@@ -29,6 +29,7 @@
 	<xsl:param name="repository" select="/content/controls/repository"/>
 	<xsl:param name="set" select="/content/controls/set"/>
 	<xsl:param name="ark" select="/content/controls/ark"/>
+	<xsl:param name="target" select="/content/controls/target"/>
 	<xsl:param name="url" select="/content/config/url"/>
 	<xsl:param name="production_server" select="/content/config/production_server"/>
 
@@ -44,8 +45,8 @@
 	<xsl:template match="/">
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
 			xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
-			xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#"
-			xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">
+			xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+			xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:doap="http://usefulinc.com/ns/doap#">
 			<!-- either process only those objects with a matching $ark when the process is instantiated by the finding aid upload, or process all objects for bulk uploading -->
 
 			<xsl:choose>
@@ -242,6 +243,18 @@
 			<xsl:call-template name="views">
 				<xsl:with-param name="cho_uri" select="$cho_uri"/>
 			</xsl:call-template>
+			<xsl:choose>
+				<xsl:when test="$target = 'dpla'">
+					<doap:audience>dpla</doap:audience>
+				</xsl:when>
+				<xsl:when test="$target = 'primo'">
+					<doap:audience>primo</doap:audience>
+				</xsl:when>
+				<xsl:otherwise>
+					<doap:audience>dpla</doap:audience>
+					<doap:audience>primo</doap:audience>
+				</xsl:otherwise>
+			</xsl:choose>
 			<prov:wasDerivedFrom rdf:resource="{$set}"/>
 			<prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
 				<xsl:value-of select="current-dateTime()"/>
@@ -447,8 +460,7 @@
 
 		<xsl:choose>
 			<!-- contentDM institutions -->
-			<xsl:when
-				test="$repository = 'waps' or $repository = 'idbb' or $repository = 'US-ula' or $repository = 'US-uuml' or $repository = 'wauar' or $repository = 'wabewwuh'">
+			<xsl:when test="$repository = 'waps' or $repository = 'idbb' or $repository = 'US-ula' or $repository = 'US-uuml' or $repository = 'wauar' or $repository = 'wabewwuh'">
 				<!-- get thumbnail -->
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}">
 					<xsl:if test="string-length($content-type) &gt; 0">
@@ -472,7 +484,7 @@
 				</edm:WebResource>
 			</xsl:when>
 			<!-- University of Montana -->
-			<xsl:when test="$repository = 'mtg'">
+			<xsl:when test="$repository = 'mtu'">
 				<xsl:if test="dc:description[matches(., '.jpg$')]">
 					<edm:WebResource rdf:about="{dc:description[matches(., '.jpg$')]}">
 						<xsl:if test="string-length($content-type) &gt; 0">
@@ -540,7 +552,7 @@
 				<edm:object rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}"/>
 			</xsl:when>
 			<!-- University of Montana -->
-			<xsl:when test="$repository = 'mtg'">
+			<xsl:when test="$repository = 'mtu'">
 				<xsl:if test="dc:description[contains(., '.jpg')]">
 					<edm:preview rdf:resource="{dc:description[contains(., '.jpg')]}"/>
 				</xsl:if>
