@@ -6,7 +6,7 @@
 	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:prov="http://www.w3.org/ns/prov#"
 	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#"
 	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/"
-	exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda foaf dpla ore digest prov geo" version="2.0">
+	exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda dpla ore digest prov geo" version="2.0">
 
 	<xsl:variable name="url" select="//config/url"/>
 	<xsl:variable name="publisher" select="//config/publisher"/>
@@ -258,6 +258,8 @@
 			<xsl:if test="$verb = 'GetRecord' or $verb = 'ListRecords'">
 				<metadata>
 					<xsl:apply-templates select="descendant::dpla:SourceResource">
+						<xsl:with-param name="depiction" select="edm:object/@rdf:resource"/>
+						<xsl:with-param name="thumbnail" select="edm:preview/@rdf:resource"/>
 						<xsl:with-param name="publisher" select="edm:dataProvider/@rdf:resource"/>
 					</xsl:apply-templates>
 				</metadata>
@@ -267,6 +269,8 @@
 
 	<xsl:template match="dpla:SourceResource">
 		<xsl:param name="publisher"/>
+		<xsl:param name="thumbnail"/>
+		<xsl:param name="depiction"/>
 
 		<oai_dc:dc>
 			<xsl:apply-templates select="*"/>
@@ -276,13 +280,24 @@
 			<dc:identifier>
 				<xsl:value-of select="@rdf:about"/>
 			</dc:identifier>
+
+			<xsl:if test="string($thumbnail)">
+				<foaf:thumbnail>
+					<xsl:value-of select="$thumbnail"/>
+				</foaf:thumbnail>
+			</xsl:if>
+			<xsl:if test="string($depiction)">
+				<foaf:depiction>
+					<xsl:value-of select="$depiction"/>
+				</foaf:depiction>
+			</xsl:if>
 		</oai_dc:dc>
 	</xsl:template>
 
 	<xsl:template match="dcterms:coverage[edm:Place]">
 		<dc:coverage>
 			<xsl:apply-templates select="edm:Place"/>
-		</dc:coverage>		
+		</dc:coverage>
 	</xsl:template>
 
 	<xsl:template match="edm:Place">
