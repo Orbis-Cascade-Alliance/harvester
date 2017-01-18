@@ -279,7 +279,7 @@
 								<xsl:value-of select="harvester:date_dataType($val)"/>
 							</xsl:attribute>
 						</xsl:if>
-						<xsl:value-of select="$val"/>
+						<xsl:value-of select="harvester:parseDateTime($val)"/>
 					</dcterms:date>
 				</xsl:if>
 			</xsl:when>
@@ -300,11 +300,13 @@
 									<xsl:attribute name="rdf:datatype">
 										<xsl:value-of select="harvester:date_dataType($begin)"/>
 									</xsl:attribute>
+									<xsl:value-of select="harvester:parseDateTime($begin)"/>
 								</edm:begin>
 								<edm:end>
 									<xsl:attribute name="rdf:datatype">
 										<xsl:value-of select="harvester:date_dataType($end)"/>
 									</xsl:attribute>
+									<xsl:value-of select="harvester:parseDateTime($end)"/>
 								</edm:end>
 							</edm:TimeSpan>
 						</dcterms:date>
@@ -318,7 +320,7 @@
 							<xsl:value-of select="harvester:date_dataType(.)"/>
 						</xsl:attribute>
 					</xsl:if>
-					<xsl:value-of select="."/>
+					<xsl:value-of select="harvester:parseDateTime(.)"/>
 				</dcterms:date>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -385,9 +387,17 @@
 					</xsl:choose>
 				</xsl:variable>
 
-				<xsl:if test="string($type)">
-					<dcterms:type rdf:resource="{$type}"/>
-				</xsl:if>
+				<xsl:choose>
+					<xsl:when test="string($type)">
+						<dcterms:type rdf:resource="{$type}"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<edm:hasType>
+							<xsl:value-of select="normalize-space(.)"/>
+						</edm:hasType>
+					</xsl:otherwise>
+				</xsl:choose>
+
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
@@ -402,13 +412,15 @@
 		<xsl:for-each select="tokenize(normalize-space(.), ';')">
 			<!-- ignore 0 length strings -->
 			<xsl:if test="string-length(normalize-space(.)) &gt; 0">
+				<xsl:variable name="val"
+					select="if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1) else normalize-space(.)"/>
 				<!-- conditionals for ignoring or processing specific properties differently -->
 				<xsl:choose>
 					<xsl:when test="$property = 'format'">
 						<!-- suppress content types -->
 						<xsl:if test="not(contains(., '/'))">
 							<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
-								<xsl:value-of select="normalize-space(.)"/>
+								<xsl:value-of select="$val"/>
 							</xsl:element>
 							<xsl:element name="edm:hasType" namespace="http://www.europeana.eu/schemas/edm/">placeholder for AAT URI</xsl:element>
 						</xsl:if>
@@ -418,31 +430,31 @@
 							<!-- normalization -->
 							<xsl:choose>
 								<xsl:when test="$property = 'subject'">
-									<xsl:variable name="label" select="normalize-space(.)"/>
+									<xsl:variable name="label" select="$val"/>
 
 									<xsl:choose>
 										<xsl:when test="$subjects//atom:entry[gsx:label = $label]">
 											<xsl:attribute name="rdf:resource" select="$subjects//atom:entry[gsx:label = $label]/gsx:uri"/>
 										</xsl:when>
 										<xsl:otherwise>
-											<xsl:value-of select="normalize-space(.)"/>
+											<xsl:value-of select="$val"/>
 										</xsl:otherwise>
 									</xsl:choose>
 								</xsl:when>
 								<xsl:when test="$property = 'spatial' or $property = 'coverage'">
-									<xsl:variable name="label" select="normalize-space(.)"/>
+									<xsl:variable name="label" select="$val"/>
 
 									<xsl:choose>
 										<xsl:when test="$places//atom:entry[gsx:label = $label]">
 											<xsl:attribute name="rdf:resource" select="$places//atom:entry[gsx:label = $label]/gsx:uri"/>
 										</xsl:when>
 										<xsl:otherwise>
-											<xsl:value-of select="normalize-space(.)"/>
+											<xsl:value-of select="$val"/>
 										</xsl:otherwise>
 									</xsl:choose>
 								</xsl:when>
 								<xsl:otherwise>
-									<xsl:value-of select="normalize-space(.)"/>
+									<xsl:value-of select="$val"/>
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:element>
@@ -602,10 +614,33 @@
 		<xsl:param name="val"/>
 
 		<xsl:choose>
-			<xsl:when test="$val castable as xs:dateTime">http://www.w3.org/2001/XMLSchema#dateTime</xsl:when>
+			<!-- replace dateTime with the xs:date when not January 1: otherwise this is only a year -->
+			<xsl:when test="$val castable as xs:dateTime">
+				<xsl:variable name="date" select="substring($val, 1, 10)"/>
+
+				<xsl:choose>
+					<xsl:when test="substring($date, 6) = '01-01'">http://www.w3.org/2001/XMLSchema#gYear</xsl:when>
+					<xsl:otherwise>http://www.w3.org/2001/XMLSchema#gYear</xsl:otherwise>
+				</xsl:choose>
+			</xsl:when>
 			<xsl:when test="$val castable as xs:date">http://www.w3.org/2001/XMLSchema#date</xsl:when>
 			<xsl:when test="$val castable as xs:gYearMonth">http://www.w3.org/2001/XMLSchema#gYearMonth</xsl:when>
 			<xsl:when test="$val castable as xs:gYear">http://www.w3.org/2001/XMLSchema#gYear</xsl:when>
+		</xsl:choose>
+	</xsl:function>
+
+	<xsl:function name="harvester:parseDateTime">
+		<xsl:param name="val"/>
+
+		<xsl:choose>
+			<xsl:when test="$val castable as xs:dateTime">
+				<xsl:variable name="date" select="substring($val, 1, 10)"/>
+
+				<xsl:value-of select="$date"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$val"/>
+			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:function>
 

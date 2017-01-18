@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.openarchives.org/OAI/2.0/"
-	xmlns:digest="org.apache.commons.codec.digest.DigestUtils" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:res="http://www.w3.org/2005/sparql-results#"
-	xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:dcterms="http://purl.org/dc/terms/"
-	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:prov="http://www.w3.org/ns/prov#"
-	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#"
-	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/"
-	exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda dpla ore digest prov geo" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:digest="org.apache.commons.codec.digest.DigestUtils"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:res="http://www.w3.org/2005/sparql-results#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
+	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:prov="http://www.w3.org/ns/prov#"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#" xmlns:ore="http://www.openarchives.org/ore/terms/"
+	xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda dpla ore digest prov geo" version="2.0">
 
 	<xsl:variable name="url" select="//config/url"/>
 	<xsl:variable name="publisher" select="//config/publisher"/>
@@ -49,8 +47,7 @@
 
 	<!-- construct OAI-PMH response -->
 	<xsl:template match="/">
-		<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
 			http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
 			<responseDate>
@@ -109,8 +106,7 @@
 							<setName>Primo Harvest</setName>
 							<setDescription>
 								<oai_dc:dc>
-									<dc:title>All cultural heritage objects in <xsl:value-of select="$publisher"/> designated for harvesting into
-										Primo</dc:title>
+									<dc:title>All cultural heritage objects in <xsl:value-of select="$publisher"/> designated for harvesting into Primo</dc:title>
 									<dc:creator>
 										<xsl:value-of select="$publisher"/>
 									</dc:creator>
@@ -282,18 +278,58 @@
 			</dc:identifier>
 
 			<xsl:if test="string($thumbnail)">
-				<foaf:thumbnail>
+				<dc:identifier.thumbnail>
 					<xsl:value-of select="$thumbnail"/>
-				</foaf:thumbnail>
+				</dc:identifier.thumbnail>
 			</xsl:if>
 			<xsl:if test="string($depiction)">
-				<foaf:depiction>
+				<dc:identifier.reference>
 					<xsl:value-of select="$depiction"/>
-				</foaf:depiction>
+				</dc:identifier.reference>
 			</xsl:if>
 		</oai_dc:dc>
 	</xsl:template>
 
+	<!-- types -->
+	<xsl:template match="dcterms:type">
+		<dc:type>
+			<xsl:value-of select="tokenize(@rdf:resource, '/')[last()]"/>
+		</dc:type>
+	</xsl:template>
+	
+	<xsl:template match="edm:hasType">
+		<dc:genre>
+			<xsl:value-of select="."/>
+		</dc:genre>
+	</xsl:template>
+
+	<!-- parse dates -->
+	<xsl:template match="dcterms:date">
+		<xsl:choose>
+			<xsl:when test="edm:TimeSpan">
+				<xsl:apply-templates select="edm:TimeSpan"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<dc:date>
+					<xsl:value-of select="."/>
+				</dc:date>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
+	<xsl:template match="edm:TimeSpan">
+		<dc:date>
+			<xsl:value-of select="concat(edm:begin, '/', edm:end)"/>
+		</dc:date>
+		<dc:date.start>
+			<xsl:value-of select="edm:begin"/>
+		</dc:date.start>
+		<dc:date.end>
+			<xsl:value-of select="edm:end"/>
+		</dc:date.end>
+	</xsl:template>
+
+	<!-- put edm:Place coordinates back together -->
 	<xsl:template match="dcterms:coverage[edm:Place]">
 		<dc:coverage>
 			<xsl:apply-templates select="edm:Place"/>
