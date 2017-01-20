@@ -26,7 +26,6 @@
 	<!-- **** SERIALIZATIONS **** -->	
 	<page path="/harvester/record/.*" model="xpl/models/sparql/get-record.xpl" view="xpl/views/serializations/rdf/html.xpl"/>
 	<page path="/harvester/feed" model="xpl/models/sparql/atom.xpl" view="xpl/views/serializations/sparql/atom.xpl"/>
-	<page path="/harvester/test/" model="config.xml" view="xpl/models/sparql/oai-list.xpl"/>
 	<page path="/harvester/oai-pmh/" view="xpl/controllers/oai-pmh.xpl"/>
 	
 	<page path="/harvester/apis/ask" model="xpl/models/sparql/ask.xpl" view="xpl/views/apis/ask.xpl"/>
@@ -41,6 +40,10 @@
 	<page path="/harvester/void.ttl" model="xpl/views/serializations/sparql/void.xpl" view="xpl/views/serializations/rdf/ttl.xpl"/>
 	<page path="/harvester/void.jsonld" model="xpl/views/serializations/sparql/void.xpl" view="xpl/views/serializations/rdf/json-ld.xpl"/>
 	<page path="/harvester/download/[\d]+\.(?:ttl|rdf|jsonld)" view="xpl/models/sparql/aggregate.xpl"/>
+	
+	<!-- tests -->
+	<page path="/harvester/test" model="config.xml" view="xpl/views/pages/test.xpl"/>
+	<page path="/harvester/test/view" model="xpl/controllers/getRDF.xpl" view="xpl/controllers/view.xpl"/>
 	
 	<!-- ****************
 	* ADMIN INTERFACE *
