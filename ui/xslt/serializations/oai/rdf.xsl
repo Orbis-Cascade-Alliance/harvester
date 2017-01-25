@@ -472,7 +472,7 @@
 
 		<xsl:choose>
 			<!-- contentDM institutions -->
-			<xsl:when test="$repository = 'waps' or $repository = 'idbb' or $repository = 'US-ula' or $repository = 'US-uuml' or $repository = 'wauar' or $repository = 'wabewwuh'">
+			<xsl:when test="$repository = 'waps' or $repository = 'idbb' or $repository = 'US-ula' or $repository = 'US-uuml' or $repository = 'wauar' or $repository = 'wabewwuh' or $repository = 'xxx'">
 				<!-- get thumbnail -->
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}">
 					<xsl:if test="string-length($content-type) &gt; 0">
