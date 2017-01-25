@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:dcterms="http://purl.org/dc/terms/"
-	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:prov="http://www.w3.org/ns/prov#"
-	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#" xmlns:ore="http://www.openarchives.org/ore/terms/"
-	xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" exclude-result-prefixes="#all" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
+	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
+	xmlns:prov="http://www.w3.org/ns/prov#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+	xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/"
+	xmlns:foaf="http://xmlns.com/foaf/0.1/" exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="../../templates.xsl"/>
 	<xsl:variable name="display_path">../</xsl:variable>
 
@@ -32,8 +33,8 @@
 				<meta name="viewport" content="width=device-width, initial-scale=1"/>
 				<!-- bootstrap -->
 				<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"/>
-				<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
-				<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"/>
+				<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+				<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
 				<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
 				<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"/>
 				<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"/>
@@ -55,54 +56,55 @@
 
 	<xsl:template match="ore:Aggregation">
 		<div class="row">
-			<div class="col-md-12">
-				<xsl:choose>
-					<xsl:when test="string($output)">
-						<xsl:variable name="cho_uri" select="edm:aggregatedCHO/@rdf:resource"/>
-						<xsl:variable name="reference" select="edm:object/@rdf:resource"/>
-						<xsl:variable name="thumbnail" select="edm:preview/@rdf:resource"/>
 
-						<xsl:apply-templates select="parent::node()/dpla:SourceResource[@rdf:about = $cho_uri]">
-							<xsl:with-param name="reference" select="$reference"/>
-							<xsl:with-param name="hasCoords" select="false()" as="xs:boolean"/>
-						</xsl:apply-templates>
+			<xsl:choose>
+				<xsl:when test="string($output)">				
+					<xsl:variable name="cho_uri" select="edm:aggregatedCHO/@rdf:resource"/>
+					<xsl:variable name="reference" select="edm:object/@rdf:resource"/>
+					<xsl:variable name="thumbnail" select="edm:preview/@rdf:resource"/>
 
-						<!-- images -->
-						<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about=$thumbnail]"/>
-						<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about=$reference]"/>
+					<xsl:apply-templates select="parent::node()/dpla:SourceResource[@rdf:about = $cho_uri]">
+						<xsl:with-param name="reference" select="$reference"/>
+						<xsl:with-param name="hasCoords" select="false()" as="xs:boolean"/>
+					</xsl:apply-templates>
 
-						<hr/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:variable name="hasCoords" as="xs:boolean">
-							<xsl:choose>
-								<xsl:when test="descendant::geo:lat and descendant::geo:long">true</xsl:when>
-								<xsl:otherwise>false</xsl:otherwise>
-							</xsl:choose>
-						</xsl:variable>
+					<!-- self -->
+					<xsl:apply-templates select="self::node()" mode="render"/>
 
-						<xsl:apply-templates select="descendant::dpla:SourceResource">
-							<xsl:with-param name="reference" select="edm:object/@rdf:resource"/>
-							<xsl:with-param name="hasCoords" select="$hasCoords"/>
-						</xsl:apply-templates>
+					<!-- images -->
+					<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about = $thumbnail]|parent::node()/edm:WebResource[@rdf:about = $reference]" mode="render"/>					
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:variable name="hasCoords" as="xs:boolean">
+						<xsl:choose>
+							<xsl:when test="descendant::geo:lat and descendant::geo:long">true</xsl:when>
+							<xsl:otherwise>false</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
 
-						<xsl:if test="$hasCoords = true()">
-							<div class="hidden">
-								<span id="lat">
-									<xsl:value-of select="descendant::geo:lat"/>
-								</span>
-								<span id="long">
-									<xsl:value-of select="descendant::geo:long"/>
-								</span>
-							</div>
-						</xsl:if>
-					</xsl:otherwise>
-				</xsl:choose>
-			</div>
+					<xsl:apply-templates select="descendant::dpla:SourceResource">
+						<xsl:with-param name="reference" select="edm:object/@rdf:resource"/>
+						<xsl:with-param name="hasCoords" select="$hasCoords"/>
+					</xsl:apply-templates>
+
+					<xsl:if test="$hasCoords = true()">
+						<div class="hidden">
+							<span id="lat">
+								<xsl:value-of select="descendant::geo:lat"/>
+							</span>
+							<span id="long">
+								<xsl:value-of select="descendant::geo:long"/>
+							</span>
+						</div>
+					</xsl:if>
+				</xsl:otherwise>
+			</xsl:choose>
+
 		</div>
 	</xsl:template>
 
-	<xsl:template match="edm:WebResource">
+	<xsl:template match="edm:WebResource | ore:Aggregation" mode="render">
+		<xsl:variable name="uri" select="@rdf:about"/>
 
 		<div class="col-md-12">
 			<h2>
@@ -121,31 +123,36 @@
 					<xsl:sort select="local-name()"/>
 				</xsl:apply-templates>
 			</dl>
+			
+			<xsl:if test="self::edm:WebResource and position() = last()">
+				<hr/>
+			</xsl:if>
 		</div>
 	</xsl:template>
 
 	<xsl:template match="dpla:SourceResource">
 		<xsl:param name="reference"/>
 		<xsl:param name="hasCoords" as="xs:boolean"/>
-
-		<h1>
-			<xsl:choose>
-				<xsl:when test="string($output)">
-					<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
-					<a href="{$propertyUri}" title="{$propertyUri}">
-						<xsl:value-of select="name()"/>
-					</a>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="dcterms:title"/>
-				</xsl:otherwise>
-			</xsl:choose>
-		</h1>
-		<h4>
-			<a href="{@rdf:about}">
-				<xsl:value-of select="@rdf:about"/>
-			</a>
-		</h4>
+		<div class="col-md-12">
+			<h1>
+				<xsl:choose>
+					<xsl:when test="string($output)">
+						<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
+						<a href="{$propertyUri}" title="{$propertyUri}">
+							<xsl:value-of select="name()"/>
+						</a>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="dcterms:title"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</h1>
+			<h4>
+				<a href="{@rdf:about}">
+					<xsl:value-of select="@rdf:about"/>
+				</a>
+			</h4>
+		</div>		
 		<xsl:choose>
 			<xsl:when test="string($output)">
 				<div class="col-md-6">
@@ -215,7 +222,7 @@
 		</dd>
 	</xsl:template>
 
-	<xsl:template match="edm:TimeSpan|edm:Place">
+	<xsl:template match="edm:TimeSpan | edm:Place">
 		<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
 		<div>
 			<h4>
@@ -232,7 +239,7 @@
 	<xsl:function name="nwda:linkProperty">
 		<xsl:param name="property"/>
 		<xsl:variable name="prefix" select="substring-before($property, ':')"/>
-		<xsl:value-of select="concat($namespaces//namespace[@prefix=$prefix]/@uri, substring-after($property, ':'))"/>
+		<xsl:value-of select="concat($namespaces//namespace[@prefix = $prefix]/@uri, substring-after($property, ':'))"/>
 	</xsl:function>
 
 </xsl:stylesheet>
