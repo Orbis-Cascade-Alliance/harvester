@@ -111,11 +111,11 @@
 					<xsl:value-of select="name()"/>
 				</a>
 			</h2>
-			<h3>
+			<h4>
 				<a href="{@rdf:about}">
 					<xsl:value-of select="@rdf:about"/>
 				</a>
-			</h3>
+			</h4>
 			<dl class="dl-horizontal">
 				<xsl:apply-templates>
 					<xsl:sort select="local-name()"/>
@@ -141,11 +141,11 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</h1>
-		<h2>
+		<h4>
 			<a href="{@rdf:about}">
 				<xsl:value-of select="@rdf:about"/>
 			</a>
-		</h2>
+		</h4>
 		<xsl:choose>
 			<xsl:when test="string($output)">
 				<div class="col-md-6">
