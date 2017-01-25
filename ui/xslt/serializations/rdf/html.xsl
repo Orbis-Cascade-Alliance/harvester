@@ -61,16 +61,16 @@
 						<xsl:variable name="cho_uri" select="edm:aggregatedCHO/@rdf:resource"/>
 						<xsl:variable name="reference" select="edm:object/@rdf:resource"/>
 						<xsl:variable name="thumbnail" select="edm:preview/@rdf:resource"/>
-						
+
 						<xsl:apply-templates select="parent::node()/dpla:SourceResource[@rdf:about = $cho_uri]">
 							<xsl:with-param name="reference" select="$reference"/>
 							<xsl:with-param name="hasCoords" select="false()" as="xs:boolean"/>
 						</xsl:apply-templates>
-						
+
 						<!-- images -->
 						<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about=$thumbnail]"/>
 						<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about=$reference]"/>
-						
+
 						<hr/>
 					</xsl:when>
 					<xsl:otherwise>
@@ -80,12 +80,12 @@
 								<xsl:otherwise>false</xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>
-						
+
 						<xsl:apply-templates select="descendant::dpla:SourceResource">
 							<xsl:with-param name="reference" select="edm:object/@rdf:resource"/>
 							<xsl:with-param name="hasCoords" select="$hasCoords"/>
 						</xsl:apply-templates>
-						
+
 						<xsl:if test="$hasCoords = true()">
 							<div class="hidden">
 								<span id="lat">
@@ -101,16 +101,21 @@
 			</div>
 		</div>
 	</xsl:template>
-	
+
 	<xsl:template match="edm:WebResource">
-		
+
 		<div class="col-md-12">
-			<h1>
+			<h2>
 				<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
 				<a href="{$propertyUri}" title="{$propertyUri}">
 					<xsl:value-of select="name()"/>
-				</a>		
-			</h1>
+				</a>
+			</h2>
+			<h3>
+				<a href="{@rdf:about}">
+					<xsl:value-of select="@rdf:about"/>
+				</a>
+			</h3>
 			<dl class="dl-horizontal">
 				<xsl:apply-templates>
 					<xsl:sort select="local-name()"/>
@@ -134,9 +139,13 @@
 				<xsl:otherwise>
 					<xsl:value-of select="dcterms:title"/>
 				</xsl:otherwise>
-			</xsl:choose>			
+			</xsl:choose>
 		</h1>
-	
+		<h2>
+			<a href="{@rdf:about}">
+				<xsl:value-of select="@rdf:about"/>
+			</a>
+		</h2>
 		<xsl:choose>
 			<xsl:when test="string($output)">
 				<div class="col-md-6">
@@ -181,12 +190,12 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:otherwise>
-		</xsl:choose>		
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template match="*">
 		<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
-		
+
 		<dt>
 			<a href="{$propertyUri}" title="{$propertyUri}">
 				<xsl:value-of select="name()"/>
