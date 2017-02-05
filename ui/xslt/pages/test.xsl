@@ -8,8 +8,7 @@
 		<html lang="en">
 			<head>
 				<title>
-					<xsl:value-of select="/content/config/title"/>
-				</title>
+					<xsl:value-of select="/config/title"/>: Test Set</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1"/>
 				<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"/>
 				<!-- bootstrap -->
@@ -40,13 +39,21 @@
 						<div class="form-group">
 							<label for="repository" class="col-sm-2 control-label">Agency Code</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="repository" name="repository" style="width:25em"/>
+								<select name="repository" class="form-control" id="repository" style="width:10em">
+									<xsl:for-each select="distinct-values(/config/dams//repository)">
+										<xsl:sort/>
+										<option value="{.}">
+											<xsl:value-of select="."/>
+										</option>
+									</xsl:for-each>
+								</select>
+								<!--<input type="text" class="form-control" id="repository" name="repository" style="width:25em"/>-->
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="output" class="col-sm-2 control-label">Output</label>
 							<div class="col-sm-10">
-								<select id="output" name="output">
+								<select id="output" name="output" class="form-control" style="width:10em">
 									<option value="html" selected="selected">HTML</option>
 									<option value="rdf">RDF</option>
 								</select>

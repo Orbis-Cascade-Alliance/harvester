@@ -14,14 +14,14 @@
                         image URLs.
 -->
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dpla="http://dp.la/terms/" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
-	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:edm="http://www.europeana.eu/schemas/edm/"
-	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/"
-	xmlns:prov="http://www.w3.org/ns/prov#" xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"
-	xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester" xmlns:digest="org.apache.commons.codec.digest.DigestUtils"
-	exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dpla="http://dp.la/terms/"
+	xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:doap="http://usefulinc.com/ns/doap#"
+	xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester"
+	xmlns:digest="org.apache.commons.codec.digest.DigestUtils" exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest" version="2.0">
 	<xsl:output indent="yes" encoding="UTF-8"/>
 
 	<!-- request parameters -->
@@ -32,6 +32,7 @@
 	<xsl:param name="target" select="/content/controls/target"/>
 	<xsl:param name="url" select="/content/config/url"/>
 	<xsl:param name="production_server" select="/content/config/production_server"/>
+	
 
 	<!-- load Google Sheets Atom feeds into variables for normalization -->
 	<xsl:variable name="places" as="element()*">
@@ -41,12 +42,16 @@
 	<xsl:variable name="subjects" as="element()*">
 		<xsl:copy-of select="document(/content/config/sheets/subjects)/*"/>
 	</xsl:variable>
+	
+	<xsl:variable name="dams-node" as="element()*">
+		<xsl:copy-of select="/content/config/dams"/>
+	</xsl:variable>
 
 	<xsl:template match="/">
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
 			xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
-			xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
-			xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:doap="http://usefulinc.com/ns/doap#">
+			xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#"
+			xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:doap="http://usefulinc.com/ns/doap#">
 			<!-- either process only those objects with a matching $ark when the process is instantiated by the finding aid upload, or process all objects for bulk uploading -->
 
 			<xsl:choose>
@@ -104,7 +109,7 @@
 				<!-- ignore kaga -->
 				<xsl:when test="matches($cho_uri, 'https?://kaga')"/>
 				<!-- ignore jpg files -->
-				<xsl:when test="matches($cho_uri, '.jpe?g$')"/>
+				<xsl:when test="matches($cho_uri, '\.(jpe?g|tif|pdf)$')"/>				
 				<xsl:otherwise>
 					<xsl:apply-templates select="$metadata" mode="process-metadata">
 						<xsl:with-param name="cho_uri" select="$cho_uri"/>
@@ -155,8 +160,8 @@
 				select="dc:date[1] | dc:type | dc:creator | dc:language | dc:contributor | dc:rights | dc:format | dc:subject | dc:extent | dc:temporal | dc:publisher"/>
 
 			<!-- handle coverage and spatial for coordinates vs. text -->
-			<xsl:choose>
-				<!-- handle spatial/coverage with lat and long encoded directly -->
+			<!--<xsl:choose>
+				<!-\- handle spatial/coverage with lat and long encoded directly -\->
 				<xsl:when test="count(*[local-name() = 'spatial']) = 2">
 					<xsl:if test="*[local-name() = 'spatial'][1] castable as xs:decimal and *[local-name() = 'spatial'][2] castable as xs:decimal">
 						<xsl:call-template name="place">
@@ -173,14 +178,14 @@
 						</xsl:call-template>
 					</xsl:if>
 				</xsl:when>
-				<!-- handle .lat and .long qualified DC -->
+				<!-\- handle .lat and .long qualified DC -\->
 				<xsl:when test="*[contains(local-name(), '.lat')] and *[contains(local-name(), '.long')]">
 					<xsl:call-template name="place">
 						<xsl:with-param name="lat" select="*[contains(local-name(), '.lat')][1]"/>
 						<xsl:with-param name="long" select="*[contains(local-name(), '.long')][2]"/>
 					</xsl:call-template>
 				</xsl:when>
-				<!-- handle spatial/coverage with lat,long value -->
+				<!-\- handle spatial/coverage with lat,long value -\->
 				<xsl:when test="matches(*[local-name() = 'coverage'], '-?\d+\.\d+,-?\d+\.\d+')">
 					<xsl:variable name="coords" select="*[local-name() = 'coverage'][matches(., '-?\d+\.\d+,-?\d+\.\d+')]"/>
 					<xsl:analyze-string select="$coords" regex="(-?\d+\.\d+),(-?\d+\.\d+)">
@@ -206,7 +211,7 @@
 				<xsl:otherwise>
 					<xsl:apply-templates select="*[local-name() = 'spatial'] | *[local-name() = 'coverage']"/>
 				</xsl:otherwise>
-			</xsl:choose>
+			</xsl:choose>-->
 
 			<xsl:if test="dc:description">
 				<dcterms:description>
@@ -413,7 +418,11 @@
 			<!-- ignore 0 length strings -->
 			<xsl:if test="string-length(normalize-space(.)) &gt; 0">
 				<xsl:variable name="val"
-					select="if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1) else normalize-space(.)"/>
+					select="
+						if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then
+							substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1)
+						else
+							normalize-space(.)"/>
 				<!-- conditionals for ignoring or processing specific properties differently -->
 				<xsl:choose>
 					<xsl:when test="$property = 'format'">
@@ -469,11 +478,12 @@
 		<xsl:param name="cho_uri"/>
 		<xsl:param name="content-type"/>
 		<xsl:param name="rights"/>
+		
+		<xsl:variable name="dams" select="$dams-node//repository[. = $repository][contains($set, @pattern)]/parent::node()/name()"/>
+
 
 		<xsl:choose>
-			<!-- contentDM institutions -->
-			<xsl:when test="$repository = 'waps' or $repository = 'idbb' or $repository = 'US-ula' or $repository = 'US-uuml' or $repository = 'wauar' or $repository = 'wabewwuh' or $repository = 'xxx'">
-				<!-- get thumbnail -->
+			<xsl:when test="$dams = 'contentdm-default'">
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}">
 					<xsl:if test="string-length($content-type) &gt; 0">
 						<dcterms:format>
@@ -495,8 +505,7 @@
 					</xsl:if>
 				</edm:WebResource>
 			</xsl:when>
-			<!-- University of Montana -->
-			<xsl:when test="$repository = 'mtu'">
+			<xsl:when test="$dams = 'digital-commons'">
 				<xsl:if test="dc:description[matches(., '.jpg$')]">
 					<edm:WebResource rdf:about="{dc:description[matches(., '.jpg$')]}">
 						<xsl:if test="string-length($content-type) &gt; 0">
@@ -510,10 +519,12 @@
 					</edm:WebResource>
 				</xsl:if>
 			</xsl:when>
-			<!-- Omeka -->
-			<xsl:when test="$repository = 'orphs'">
-				<xsl:if test="dc:identifier[matches(., '.jpg$')]">
-					<edm:WebResource rdf:about="{dc:identifier[matches(., '.jpg$')]}">
+			<xsl:when test="$dams = 'dspace'">
+				<!-- dspace does not include links to files -->
+			</xsl:when>
+			<xsl:when test="$dams = 'omeka'">
+				<xsl:if test="dc:identifier[contains(., 'files/original')]">
+					<edm:WebResource rdf:about="{dc:identifier[contains(., 'files/original')]}">
 						<xsl:if test="string-length($content-type) &gt; 0">
 							<dcterms:format>
 								<xsl:value-of select="$content-type"/>
@@ -525,62 +536,93 @@
 					</edm:WebResource>
 				</xsl:if>
 			</xsl:when>
-			<!-- Willamette - contentDM but with different CHO URI style -->
-			<xsl:when test="$repository = 'orsaw'">
-				<!-- get thumbnail -->
-				<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getthumbnail/collection/$1/id/$2')}">
-					<xsl:if test="string-length($content-type) &gt; 0">
-						<dcterms:format>
-							<xsl:value-of select="$content-type"/>
-						</dcterms:format>
-					</xsl:if>
-					<xsl:if test="string($rights)">
-						<edm:rights rdf:resource="{$rights}"/>
-					</xsl:if>
-				</edm:WebResource>
-				<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}">
-					<xsl:if test="string-length($content-type) &gt; 0">
-						<dcterms:format>
-							<xsl:value-of select="$content-type"/>
-						</dcterms:format>
-					</xsl:if>
-					<xsl:if test="string($rights)">
-						<edm:rights rdf:resource="{$rights}"/>
-					</xsl:if>
-				</edm:WebResource>
-			</xsl:when>
+			<xsl:otherwise>
+				<xsl:choose>
+					<xsl:when test="$repository = 'orphs'">
+						<xsl:if test="dc:identifier[matches(., '.jpg$')]">
+							<edm:WebResource rdf:about="{dc:identifier[matches(., '.jpg$')]}">
+								<xsl:if test="string-length($content-type) &gt; 0">
+									<dcterms:format>
+										<xsl:value-of select="$content-type"/>
+									</dcterms:format>
+								</xsl:if>
+								<xsl:if test="string($rights)">
+									<edm:rights rdf:resource="{$rights}"/>
+								</xsl:if>
+							</edm:WebResource>
+						</xsl:if>
+					</xsl:when>
+					<!-- Willamette - contentDM but with different CHO URI style -->
+					<xsl:when test="$repository = 'orsaw'">
+						<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getthumbnail/collection/$1/id/$2')}">
+							<xsl:if test="string-length($content-type) &gt; 0">
+								<dcterms:format>
+									<xsl:value-of select="$content-type"/>
+								</dcterms:format>
+							</xsl:if>
+							<xsl:if test="string($rights)">
+								<edm:rights rdf:resource="{$rights}"/>
+							</xsl:if>
+						</edm:WebResource>
+						<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}">
+							<xsl:if test="string-length($content-type) &gt; 0">
+								<dcterms:format>
+									<xsl:value-of select="$content-type"/>
+								</dcterms:format>
+							</xsl:if>
+							<xsl:if test="string($rights)">
+								<edm:rights rdf:resource="{$rights}"/>
+							</xsl:if>
+						</edm:WebResource>
+					</xsl:when>
+				</xsl:choose>
+			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 
 	<!-- views -->
 	<xsl:template name="views">
 		<xsl:param name="cho_uri"/>
+
+		<xsl:variable name="dams" select="$dams-node//repository[. = $repository][contains($set, @pattern)]/parent::node()/name()"/>
+		
+		<test>
+			<xsl:value-of select="$dams"/>
+		</test>
+		
 		<xsl:choose>
-			<!-- contentDM institutions -->
-			<xsl:when
-				test="$repository = 'waps' or $repository = 'idbb' or $repository = 'US-ula' or $repository = 'US-uuml' or $repository = 'wauar' or $repository = 'wabewwuh' or $repository = 'xxx'">
-				<!-- get thumbnail -->
+			<xsl:when test="$dams = 'contentdm-default'">
 				<edm:preview rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}"/>
 				<edm:object rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}"/>
 			</xsl:when>
-			<!-- University of Montana -->
-			<xsl:when test="$repository = 'mtu'">
-				<xsl:if test="dc:description[contains(., '.jpg')]">
-					<edm:preview rdf:resource="{dc:description[contains(., '.jpg')]}"/>
+			<xsl:when test="$dams = 'digital-commons'">
+				<xsl:if test="dc:description[matches(., '.jpg$')]">
+					<edm:preview rdf:resource="{dc:description[matches(., '.jpg$')]}"/>
 				</xsl:if>
 			</xsl:when>
-			<!-- Omeka -->
-			<xsl:when test="$repository = 'orphs'">
-				<xsl:if test="dc:identifier[matches(., '.jpg$')]">
-					<edm:preview rdf:resource="{dc:identifier[matches(., '.jpg$')]}"/>
+			<xsl:when test="$dams = 'dspace'">
+				<!-- dspace does not include links to files -->
+			</xsl:when>
+			<xsl:when test="$dams = 'omeka'">
+				<xsl:if test="dc:identifier[contains(., 'files/original')]">
+					<edm:object rdf:resource="{dc:identifier[contains(., 'files/original')]}"/>
 				</xsl:if>
 			</xsl:when>
-			<!-- Willamette - contentDM but with different CHO URI style -->
-			<xsl:when test="$repository = 'orsaw'">
-				<!-- get thumbnail -->
-				<edm:preview rdf:resource="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getthumbnail/collection/$1/id/$2')}"/>
-				<edm:object rdf:resource="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}"/>
-			</xsl:when>
+			<xsl:otherwise>
+				<xsl:choose>
+					<xsl:when test="$repository = 'orphs'">
+						<xsl:if test="dc:identifier[matches(., '.jpg$')]">
+							<edm:preview rdf:resource="{dc:identifier[matches(., '.jpg$')]}"/>
+						</xsl:if>
+					</xsl:when>
+					<!-- Willamette - contentDM but with different CHO URI style -->
+					<xsl:when test="$repository = 'orsaw'">
+						<!-- get thumbnail -->
+						<edm:preview rdf:resource="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getthumbnail/collection/$1/id/$2')}"/>
+						<edm:object rdf:resource="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}"/>
+					</xsl:when>
+				</xsl:choose>
+			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 

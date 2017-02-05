@@ -65,6 +65,7 @@
 
 					<xsl:apply-templates select="parent::node()/dpla:SourceResource[@rdf:about = $cho_uri]">
 						<xsl:with-param name="reference" select="$reference"/>
+						<xsl:with-param name="thumbnail" select="$thumbnail"/>
 						<xsl:with-param name="hasCoords" select="false()" as="xs:boolean"/>
 					</xsl:apply-templates>
 
@@ -131,6 +132,7 @@
 	</xsl:template>
 
 	<xsl:template match="dpla:SourceResource">
+		<xsl:param name="thumbnail"/>
 		<xsl:param name="reference"/>
 		<xsl:param name="hasCoords" as="xs:boolean"/>
 		<div class="col-md-12">
@@ -163,7 +165,12 @@
 					</dl>
 				</div>
 				<div class="col-md-6">
-					<img src="{$reference}" alt="image" style="max-width:100%"/>
+					<xsl:if test="string($reference)">
+						<img src="{$reference}" alt="Reference image URL not dereferenceable" title="Thumbnail" style="max-width:100%"/>
+					</xsl:if>
+					<xsl:if test="string($thumbnail)">
+						<img src="{$thumbnail}" alt="Thumbnail image URL not dereferenceable" title="Reference" style="max-width:100%"/>
+					</xsl:if>					
 				</div>
 			</xsl:when>
 			<xsl:otherwise>
@@ -177,7 +184,9 @@
 							</dl>
 						</div>
 						<div class="col-md-6">
-							<img src="{$reference}" alt="image" style="max-width:100%"/>
+							<xsl:if test="string($reference)">
+								<img src="{$reference}" alt="Reference image URL not dereferenceable" style="max-width:100%"/>
+							</xsl:if>							
 						</div>
 						<div class="col-md-6">
 							<div id="map"/>

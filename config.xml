@@ -18,4 +18,60 @@
 	<limit>24</limit>
 	<dpla_limit>10000</dpla_limit>
 	<oai-pmh_limit>100</oai-pmh_limit>
+	<dams>
+		<contentdm-default>
+			<repository pattern="content">waps</repository>
+			<repository>idbb</repository>
+			<repository>US-ula</repository>
+			<repository>US-uuml</repository>
+			<repository>wauar</repository>
+			<repository>wabewwuh</repository>
+			<repository pattern="contentdm">wachene</repository>
+			<repository>ormac</repository>
+			<repository>orkt</repository>
+			<repository>orppc</repository>
+			<repository>wasu</repository>
+			<repository>orashs</repository>
+			<repository>idu</repository>
+			<repository>orpu</repository>
+			<repository pattern="digitalcollections">watu</repository>
+			<repository pattern="contentdm">wau</repository>
+			<repository pattern="content.wwu">wabewh</repository>
+			<repository pattern="contentdm">waww</repository>			
+		</contentdm-default>		
+		<digital-commons>
+			<repository>mtu</repository>
+			<repository>waeic</repository>
+			<repository pattern="digitalcommons">orphs</repository>
+			<repository>orpcc</repository>
+			<repository pattern="dc.ewu">wachene</repository>
+			<repository>orngf</repository>
+			<repository>orplic</repository>
+			<repository>orfp</repository>
+			<repository>orps</repository>
+			<repository>waspc</repository>
+			<repository pattern="soundideas">watu</repository>
+			<repository>ormonw</repository>
+			<repository pattern="cedar.wwu">wabewh</repository>
+			<repository pattern="arminda">waww</repository>
+			<repository pattern="digitalcommons">waspw</repository>
+		</digital-commons>
+		<dspace>
+			<repository pattern="research">waps</repository>
+			<repository pattern="scholarsbank">oru</repository>
+			<repository pattern="digital.lib">wau</repository>
+		</dspace>
+		<omeka>
+			<repository>wavc</repository>
+			<repository>orpl</repository>
+			<repository pattern="oai-pmh-repository">orphs</repository>
+		</omeka>
+		<hydra>
+			<repository pattern="oregondigital">oru</repository>
+		</hydra>
+		<other>			
+			<repository>orcs</repository>
+			<repository note="some other contentdm">orsaw</repository>
+		</other>
+	</dams>
 </config>
