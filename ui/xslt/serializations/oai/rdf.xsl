@@ -402,10 +402,14 @@
 				<xsl:when test="$val castable as xs:decimal">
 					<!-- if this element is a decimal and a following sibling is also a decimal, this is a lat and the other is a long -->
 					<xsl:if test="following-sibling::*[local-name()=$element][normalize-space(text()) castable as xs:decimal]">
-						<xsl:call-template name="place">
-							<xsl:with-param name="lat" select="$val"/>
-							<xsl:with-param name="long" select="following-sibling::*[local-name()=$element][normalize-space(text()) castable as xs:decimal][1]"/>
-						</xsl:call-template>
+						<xsl:choose>
+							<xsl:when test="$dams = 'digital-commons'">
+								<xsl:call-template name="place">
+									<xsl:with-param name="lat" select="$val"/>
+									<xsl:with-param name="long" select="following-sibling::*[local-name()=$element][normalize-space(text()) castable as xs:decimal][1]"/>
+								</xsl:call-template>
+							</xsl:when>
+						</xsl:choose>						
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
