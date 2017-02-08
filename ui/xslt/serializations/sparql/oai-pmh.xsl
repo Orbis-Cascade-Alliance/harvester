@@ -350,7 +350,7 @@
 	</xsl:template>
 
 	<!-- put edm:Place coordinates back together -->
-	<xsl:template match="dcterms:coverage[edm:Place]">
+	<xsl:template match="dcterms:spatial[edm:Place]">
 		<dc:coverage.spatial.latlong>
 			<xsl:apply-templates select="edm:Place"/>
 		</dc:coverage.spatial.latlong>
