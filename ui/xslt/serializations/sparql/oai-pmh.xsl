@@ -318,6 +318,12 @@
 				<dc:date>
 					<xsl:value-of select="substring(., 1, 4)"/>
 				</dc:date>
+				<dc:date.start>
+					<xsl:value-of select="nwda:denormalizeDate(., 'from')"/>
+				</dc:date.start>
+				<dc:date.end>
+					<xsl:value-of select="nwda:denormalizeDate(., 'to')"/>
+				</dc:date.end>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
