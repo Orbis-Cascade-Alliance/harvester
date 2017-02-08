@@ -315,15 +315,24 @@
 				<xsl:apply-templates select="edm:TimeSpan"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<dc:date>
-					<xsl:value-of select="substring(., 1, 4)"/>
-				</dc:date>
-				<dc:date.start>
-					<xsl:value-of select="nwda:denormalizeDate(., 'from')"/>
-				</dc:date.start>
-				<dc:date.end>
-					<xsl:value-of select="nwda:denormalizeDate(., 'to')"/>
-				</dc:date.end>
+				<xsl:choose>
+					<xsl:when test="@rdf:datatype">
+						<dc:date>
+							<xsl:value-of select="substring(., 1, 4)"/>
+						</dc:date>
+						<dc:date.start>
+							<xsl:value-of select="nwda:denormalizeDate(., 'from')"/>
+						</dc:date.start>
+						<dc:date.end>
+							<xsl:value-of select="nwda:denormalizeDate(., 'to')"/>
+						</dc:date.end>
+					</xsl:when>
+					<xsl:otherwise>
+						<dc:date>
+							<xsl:value-of select="."/>
+						</dc:date>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -373,7 +382,7 @@
 	<!-- ************ FUNCTIONS *************-->
 	<xsl:function name="nwda:denormalizeDate">
 		<xsl:param name="date"/>
-		<xsl:param name="pos"/>		
+		<xsl:param name="pos"/>
 
 		<xsl:choose>
 			<xsl:when test="$date castable as xs:date">
@@ -411,15 +420,15 @@
 			</xsl:when>
 		</xsl:choose>
 	</xsl:function>
-	
+
 	<xsl:template name="last-day-of-month">
 		<xsl:param name="date"/>
 		<xsl:param name="y" select="substring($date, 1, 4)"/>
 		<xsl:param name="m" select="substring($date, 6, 2)"/>
 		<xsl:param name="cal" select="'312831303130313130313031'"/>
 		<xsl:param name="leap" select="not($y mod 4) and $y mod 100 or not($y mod 400)"/>
-		<xsl:param name="month-length" select="substring($cal, 2*($m - 1) + 1, 2) " />
-		<xsl:value-of select="$month-length" />
+		<xsl:param name="month-length" select="substring($cal, 2 * ($m - 1) + 1, 2)"/>
+		<xsl:value-of select="$month-length"/>
 	</xsl:template>
 
 </xsl:stylesheet>

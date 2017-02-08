@@ -684,7 +684,7 @@
 		<xsl:param name="set"/>
 
 		<xsl:variable name="oai" as="node()*">
-			<xsl:copy-of select="document(concat($set, '?verb=ListRecords&amp;resumptionToken=', $token))"/>
+			<xsl:copy-of select="document(concat($set, '?verb=ListRecords&amp;resumptionToken=', encode-for-uri($token)))"/>
 		</xsl:variable>
 
 		<xsl:choose>
