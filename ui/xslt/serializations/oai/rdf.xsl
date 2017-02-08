@@ -405,8 +405,8 @@
 						<xsl:choose>
 							<xsl:when test="$dams = 'digital-commons'">
 								<xsl:call-template name="place">
-									<xsl:with-param name="lat" select="$val"/>
-									<xsl:with-param name="long" select="following-sibling::*[local-name()=$element][normalize-space(text()) castable as xs:decimal][1]"/>
+									<xsl:with-param name="lat" select="following-sibling::*[local-name()=$element][normalize-space(text()) castable as xs:decimal][1]"/>
+									<xsl:with-param name="long" select="$val"/>
 								</xsl:call-template>
 							</xsl:when>
 						</xsl:choose>						
