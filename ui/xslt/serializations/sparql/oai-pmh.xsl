@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:digest="org.apache.commons.codec.digest.DigestUtils"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:res="http://www.w3.org/2005/sparql-results#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
-	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:prov="http://www.w3.org/ns/prov#"
-	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#" xmlns:ore="http://www.openarchives.org/ore/terms/"
-	xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda dpla ore digest prov geo" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.openarchives.org/OAI/2.0/"
+	xmlns:digest="org.apache.commons.codec.digest.DigestUtils" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:res="http://www.w3.org/2005/sparql-results#"
+	xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:prov="http://www.w3.org/ns/prov#"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#"
+	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda dpla ore digest prov geo" version="2.0">
 
 	<xsl:variable name="url" select="//config/url"/>
 	<xsl:variable name="publisher" select="//config/publisher"/>
@@ -47,7 +49,8 @@
 
 	<!-- construct OAI-PMH response -->
 	<xsl:template match="/">
-		<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
 			http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
 			<responseDate>
@@ -106,7 +109,8 @@
 							<setName>Primo Harvest</setName>
 							<setDescription>
 								<oai_dc:dc>
-									<dc:title>All cultural heritage objects in <xsl:value-of select="$publisher"/> designated for harvesting into Primo</dc:title>
+									<dc:title>All cultural heritage objects in <xsl:value-of select="$publisher"/> designated for harvesting into
+										Primo</dc:title>
 									<dc:creator>
 										<xsl:value-of select="$publisher"/>
 									</dc:creator>
@@ -273,14 +277,15 @@
 			<dc:publisher>
 				<xsl:value-of select="$publisher"/>
 			</dc:publisher>
+
 			<dc:identifier>
 				<xsl:value-of select="@rdf:about"/>
 			</dc:identifier>
 
 			<xsl:if test="string($thumbnail)">
-				<dc:identifier.thumbnail>
+				<dc:relation.hasVersion>
 					<xsl:value-of select="$thumbnail"/>
-				</dc:identifier.thumbnail>
+				</dc:relation.hasVersion>
 			</xsl:if>
 			<xsl:if test="string($depiction)">
 				<dc:identifier.reference>
@@ -296,7 +301,7 @@
 			<xsl:value-of select="tokenize(@rdf:resource, '/')[last()]"/>
 		</dc:type>
 	</xsl:template>
-	
+
 	<xsl:template match="edm:hasType">
 		<dc:genre>
 			<xsl:value-of select="."/>
@@ -311,7 +316,7 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<dc:date>
-					<xsl:value-of select="."/>
+					<xsl:value-of select="substring(., 1, 4)"/>
 				</dc:date>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -319,25 +324,31 @@
 
 	<xsl:template match="edm:TimeSpan">
 		<dc:date>
-			<xsl:value-of select="concat(edm:begin, '/', edm:end)"/>
+			<xsl:value-of select="concat(replace(edm:begin, '-', ''), '/', replace(edm:end, '-', ''))"/>
 		</dc:date>
 		<dc:date.start>
-			<xsl:value-of select="edm:begin"/>
+			<xsl:value-of select="nwda:denormalizeDate(edm:begin, 'from')"/>
 		</dc:date.start>
 		<dc:date.end>
-			<xsl:value-of select="edm:end"/>
+			<xsl:value-of select="nwda:denormalizeDate(edm:end, 'to')"/>
 		</dc:date.end>
 	</xsl:template>
 
 	<!-- put edm:Place coordinates back together -->
 	<xsl:template match="dcterms:coverage[edm:Place]">
-		<dc:coverage>
+		<dc:coverage.spatial.latlong>
 			<xsl:apply-templates select="edm:Place"/>
-		</dc:coverage>
+		</dc:coverage.spatial.latlong>
 	</xsl:template>
 
 	<xsl:template match="edm:Place">
 		<xsl:value-of select="concat(geo:lat, ',', geo:long)"/>
+	</xsl:template>
+
+	<xsl:template match="dcterms:rights[@rdf:resource]">
+		<dc:rights.standarized>
+			<xsl:value-of select="@rdf:resource"/>
+		</dc:rights.standarized>
 	</xsl:template>
 
 	<xsl:template match="*">
@@ -351,6 +362,58 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:element>
+	</xsl:template>
+
+	<!-- ************ FUNCTIONS *************-->
+	<xsl:function name="nwda:denormalizeDate">
+		<xsl:param name="date"/>
+		<xsl:param name="pos"/>		
+
+		<xsl:choose>
+			<xsl:when test="$date castable as xs:date">
+				<xsl:value-of select="replace($date, '-', '')"/>
+			</xsl:when>
+			<xsl:when test="$date castable as xs:gYearMonth">
+				<xsl:choose>
+					<xsl:when test="$pos = 'from'">
+						<xsl:value-of select="concat(replace($date, '-', ''), '01')"/>
+					</xsl:when>
+					<xsl:when test="$pos = 'to'">
+						<xsl:variable name="last">
+							<xsl:call-template name="last-day-of-month">
+								<xsl:with-param name="date" select="$date"/>
+							</xsl:call-template>
+						</xsl:variable>
+						<xsl:value-of select="concat(replace($date, '-', ''), $last)"/>
+					</xsl:when>
+				</xsl:choose>
+			</xsl:when>
+			<xsl:when test="$date castable as xs:gYear">
+				<xsl:choose>
+					<xsl:when test="$pos = 'from'">
+						<xsl:value-of select="concat(replace($date, '-', ''), '0101')"/>
+					</xsl:when>
+					<xsl:when test="$pos = 'to'">
+						<xsl:variable name="last">
+							<xsl:call-template name="last-day-of-month">
+								<xsl:with-param name="date" select="$date"/>
+							</xsl:call-template>
+						</xsl:variable>
+						<xsl:value-of select="concat(replace($date, '-', ''), '1231')"/>
+					</xsl:when>
+				</xsl:choose>
+			</xsl:when>
+		</xsl:choose>
+	</xsl:function>
+	
+	<xsl:template name="last-day-of-month">
+		<xsl:param name="date"/>
+		<xsl:param name="y" select="substring($date, 1, 4)"/>
+		<xsl:param name="m" select="substring($date, 6, 2)"/>
+		<xsl:param name="cal" select="'312831303130313130313031'"/>
+		<xsl:param name="leap" select="not($y mod 4) and $y mod 100 or not($y mod 400)"/>
+		<xsl:param name="month-length" select="substring($cal, 2*($m - 1) + 1, 2) " />
+		<xsl:value-of select="$month-length" />
 	</xsl:template>
 
 </xsl:stylesheet>

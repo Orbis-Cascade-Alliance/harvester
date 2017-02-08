@@ -30,9 +30,10 @@
 	<xsl:param name="set" select="/content/controls/set"/>
 	<xsl:param name="ark" select="/content/controls/ark"/>
 	<xsl:param name="target" select="/content/controls/target"/>
+	<xsl:param name="rightsStatement" select="/content/controls/rights"/>
 	<xsl:param name="url" select="/content/config/url"/>
 	<xsl:param name="production_server" select="/content/config/production_server"/>
-	
+
 
 	<!-- load Google Sheets Atom feeds into variables for normalization -->
 	<xsl:variable name="places" as="element()*">
@@ -42,10 +43,8 @@
 	<xsl:variable name="subjects" as="element()*">
 		<xsl:copy-of select="document(/content/config/sheets/subjects)/*"/>
 	</xsl:variable>
-	
-	<xsl:variable name="dams-node" as="element()*">
-		<xsl:copy-of select="/content/config/dams"/>
-	</xsl:variable>
+
+	<xsl:variable name="dams" select="/content/config/dams//repository[. = $repository][contains($set, @pattern)]/parent::node()/name()"/>
 
 	<xsl:template match="/">
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
@@ -109,7 +108,7 @@
 				<!-- ignore kaga -->
 				<xsl:when test="matches($cho_uri, 'https?://kaga')"/>
 				<!-- ignore jpg files -->
-				<xsl:when test="matches($cho_uri, '\.(jpe?g|tif|pdf)$')"/>				
+				<xsl:when test="matches($cho_uri, '\.(jpe?g|tif|pdf)$')"/>
 				<xsl:otherwise>
 					<xsl:apply-templates select="$metadata" mode="process-metadata">
 						<xsl:with-param name="cho_uri" select="$cho_uri"/>
@@ -145,9 +144,16 @@
 
 		<!-- parse rights statement from dc:rights -->
 		<xsl:variable name="rights">
-			<xsl:if test="dc:rights[starts-with(normalize-space(.), 'http://rightsstatements.org')]">
-				<xsl:value-of select="dc:rights[starts-with(normalize-space(.), 'http://rightsstatements.org')]"/>
-			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="string($rightsStatement)">
+					<xsl:value-of select="concat('http://rightsstatements.org/vocab/', $rightsStatement, '/1.0/')"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:if test="dc:rights[starts-with(normalize-space(.), 'http://rightsstatements.org')]">
+						<xsl:value-of select="dc:rights[starts-with(normalize-space(.), 'http://rightsstatements.org')]"/>
+					</xsl:if>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:variable>
 
 		<dpla:SourceResource rdf:about="{$cho_uri}">
@@ -158,6 +164,13 @@
 			<!-- apply generic DC templates -->
 			<xsl:apply-templates
 				select="dc:date[1] | dc:type | dc:creator | dc:language | dc:contributor | dc:rights | dc:format | dc:subject | dc:extent | dc:temporal | dc:publisher"/>
+
+			<xsl:if test="*[contains(local-name(), '.lat')] and *[contains(local-name(), '.long')]">
+				<xsl:call-template name="place">
+					<xsl:with-param name="lat" select="*[contains(local-name(), '.lat')][1]"/>
+					<xsl:with-param name="long" select="*[contains(local-name(), '.long')][2]"/>
+				</xsl:call-template>
+			</xsl:if>
 
 			<!-- handle coverage and spatial for coordinates vs. text -->
 			<!--<xsl:choose>
@@ -212,6 +225,8 @@
 					<xsl:apply-templates select="*[local-name() = 'spatial'] | *[local-name() = 'coverage']"/>
 				</xsl:otherwise>
 			</xsl:choose>-->
+			
+			<xsl:apply-templates select="*[local-name() = 'spatial'] | *[local-name() = 'coverage']"/>
 
 			<xsl:if test="dc:description">
 				<dcterms:description>
@@ -245,6 +260,9 @@
 			<edm:isShownAt rdf:resource="{$cho_uri}"/>
 			<edm:dataProvider rdf:resource="{$production_server}contact#{$repository}"/>
 			<edm:provider rdf:resource="{$production_server}"/>
+			<xsl:if test="string($rights)">
+				<edm:rights rdf:resource="{$rights}"/>
+			</xsl:if>
 			<xsl:call-template name="views">
 				<xsl:with-param name="cho_uri" select="$cho_uri"/>
 			</xsl:call-template>
@@ -333,10 +351,24 @@
 
 	<!-- only include rights if they are a URI -->
 	<xsl:template match="dc:rights">
-		<xsl:for-each select="tokenize(., ';')">
-			<xsl:if test="starts-with(normalize-space(.), 'http://rightsstatements.org')">
-				<dcterms:rights rdf:resource="{normalize-space(.)}"/>
-			</xsl:if>
+		<xsl:for-each select="tokenize(., ';')[1]">
+			<xsl:choose>
+				<xsl:when test="string($rightsStatement)">
+					<dcterms:rights>
+						<xsl:attribute name="rdf:resource" select="concat('http://rightsstatements.org/vocab/', $rightsStatement, '/1.0/')"/>
+					</dcterms:rights>
+				</xsl:when>
+				<xsl:when test="starts-with(normalize-space(.), 'http://rightsstatements.org')">
+					<dcterms:rights>
+						<xsl:attribute name="rdf:resource" select="normalize-space(.)"/>
+					</dcterms:rights>
+				</xsl:when>
+				<xsl:otherwise>
+					<dcterms:rights>
+						<xsl:value-of select="normalize-space(.)"/>
+					</dcterms:rights>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:for-each>
 	</xsl:template>
 
@@ -351,12 +383,52 @@
 		</xsl:for-each>
 	</xsl:template>
 
+	<xsl:template match="*[local-name()='coverage']|*[local-name()='spatial']">
+		<xsl:variable name="element" select="local-name()"/>
+		<xsl:variable name="val" select="normalize-space(.)"/>
+		
+		
+			<xsl:choose>
+				<xsl:when test="matches($val, '-?\d+\.\d+,\s?-?\d+\.\d+')">					
+					<xsl:analyze-string select="$val" regex="(-?\d+\.\d+),\s?(-?\d+\.\d+)">
+						<xsl:matching-substring>
+							<xsl:call-template name="place">
+								<xsl:with-param name="lat" select="regex-group(1)"/>
+								<xsl:with-param name="long" select="regex-group(2)"/>
+							</xsl:call-template>
+						</xsl:matching-substring>
+					</xsl:analyze-string>
+				</xsl:when>
+				<xsl:when test="$val castable as xs:decimal">
+					<!-- if this element is a decimal and a following sibling is also a decimal, this is a lat and the other is a long -->
+					<xsl:if test="following-sibling::*[local-name()=$element][normalize-space(text()) castable as xs:decimal]">
+						<xsl:call-template name="place">
+							<xsl:with-param name="lat" select="$val"/>
+							<xsl:with-param name="long" select="following-sibling::*[local-name()=$element][normalize-space(text()) castable as xs:decimal][1]"/>
+						</xsl:call-template>
+					</xsl:if>
+				</xsl:when>
+				<xsl:otherwise>
+					<dcterms:spatial>
+						<xsl:choose>
+							<xsl:when test="$places//atom:entry[gsx:label = $val]">
+								<xsl:attribute name="rdf:resource" select="$places//atom:entry[gsx:label = $val]/gsx:uri"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$val"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</dcterms:spatial>							
+				</xsl:otherwise>
+			</xsl:choose>
+	</xsl:template>
+
 	<!-- geographic -->
 	<xsl:template name="place">
 		<xsl:param name="lat"/>
 		<xsl:param name="long"/>
 
-		<dcterms:coverage>
+		<dcterms:spatial>
 			<edm:Place>
 				<geo:lat>
 					<xsl:value-of select="$lat"/>
@@ -365,7 +437,7 @@
 					<xsl:value-of select="$long"/>
 				</geo:long>
 			</edm:Place>
-		</dcterms:coverage>
+		</dcterms:spatial>
 
 	</xsl:template>
 
@@ -431,7 +503,7 @@
 							<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
 								<xsl:value-of select="$val"/>
 							</xsl:element>
-							<xsl:element name="edm:hasType" namespace="http://www.europeana.eu/schemas/edm/">placeholder for AAT URI</xsl:element>
+							<!--<xsl:element name="edm:hasType" namespace="http://www.europeana.eu/schemas/edm/">placeholder for AAT URI</xsl:element>-->
 						</xsl:if>
 					</xsl:when>
 					<xsl:otherwise>
@@ -449,19 +521,7 @@
 											<xsl:value-of select="$val"/>
 										</xsl:otherwise>
 									</xsl:choose>
-								</xsl:when>
-								<xsl:when test="$property = 'spatial' or $property = 'coverage'">
-									<xsl:variable name="label" select="$val"/>
-
-									<xsl:choose>
-										<xsl:when test="$places//atom:entry[gsx:label = $label]">
-											<xsl:attribute name="rdf:resource" select="$places//atom:entry[gsx:label = $label]/gsx:uri"/>
-										</xsl:when>
-										<xsl:otherwise>
-											<xsl:value-of select="$val"/>
-										</xsl:otherwise>
-									</xsl:choose>
-								</xsl:when>
+								</xsl:when>								
 								<xsl:otherwise>
 									<xsl:value-of select="$val"/>
 								</xsl:otherwise>
@@ -478,10 +538,9 @@
 		<xsl:param name="cho_uri"/>
 		<xsl:param name="content-type"/>
 		<xsl:param name="rights"/>
+
 		
-		<xsl:variable name="dams" select="$dams-node//repository[. = $repository][contains($set, @pattern)]/parent::node()/name()"/>
-
-
+		
 		<xsl:choose>
 			<xsl:when test="$dams = 'contentdm-default'">
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}">
@@ -583,12 +642,6 @@
 	<!-- views -->
 	<xsl:template name="views">
 		<xsl:param name="cho_uri"/>
-
-		<xsl:variable name="dams" select="$dams-node//repository[. = $repository][contains($set, @pattern)]/parent::node()/name()"/>
-		
-		<test>
-			<xsl:value-of select="$dams"/>
-		</test>
 		
 		<xsl:choose>
 			<xsl:when test="$dams = 'contentdm-default'">
@@ -661,8 +714,8 @@
 				<xsl:variable name="date" select="substring($val, 1, 10)"/>
 
 				<xsl:choose>
-					<xsl:when test="substring($date, 6) = '01-01'">http://www.w3.org/2001/XMLSchema#gYear</xsl:when>
-					<xsl:otherwise>http://www.w3.org/2001/XMLSchema#gYear</xsl:otherwise>
+					<xsl:when test="substring($date, 6) = '01-01' and $dams = 'digital-commons'">http://www.w3.org/2001/XMLSchema#gYear</xsl:when>
+					<xsl:otherwise>http://www.w3.org/2001/XMLSchema#date</xsl:otherwise>
 				</xsl:choose>
 			</xsl:when>
 			<xsl:when test="$val castable as xs:date">http://www.w3.org/2001/XMLSchema#date</xsl:when>
@@ -678,7 +731,14 @@
 			<xsl:when test="$val castable as xs:dateTime">
 				<xsl:variable name="date" select="substring($val, 1, 10)"/>
 
-				<xsl:value-of select="$date"/>
+				<xsl:choose>
+					<xsl:when test="substring($date, 6) = '01-01' and $dams = 'digital-commons'">
+						<xsl:value-of select="substring($date, 1, 4)"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$date"/>
+					</xsl:otherwise>
+				</xsl:choose>				
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$val"/>

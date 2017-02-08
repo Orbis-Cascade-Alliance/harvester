@@ -51,6 +51,26 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<label for="rights" class="col-sm-2 control-label">Rights</label>
+							<div class="col-sm-10">
+								<select id="rights" name="rights" class="form-control" style="width:10em">
+									<option value="">Select Rights Statement (Optional)</option>
+									<option value="InC">In Copyright</option>
+									<option value="InC-OW-EU">In Copyright - EU orphan work</option>
+									<option value="InC-EDU">In Copyright - Educational use permitted</option>
+									<option value="InC-NC">In Copyright - Non-commercial use permitted</option>
+									<option value="InC-RUU">In Copyright - Rights-holder(s) unlocatable or unidentifiable</option>
+									<option value="NoC-CR">No Copyright - Contractual restrictions</option>
+									<option value="NoC-NC">No Copyright - Non-commercial use only</option>
+									<option value="NoC-OKLR">No Copyright - Other known legal restrictions</option>
+									<option value="NoC-US">No Copyright - United States</option>
+									<option value="CNE">Copyright not evaluated</option>
+									<option value="UND">Copyright undetermined</option>
+									<option value="NKC">No known copyright</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
 							<label for="output" class="col-sm-2 control-label">Output</label>
 							<div class="col-sm-10">
 								<select id="output" name="output" class="form-control" style="width:10em">
@@ -59,7 +79,7 @@
 								</select>
 							</div>
 						</div>
-						<input type="hidden" name="target" value="dpla"/>
+						<input type="hidden" name="target" value="both"/>
 						<input type="hidden" name="mode" value="test"/>
 						<input type="submit" value="Submit"/>
 					</form>
