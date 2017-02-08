@@ -47,6 +47,9 @@
 				<p:output name="data" id="model"/>
 			</p:processor>			
 		</p:when>
+		<!--<p:when test="verb='GetRecord'">
+		
+		</p:when>-->
 		<p:when test="verb='ListIdentifiers' or verb='ListRecords'">
 			<!-- evaluate for errors -->
 			<p:processor name="oxf:unsafe-xslt">

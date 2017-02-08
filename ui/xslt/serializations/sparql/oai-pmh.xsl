@@ -361,9 +361,9 @@
 	</xsl:template>
 
 	<xsl:template match="dcterms:rights[@rdf:resource]">
-		<dc:rights.standarized>
+		<dc:rights.standardized>
 			<xsl:value-of select="@rdf:resource"/>
-		</dc:rights.standarized>
+		</dc:rights.standardized>
 	</xsl:template>
 
 	<xsl:template match="*">
