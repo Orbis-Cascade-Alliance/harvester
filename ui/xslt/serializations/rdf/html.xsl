@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
 	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
-	xmlns:prov="http://www.w3.org/ns/prov#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+	xmlns:prov="http://www.w3.org/ns/prov#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:dcmitype="http://purl.org/dc/dcmitype/"
 	xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/" exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="../../templates.xsl"/>
@@ -14,6 +14,7 @@
 	<xsl:variable name="namespaces" as="item()*">
 		<namespaces>
 			<namespace prefix="dc" uri="http://purl.org/dc/elements/1.1/"/>
+			<namespace prefix="dcmitype" uri="http://purl.org/dc/dcmitype/"/>
 			<namespace prefix="dcterms" uri="http://purl.org/dc/terms/"/>
 			<namespace prefix="dpla" uri="http://dp.la/terms/"/>
 			<namespace prefix="edm" uri="http://www.europeana.eu/schemas/edm/"/>
@@ -22,7 +23,7 @@
 			<namespace prefix="geo" uri="http://www.w3.org/2003/01/geo/wgs84_pos#"/>
 			<namespace prefix="prov" uri="http://www.w3.org/ns/prov#"/>
 			<namespace prefix="rdf" uri="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
-			<namespace prefix="xsd" uri="http://www.w3.org/2001/XMLSchema#"/>
+			<namespace prefix="xsd" uri="http://www.w3.org/2001/XMLSchema#"/>			
 		</namespaces>
 	</xsl:variable>
 
@@ -50,6 +51,7 @@
 
 	<xsl:template name="body">
 		<div class="container-fluid content">
+			<xsl:apply-templates select="descendant::dcmitype:Collection" mode="render"/>
 			<xsl:apply-templates select="descendant::ore:Aggregation"/>
 		</div>
 	</xsl:template>
@@ -104,7 +106,7 @@
 		</div>
 	</xsl:template>
 
-	<xsl:template match="edm:WebResource | ore:Aggregation" mode="render">
+	<xsl:template match="edm:WebResource | ore:Aggregation | dcmitype:Collection" mode="render">
 		<xsl:variable name="uri" select="@rdf:about"/>
 
 		<div class="col-md-12">

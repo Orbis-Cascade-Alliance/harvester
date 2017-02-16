@@ -14,14 +14,14 @@
                         image URLs.
 -->
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
-	xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dpla="http://dp.la/terms/"
-	xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/"
-	xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:atom="http://www.w3.org/2005/Atom"
-	xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:doap="http://usefulinc.com/ns/doap#"
-	xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester"
-	xmlns:digest="org.apache.commons.codec.digest.DigestUtils" exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dpla="http://dp.la/terms/" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:edm="http://www.europeana.eu/schemas/edm/"
+	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/"
+	xmlns:prov="http://www.w3.org/ns/prov#" xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"
+	xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester" xmlns:digest="org.apache.commons.codec.digest.DigestUtils"
+	exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest" version="2.0">
 	<xsl:output indent="yes" encoding="UTF-8"/>
 
 	<!-- request parameters -->
@@ -33,7 +33,11 @@
 	<xsl:param name="rightsStatement" select="/content/controls/rights"/>
 	<xsl:param name="url" select="/content/config/url"/>
 	<xsl:param name="production_server" select="/content/config/production_server"/>
+	<xsl:variable name="repo_uri" select="concat($production_server, 'contact#', $repository)"/>
 
+	<!-- break down information about the OAI-PMH service -->
+	<xsl:variable name="oai_service" select="/content/oai:OAI-PMH/oai:request"/>
+	<xsl:variable name="setSpec" select="/content/oai:OAI-PMH/oai:request/@set"/>
 
 	<!-- load Google Sheets Atom feeds into variables for normalization -->
 	<xsl:variable name="places" as="element()*">
@@ -49,10 +53,27 @@
 	<xsl:template match="/">
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
 			xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
-			xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#"
+			xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:dcmitype="http://purl.org/dc/dcmitype/"
 			xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:doap="http://usefulinc.com/ns/doap#">
-			<!-- either process only those objects with a matching $ark when the process is instantiated by the finding aid upload, or process all objects for bulk uploading -->
 
+			<!-- generate triples for describing the set -->
+			<xsl:variable name="setNode" as="element()*">
+				<xsl:copy-of select="document(concat($oai_service, '?verb=ListSets'))//oai:set[oai:setSpec=$setSpec]"/>
+			</xsl:variable>
+
+			<dcmitype:Collection rdf:about="{$set}">
+				<dcterms:title>
+					<xsl:value-of select="$setNode/oai:setName"/>
+				</dcterms:title>
+				<xsl:if test="$setNode/oai:setDescription">
+					<dcterms:description>
+						<xsl:value-of select="$setNode/oai:setDescription"/>
+					</dcterms:description>
+				</xsl:if>
+				<dcterms:publisher rdf:resource="{$repo_uri}"/>
+			</dcmitype:Collection>
+
+			<!-- either process only those objects with a matching $ark when the process is instantiated by the finding aid upload, or process all objects for bulk uploading -->
 			<xsl:choose>
 				<xsl:when test="$mode = 'test'">
 					<xsl:apply-templates select="descendant::oai:record[not(oai:header/@status = 'deleted')][position() &lt;= 10]"/>
@@ -162,8 +183,7 @@
 			</dcterms:title>
 
 			<!-- apply generic DC templates -->
-			<xsl:apply-templates
-				select="dc:date[1] | dc:type | dc:creator | dc:language | dc:contributor | dc:rights | dc:format | dc:subject | dc:extent | dc:temporal | dc:publisher"/>
+			<xsl:apply-templates select="dc:date[1] | dc:type | dc:creator | dc:language | dc:contributor | dc:rights | dc:format | dc:subject | dc:extent | dc:temporal"/>
 
 			<xsl:if test="*[contains(local-name(), '.lat')] and *[contains(local-name(), '.long')]">
 				<xsl:call-template name="place">
@@ -172,66 +192,16 @@
 				</xsl:call-template>
 			</xsl:if>
 
-			<!-- handle coverage and spatial for coordinates vs. text -->
-			<!--<xsl:choose>
-				<!-\- handle spatial/coverage with lat and long encoded directly -\->
-				<xsl:when test="count(*[local-name() = 'spatial']) = 2">
-					<xsl:if test="*[local-name() = 'spatial'][1] castable as xs:decimal and *[local-name() = 'spatial'][2] castable as xs:decimal">
-						<xsl:call-template name="place">
-							<xsl:with-param name="lat" select="*[local-name() = 'spatial'][1]"/>
-							<xsl:with-param name="long" select="*[local-name() = 'spatial'][2]"/>
-						</xsl:call-template>
-					</xsl:if>
-				</xsl:when>
-				<xsl:when test="count(*[local-name() = 'coverage']) = 2">
-					<xsl:if test="*[local-name() = 'coverage'][1] castable as xs:decimal and *[local-name() = 'coverage'][2] castable as xs:decimal">
-						<xsl:call-template name="place">
-							<xsl:with-param name="lat" select="*[local-name() = 'coverage'][1]"/>
-							<xsl:with-param name="long" select="*[local-name() = 'coverage'][2]"/>
-						</xsl:call-template>
-					</xsl:if>
-				</xsl:when>
-				<!-\- handle .lat and .long qualified DC -\->
-				<xsl:when test="*[contains(local-name(), '.lat')] and *[contains(local-name(), '.long')]">
-					<xsl:call-template name="place">
-						<xsl:with-param name="lat" select="*[contains(local-name(), '.lat')][1]"/>
-						<xsl:with-param name="long" select="*[contains(local-name(), '.long')][2]"/>
-					</xsl:call-template>
-				</xsl:when>
-				<!-\- handle spatial/coverage with lat,long value -\->
-				<xsl:when test="matches(*[local-name() = 'coverage'], '-?\d+\.\d+,-?\d+\.\d+')">
-					<xsl:variable name="coords" select="*[local-name() = 'coverage'][matches(., '-?\d+\.\d+,-?\d+\.\d+')]"/>
-					<xsl:analyze-string select="$coords" regex="(-?\d+\.\d+),(-?\d+\.\d+)">
-						<xsl:matching-substring>
-							<xsl:call-template name="place">
-								<xsl:with-param name="lat" select="regex-group(1)"/>
-								<xsl:with-param name="long" select="regex-group(2)"/>
-							</xsl:call-template>
-						</xsl:matching-substring>
-					</xsl:analyze-string>
-				</xsl:when>
-				<xsl:when test="matches(*[local-name() = 'spatial'], '-?\d+\.\d+,-?\d+\.\d+')">
-					<xsl:variable name="coords" select="*[local-name() = 'spatial'][matches(., '-?\d+\.\d+,-?\d+\.\d+')]"/>
-					<xsl:analyze-string select="$coords" regex="(-?\d+\.\d+),(-?\d+\.\d+)">
-						<xsl:matching-substring>
-							<xsl:call-template name="place">
-								<xsl:with-param name="lat" select="regex-group(1)"/>
-								<xsl:with-param name="long" select="regex-group(2)"/>
-							</xsl:call-template>
-						</xsl:matching-substring>
-					</xsl:analyze-string>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:apply-templates select="*[local-name() = 'spatial'] | *[local-name() = 'coverage']"/>
-				</xsl:otherwise>
-			</xsl:choose>-->
-			
 			<xsl:apply-templates select="*[local-name() = 'spatial'] | *[local-name() = 'coverage']"/>
 
-			<xsl:if test="dc:description">
+			<xsl:if test="string($rightsStatement)">
+				<dcterms:rights rdf:resource="{$rightsStatement}"/>
+			</xsl:if>
+
+			<xsl:if test="dc:description[not(matches(., '.jpe?g$'))]">
 				<dcterms:description>
 					<xsl:for-each select="dc:description[not(matches(., '.jpe?g$'))]">
-						<xsl:value-of select="normalize-space(.)"/>
+						<xsl:value-of select="harvester:cleanText(normalize-space(.))"/>
 						<xsl:if test="not(position() = last())">
 							<xsl:text> </xsl:text>
 						</xsl:if>
@@ -349,23 +319,18 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<!-- only include rights if they are a URI -->
+	<!-- parse rights. Always include textual statement if available -->
 	<xsl:template match="dc:rights">
 		<xsl:for-each select="tokenize(., ';')[1]">
 			<xsl:choose>
-				<xsl:when test="string($rightsStatement)">
-					<dcterms:rights>
-						<xsl:attribute name="rdf:resource" select="concat('http://rightsstatements.org/vocab/', $rightsStatement, '/1.0/')"/>
-					</dcterms:rights>
-				</xsl:when>
-				<xsl:when test="starts-with(normalize-space(.), 'http://rightsstatements.org')">
+				<xsl:when test="starts-with(normalize-space(.), 'http://rightsstatements.org') and not(string($rightsStatement))">
 					<dcterms:rights>
 						<xsl:attribute name="rdf:resource" select="normalize-space(.)"/>
 					</dcterms:rights>
 				</xsl:when>
 				<xsl:otherwise>
 					<dcterms:rights>
-						<xsl:value-of select="normalize-space(.)"/>
+						<xsl:value-of select="harvester:cleanText(normalize-space(.))"/>
 					</dcterms:rights>
 				</xsl:otherwise>
 			</xsl:choose>
@@ -386,45 +351,51 @@
 	<xsl:template match="*[local-name()='coverage']|*[local-name()='spatial']">
 		<xsl:variable name="element" select="local-name()"/>
 		<xsl:variable name="val" select="normalize-space(.)"/>
-		
-		
-			<xsl:choose>
-				<xsl:when test="matches($val, '-?\d+\.\d+,\s?-?\d+\.\d+')">					
-					<xsl:analyze-string select="$val" regex="(-?\d+\.\d+),\s?(-?\d+\.\d+)">
-						<xsl:matching-substring>
+
+
+		<xsl:choose>
+			<xsl:when test="matches($val, '-?\d+\.\d+,\s?-?\d+\.\d+')">
+				<xsl:analyze-string select="$val" regex="(-?\d+\.\d+),\s?(-?\d+\.\d+)">
+					<xsl:matching-substring>
+						<xsl:call-template name="place">
+							<xsl:with-param name="lat" select="regex-group(1)"/>
+							<xsl:with-param name="long" select="regex-group(2)"/>
+						</xsl:call-template>
+					</xsl:matching-substring>
+				</xsl:analyze-string>
+			</xsl:when>
+			<xsl:when test="$val castable as xs:decimal">
+				<!-- if this element is a decimal and a following sibling is also a decimal, this is a lat and the other is a long -->
+				<xsl:if test="following-sibling::*[local-name()=$element][normalize-space(text()) castable as xs:decimal]">
+					<xsl:choose>
+						<xsl:when test="$dams = 'digital-commons'">
 							<xsl:call-template name="place">
-								<xsl:with-param name="lat" select="regex-group(1)"/>
-								<xsl:with-param name="long" select="regex-group(2)"/>
+								<xsl:with-param name="lat" select="following-sibling::*[local-name()=$element][normalize-space(text()) castable as xs:decimal][1]"/>
+								<xsl:with-param name="long" select="$val"/>
 							</xsl:call-template>
-						</xsl:matching-substring>
-					</xsl:analyze-string>
-				</xsl:when>
-				<xsl:when test="$val castable as xs:decimal">
-					<!-- if this element is a decimal and a following sibling is also a decimal, this is a lat and the other is a long -->
-					<xsl:if test="following-sibling::*[local-name()=$element][normalize-space(text()) castable as xs:decimal]">
-						<xsl:choose>
-							<xsl:when test="$dams = 'digital-commons'">
-								<xsl:call-template name="place">
-									<xsl:with-param name="lat" select="following-sibling::*[local-name()=$element][normalize-space(text()) castable as xs:decimal][1]"/>
-									<xsl:with-param name="long" select="$val"/>
-								</xsl:call-template>
-							</xsl:when>
-						</xsl:choose>						
-					</xsl:if>
-				</xsl:when>
-				<xsl:otherwise>
+						</xsl:when>
+					</xsl:choose>
+				</xsl:if>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:variable name="pieces" select="tokenize($val, ';')"/>
+
+				<xsl:for-each select="$pieces">
+					<xsl:variable name="label" select="harvester:cleanText(normalize-space(.))"/>
+
 					<dcterms:spatial>
 						<xsl:choose>
-							<xsl:when test="$places//atom:entry[gsx:label = $val]">
-								<xsl:attribute name="rdf:resource" select="$places//atom:entry[gsx:label = $val]/gsx:uri"/>
+							<xsl:when test="$places//atom:entry[gsx:label = $label]">
+								<xsl:attribute name="rdf:resource" select="$places//atom:entry[gsx:label = $label]/gsx:uri"/>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:value-of select="$val"/>
+								<xsl:value-of select="$label"/>
 							</xsl:otherwise>
 						</xsl:choose>
-					</dcterms:spatial>							
-				</xsl:otherwise>
-			</xsl:choose>
+					</dcterms:spatial>
+				</xsl:for-each>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<!-- geographic -->
@@ -474,11 +445,10 @@
 					</xsl:when>
 					<xsl:otherwise>
 						<edm:hasType>
-							<xsl:value-of select="normalize-space(.)"/>
+							<xsl:value-of select="harvester:cleanText(normalize-space(.))"/>
 						</edm:hasType>
 					</xsl:otherwise>
 				</xsl:choose>
-
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
@@ -493,14 +463,16 @@
 		<xsl:for-each select="tokenize(normalize-space(.), ';')">
 			<!-- ignore 0 length strings -->
 			<xsl:if test="string-length(normalize-space(.)) &gt; 0">
-				<xsl:variable name="val"
-					select="
-						if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then
-							substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1)
-						else
-							normalize-space(.)"/>
+				<xsl:variable name="val" select="harvester:cleanText(normalize-space(.))"/>
 				<!-- conditionals for ignoring or processing specific properties differently -->
 				<xsl:choose>
+					<xsl:when test="$property='creator'">
+						<xsl:if test="not(contains(lower-case($val), 'unknown'))">
+							<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
+								<xsl:value-of select="$val"/>
+							</xsl:element>
+						</xsl:if>
+					</xsl:when>
 					<xsl:when test="$property = 'format'">
 						<!-- suppress content types -->
 						<xsl:if test="not(contains(., '/'))">
@@ -525,7 +497,7 @@
 											<xsl:value-of select="$val"/>
 										</xsl:otherwise>
 									</xsl:choose>
-								</xsl:when>								
+								</xsl:when>
 								<xsl:otherwise>
 									<xsl:value-of select="$val"/>
 								</xsl:otherwise>
@@ -543,8 +515,8 @@
 		<xsl:param name="content-type"/>
 		<xsl:param name="rights"/>
 
-		
-		
+
+
 		<xsl:choose>
 			<xsl:when test="$dams = 'contentdm-default'">
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}">
@@ -646,7 +618,7 @@
 	<!-- views -->
 	<xsl:template name="views">
 		<xsl:param name="cho_uri"/>
-		
+
 		<xsl:choose>
 			<xsl:when test="$dams = 'contentdm-default'">
 				<edm:preview rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}"/>
@@ -709,6 +681,22 @@
 	</xsl:template>
 
 	<!-- FUNCTIONS -->
+	<xsl:function name="harvester:cleanText">
+		<xsl:param name="val"/>
+
+		<xsl:variable name="html-stripped" select="replace(replace($val, '&lt;[^&gt;]+&gt;', ' '), '\\s+', ' ')"/>
+
+		<xsl:choose>
+			<!-- strip trailing period -->
+			<xsl:when test="substring($html-stripped, string-length($html-stripped), 1) = '.'">
+				<xsl:value-of select="substring($html-stripped, 1, string-length($html-stripped) - 1)"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$html-stripped"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:function>
+
 	<xsl:function name="harvester:date_dataType">
 		<xsl:param name="val"/>
 
@@ -742,7 +730,7 @@
 					<xsl:otherwise>
 						<xsl:value-of select="$date"/>
 					</xsl:otherwise>
-				</xsl:choose>				
+				</xsl:choose>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$val"/>

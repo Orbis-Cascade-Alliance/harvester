@@ -46,7 +46,7 @@
 			<repository>orpcc</repository>
 			<repository pattern="dc.ewu">wachene</repository>
 			<repository>orngf</repository>
-			<repository>orplic</repository>
+			<repository>ormcl</repository>
 			<repository>orfp</repository>
 			<repository>orps</repository>
 			<repository>waspc</repository>
