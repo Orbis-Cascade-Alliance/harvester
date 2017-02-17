@@ -13,40 +13,48 @@
 		<link rel="stylesheet" href="/apps/harvester/xforms/css/style.css" />
 
 		<xforms:model>
-			<xforms:instance id="sets" xxforms:exclude-result-prefixes="#all">
-				<sets xmlns="">
-					<set>
-						<url></url>
-						<repository></repository>
-						<oai-valid>false</oai-valid>
-						<repository-valid>false</repository-valid>
-						<error-code></error-code>
-						<count></count>
-					</set>
-				</sets>
-			</xforms:instance>
-
-			<xforms:instance id="control-instance">
+			<xforms:instance id="control-instance" xxforms:exclude-result-prefixes="#all">
 				<controls xmlns="">
 					<status></status>
-					<set></set>
-					<repository></repository>
-					<upload-valid></upload-valid>
-					<validation-complete>false</validation-complete>
 					<current></current>
 					<total></total>
 					<count></count>
+					<upload-trigger>false</upload-trigger>
 				</controls>
 			</xforms:instance>
-
-			<xforms:instance id="repository-list" xxforms:exclude-result-prefixes="#all">
-				<repositories xmlns=""></repositories>
+			
+			<xforms:instance id="set" xxforms:exclude-result-prefixes="#all">
+				<set xmlns="">
+					<set></set>
+					<repository></repository>
+					<rights></rights>
+					<target>both</target>
+				</set>
 			</xforms:instance>
 
 			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
 				<xi:include href="../config.xml"></xi:include>
 			</xforms:instance>
-
+			
+			<!-- instances for controlled lists -->
+			<xforms:instance id="rights-statements">
+				<rights xmlns="">
+					<statement value="InC">In Copyright</statement>
+					<statement value="InC-OW-EU">In Copyright - EU orphan work</statement>
+					<statement value="InC-EDU">In Copyright - Educational use permitted</statement>
+					<statement value="InC-NC">In Copyright - Non-commercial use permitted</statement>
+					<statement value="InC-RUU">In Copyright - Rights-holder(s) unlocatable or unidentifiable</statement>
+					<statement value="NoC-CR">No Copyright - Contractual restrictions</statement>
+					<statement value="NoC-NC">No Copyright - Non-commercial use only</statement>
+					<statement value="NoC-OKLR">No Copyright - Other known legal restrictions</statement>
+					<statement value="NoC-US">No Copyright - United States</statement>
+					<statement value="CNE">Copyright not evaluated</statement>
+					<statement value="UND">Copyright undetermined</statement>
+					<statement value="NKC">No known copyright</statement>
+				</rights>
+			</xforms:instance>
+			
+			<!-- instances for REST interactions -->
 			<xforms:instance id="feed" xxforms:exclude-result-prefixes="#all">
 				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"></OAI-PMH>
 			</xforms:instance>
@@ -62,54 +70,21 @@
 				<response xmlns=""></response>
 			</xforms:instance>
 
-			<!-- upload instances -->
-			<xforms:instance id="file">
-				<!-- Start with placeholders for three files -->
-				<file xmlns="" xsi:type="xs:anyURI" filename="" mediatype="" size="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"></file>
-			</xforms:instance>
-
-			<xforms:instance id="load-sets-config">
-				<config xmlns="">
-					<url></url>
-					<content-type>application/xml</content-type>
-					<mode>xml</mode>
-				</config>
-			</xforms:instance>
-
 			<!-- sparql update -->
-			<xforms:instance id="purge-set-template">
+			<xforms:instance id="delete-set">
 				<query><![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX prov:	<http://www.w3.org/ns/prov#>
+PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
 DELETE {?s ?p ?o} WHERE { 
-{?cho dcterms:relation <SET> .
-?ore edm:aggregatedCHO ?cho .
-?ore edm:object ?s .
-?s ?p ?o}
-UNION {?cho dcterms:relation <SET> .
-?ore edm:aggregatedCHO ?cho .
-?ore edm:preview ?s .
-?s ?p ?o}
-UNION {?cho dcterms:relation <SET> .
-?s edm:aggregatedCHO ?cho . ?s ?p ?o }
-UNION {?s dcterms:relation <SET> .
-?s ?p ?o }
-}]]>
-				</query>
-			</xforms:instance>
-
-			<xforms:instance id="list-repositories">
-				<query>
-					<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX dcterms:	<http://purl.org/dc/terms/>
-PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
-PREFIX arch:	<http://purl.org/archival/vocab/arch#>
-PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
-
-SELECT ?uri ?name WHERE {
-  ?uri a arch:Archive ;
-         foaf:name ?name
-} ORDER BY ?name]]>
-				</query>
+{?agg prov:wasDerivedFrom <SET> ;
+    edm:preview ?s . ?s ?p ?o}
+UNION {?agg prov:wasDerivedFrom <SET> ;
+    edm:object ?s . ?s ?p ?o}
+UNION {?s dcterms:isPartOf <SET> . ?s ?p ?o }
+UNION {?s prov:wasDerivedFrom <SET> . ?s ?p ?o }
+UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
+}]]></query>
 			</xforms:instance>
 
 			<xforms:instance id="sparqlQuery">
@@ -121,22 +96,18 @@ SELECT ?uri ?name WHERE {
 			</xforms:instance>
 
 			<!-- ************************* BINDINGS ************************** -->
-			<xforms:bind nodeset="instance('sets')">
-				<xforms:bind nodeset="set">
-					<xforms:bind nodeset="oai-valid" type="xs:boolean"></xforms:bind>
-					<xforms:bind nodeset="repository-valid" type="xs:boolean"></xforms:bind>
-					<xforms:bind nodeset="error-code" type="xs:integer"></xforms:bind>
-					<xforms:bind nodeset="count" type="xs:integer"></xforms:bind>
-				</xforms:bind>
+			<xforms:bind nodeset="instance('set')">
+				<xforms:bind nodeset="set" required="true()" type="xs:anyURI" constraint="matches(., 'https?://')"/>
+				<xforms:bind nodeset="repository" required="true()"/>
 			</xforms:bind>
-
+			
 			<xforms:bind nodeset="instance('control-instance')">
-				<xforms:bind nodeset="validation-complete" type="xs:boolean"></xforms:bind>
+				<xforms:bind id="upload-trigger" nodeset="upload-trigger" type="xs:boolean" readonly=". != true()"></xforms:bind>
 			</xforms:bind>
 
 			<!-- ************************* SUBMISSIONS ************************** -->
 			<!-- get OAI-PMH feed, perform validation, and return the count (iterating through resumptionTokens if necessary -->
-			<xforms:submission id="get-feed" serialization="none" method="get" action="{instance('control-instance')/set}" replace="instance" instance="feed">
+			<xforms:submission id="get-feed" serialization="none" method="get" action="{instance('set')/set}" replace="instance" instance="feed">
 				<xforms:header>
 					<xforms:name>User-Agent</xforms:name>
 					<xforms:value>XForms/harvester.orbiscascade.org</xforms:value>
@@ -170,17 +141,17 @@ SELECT ?uri ?name WHERE {
 
 			<!-- get the RDF through the administrative getRDF API -->
 			<xforms:submission id="get-rdf" serialization="none" method="get"
-				action="/harvester/admin/getRDF?sets={encode-for-uri(instance('control-instance')/set)}&amp;repository={instance('control-instance')/repository}" replace="instance" instance="rdf">
+				action="/harvester/admin/getRDF?sets={encode-for-uri(instance('set')/set)}&amp;repository={instance('set')/repository}&amp;rights={instance('set')/rights}&amp;target={instance('set')/target}" replace="instance" instance="rdf">
 				<!-- upon successful execution of getRDF, post the RDF into the triplestore -->
 				<xforms:send submission="post-rdf" ev:event="xforms-submit-done"></xforms:send>
 				<!-- otherwise display a popup alert -->
-				<xforms:message ev:event="xforms-submit-error" level="modal" value="concat(instance('control-instance')/set, ': Unable to get RDF.')"></xforms:message>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get RDF</xforms:message>
 			</xforms:submission>
 
 			<!-- post RDF into the triplestore -->
 			<xforms:submission id="post-rdf" action="{instance('config')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post" mediatype="application/rdf+xml">
-				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status" value="concat(instance('control-instance')/set, ': Successfully posted to endpoint.')"></xforms:setvalue>
-				<xforms:message ev:event="xforms-submit-error" level="modal" value="concat(instance('control-instance')/set, ': Failed to post to endpoint.')"></xforms:message>
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status" value="concat(instance('set')/set, ': Successfully posted to endpoint.')"></xforms:setvalue>
+				<xforms:message ev:event="xforms-submit-error" level="modal" value="concat(instance('set')/set, ': Failed to post to endpoint.')"></xforms:message>
 			</xforms:submission>
 
 			<!-- SPARQL queries -->
@@ -196,16 +167,20 @@ SELECT ?uri ?name WHERE {
 				</xforms:action>
 			</xforms:submission>
 
+			<!-- **************** DYNAMIC VALIDATION CONTROLS ********************** -->
+			<xforms:action ev:event="xxforms-invalid" ev:observer="set">
+				<xforms:setvalue ref="instance('control-instance')/upload-trigger" value="false()"></xforms:setvalue>
+			</xforms:action>
+			
+			<xforms:action ev:event="xxforms-valid" ev:observer="set">
+				<xforms:setvalue ref="instance('control-instance')/upload-trigger" value="true()"></xforms:setvalue>
+			</xforms:action>
+
 			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
 			<!-- get the list of repositories from the SPARQL endpoint on xforms-model-construct-done -->
-			<xforms:action ev:event="xforms-model-construct-done">
-				<xforms:setvalue ref="instance('sparqlQuery')" value="instance('list-repositories')"></xforms:setvalue>
-				<xforms:send submission="submit-sparqlQuery"></xforms:send>
-				<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
-					<xforms:var name="repository" select="substring-after(context()/res:binding[@name='uri']/res:uri, '#')"></xforms:var>
-					<xforms:insert context="instance('repository-list')" nodeset="./child::node()[last()]" origin="xforms:element('repository', $repository)"></xforms:insert>
-				</xforms:action>
-			</xforms:action>
+			<!--<xforms:action ev:event="xforms-model-construct-done">
+				
+			</xforms:action>-->
 		</xforms:model>
 	</head>
 
@@ -227,97 +202,76 @@ SELECT ?uri ?name WHERE {
 			</div>
 			<div class="row">
 				<div class="col-md-12">
-					<h1>OAI-PMH Harvester: Batch Import</h1>
+					<h1>OAI-PMH Harvester: Import</h1>
 					<a href="../admin/"><span class="glyphicon glyphicon-arrow-left"></span>Return to Admin</a>
 					
 					<xforms:switch>
 						<xforms:case id="import-form">
-							<!-- Case 1: Display the upload form when the upload-valid is false or has not been set -->
-							<xforms:group ref=".[instance('control-instance')/upload-valid='false' or not(string(instance('control-instance')/upload-valid))]">
-								<p>The batch import process accepts a simple XML file with a root element of 'sets' and children of 'set' that contain two required elements: 'url' of the OAI-PMH set and
-									'repository', which must conform to the EAD documents @mainagencycode within the &lt;eadid&gt;. The @mainagencycode is identical to the code used by the repository metadata
-									RDF URIs, which, in turn, is used as the edm:dataProvider in the ore:Aggregation in the Harvester CHO triples.</p>
-								<pre style="width:50%;margin:auto"><![CDATA[<sets>
-	<set>
-		<url>{oai-pmh set URL}</url>
-		<repository>{@mainagencycode}</repository>
-	</set>
-	<set>
-		<url>{oai-pmh set URL}</url>
-		<repository>{@mainagencycode}</repository>
-	</set>
-</sets>]]></pre>
-								<p>To proceed with the import, upload a conformant XML file for further validation and processing.</p>
-								<h2>Upload Set List</h2>
-								<fr:upload ref="instance('file')">
-									<xforms:filename ref="@filename"></xforms:filename>
-									<xforms:mediatype ref="@mediatype"></xforms:mediatype>
-									<xxforms:size ref="@size"></xxforms:size>
-								</fr:upload>
-								<br />
-								<fr:button>
-									<xforms:label>Upload</xforms:label>
+							<xforms:group ref="instance('set')">
+								<p>Input the following information to harvest the OAI-PMH into the system:</p>
+								<div>
+									<xforms:input ref="set">
+										<xforms:label>Set</xforms:label>
+										<xforms:alert>Required</xforms:alert>
+									</xforms:input>								
+								</div>
+								<div>
+									<xforms:select1 ref="repository">
+										<xforms:label>Repository</xforms:label>
+										<xforms:alert>Required</xforms:alert>
+										<xforms:item>
+											<xforms:label>Select...</xforms:label>
+											<xforms:value></xforms:value>
+										</xforms:item>
+										<xforms:itemset nodeset="xxforms:sort(distinct-values(instance('config')//repository), ., 'text', 'ascending')">
+											<xforms:label ref="."></xforms:label>
+											<xforms:value ref="."></xforms:value>
+										</xforms:itemset>
+									</xforms:select1>
+								</div>
+								<div>
+									<xforms:select1 ref="rights">
+										<xforms:label>Rights Statement</xforms:label>
+										<xforms:hint>Optional standardized rights statement</xforms:hint>
+										<xforms:item>
+											<xforms:label>Select...</xforms:label>
+											<xforms:value/>
+										</xforms:item>
+										<xforms:itemset nodeset="instance('rights-statements')//statement">
+											<xforms:label ref="."/>
+											<xforms:value ref="@value"/>
+										</xforms:itemset>
+									</xforms:select1>
+								</div>
+								<div>
+									<xforms:select1 ref="target">
+										<xforms:label>Target System</xforms:label>
+										<xforms:item>
+											<xforms:label>DPLA and Primo</xforms:label>
+											<xforms:value>both</xforms:value>
+										</xforms:item>
+										<xforms:item>
+											<xforms:label>DPLA only</xforms:label>
+											<xforms:value>dpla</xforms:value>
+										</xforms:item>
+										<xforms:item>
+											<xforms:label>Primo only</xforms:label>
+											<xforms:value>primo</xforms:value>
+										</xforms:item>
+									</xforms:select1>
+								</div>
+								<xforms:trigger bind="upload-trigger">
+									<xforms:label><span class="glyphicon glyphicon-import"></span>Import</xforms:label>
 									<xforms:action ev:event="DOMActivate">
-										<xforms:send submission="upload-file"></xforms:send>
-										<!--get the temp file written to disk-->
+										<!-- delete the set from the SPARQL update -->
+										<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('delete-set'), 'SET', instance('set')/set)"/>
+										<xforms:send submission="delete-graph"/>
+										<!-- call the getRDF web service to transform OAI-PMH into RDF -->
 										<xforms:action ev:event="xforms-submit-done">
-											<xforms:setvalue ref="instance('load-sets-config')/url" value="substring-before(instance('file'), '?')"></xforms:setvalue>
-											<xforms:insert nodeset="instance('sets')" origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/load-sets.xpl', 'file', instance('load-sets-config'), 'data')"></xforms:insert>
-											<xforms:setvalue ref="instance('control-instance')/upload-valid" if="count(instance('sets')/set) &gt; 0">true</xforms:setvalue>
-											<xforms:setvalue ref="instance('control-instance')/upload-valid" if="count(instance('sets')/set) = 0">false</xforms:setvalue>
-										</xforms:action>
+											<xforms:send submission="get-rdf"/>
+										</xforms:action>							
 									</xforms:action>
-								</fr:button>
-							</xforms:group>
-							<!-- Case 2: If the uploaded XML file is well-formed and contains at least one set node, display the list of sets and the validation controls -->
-							<xforms:group ref=".[instance('control-instance')/upload-valid='true']">
-								<xforms:group ref="instance('sets')">
-									<h2>Set List</h2>
-									<!-- only display the Validate control if validation has not already been performed -->
-									<xforms:group ref=".[not(set[count &gt; 0])]">
-										<xforms:trigger>
-											<xforms:label>Validate</xforms:label>
-											<!-- show the validation dialog -->
-											<xforms:dispatch ev:event="DOMActivate" target="initiate-validation-dialog" name="fr-show"></xforms:dispatch>
-										</xforms:trigger>
-									</xforms:group>
-									<xforms:group ref=".[set[not(oai-valid=false()) and count &gt; 0]]">
-										<p>Ingestion control follows the set list.</p>
-									</xforms:group>
-									<xforms:repeat nodeset="set">
-										<!-- divs for each set are color-coded with Bootstrap classes to indicate success, failure, or warning (OAI-PMH is valid, but there are 0 CHOs) -->
-										<xforms:var name="class"
-											select="if(oai-valid=false() or repository-valid=false()) then 'text-danger' else if (count = 0) then 'text-warning' else if (count &gt; 0) then 'text-success' else ''"></xforms:var>
-										<div class="highlight">
-											<dl class="dl-horizontal {$class}">
-												<dt>URL:</dt>
-												<dd><xforms:output ref="url"></xforms:output></dd>
-												<dt>Repository:</dt>
-												<dd><xforms:output ref="repository"></xforms:output></dd>
-												<xforms:group ref=".[count]">
-													<dt>Count:</dt>
-													<dd><xforms:group ref=".[count=0]"><span class="glyphicon glyphicon-warning-sign"></span></xforms:group><xforms:output ref="count"></xforms:output></dd>
-												</xforms:group>
-												<xforms:group ref=".[string-length(error-code) &gt; 0]">
-													<dt>Error:</dt>
-													<dd><span class="glyphicon glyphicon-warning-sign"></span><xforms:output
-														value="if (error-code = '0') then 'Invalid repository code.' else if (error-code = '1') then 'OAI-PMH set URL does not yield well-formed XML.' else if (error-code='2') then 'Set URL yields XML, but not valid OAI-PMH.' else ''"
-														></xforms:output></dd>
-												</xforms:group>
-											</dl>
-										</div>
-									</xforms:repeat>
-									<!-- display the Ingest trigger if there is at least one set with a positive number of associated CHOs -->
-									<xforms:group ref=".[set[not(oai-valid=false()) and count &gt; 0]]">
-										<xforms:trigger>
-											<xforms:label>Ingest CHOs</xforms:label>
-											<xforms:action ev:event="DOMActivate">
-												<!-- show the ingestion dialog -->
-												<xforms:dispatch ev:event="DOMActivate" target="initiate-ingestion-dialog" name="fr-show"></xforms:dispatch>
-											</xforms:action>
-										</xforms:trigger>
-									</xforms:group>
-								</xforms:group>
+								</xforms:trigger>
 							</xforms:group>
 						</xforms:case>
 						<xforms:case id="import-complete">
@@ -349,7 +303,7 @@ SELECT ?uri ?name WHERE {
 									<xforms:var name="repository" value="context()/repository"></xforms:var>
 									<xforms:setvalue ref="instance('control-instance')/count">0</xforms:setvalue>
 									<xforms:setvalue ref="instance('control-instance')/current" value="$position"></xforms:setvalue>
-									<xforms:setvalue ref="instance('control-instance')/set" value="context()/url"></xforms:setvalue>
+									<xforms:setvalue ref="instance('set')/set" value="context()/url"></xforms:setvalue>
 									<!-- Step 1: verify that the repository in the set XML matches a repository returned from the Harvester SPARQL endpoint -->
 									<xforms:action if="not(instance('repository-list')/repository = $repository)">
 										<xforms:insert context="instance('sets')/set[position()=$position]" origin="xforms:element('repository-valid', false())"></xforms:insert>
@@ -365,43 +319,6 @@ SELECT ?uri ?name WHERE {
 						</fr:positive-choice>
 					</fr:alert-dialog>
 					
-					<!-- ingestion dialog -->
-					<fr:alert-dialog id="initiate-ingestion-dialog">
-						<fr:label>Validate Sets</fr:label>
-						<fr:message>Proceed with set ingestion?</fr:message>
-						<fr:negative-choice>
-							<fr:label>No</fr:label>
-						</fr:negative-choice>
-						<fr:positive-choice>
-							<fr:label>Yes</fr:label>
-							<xforms:action ev:event="DOMActivate">
-								<!-- iterate through sets with a count greater than 0 -->								
-								<xforms:action xxforms:iterate="instance('sets')/set[number(count) &gt; 0 and not(oai-valid=false())]">
-									<xforms:var name="set" select="context()/url"></xforms:var>
-									<!-- Step 1: set the SPARQL query template and submit the SPARQL/Update to purge triples associated with each set -->
-									<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('purge-set-template'), 'SET', $set)"></xforms:setvalue>
-									<xforms:send submission="delete-graph"/>
-									<!-- Step 2: If the SPARQL/Update XForms submission is successfully, get the RDF via the admin getRDF API and post the RDF into the triplestore -->
-									<xforms:action ev:event="xforms-submit-done">
-										<xforms:setvalue ref="instance('control-instance')/set" value="$set"></xforms:setvalue>
-										<xforms:setvalue ref="instance('control-instance')/repository" value="context()/repository"></xforms:setvalue>
-										<xforms:send submission="get-rdf"> </xforms:send>
-									</xforms:action>
-								</xforms:action>
-								
-								<!-- toggle the case when the ingestion process is complete -->
-								<xforms:toggle case="import-complete"/>
-							</xforms:action>
-						</fr:positive-choice>
-					</fr:alert-dialog>
-					
-					<!--<xxforms:dialog id="progress-dialog" appearance="full" level="modal" close="false" draggable="false" visible="false">
-						<xforms:label>Progress Update</xforms:label>
-						<div style="width:400px;">
-							<xforms:output value="concat(instance('control-instance')/current, ' of ', instance('control-instance')/total, ':')"></xforms:output>
-							<xforms:output ref="instance('control-instance')/set"></xforms:output>
-						</div>
-					</xxforms:dialog>-->
 					<!--<fr:xforms-inspector></fr:xforms-inspector>-->
 				</div>
 			</div>

@@ -119,13 +119,25 @@
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes="#all">
 				<xsl:output indent="yes"/>
 				<xsl:template match="/">
-					<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
+					<rdf:RDF  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
 						xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
-						xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/">
+						xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:dcmitype="http://purl.org/dc/dcmitype/"
+						xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:doap="http://usefulinc.com/ns/doap#">
 						<xsl:copy-of select="//rdf:RDF/*"/>
 					</rdf:RDF>
 				</xsl:template>
 			</xsl:stylesheet>
+		</p:input>
+		<p:output name="data" id="model"/>
+	</p:processor>
+	
+	<p:processor name="oxf:xml-serializer">
+		<p:input name="data" href="#model"/>
+		<p:input name="config">
+			<config>
+				<content-type>application/rdf+xml</content-type>
+				<indent>true</indent>
+			</config>
 		</p:input>
 		<p:output name="data" ref="data"/>
 	</p:processor>

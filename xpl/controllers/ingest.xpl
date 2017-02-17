@@ -167,7 +167,7 @@ UNION {?agg prov:wasDerivedFrom <SET> ;
     edm:object ?s . ?s ?p ?o}
 UNION {?s dcterms:isPartOf <SET> . ?s ?p ?o }
 UNION {?s prov:wasDerivedFrom <SET> . ?s ?p ?o }
-UNION {<SET> a dcmitype:Collection . ?s ?p ?o}
+UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>}
 }]]>
 								</xsl:otherwise>
 							</xsl:choose>							

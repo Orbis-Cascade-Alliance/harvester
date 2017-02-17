@@ -16,8 +16,7 @@
 			<xforms:instance id="control-instance">
 				<controls xmlns="">
 					<status></status>
-					<repository-code></repository-code>
-					<repository-uri></repository-uri>
+					<set-url></set-url>
 				</controls>
 			</xforms:instance>
 
@@ -26,11 +25,11 @@
 			</xforms:instance>
 
 			<xforms:instance id="set-template" xxforms:exclude-result-prefixes="#all">
-				<repository xmlns="">
+				<set xmlns="">
 					<title></title>
 					<uri></uri>
 					<publisher></publisher>
-				</repository>
+				</set>
 			</xforms:instance>
 
 			<xforms:instance id="controls">
@@ -64,8 +63,7 @@
 PREFIX arch:	<http://purl.org/archival/vocab/arch#>
 DELETE {?s ?p ?o} WHERE { ?s rdf:type arch:Archive . ?s ?p ?o }]]>
 					</query>
-					<query id="delete-set">
-						<![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
+					<query id="delete-set"><![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX prov:	<http://www.w3.org/ns/prov#>
 PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
@@ -76,9 +74,8 @@ UNION {?agg prov:wasDerivedFrom <SET> ;
     edm:object ?s . ?s ?p ?o}
 UNION {?s dcterms:isPartOf <SET> . ?s ?p ?o }
 UNION {?s prov:wasDerivedFrom <SET> . ?s ?p ?o }
-UNION {<SET> a dcmitype:Collection . ?s ?p ?o}
-}]]>
-					</query>
+UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
+}]]></query>
 				</queries>
 			</xforms:instance>
 
@@ -91,11 +88,11 @@ PREFIX arch:	<http://purl.org/archival/vocab/arch#>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
 
-SELECT ?set ?title ?publisher WHERE {
+SELECT ?set ?title ?pub WHERE {
 ?set a dcmitype:Collection ;
   dcterms:title ?title ;
   dcterms:publisher %PUB%
-}]]>
+} ORDER BY ?pub ?title]]>
 				</query>
 			</xforms:instance>
 
@@ -123,18 +120,6 @@ SELECT ?set ?title ?publisher WHERE {
 					<xforms:action ev:event="xforms-submit-done">
 						<!-- post RDF and then refresh the repository list -->
 						<xforms:send submission="post-rdf"></xforms:send>
-						<xforms:action ev:event="xforms-sumit-done">
-							<xforms:delete nodeset="instance('repository-list')/repository"></xforms:delete>
-							<xforms:setvalue ref="instance('sparqlQuery')" value="instance('list-repositories')"></xforms:setvalue>
-							<xforms:send submission="submit-sparqlQuery"></xforms:send>
-							<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
-								<xforms:insert context="instance('repository-list')" nodeset="./child::node()[last()]" origin="instance('repository-template')"></xforms:insert>
-								<xforms:setvalue ref="instance('repository-list')/repository[last()]/name" value="context()/res:binding[@name='name']/res:literal"></xforms:setvalue>
-								<xforms:setvalue ref="instance('repository-list')/repository[last()]/uri" value="context()/res:binding[@name='uri']/res:uri"></xforms:setvalue>
-								<xforms:setvalue ref="instance('repository-list')/repository[last()]/count" value="context()/res:binding[@name='count']/res:literal"
-								></xforms:setvalue>
-							</xforms:action>
-						</xforms:action>
 					</xforms:action>
 
 				</xforms:action>
@@ -170,9 +155,9 @@ SELECT ?set ?title ?publisher WHERE {
 				<xforms:send submission="submit-sparqlQuery"></xforms:send>
 				<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
 					<xforms:insert context="instance('set-list')" nodeset="./child::node()[last()]" origin="instance('set-template')"></xforms:insert>
-					<xforms:setvalue ref="instance('set-list')/repository[last()]/uri" value="context()/res:binding[@name='set']/res:uri"></xforms:setvalue>
-					<xforms:setvalue ref="instance('set-list')/repository[last()]/title" value="context()/res:binding[@name='title']/res:literal"></xforms:setvalue>
-					<xforms:setvalue ref="instance('set-list')/repository[last()]/publisher" value="context()/res:binding[@name='publisher']/res:literal"></xforms:setvalue>
+					<xforms:setvalue ref="instance('set-list')/set[last()]/uri" value="context()/res:binding[@name='set']/res:uri"></xforms:setvalue>
+					<xforms:setvalue ref="instance('set-list')/set[last()]/title" value="context()/res:binding[@name='title']/res:literal"></xforms:setvalue>
+					<xforms:setvalue ref="instance('set-list')/set[last()]/publisher" value="context()/res:binding[@name='pub']/res:uri"></xforms:setvalue>
 				</xforms:action>
 			</xforms:action>
 		</xforms:model>
@@ -208,28 +193,41 @@ SELECT ?set ?title ?publisher WHERE {
 									</tr>
 								</thead>
 								<tbody>
-									<xforms:repeat nodeset="repository">
+									<xforms:repeat nodeset="set">
 										<xforms:var name="uri" select="uri"/>
 										<tr>
 											<td>
-												<xforms:trigger appearance="minimal">
-													<xforms:label value="name"/>
-													<xforms:action ev:event="DOMActivate">
-														<xforms:load show="new" resource="{$uri}"/>
-													</xforms:action>
-												</xforms:trigger>
+												<h4>
+													<xforms:output ref="title"/>
+													<!--<xforms:trigger appearance="minimal">
+														<xforms:label value="title"/>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:load show="new" resource="{$uri}"/>
+														</xforms:action>
+													</xforms:trigger>-->
+												</h4>
+												<div>
+													<xforms:output ref="uri">
+														<xforms:label>URL</xforms:label>
+													</xforms:output>
+												</div>
+												<xforms:group ref=".[string-length(publisher) &gt; 0]">
+													<div>
+														<xforms:output ref="publisher">
+															<xforms:label>Publisher</xforms:label>
+														</xforms:output>
+													</div>
+												</xforms:group>
 											</td>
 											<td>
-												<xforms:group ref=".[number(count) &gt; 0]">
-													<xforms:trigger appearance="minimal">
-														<xforms:label><span class="glyphicon glyphicon-remove"></span></xforms:label>
-														<xforms:hint>Delete Set</xforms:hint>
-														<xforms:action ev:event="DOMActivate">
-															<xforms:setvalue ref="instance('control-instance')/set-uri" value="$uri"/>
-															<xforms:dispatch target="delete-set-dialog" name="fr-show"/>
-														</xforms:action>
-													</xforms:trigger>
-												</xforms:group>
+												<xforms:trigger appearance="minimal">
+													<xforms:label><span class="glyphicon glyphicon-remove"></span></xforms:label>
+													<xforms:hint>Delete Set</xforms:hint>
+													<xforms:action ev:event="DOMActivate">
+														<xforms:setvalue ref="instance('control-instance')/set-url" value="$uri"/>
+														<xforms:dispatch target="delete-set-dialog" name="fr-show"/>
+													</xforms:action>
+												</xforms:trigger>
 											</td>
 										</tr>
 									</xforms:repeat>
@@ -240,20 +238,23 @@ SELECT ?set ?title ?publisher WHERE {
 							<p>No sets found in SPARQL endpoint.</p>
 						</xforms:group>
 					</xforms:group>
-					<fr:xforms-inspector></fr:xforms-inspector>
+<!--					<fr:xforms-inspector></fr:xforms-inspector>-->
 				</div>
 				<div class="col-md-3">
 					<h2>Actions</h2>
 					<ul>
-						<li>
-							<xforms:trigger appearance="minimal">
-								<xforms:label><span class="glyphicon glyphicon-refresh"></span>Refresh Repository Metadata</xforms:label>
-								<xforms:action ev:event="DOMActivate">
-									<!-- then get repository RDF from NWDA and repost to SPARQL endpoint -->
-									<xforms:send submission="get-repository-rdf"></xforms:send>
-								</xforms:action>
-							</xforms:trigger>
-						</li>
+						<xforms:group if=".[xxforms:is-user-in-role('harvester-admin')]">
+							<li>
+								<xforms:trigger appearance="minimal">
+									<xforms:label><span class="glyphicon glyphicon-refresh"></span>Refresh Repository Metadata</xforms:label>
+									<xforms:action ev:event="DOMActivate">
+										<!-- then get repository RDF from NWDA and repost to SPARQL endpoint -->
+										<xforms:send submission="get-repository-rdf"></xforms:send>
+									</xforms:action>
+								</xforms:trigger>
+							</li>
+						</xforms:group>
+						
 						<!--<li>
 							<a href="vocabularies"><span class="glyphicon glyphicon-import"></span>Ingest Vocabulary RDF</a>
 						</li>-->
@@ -266,7 +267,7 @@ SELECT ?set ?title ?publisher WHERE {
 		</div>
 		<fr:alert-dialog id="delete-set-dialog">
 			<fr:label>Delete Set</fr:label>
-			<fr:message>Do you wish to purge all Cultural Heritage Objects associated with this set from the repository?</fr:message>
+			<fr:message>Do you wish to purge all Cultural Heritage Objects associated with this set?</fr:message>
 			<fr:negative-choice>
 				<fr:label>No</fr:label>
 			</fr:negative-choice>
@@ -275,20 +276,23 @@ SELECT ?set ?title ?publisher WHERE {
 				<xforms:action ev:event="DOMActivate">
 					<!-- iterate through repositories with a count greater than 0 -->
 					<xforms:setvalue ref="instance('sparqlQuery')"
-						value="replace(instance('sparql-update-templates')/query[@id='delete-set'], 'SET', instance('control-instance')/set-uri)"/>
+						value="replace(instance('sparql-update-templates')/query[@id='delete-set'], 'SET', instance('control-instance')/set-url)"/>
 					<xforms:send submission="delete-graph"/>
-					<!-- refresh the repository list -->
+					
 					<xforms:action ev:event="xforms-submit-done">
-						<xforms:setvalue ref="instance('control-instance')/status">Set successfully deleted from triplestore.</xforms:setvalue> <xforms:delete
+						<xforms:setvalue ref="instance('control-instance')/status">Set successfully deleted set from triplestore.</xforms:setvalue>
+						
+						<!-- refresh the set list -->
+						<xforms:delete
 							nodeset="instance('set-list')/*"/>						
 						<xforms:var name="pub" select="if (xxforms:is-user-in-role('harvester-admin')) then '?pub' else concat('&lt;', instance('config')/production_server, 'contact#', instance('control-instance')/request-security/role, '&gt;')"/>						
 						<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', $pub)"></xforms:setvalue>
 						<xforms:send submission="submit-sparqlQuery"/>
 						<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
 							<xforms:insert context="instance('set-list')" nodeset="./child::node()[last()]" origin="instance('set-template')"></xforms:insert>
-							<xforms:setvalue ref="instance('set-list')/repository[last()]/uri" value="context()/res:binding[@name='set']/res:uri"></xforms:setvalue>
-							<xforms:setvalue ref="instance('set-list')/repository[last()]/title" value="context()/res:binding[@name='title']/res:literal"></xforms:setvalue>
-							<xforms:setvalue ref="instance('set-list')/repository[last()]/publisher" value="context()/res:binding[@name='publisher']/res:literal"></xforms:setvalue>
+							<xforms:setvalue ref="instance('set-list')/set[last()]/uri" value="context()/res:binding[@name='set']/res:uri"></xforms:setvalue>
+							<xforms:setvalue ref="instance('set-list')/set[last()]/title" value="context()/res:binding[@name='title']/res:literal"></xforms:setvalue>
+							<xforms:setvalue ref="instance('set-list')/set[last()]/publisher" value="context()/res:binding[@name='pub']/res:uri"></xforms:setvalue>
 						</xforms:action>
 					</xforms:action>
 				</xforms:action>
