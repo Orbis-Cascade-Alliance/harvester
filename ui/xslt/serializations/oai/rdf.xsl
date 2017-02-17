@@ -195,7 +195,7 @@
 			<xsl:apply-templates select="*[local-name() = 'spatial'] | *[local-name() = 'coverage']"/>
 
 			<xsl:if test="string($rightsStatement)">
-				<dcterms:rights rdf:resource="{$rightsStatement}"/>
+				<dcterms:rights rdf:resource="{concat('http://rightsstatements.org/vocab/', $rightsStatement, '/1.0/')}"/>
 			</xsl:if>
 
 			<xsl:if test="dc:description[not(matches(., '.jpe?g$'))]">
