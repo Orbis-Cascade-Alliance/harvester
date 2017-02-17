@@ -281,8 +281,8 @@
 
 				<!-- only process if there is a definite date range -->
 				<xsl:if test="count($date-tokens) = 2">
-					<xsl:variable name="begin" select="$date-tokens[1]"/>
-					<xsl:variable name="end" select="$date-tokens[2]"/>
+					<xsl:variable name="begin" select="normalize-space($date-tokens[1])"/>
+					<xsl:variable name="end" select="normalize-space($date-tokens[2])"/>
 
 					<!-- only include the date range if both the begin and end dates are castable as xs date types -->
 					<xsl:if
