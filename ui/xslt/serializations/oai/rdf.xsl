@@ -86,8 +86,7 @@
 			<xsl:if test="not($mode = 'test')">
 				<xsl:if test="descendant::oai:resumptionToken">
 					<xsl:call-template name="recurse">
-						<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>
-						<xsl:with-param name="set" select="descendant::oai:request"/>
+						<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>						
 					</xsl:call-template>
 				</xsl:if>
 			</xsl:if>
@@ -107,8 +106,7 @@
 		<xsl:if test="not($mode = 'test') and not($mode = 'form')">
 			<xsl:if test="descendant::oai:resumptionToken">
 				<xsl:call-template name="recurse">
-					<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>
-					<xsl:with-param name="set" select="descendant::oai:request"/>
+					<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>					
 				</xsl:call-template>
 			</xsl:if>
 		</xsl:if>
@@ -656,11 +654,10 @@
 	</xsl:template>
 
 	<xsl:template name="recurse">
-		<xsl:param name="token"/>
-		<xsl:param name="set"/>
+		<xsl:param name="token"/>		
 
 		<xsl:variable name="oai" as="node()*">
-			<xsl:copy-of select="document(concat($set, '?verb=ListRecords&amp;resumptionToken=', encode-for-uri($token)))"/>
+			<xsl:copy-of select="document(concat($oai_service, '?verb=ListRecords&amp;resumptionToken=', encode-for-uri($token)))"/>
 		</xsl:variable>
 
 		<xsl:choose>
@@ -674,8 +671,7 @@
 
 		<xsl:if test="$oai/descendant::oai:resumptionToken">
 			<xsl:call-template name="recurse">
-				<xsl:with-param name="token" select="$oai/descendant::oai:resumptionToken"/>
-				<xsl:with-param name="set" select="$set"/>
+				<xsl:with-param name="token" select="$oai/descendant::oai:resumptionToken"/>				
 			</xsl:call-template>
 		</xsl:if>
 	</xsl:template>
