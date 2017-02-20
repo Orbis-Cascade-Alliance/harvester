@@ -24,12 +24,12 @@
 		<p:input name="config">
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 				<xsl:param name="resumptionToken" select="doc('input:request')/request/parameters/parameter[name = 'resumptionToken']/value"/>
-				<xsl:param name="set" select="doc('input:request')/request/parameters/parameter[name = 'set']/value"/>
+				<xsl:param name="set" select="if (string-length($resumptionToken) &gt; 0) then tokenize($resumptionToken, ':')[1] else doc('input:request')/request/parameters/parameter[name = 'set']/value"/>
 				
 				<xsl:param name="offset">
 					<xsl:choose>
-						<xsl:when test="$resumptionToken castable as xs:integer and $resumptionToken &gt; 0">
-							<xsl:value-of select="$resumptionToken"/>
+						<xsl:when test="string-length($resumptionToken) &gt; 0">
+							<xsl:value-of select="tokenize($resumptionToken, ':')[3]"/>
 						</xsl:when>
 						<xsl:otherwise>0</xsl:otherwise>
 					</xsl:choose>

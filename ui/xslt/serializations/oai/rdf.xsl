@@ -84,7 +84,7 @@
 			</xsl:choose>
 
 			<xsl:if test="not($mode = 'test')">
-				<xsl:if test="descendant::oai:resumptionToken">
+				<xsl:if test="descendant::oai:resumptionToken[string-length(normalize-space(.)) &gt; 0]">
 					<xsl:call-template name="recurse">
 						<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>						
 					</xsl:call-template>
@@ -660,16 +660,9 @@
 			<xsl:copy-of select="document(concat($oai_service, '?verb=ListRecords&amp;resumptionToken=', encode-for-uri($token)))"/>
 		</xsl:variable>
 
-		<xsl:choose>
-			<xsl:when test="string($ark)">
-				<xsl:apply-templates select="$oai/descendant::oai:metadata/*[dc:relation[contains(., $ark)]]"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:apply-templates select="$oai/descendant::oai:metadata/*[dc:relation[contains(., 'ark:/')]]"/>
-			</xsl:otherwise>
-		</xsl:choose>
+		<xsl:apply-templates select="$oai/descendant::oai:record[not(oai:header/@status = 'deleted')]"/>
 
-		<xsl:if test="$oai/descendant::oai:resumptionToken">
+		<xsl:if test="$oai/descendant::oai:resumptionToken[string-length(normalize-space(.)) &gt; 0]">
 			<xsl:call-template name="recurse">
 				<xsl:with-param name="token" select="$oai/descendant::oai:resumptionToken"/>				
 			</xsl:call-template>

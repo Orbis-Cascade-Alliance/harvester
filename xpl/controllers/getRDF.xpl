@@ -23,7 +23,7 @@
 					<sets>
 						<xsl:for-each select="tokenize(/request/parameters/parameter[name='sets']/value, '\|')">
 							<set>
-								<xsl:value-of select="."/>
+								<xsl:value-of select="normalize-space(.)"/>
 							</set>
 						</xsl:for-each>
 					</sets>

@@ -141,7 +141,7 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 
 			<!-- get the RDF through the administrative getRDF API -->
 			<xforms:submission id="get-rdf" serialization="none" method="get"
-				action="/harvester/admin/getRDF?sets={encode-for-uri(instance('set')/set)}&amp;repository={instance('set')/repository}&amp;rights={instance('set')/rights}&amp;target={instance('set')/target}" replace="instance" instance="rdf">
+				action="/harvester/admin/getRDF?sets={encode-for-uri(normalize-space(instance('set')/set))}&amp;repository={instance('set')/repository}&amp;rights={instance('set')/rights}&amp;target={instance('set')/target}" replace="instance" instance="rdf">
 				<!-- upon successful execution of getRDF, post the RDF into the triplestore -->
 				<xforms:send submission="post-rdf" ev:event="xforms-submit-done"></xforms:send>
 				<!-- otherwise display a popup alert -->
@@ -264,7 +264,7 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 									<xforms:label><span class="glyphicon glyphicon-import"></span>Import</xforms:label>
 									<xforms:action ev:event="DOMActivate">
 										<!-- delete the set from the SPARQL update -->
-										<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('delete-set'), 'SET', instance('set')/set)"/>
+										<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('delete-set'), 'SET', normalize-space(instance('set')/set))"/>
 										<xforms:send submission="delete-graph"/>
 										<!-- call the getRDF web service to transform OAI-PMH into RDF -->
 										<xforms:action ev:event="xforms-submit-done">

@@ -14,22 +14,24 @@
 	<xsl:variable name="publisher_code" select="//config/publisher_code"/>
 	<xsl:variable name="repositoryIdentifier" select="substring-before(substring-after($url, 'http://'), '/')"/>
 
+	<!-- Note: resumptionToken format is {$set}:{$metadataPrefix}:{$offset} -->
+
 	<!-- request params -->
+	<xsl:param name="resumptionToken" select="doc('input:request')/request/parameters/parameter[name = 'resumptionToken']/value"/>
 	<xsl:param name="verb" select="doc('input:request')/request/parameters/parameter[name = 'verb']/value"/>
-	<xsl:param name="metadataPrefix" select="doc('input:request')/request/parameters/parameter[name = 'metadataPrefix']/value"/>
-	<xsl:param name="set" select="doc('input:request')/request/parameters/parameter[name = 'set']/value"/>
+	<xsl:param name="metadataPrefix" select="if (string-length($resumptionToken) &gt; 0) then tokenize($resumptionToken, ':')[2] else doc('input:request')/request/parameters/parameter[name = 'metadataPrefix']/value"/>
+	<xsl:param name="set" select="if (string-length($resumptionToken) &gt; 0) then tokenize($resumptionToken, ':')[1] else doc('input:request')/request/parameters/parameter[name = 'set']/value"/>
 	<xsl:param name="identifier" select="doc('input:request')/request/parameters/parameter[name = 'identifier']/value"/>
 	<xsl:param name="from" select="doc('input:request')/request/parameters/parameter[name = 'from']/value"/>
-	<xsl:param name="until" select="doc('input:request')/request/parameters/parameter[name = 'until']/value"/>
-	<xsl:param name="resumptionToken" select="doc('input:request')/request/parameters/parameter[name = 'resumptionToken']/value"/>
+	<xsl:param name="until" select="doc('input:request')/request/parameters/parameter[name = 'until']/value"/>	
 
 	<!-- pagination -->
 	<xsl:variable name="limit" select="//config/oai-pmh_limit" as="xs:integer"/>
 	<xsl:variable name="count" select="//count" as="xs:integer"/>
 	<xsl:variable name="offset">
 		<xsl:choose>
-			<xsl:when test="$resumptionToken castable as xs:integer and $resumptionToken &gt; 0">
-				<xsl:value-of select="$resumptionToken"/>
+			<xsl:when test="string-length($resumptionToken) &gt; 0">
+				<xsl:value-of select="tokenize($resumptionToken, ':')[3]"/>
 			</xsl:when>
 			<xsl:otherwise>0</xsl:otherwise>
 		</xsl:choose>
@@ -39,7 +41,7 @@
 		<xsl:choose>
 			<xsl:when test="string($resumptionToken)">
 				<xsl:choose>
-					<xsl:when test="$resumptionToken castable as xs:integer and xs:integer($resumptionToken) &gt; 0">true</xsl:when>
+					<xsl:when test="matches($resumptionToken, '[a-z]+:oai_dc:\d+')">true</xsl:when>
 					<xsl:otherwise>false</xsl:otherwise>
 				</xsl:choose>
 			</xsl:when>
@@ -59,6 +61,9 @@
 			<request verb="{$verb}">
 				<xsl:if test="string($metadataPrefix)">
 					<xsl:attribute name="metadataPrefix" select="$metadataPrefix"/>
+				</xsl:if>
+				<xsl:if test="string($resumptionToken)">
+					<xsl:attribute name="resumptionToken" select="$resumptionToken"/>
 				</xsl:if>
 				<xsl:if test="string($set)">
 					<xsl:attribute name="set" select="$set"/>
@@ -211,8 +216,9 @@
 	<!-- generate resumptionToken from the $limit defined in the config and the $offset, an integer value for SPARQL that stands as a resumptionToken -->
 	<xsl:template name="resumptionToken">
 		<xsl:if test="$offset &lt; $count">
+			<xsl:variable name="next" select="$offset + $limit"/>
 			<resumptionToken completeListSize="{$count}" cursor="{$offset}">
-				<xsl:value-of select="$offset + $limit"/>
+				<xsl:value-of select="concat($set, ':oai_dc:', $next)"/>				
 			</resumptionToken>
 		</xsl:if>
 	</xsl:template>
@@ -288,9 +294,9 @@
 				</dc:relation.hasVersion>
 			</xsl:if>
 			<xsl:if test="string($depiction)">
-				<dc:identifier.reference>
+				<dc:relation.references>
 					<xsl:value-of select="$depiction"/>
-				</dc:identifier.reference>
+				</dc:relation.references>
 			</xsl:if>
 		</oai_dc:dc>
 	</xsl:template>
