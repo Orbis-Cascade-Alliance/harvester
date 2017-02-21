@@ -40,6 +40,17 @@
 		<p:otherwise>
 			<p:processor name="oxf:identity">
 				<p:input name="data" href="#data"/>
+				<p:output name="data" id="model"/>
+			</p:processor>
+			
+			<p:processor name="oxf:xml-serializer">
+				<p:input name="data" href="#model"/>
+				<p:input name="config">
+					<config>
+						<content-type>application/rdf+xml</content-type>
+						<indent>true</indent>
+					</config>
+				</p:input>
 				<p:output name="data" ref="data"/>
 			</p:processor>
 		</p:otherwise>
