@@ -6,7 +6,8 @@
 	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:prov="http://www.w3.org/ns/prov#"
 	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#"
 	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/"
-	exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda dpla ore digest prov geo" version="2.0">
+	xmlns:dcmitype="http://purl.org/dc/dcmitype/" exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda dpla ore digest prov geo dcmitype"
+	version="2.0">
 
 	<xsl:variable name="url" select="//config/url"/>
 	<xsl:variable name="publisher" select="//config/publisher"/>
@@ -19,11 +20,21 @@
 	<!-- request params -->
 	<xsl:param name="resumptionToken" select="doc('input:request')/request/parameters/parameter[name = 'resumptionToken']/value"/>
 	<xsl:param name="verb" select="doc('input:request')/request/parameters/parameter[name = 'verb']/value"/>
-	<xsl:param name="metadataPrefix" select="if (string-length($resumptionToken) &gt; 0) then tokenize($resumptionToken, ':')[2] else doc('input:request')/request/parameters/parameter[name = 'metadataPrefix']/value"/>
-	<xsl:param name="set" select="if (string-length($resumptionToken) &gt; 0) then tokenize($resumptionToken, ':')[1] else doc('input:request')/request/parameters/parameter[name = 'set']/value"/>
+	<xsl:param name="metadataPrefix"
+		select="
+			if (string-length($resumptionToken) &gt; 0) then
+				tokenize($resumptionToken, ':')[2]
+			else
+				doc('input:request')/request/parameters/parameter[name = 'metadataPrefix']/value"/>
+	<xsl:param name="set"
+		select="
+			if (string-length($resumptionToken) &gt; 0) then
+				tokenize($resumptionToken, ':')[1]
+			else
+				doc('input:request')/request/parameters/parameter[name = 'set']/value"/>
 	<xsl:param name="identifier" select="doc('input:request')/request/parameters/parameter[name = 'identifier']/value"/>
 	<xsl:param name="from" select="doc('input:request')/request/parameters/parameter[name = 'from']/value"/>
-	<xsl:param name="until" select="doc('input:request')/request/parameters/parameter[name = 'until']/value"/>	
+	<xsl:param name="until" select="doc('input:request')/request/parameters/parameter[name = 'until']/value"/>
 
 	<!-- pagination -->
 	<xsl:variable name="limit" select="//config/oai-pmh_limit" as="xs:integer"/>
@@ -218,7 +229,7 @@
 		<xsl:if test="$offset &lt; $count">
 			<xsl:variable name="next" select="$offset + $limit"/>
 			<resumptionToken completeListSize="{$count}" cursor="{$offset}">
-				<xsl:value-of select="concat($set, ':oai_dc:', $next)"/>				
+				<xsl:value-of select="concat($set, ':oai_dc:', $next)"/>
 			</resumptionToken>
 		</xsl:if>
 	</xsl:template>
@@ -244,7 +255,10 @@
 				<identifier>
 					<xsl:choose>
 						<xsl:when test="$verb = 'GetIdentifiers'">
-							<xsl:value-of select="edm:object/@rdf:resource"/>
+							<xsl:variable name="uri" select="string(edm:object/@rdf:resource)"/>
+							<xsl:if test="string(normalize-space($uri))">
+								<xsl:value-of select="concat('oai:', $repositoryIdentifier, ':', digest:md5Hex(normalize-space($uri)))"/>
+							</xsl:if>
 						</xsl:when>
 						<xsl:otherwise>
 							<xsl:variable name="uri" select="string(descendant::dpla:SourceResource/@rdf:about)"/>
@@ -370,6 +384,20 @@
 		<dc:rights.standardized>
 			<xsl:value-of select="@rdf:resource"/>
 		</dc:rights.standardized>
+	</xsl:template>
+
+	<xsl:template match="dcterms:isPartOf">		
+		<dc:isPartOf>
+			<xsl:choose>
+				<xsl:when test="@rdf:resource">
+					<xsl:variable name="uri" select="@rdf:resource"/>
+					<xsl:value-of select="//dcmitype:Collection[@rdf:about = $uri]/dcterms:title"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="descendant::dcterms:title"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</dc:isPartOf>
 	</xsl:template>
 
 	<xsl:template match="*">

@@ -42,6 +42,7 @@
 				<xsl:variable name="query"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX dpla:	<http://dp.la/terms/>
+PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
@@ -53,7 +54,8 @@ PREFIX prov:	<http://www.w3.org/ns/prov#>
 PREFIX doap:	<http://usefulinc.com/ns/doap#>
 
 DESCRIBE * WHERE {
-  ?cho a dpla:SourceResource
+  ?cho a dpla:SourceResource;
+		dcterms:isPartOf ?collection
        { SELECT * WHERE {
          ?agg a ore:Aggregation ;
                 edm:isShownAt ?cho ;
