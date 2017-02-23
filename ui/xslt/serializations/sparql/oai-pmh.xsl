@@ -457,8 +457,8 @@
 
 	<xsl:template name="last-day-of-month">
 		<xsl:param name="date"/>
-		<xsl:param name="y" select="substring($date, 1, 4)"/>
-		<xsl:param name="m" select="substring($date, 6, 2)"/>
+		<xsl:param name="y" select="xs:integer(substring($date, 1, 4))"/>
+		<xsl:param name="m" select="xs:integer(substring($date, 6, 2))"/>
 		<xsl:param name="cal" select="'312831303130313130313031'"/>
 		<xsl:param name="leap" select="not($y mod 4) and $y mod 100 or not($y mod 400)"/>
 		<xsl:param name="month-length" select="substring($cal, 2 * ($m - 1) + 1, 2)"/>

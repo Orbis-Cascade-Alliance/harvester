@@ -199,7 +199,7 @@
 			<xsl:if test="dc:description[not(matches(., '.jpe?g$'))]">
 				<dcterms:description>
 					<xsl:for-each select="dc:description[not(matches(., '.jpe?g$'))]">
-						<xsl:value-of select="harvester:cleanText(normalize-space(.))"/>
+						<xsl:value-of select="harvester:cleanText(normalize-space(.), local-name())"/>
 						<xsl:if test="not(position() = last())">
 							<xsl:text> </xsl:text>
 						</xsl:if>
@@ -321,14 +321,14 @@
 	<xsl:template match="dc:rights">
 		<xsl:for-each select="tokenize(., ';')[1]">
 			<xsl:choose>
-				<xsl:when test="starts-with(normalize-space(.), 'http://rightsstatements.org') and not(string($rightsStatement))">
+				<xsl:when test="matches(., '^https?://') and not(string($rightsStatement))">
 					<dcterms:rights>
 						<xsl:attribute name="rdf:resource" select="normalize-space(.)"/>
 					</dcterms:rights>
 				</xsl:when>
 				<xsl:otherwise>
 					<dcterms:rights>
-						<xsl:value-of select="harvester:cleanText(normalize-space(.))"/>
+						<xsl:value-of select="harvester:cleanText(normalize-space(.), 'rights')"/>
 					</dcterms:rights>
 				</xsl:otherwise>
 			</xsl:choose>
@@ -379,7 +379,7 @@
 				<xsl:variable name="pieces" select="tokenize($val, ';')"/>
 
 				<xsl:for-each select="$pieces">
-					<xsl:variable name="label" select="harvester:cleanText(normalize-space(.))"/>
+					<xsl:variable name="label" select="harvester:cleanText(normalize-space(.), $element)"/>
 
 					<dcterms:spatial>
 						<xsl:choose>
@@ -443,7 +443,7 @@
 					</xsl:when>
 					<xsl:otherwise>
 						<edm:hasType>
-							<xsl:value-of select="harvester:cleanText(normalize-space(.))"/>
+							<xsl:value-of select="harvester:cleanText(normalize-space(.), 'type')"/>
 						</edm:hasType>
 					</xsl:otherwise>
 				</xsl:choose>
@@ -461,7 +461,7 @@
 		<xsl:for-each select="tokenize(normalize-space(.), ';')">
 			<!-- ignore 0 length strings -->
 			<xsl:if test="string-length(normalize-space(.)) &gt; 0">
-				<xsl:variable name="val" select="harvester:cleanText(normalize-space(.))"/>
+				<xsl:variable name="val" select="harvester:cleanText(normalize-space(.), $property)"/>
 				<!-- conditionals for ignoring or processing specific properties differently -->
 				<xsl:choose>
 					<xsl:when test="$property='creator'">
@@ -672,18 +672,35 @@
 	<!-- FUNCTIONS -->
 	<xsl:function name="harvester:cleanText">
 		<xsl:param name="val"/>
+		<xsl:param name="element"/>
 
 		<xsl:variable name="html-stripped" select="replace(replace($val, '&lt;[^&gt;]+&gt;', ' '), '\\s+', ' ')"/>
 
 		<xsl:choose>
-			<!-- strip trailing period -->
-			<xsl:when test="substring($html-stripped, string-length($html-stripped), 1) = '.'">
-				<xsl:value-of select="substring($html-stripped, 1, string-length($html-stripped) - 1)"/>
+			<xsl:when test="$element = 'subject' or $element = 'creator' or $element = 'contributor' or $element = 'spatial' or $element = 'coverage'">
+				<xsl:choose>
+					<!-- strip trailing period -->			
+					<xsl:when test="substring($html-stripped, string-length($html-stripped), 1) = '.'">
+						<xsl:value-of select="substring($html-stripped, 1, string-length($html-stripped) - 1)"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$html-stripped"/>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:value-of select="$html-stripped"/>
+				<xsl:choose>
+					<!-- strip trailing period -->			
+					<xsl:when test="substring($html-stripped, string-length($html-stripped), 1) = '.'">
+						<xsl:value-of select="substring($html-stripped, 1, string-length($html-stripped) - 1)"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$html-stripped"/>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:otherwise>
 		</xsl:choose>
+		
 	</xsl:function>
 
 	<xsl:function name="harvester:date_dataType">
