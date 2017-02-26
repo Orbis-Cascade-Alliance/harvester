@@ -64,7 +64,7 @@
 						<xsl:template match="/">
 							<valid>
 								<xsl:choose>
-									<xsl:when test="not($set = 'primo')">
+									<xsl:when test="not($set = 'primo') and not($set='primo-test')">
 										<error code="badArgument" xmlns="http://www.openarchives.org/OAI/2.0/">Invalid Set</error>
 									</xsl:when>
 									<xsl:when test="string($resumptionToken) and not(tokenize($resumptionToken, ':')[3] castable as xs:integer)">

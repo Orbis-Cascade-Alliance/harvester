@@ -23,6 +23,8 @@
 		<p:input name="data" href="#data"/>
 		<p:input name="config">
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<!-- Note: resumptionToken format is {$set}:{$metadataPrefix}:{$offset} -->
+				
 				<xsl:param name="resumptionToken" select="doc('input:request')/request/parameters/parameter[name = 'resumptionToken']/value"/>
 				<xsl:param name="set" select="if (string-length($resumptionToken) &gt; 0) then tokenize($resumptionToken, ':')[1] else doc('input:request')/request/parameters/parameter[name = 'set']/value"/>
 				
@@ -36,7 +38,7 @@
 				</xsl:param>
 				
 				<!-- config variables -->
-				<xsl:variable name="limit" select="/config/oai-pmh_limit"/>				
+				<xsl:variable name="limit" select="if ($set = 'primo-test') then '50' else /config/oai-pmh_limit"/>				
 				<xsl:variable name="sparql_endpoint" select="/config/sparql/query"/>
 
 				<xsl:variable name="query"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -64,7 +66,7 @@ DESCRIBE * WHERE {
        }
 } ORDER BY DESC(?mod) OFFSET %OFFSET% LIMIT %LIMIT% ]]>
 				</xsl:variable>
-
+	
 				<xsl:variable name="service" select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%LIMIT%', $limit), '%OFFSET%', $offset)), '&amp;output=xml')"/>					
 				
 

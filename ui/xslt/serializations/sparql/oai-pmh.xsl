@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.openarchives.org/OAI/2.0/"
-	xmlns:digest="org.apache.commons.codec.digest.DigestUtils" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:res="http://www.w3.org/2005/sparql-results#"
-	xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:dcterms="http://purl.org/dc/terms/"
-	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:prov="http://www.w3.org/ns/prov#"
-	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#"
-	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/"
-	xmlns:dcmitype="http://purl.org/dc/dcmitype/" exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda dpla ore digest prov geo dcmitype"
-	version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:digest="org.apache.commons.codec.digest.DigestUtils"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:res="http://www.w3.org/2005/sparql-results#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
+	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:prov="http://www.w3.org/ns/prov#"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#" xmlns:ore="http://www.openarchives.org/ore/terms/"
+	xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:dcmitype="http://purl.org/dc/dcmitype/"
+	exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda dpla ore digest prov geo dcmitype" version="2.0">
 
 	<xsl:variable name="url" select="//config/url"/>
 	<xsl:variable name="publisher" select="//config/publisher"/>
@@ -62,8 +60,7 @@
 
 	<!-- construct OAI-PMH response -->
 	<xsl:template match="/">
-		<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
 			http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
 			<responseDate>
@@ -100,7 +97,7 @@
 							<xsl:value-of select="$publisher_email"/>
 						</adminEmail>
 						<earliestDatestamp>
-							<xsl:value-of select="descendant::res:binding[@name = 'mod']/res:literal"/>
+							<xsl:value-of select="substring-before(descendant::res:binding[@name = 'mod']/res:literal, 'T')"/>
 						</earliestDatestamp>
 						<deletedRecord>no</deletedRecord>
 						<granularity>YYYY-MM-DD</granularity>
@@ -125,8 +122,19 @@
 							<setName>Primo Harvest</setName>
 							<setDescription>
 								<oai_dc:dc>
-									<dc:title>All cultural heritage objects in <xsl:value-of select="$publisher"/> designated for harvesting into
-										Primo</dc:title>
+									<dc:description>All cultural heritage objects in <xsl:value-of select="$publisher"/> designated for harvesting into Primo</dc:description>
+									<dc:creator>
+										<xsl:value-of select="$publisher"/>
+									</dc:creator>
+								</oai_dc:dc>
+							</setDescription>
+						</set>
+						<set>
+							<setSpec>primo-test</setSpec>
+							<setName>Primo Test Harvest</setName>
+							<setDescription>
+								<oai_dc:dc>
+									<dc:description>Primo test set with 50 objects.</dc:description>
 									<dc:creator>
 										<xsl:value-of select="$publisher"/>
 									</dc:creator>
@@ -159,7 +167,10 @@
 													<xsl:with-param name="verb" select="$verb"/>
 												</xsl:apply-templates>
 
-												<xsl:call-template name="resumptionToken"/>
+												<!-- suppress resumption token from test set -->
+												<xsl:if test="not($set='primo-test')">
+													<xsl:call-template name="resumptionToken"/>
+												</xsl:if>												
 											</xsl:element>
 										</xsl:otherwise>
 									</xsl:choose>
@@ -243,7 +254,9 @@
 			<datestamp>
 				<xsl:value-of select="dcterms:modified"/>
 			</datestamp>
-			<setSpec>primo</setSpec>
+			<setSpec>
+				<xsl:value-of select="$set"/>
+			</setSpec>
 		</header>
 	</xsl:template>
 
@@ -272,7 +285,9 @@
 				<datestamp>
 					<xsl:value-of select="substring(prov:generatedAtTime, 1, 10)"/>
 				</datestamp>
-				<setSpec>primo</setSpec>
+				<setSpec>
+					<xsl:value-of select="$set"/>
+				</setSpec>
 			</header>
 
 			<xsl:if test="$verb = 'GetRecord' or $verb = 'ListRecords'">
@@ -386,7 +401,7 @@
 		</dc:rights.standardized>
 	</xsl:template>
 
-	<xsl:template match="dcterms:isPartOf">		
+	<xsl:template match="dcterms:isPartOf">
 		<dc:isPartOf>
 			<xsl:choose>
 				<xsl:when test="@rdf:resource">
