@@ -1,7 +1,9 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
-	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-	xmlns:res="http://www.w3.org/2005/sparql-results#">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+	xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:res="http://www.w3.org/2005/sparql-results#"
+	xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester">
 	<head>
 		<title>OAI-PMH Harvester: Batch Import</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
@@ -17,12 +19,26 @@
 				<controls xmlns="">
 					<status></status>
 					<current></current>
-					<total></total>
-					<count></count>
 					<upload-trigger>false</upload-trigger>
+					<repository></repository>
+					<oai-service></oai-service>
+					<oai-set-code></oai-set-code>
+					<admin>false</admin>
+					<initial-page>true</initial-page>
+					<normalization current-interface="">
+						<types>true</types>
+						<agents>true</agents>
+						<places>true</places>
+					</normalization>
+					<validation>
+						<error-count>0</error-count>
+						<total-count>0</total-count>
+						<min-pos>1</min-pos>
+						<max-pos>50</max-pos>
+					</validation>
 				</controls>
 			</xforms:instance>
-			
+
 			<xforms:instance id="set" xxforms:exclude-result-prefixes="#all">
 				<set xmlns="">
 					<set></set>
@@ -33,9 +49,9 @@
 			</xforms:instance>
 
 			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
-				<xi:include href="../config.xml"></xi:include>
+				<xi:include href="../config.xml"/>
 			</xforms:instance>
-			
+
 			<!-- instances for controlled lists -->
 			<xforms:instance id="rights-statements">
 				<rights xmlns="">
@@ -53,21 +69,46 @@
 					<statement value="NKC">No known copyright</statement>
 				</rights>
 			</xforms:instance>
-			
+
 			<!-- instances for REST interactions -->
-			<xforms:instance id="feed" xxforms:exclude-result-prefixes="#all">
-				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"></OAI-PMH>
+			<xforms:instance id="oai-response" xxforms:exclude-result-prefixes="#all">
+				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"/>
+			</xforms:instance>
+
+			<xforms:instance id="oai-set" xxforms:exclude-result-prefixes="#all">
+				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"/>
+			</xforms:instance>
+
+			<xforms:instance id="oai-record" xxforms:exclude-result-prefixes="#all">
+				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"/>
+			</xforms:instance>
+
+			<xforms:instance id="validation" xxforms:exclude-result-prefixes="#all">
+				<validation xmlns=""></validation>
 			</xforms:instance>
 
 			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
-				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
-					xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:dpla="http://dp.la/terms/"
-					xmlns:foaf="http://xmlns.com/foaf/0.1/"></rdf:RDF>
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:ore="http://www.openarchives.org/ore/terms/"
+					xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:dpla="http://dp.la/terms/"
+					xmlns:foaf="http://xmlns.com/foaf/0.1/"/>
 			</xforms:instance>
 
-			<!-- count response -->
-			<xforms:instance id="count-response">
-				<response xmlns=""></response>
+			<xforms:instance id="set-rdf" xxforms:exclude-result-prefixes="#all">
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:ore="http://www.openarchives.org/ore/terms/"
+					xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:dpla="http://dp.la/terms/"
+					xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns="">
+
+					<dcmitype:Collection rdf:about="">
+						<dcterms:title/>
+						<dcterms:publisher rdf:resource=""/>
+					</dcmitype:Collection>
+				</rdf:RDF>
+			</xforms:instance>
+
+			<xforms:instance id="set-description-template" xxforms:exclude-result-prefixes="#all">
+				<dcterms:description xmlns=""/>
 			</xforms:instance>
 
 			<!-- sparql update -->
@@ -95,19 +136,46 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 				<query></query>
 			</xforms:instance>
 
+			<!-- lists for controlled vocabulary normalization -->
+			<xforms:instance id="type-list">
+				<types xmlns=""></types>
+			</xforms:instance>
+
+			<xforms:instance id="place-list">
+				<places xmlns=""></places>
+			</xforms:instance>
+
+			<xforms:instance id="agent-list">
+				<agents xmlns=""></agents>
+			</xforms:instance>
+
+			<!-- dump instance -->
+			<xforms:instance id="dump" xxforms:exclude-result-prefixes="#all">
+				<dump xmlns=""></dump>
+			</xforms:instance>
+
 			<!-- ************************* BINDINGS ************************** -->
 			<xforms:bind nodeset="instance('set')">
 				<xforms:bind nodeset="set" required="true()" type="xs:anyURI" constraint="matches(., 'https?://')"/>
-				<xforms:bind nodeset="repository" required="true()"/>
+				<xforms:bind nodeset="repository" required="true()" readonly="instance('control-instance')/admin = false()"/>
 			</xforms:bind>
-			
+
 			<xforms:bind nodeset="instance('control-instance')">
-				<xforms:bind id="upload-trigger" nodeset="upload-trigger" type="xs:boolean" readonly=". != true()"></xforms:bind>
+				<xforms:bind nodeset="admin" type="xs:boolean"/>
+				<xforms:bind nodeset="initial-page" type="xs:boolean"/>
+				<xforms:bind id="upload-trigger" nodeset="upload-trigger" type="xs:boolean" readonly=". != true()"/>
+				<xforms:bind nodeset="normalization">
+					<xforms:bind nodeset="*" type="xs:boolean"/>
+				</xforms:bind>
+				<xforms:bind nodeset="validation">
+					<xforms:bind nodeset="*" type="xs:integer"/>
+				</xforms:bind>
 			</xforms:bind>
 
 			<!-- ************************* SUBMISSIONS ************************** -->
 			<!-- get OAI-PMH feed, perform validation, and return the count (iterating through resumptionTokens if necessary -->
-			<xforms:submission id="get-feed" serialization="none" method="get" action="{instance('set')/set}" replace="instance" instance="feed">
+			<xforms:submission id="get-oai-pmh" serialization="none" method="get" action="{instance('control-instance')/oai-service}" replace="instance"
+				instance="oai-response">
 				<xforms:header>
 					<xforms:name>User-Agent</xforms:name>
 					<xforms:value>XForms/harvester.orbiscascade.org</xforms:value>
@@ -115,53 +183,178 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 
 				<!-- if the OAI-PMH feed errors, that means it is invalid XML -->
 				<xforms:action ev:event="xforms-submit-error">
-					<xforms:insert context="instance('sets')/set[position()=instance('control-instance')/current]" origin="xforms:element('oai-valid', false())"></xforms:insert>
-					<xforms:insert context="instance('sets')/set[position()=instance('control-instance')/current]" origin="xforms:element('error-code', '1')"></xforms:insert>
+					<xforms:insert context="instance('validation')" origin="xforms:element('error', 'OAI-PMH URL does not yield a well-formed XML document')"/>
 				</xforms:action>
 				<!-- if the XForms submission is successful (well-formed XML document), then verify the namespace of the root element -->
 				<xforms:action ev:event="xforms-submit-done">
-					<xforms:action if="not(instance('feed')/namespace-uri()='http://www.openarchives.org/OAI/2.0/')">
-						<xforms:insert context="instance('sets')/set[position()=instance('control-instance')/current]" origin="xforms:element('oai-valid', false())"></xforms:insert>
-						<xforms:insert context="instance('sets')/set[position()=instance('control-instance')/current]" origin="xforms:element('error-code', '2')"></xforms:insert>
+					<xforms:action if="not(instance('oai-response')/namespace-uri()='http://www.openarchives.org/OAI/2.0/')">
+						<xforms:insert context="instance('validation')"
+							origin="xforms:element('error', 'URL yields an XML document, but it is not in the OAI-PMH namespace')"/>
 					</xforms:action>
-					<xforms:action if="instance('feed')/namespace-uri()='http://www.openarchives.org/OAI/2.0/'">
-						<xforms:insert context="instance('sets')/set[position()=instance('control-instance')/current]" origin="xforms:element('count', '0')"
-							if="not(instance('sets')/set[position()=instance('control-instance')/current]/count)"></xforms:insert>
-						<xforms:setvalue ref="instance('control-instance')/count"
-							value="instance('control-instance')/count + count(instance('feed')/descendant::oai_dc:dc[dc:relation[contains(., 'ark:/')]])"></xforms:setvalue>
-						<xforms:setvalue ref="instance('sets')/set[position()=instance('control-instance')/current]/count" value="instance('control-instance')/count"></xforms:setvalue>
-						<!-- for a multipage feed, check for the existence of a resumptionToken for iteration -->
-						<xforms:action if="instance('feed')//oai:resumptionToken">							
-							<xforms:setvalue ref="instance('control-instance')/set" value="concat(instance('feed')//descendant::oai:request, '?verb=ListRecords&amp;resumptionToken=', instance('feed')//descendant::oai:resumptionToken)"/>
-							<xforms:send submission="get-feed"/>
+					<xforms:action if="instance('oai-response')/namespace-uri()='http://www.openarchives.org/OAI/2.0/'">
+
+						<!-- parse metadata about the set by parsing the set HTTP param and executing an XForms submission. but only for first page -->
+						<xforms:action if="instance('control-instance')/initial-page = true()">
+							<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
+							<xforms:setvalue ref="instance('control-instance')/oai-set-code" value="substring-after($params[contains(., 'set=')][1], '=')"/>
+							<xforms:setvalue ref="instance('control-instance')/oai-service"
+								value="concat(substring-before(instance('set')/set, '?'), '?verb=ListSets')"/>
+							<xforms:send submission="get-oai-set"/>
 						</xforms:action>
+
+						<!-- iterate through all harvestable records -->
+						<xforms:action xxforms:iterate="instance('oai-response')/descendant::oai:record[not(oai:header/@status = 'deleted')]">
+							<xforms:var name="id" select="context()/oai:header/oai:identifier"/>
+							<xforms:insert context="instance('validation')" nodeset="./child::node()[last()]"
+								origin="xforms:element('record', xforms:attribute('id', $id))"/>
+
+							<xforms:action if="oai:metadata/*[dc:identifier[matches(., 'https?://')]]">
+								<xforms:var name="binding" select="context()/oai:metadata/*"/>
+								<xforms:var name="cho_uri"
+									select="data(descendant::dc:identifier[matches(., 'https?://') and not(matches(., 'https?://kaga')) and not(matches(., '\.(jpe?g|tif|pdf)$', 'i'))][1])"/>
+
+								<!-- insert some basic metadata for human-readable validation -->
+								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('uri', $cho_uri)"/>
+								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('title', data($binding/dc:title))"
+									if="$binding/dc:title"/>
+
+								<!-- insert errors for invalid or missing fields -->
+								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No title')"
+									if="not($binding/dc:title)"/>
+
+								<!-- parse and insert entities into relevant lists, if applicable -->
+								<!-- types/genres: normalize to AAT -->
+								<xforms:action if="instance('control-instance')/normalization/types = true()">
+									<xforms:var name="types" select="tokenize($binding/dc:type, ';')"/>
+
+									<xforms:action xxforms:iterate="$types">
+										<xforms:var name="val" select="normalize-space(.)"/>
+										<xforms:var name="dcmi-types"
+											select="('collection','dataset','event','image','interactiveresource','movingimage','physicalobject','service','software','sound','stillimage','text')"/>
+
+										<!-- insert only distinct values and if they aren't valid DCMI Types -->
+										<xforms:insert context="instance('type-list')" nodeset="./child::node()[last()]"
+											origin="xforms:element('type', (xforms:attribute('uri', ''), $val))"
+											if="not(instance('type-list')/type = $val) and not(index-of($dcmi-types, lower-case($val)))"/>
+									</xforms:action>
+								</xforms:action>
+
+								<!-- dc:creator and dc:contributor -->
+								<xforms:action if="instance('control-instance')/normalization/agents = true()">
+									<xforms:var name="all-elements" select="string-join($binding/dc:creator|$binding/dc:contributor, ';')"/>
+
+									<xforms:var name="agents" select="tokenize($all-elements, ';')"/>
+
+									<xforms:action xxforms:iterate="$agents">
+										<xforms:var name="val" select="normalize-space(.)"/>
+
+										<xforms:insert context="instance('agent-list')" nodeset="./child::node()[last()]"
+											origin="xforms:element('agent', (xforms:attribute('uri', ''), $val))" if="not(instance('agent-list')/agent = $val)"
+										/>
+									</xforms:action>
+								</xforms:action>
+
+								<!-- coverage and spatial, but ignoring coordinates -->
+								<xforms:action if="instance('control-instance')/normalization/places = true()">
+									<xforms:var name="all-elements" select="string-join($binding/*:coverage|$binding/*:spatial, ';')"/>
+
+									<xforms:var name="places" select="tokenize($all-elements, ';')"/>
+
+									<xforms:action xxforms:iterate="$places">
+										<xforms:var name="val" select="normalize-space(.)"/>
+
+										<!-- ignore individual lat or long elements and elements conforming to "lat,long" formatting -->
+										<xforms:action if="not($val castable as xs:decimal) and not(matches($val, '-?\d+\.\d+,\s?-?\d+\.\d+'))">
+											<xforms:insert context="instance('place-list')" nodeset="./child::node()[last()]"
+												origin="xforms:element('place', (xforms:attribute('uri', ''), $val))"
+												if="not(instance('place-list')/place = $val)"/>
+										</xforms:action>
+									</xforms:action>
+								</xforms:action>
+							</xforms:action>
+						</xforms:action>
+						<xforms:action if="not(oai:metadata/*[dc:identifier[matches(., 'https?://')]])">
+							<xforms:insert context="instance('validation')/record[last()]"
+								origin="xforms:element('error', concat('ID ', $id, ' - no discernable URI'))"/>
+						</xforms:action>
+
+
+						<!-- for a multipage feed, check for the existence of a resumptionToken for iteration -->
+						<!--<xforms:action if="instance('feed')//oai:resumptionToken">
+							<xforms:setvalue ref="instance('control-instance')/set"
+								value="concat(instance('feed')//descendant::oai:request, '?verb=ListRecords&amp;resumptionToken=', instance('feed')//descendant::oai:resumptionToken)"/>
+							<xforms:send submission="get-set"/>
+						</xforms:action>-->
+					</xforms:action>
+				</xforms:action>
+			</xforms:submission>
+
+			<!-- parse set metadata -->
+			<xforms:submission id="get-oai-set" serialization="none" method="get" action="{instance('control-instance')/oai-service}" replace="instance"
+				instance="oai-set">
+				<xforms:header>
+					<xforms:name>User-Agent</xforms:name>
+					<xforms:value>XForms/harvester.orbiscascade.org</xforms:value>
+				</xforms:header>
+
+				<!-- if the OAI-PMH feed errors, that means it is invalid XML -->
+				<xforms:action ev:event="xforms-submit-error">
+					<xforms:insert context="instance('validation')" origin="xforms:element('error', 'Unable to parse the OAI-PMH response for ListSets')"/>
+				</xforms:action>
+
+				<!-- validate the set response-->
+				<xforms:action ev:event="xforms-submit-done">
+					<xforms:var name="setSpec" select="instance('control-instance')/oai-set-code"/>
+
+					<xforms:action if="not(instance('oai-set')//oai:set[oai:setSpec = $setSpec])">
+						<!-- if there is no metadata matching the set code, throw an error -->
+						<xforms:insert context="instance('validation')" origin="xforms:element('error', concat('No metadata for setSpec ', $setSpec))"/>
+					</xforms:action>
+					<xforms:action if="instance('oai-set')//oai:set[oai:setSpec = $setSpec]">
+						<!-- set Collection RDF metadata -->
+						<xforms:setvalue ref="instance('set-rdf')/dcmitype:Collection/@rdf:about" value="instance('set')/set"/>
+						<xforms:setvalue ref="instance('set-rdf')/dcmitype:Collection/dcterms:title"
+							value="instance('oai-set')//oai:set[oai:setSpec = $setSpec]/oai:setName"/>
+						<xforms:setvalue ref="instance('set-rdf')/dcmitype:Collection/dcterms:publisher/@rdf:resource"
+							value="concat(instance('config')/production_server, 'contact#', instance('set')/repository)"/>
+						<xforms:action if="instance('oai-set')//oai:set[oai:setSpec = $setSpec]/oai:setDescription">
+							<xforms:insert context="instance('set-rdf')/dcmitype:Collection" nodeset="./child::node()[last()]"
+								origin="instance('set-description-template')"/>
+							<xforms:setvalue ref="instance('set-rdf')/dcmitype:Collection/dcterms:description"
+								value="instance('oai-set')//oai:set[oai:setSpec = $setSpec]/oai:setDescription/descendant-or-self::text()"/>
+						</xforms:action>
+						<!-- set initital page to false() to ensure this submission does not repeat for every OAI-PMH page -->
+						<xforms:setvalue ref="instance('control-instance')/initial-page" value="false()"/>
 					</xforms:action>
 				</xforms:action>
 			</xforms:submission>
 
 			<!-- get the RDF through the administrative getRDF API -->
 			<xforms:submission id="get-rdf" serialization="none" method="get"
-				action="/harvester/admin/getRDF?sets={encode-for-uri(normalize-space(instance('set')/set))}&amp;repository={instance('set')/repository}&amp;rights={instance('set')/rights}&amp;target={instance('set')/target}" replace="instance" instance="rdf">
+				action="/harvester/admin/getRDF?sets={encode-for-uri(normalize-space(instance('set')/set))}&amp;repository={instance('set')/repository}&amp;rights={instance('set')/rights}&amp;target={instance('set')/target}"
+				replace="instance" instance="rdf">
 				<!-- upon successful execution of getRDF, post the RDF into the triplestore -->
-				<xforms:send submission="post-rdf" ev:event="xforms-submit-done"></xforms:send>
+				<xforms:send submission="post-rdf" ev:event="xforms-submit-done"/>
 				<!-- otherwise display a popup alert -->
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get RDF</xforms:message>
 			</xforms:submission>
 
 			<!-- post RDF into the triplestore -->
-			<xforms:submission id="post-rdf" action="{instance('config')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post" mediatype="application/rdf+xml">
-				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status" value="concat(instance('set')/set, ': Successfully posted to endpoint.')"></xforms:setvalue>
-				<xforms:message ev:event="xforms-submit-error" level="modal" value="concat(instance('set')/set, ': Failed to post to endpoint.')"></xforms:message>
+			<xforms:submission id="post-rdf" action="{instance('config')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post"
+				mediatype="application/rdf+xml">
+				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status"
+					value="concat(instance('set')/set, ': Successfully posted to endpoint.')"/>
+				<xforms:message ev:event="xforms-submit-error" level="modal" value="concat(instance('set')/set, ': Failed to post to endpoint.')"/>
 			</xforms:submission>
 
 			<!-- SPARQL queries -->
-			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml" ref="instance('sparqlResponse')"
-				replace="instance" method="get">
+			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
+				ref="instance('sparqlResponse')" replace="instance" method="get">
 				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
 			</xforms:submission>
 
-			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlQuery')" serialization="text/plain" replace="none" method="post"
-				mediatype="application/sparql-update">
+			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlQuery')" serialization="text/plain"
+				replace="none" method="post" mediatype="application/sparql-update">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
 				</xforms:action>
@@ -169,19 +362,28 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 
 			<!-- **************** DYNAMIC VALIDATION CONTROLS ********************** -->
 			<xforms:action ev:event="xxforms-invalid" ev:observer="set">
-				<xforms:setvalue ref="instance('control-instance')/upload-trigger" value="false()"></xforms:setvalue>
+				<xforms:setvalue ref="instance('control-instance')/upload-trigger" value="false()"/>
 			</xforms:action>
-			
+
 			<xforms:action ev:event="xxforms-valid" ev:observer="set">
-				<xforms:setvalue ref="instance('control-instance')/upload-trigger" value="true()"></xforms:setvalue>
+				<xforms:setvalue ref="instance('control-instance')/upload-trigger" value="true()"/>
 			</xforms:action>
 
 			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
-			<!-- get the list of repositories from the SPARQL endpoint on xforms-model-construct-done -->
-			<!--<xforms:action ev:event="xforms-model-construct-done">
-				
-			</xforms:action>-->
+			<xforms:action ev:event="xforms-model-construct-done">
+				<xforms:setvalue ref="instance('control-instance')/admin" value="xxforms:is-user-in-role('harvester-admin')"/>
+
+				<!-- set repo information if not harvester-admin -->
+				<xforms:action if="xxforms:is-user-in-role('harvester-admin') = false()">
+					<xforms:insert context="instance('control-instance')" nodeset="status" position="after"
+						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"/>
+					<xforms:setvalue ref="instance('set')/repository" value="instance('control-instance')/request-security/role"/>
+				</xforms:action>
+			</xforms:action>
 		</xforms:model>
+
+		<!-- include XBL -->
+		<xi:include href="xbl/type/type.xbl" xi:omit-xml-base="true"/>
 	</head>
 
 
@@ -194,7 +396,7 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 							<p>
 								<span class="glyphicon glyphicon-info-sign"></span>
 								<strong>Status:</strong>
-								<xforms:output ref="instance('control-instance')/status"></xforms:output>
+								<xforms:output ref="instance('control-instance')/status"/>
 							</p>
 						</div>
 					</xforms:group>
@@ -204,7 +406,7 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 				<div class="col-md-12">
 					<h1>OAI-PMH Harvester: Import</h1>
 					<a href="../admin/"><span class="glyphicon glyphicon-arrow-left"></span>Return to Admin</a>
-					
+
 					<xforms:switch>
 						<xforms:case id="import-form">
 							<xforms:group ref="instance('set')">
@@ -213,7 +415,7 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 									<xforms:input ref="set">
 										<xforms:label>Set</xforms:label>
 										<xforms:alert>Required</xforms:alert>
-									</xforms:input>								
+									</xforms:input>
 								</div>
 								<div>
 									<xforms:select1 ref="repository">
@@ -221,11 +423,11 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 										<xforms:alert>Required</xforms:alert>
 										<xforms:item>
 											<xforms:label>Select...</xforms:label>
-											<xforms:value></xforms:value>
+											<xforms:value/>
 										</xforms:item>
 										<xforms:itemset nodeset="xxforms:sort(distinct-values(instance('config')//repository), ., 'text', 'ascending')">
-											<xforms:label ref="."></xforms:label>
-											<xforms:value ref="."></xforms:value>
+											<xforms:label ref="."/>
+											<xforms:value ref="."/>
 										</xforms:itemset>
 									</xforms:select1>
 								</div>
@@ -261,65 +463,282 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 									</xforms:select1>
 								</div>
 								<xforms:trigger bind="upload-trigger">
-									<xforms:label><span class="glyphicon glyphicon-import"></span>Import</xforms:label>
+									<xforms:label><span class="glyphicon glyphicon-ok"></span>Validate</xforms:label>
 									<xforms:action ev:event="DOMActivate">
-										<!-- delete the set from the SPARQL update -->
-										<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('delete-set'), 'SET', normalize-space(instance('set')/set))"/>
-										<xforms:send submission="delete-graph"/>
-										<!-- call the getRDF web service to transform OAI-PMH into RDF -->
-										<xforms:action ev:event="xforms-submit-done">
-											<xforms:send submission="get-rdf"/>
-										</xforms:action>							
+										<xforms:setvalue ref="instance('control-instance')/oai-service" value="normalize-space(instance('set')/set)"/>
+										<xforms:send submission="get-oai-pmh"/>
+
+										<!-- after the OAI-PMH harvesting and validation is completed, then switch the case -->
+										<!--<xforms:var name="interface"
+											select="if (instance('control-instance')/normalization/*[. = true()]) then concat(instance('control-instance')/normalization/*[. = true()][1]/name(), '-normalization') else 'import-complete'"/>
+										<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface" value="$interface"/>
+										<xforms:toggle case="{$interface}"/>-->
+
+										<!-- populate total and error count -->
+										<xforms:setvalue ref="instance('control-instance')/validation/total-count" value="count(instance('validation')/record)"/>
+										<xforms:setvalue ref="instance('control-instance')/validation/error-count"
+											value="count(instance('validation')/record[error])"/>
+
+										<xforms:toggle case="validation-results"/>
 									</xforms:action>
 								</xforms:trigger>
+							</xforms:group>
+						</xforms:case>
+						<xforms:case id="validation-results">
+							<h3>OAI-PMH Validation Results</h3>
+							<xforms:group ref="instance('validation')">
+								<!-- display limited error response if there are errors, with a link to download full results as CSV -->
+								<xforms:group ref=".[instance('control-instance')/validation/error-count &gt; 0]">
+									<div class="row">
+										<div class="col-md-12">
+
+											<h3>Errors</h3>
+											<div class="bg-warning alert-box"><span class="glyphicon glyphicon-exclamation-sign"
+													></span><strong>Warning:</strong>
+												<strong><xforms:output ref="instance('control-instance')/validation/error-count"/></strong> records of <strong><xforms:output
+													ref="instance('control-instance')/validation/total-count"/></strong> total have reported errors. Up to 20 are
+												displayed below. Please download CSV for full report.</div>
+											<xforms:repeat nodeset="record[error][position() &lt;= 20]">
+
+												<h4>
+													<xforms:output ref="@id"/>
+												</h4>
+
+												<xforms:repeat nodeset="*">
+													<div>
+														<xforms:output ref=".">
+															<xforms:label value="name()"/>
+														</xforms:output>
+													</div>
+												</xforms:repeat>
+												<hr />
+											</xforms:repeat>
+										</div>
+									</div>
+								</xforms:group>
+
+								<!-- display validation results in pages of 50 -->
+								<xforms:group ref=".[instance('control-instance')/validation/error-count = 0]">
+									<xforms:var name="min" select="number(instance('control-instance')/validation/min-pos)"/>
+									<xforms:var name="max" select="number(instance('control-instance')/validation/max-pos)"/>
+									<xforms:var name="numFound" select="number(instance('control-instance')/validation/total-count)"/>									
+									
+									<div class="row">
+										<div class="col-md-12">
+											<h3>Results</h3>
+
+											<div>
+												<!-- display button for import if there are no entities to be normalized -->
+												<xforms:group ref=".[not(instance('control-instance')/normalization/*[. = true()])]">
+													<xforms:trigger>
+														<xforms:label><span class="glyphicon glyphicon-import"></span> Import</xforms:label>
+														<xforms:dispatch target="initiate-import" name="fr-show" ev:event="DOMActivate"/>
+													</xforms:trigger>
+												</xforms:group>
+
+												<!-- display the next relevant normalization interface, if applicable -->
+												<xforms:group ref=".[instance('control-instance')/normalization/*[. = true()]]">
+													<xforms:trigger>
+														<xforms:label>Proceed with Normalization<span class="glyphicon glyphicon-chevron-right"
+															></span></xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface"
+																value="instance('control-instance')/normalization/*[. = true()][1]/name()"/>
+															<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"
+															/>
+														</xforms:action>
+													</xforms:trigger>
+												</xforms:group>
+											</div>
+										</div>
+									</div>
+
+									<!-- pagination -->
+									<div class="row">
+										<div class="col-md-6"> Displaying records <strong><xforms:output value="$min"/></strong> to <strong><xforms:output
+													value="if ($numFound &gt; $max) then $max else $numFound"/></strong> of <strong><xforms:output
+													value="$numFound"/></strong> total records.</div>
+										<div class="col-md-6 text-right">
+											<!-- back buttons -->
+											<xforms:group ref=".[$min = 1]">
+												<a class="btn btn-default disabled" title="Previous" href="#">
+													<span class="glyphicon glyphicon-backward"></span>
+												</a>
+											</xforms:group>
+											<xforms:group ref=".[$min &gt; 1]">
+												<xforms:trigger>
+													<xforms:label>
+														<span class="glyphicon glyphicon-backward"></span>
+													</xforms:label>
+													<xforms:action ev:event="DOMActivate">
+														<xforms:setvalue ref="instance('control-instance')/validation/min-pos" value="$min - 50"/>
+														<xforms:setvalue ref="instance('control-instance')/validation/max-pos" value="$max - 50"/>														
+													</xforms:action>
+												</xforms:trigger>
+											</xforms:group>
+											<xforms:group ref=".[$max &lt; $numFound]">
+												<xforms:trigger>
+													<xforms:label>
+														<span class="glyphicon glyphicon-forward"></span>
+													</xforms:label>
+													<xforms:action ev:event="DOMActivate">
+														<xforms:setvalue ref="instance('control-instance')/validation/min-pos" value="$min + 50"/>
+														<xforms:setvalue ref="instance('control-instance')/validation/max-pos" value="if ($max + 50 &gt; $numFound) then $numFound else $max + 50"/>														
+													</xforms:action>
+												</xforms:trigger>
+											</xforms:group>
+											<!-- forward buttons -->
+											<xforms:group ref=".[$max &gt;= $numFound]">
+												<a class="btn btn-default disabled" title="Previous" href="#">
+													<span class="glyphicon glyphicon-forward"></span>
+												</a>
+											</xforms:group>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-12">
+											<!-- display only 50 records at a time -->
+											<xforms:repeat
+												nodeset="record[position() &gt;= $min and position() &lt;= $max]">
+												<h4>
+													<xforms:output ref="@id"/><small>
+														<a href="#" class="toggle-record" id="{@id}-button">
+															<span class="glyphicon glyphicon-info-sign"></span>
+														</a></small>
+												</h4>
+
+												<dl class="dl-horizontal">
+													<dt>Title</dt>
+													<dd><xforms:output ref="title"/></dd>
+													<dt>URI</dt>
+													<dd>
+														<xforms:trigger appearance="minimal">
+															<xforms:label><xforms:output ref="uri"/>
+																<span class="glyphicon glyphicon-new-window"></span></xforms:label>
+															<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
+														</xforms:trigger>
+													</dd>
+												</dl>
+												<div id="{@id}-div" style="display:none"></div>
+												<hr />
+											</xforms:repeat>
+
+											<div>
+												<!-- display button for import if there are no entities to be normalized -->
+												<xforms:group ref=".[not(instance('control-instance')/normalization/*[. = true()])]">
+													<xforms:trigger>
+														<xforms:label><span class="glyphicon glyphicon-import"></span> Import</xforms:label>
+														<xforms:dispatch target="initiate-import" name="fr-show" ev:event="DOMActivate"/>
+													</xforms:trigger>
+												</xforms:group>
+
+												<!-- display the next relevant normalization interface, if applicable -->
+												<xforms:group ref=".[instance('control-instance')/normalization/*[. = true()]]">
+													<xforms:trigger>
+														<xforms:label>Proceed with Normalization<span class="glyphicon glyphicon-chevron-right"
+															></span></xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface"
+																value="instance('control-instance')/normalization/*[. = true()][1]/name()"/>
+															<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"
+															/>
+														</xforms:action>
+													</xforms:trigger>
+												</xforms:group>
+											</div>
+										</div>
+									</div>
+								</xforms:group>
+							</xforms:group>
+						</xforms:case>
+						<xforms:case id="types-normalization">
+							<xforms:group ref="instance('type-list')">
+								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
+
+								<div>
+									<h3>Match types to the Getty Art &amp; Architecture Thesaurus</h3>
+
+									<!-- display XBL components for AAT lookups -->
+									<xforms:group ref=".[count(type) &gt; 0]">
+										<xforms:repeat nodeset="xxforms:sort(type, ., 'text', 'ascending')">
+											<harvester:type/>
+										</xforms:repeat>
+									</xforms:group>
+
+									<xforms:group ref=".[count(type) = 0]">
+										<p>No dc:types (excluding those that match DCMI Types) available to link to the AAT.</p>
+									</xforms:group>
+
+									<!-- display button for import if there are no entities to be normalized -->
+									<xforms:group ref=".[not(instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()])]">
+										<xforms:trigger>
+											<xforms:label><span class="glyphicon glyphicon-import"></span> Import</xforms:label>
+											<xforms:dispatch target="initiate-import" name="fr-show" ev:event="DOMActivate"/>
+										</xforms:trigger>
+									</xforms:group>
+
+									<!-- display the next relevant normalization interface, if applicable -->
+									<xforms:group ref=".[instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]]">
+										<xforms:trigger>
+											<xforms:label>Next<span class="glyphicon glyphicon-chevron-right"></span></xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:var name="next"
+													select="instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]/name()"/>
+												<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface" value="$next"/>
+												<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
+											</xforms:action>
+										</xforms:trigger>
+									</xforms:group>
+								</div>
+							</xforms:group>
+						</xforms:case>
+						<xforms:case id="agents-normalization">
+							<xforms:group ref="instance('agent-list')">
+								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
+								<div>
+									<h3>Match agents to VIAF or SNAC</h3>
+								</div>
+							</xforms:group>
+						</xforms:case>
+						<xforms:case id="places-normalization">
+							<xforms:group ref="instance('place-list')">
+								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
+								<div>
+									<h3>Match places to Geonames</h3>
+								</div>
 							</xforms:group>
 						</xforms:case>
 						<xforms:case id="import-complete">
 							<p>The ingestion process has been completed.</p>
 						</xforms:case>
 					</xforms:switch>
-					
-					<!-- ***
-						initiate-validation-dialog: this is the dialog to initiate the validation process.
-						Options: Negative choice: close dialog, cancel validation
-							Positive choice: iterate through each set to perform validation and return a total count of CHOs. See the get-feed XForms Submission above 
-							for further workflow documentation.
-						*** -->
-					<fr:alert-dialog id="initiate-validation-dialog">
-						<fr:label>Validate Sets</fr:label>
-						<fr:message>Proceed with set validation? This may take some time, depending the number of sets and whether pagination is necessary for harvesting.</fr:message>
+
+					<!-- dialog asking to initiate the import -->
+					<fr:alert-dialog id="initiate-import">
+						<fr:label>Import Data</fr:label>
+						<fr:message>Proceed with importation of the OAI-PMH set? This may take some time, depending on the number of records to be
+							harvested.</fr:message>
 						<fr:negative-choice>
 							<fr:label>No</fr:label>
 						</fr:negative-choice>
 						<fr:positive-choice>
 							<fr:label>Yes</fr:label>
 							<xforms:action ev:event="DOMActivate">
-								<!-- hide initiate-validation-dialog and show the progess-dialog -->
-								<!--<xxforms:show dialog="progress-dialog"></xxforms:show>
-								<xforms:dispatch target="initiate-validation-dialog" name="fr-hide"></xforms:dispatch>		-->
-								<xforms:setvalue ref="instance('control-instance')/total" value="count(instance('sets')/set)"></xforms:setvalue>
-								<xforms:action xxforms:iterate="instance('sets')/set">
-									<xforms:var name="position" value="position()"></xforms:var>
-									<xforms:var name="repository" value="context()/repository"></xforms:var>
-									<xforms:setvalue ref="instance('control-instance')/count">0</xforms:setvalue>
-									<xforms:setvalue ref="instance('control-instance')/current" value="$position"></xforms:setvalue>
-									<xforms:setvalue ref="instance('set')/set" value="context()/url"></xforms:setvalue>
-									<!-- Step 1: verify that the repository in the set XML matches a repository returned from the Harvester SPARQL endpoint -->
-									<xforms:action if="not(instance('repository-list')/repository = $repository)">
-										<xforms:insert context="instance('sets')/set[position()=$position]" origin="xforms:element('repository-valid', false())"></xforms:insert>
-										<xforms:insert context="instance('sets')/set[position()=$position]" origin="xforms:element('error-code', '0')"></xforms:insert>
-									</xforms:action>
-									<!-- Step 2: Get the OAI-PMH feed: Further XForms actions are implemented in the XForms Submission -->
-									<xforms:action if="instance('repository-list')/repository = $repository">
-										<xforms:send submission="get-feed"></xforms:send>
-									</xforms:action>
-								</xforms:action>								
-								<!--<xxforms:hide dialog="progress-dialog"></xxforms:hide>-->
+								<!-- delete the set from the SPARQL endpoint -->
+								<xforms:setvalue ref="instance('sparqlQuery')"
+									value="replace(instance('delete-set'), 'SET', normalize-space(instance('set')/set))"/>
+								<xforms:send submission="delete-graph"/>
+								<!-- call the getRDF web service to transform OAI-PMH into RDF. It will make use to any terms normalized and inserted into Google Sheets -->
+								<xforms:action ev:event="xforms-submit-done">
+									<xforms:send submission="get-rdf"/>
+									<xforms:toggle case="import-complete"/>
+								</xforms:action>
 							</xforms:action>
 						</fr:positive-choice>
 					</fr:alert-dialog>
-					
-					<!--<fr:xforms-inspector></fr:xforms-inspector>-->
+
+					<fr:xforms-inspector/>
 				</div>
 			</div>
 		</div>

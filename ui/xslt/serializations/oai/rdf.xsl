@@ -676,17 +676,10 @@
 
 		<xsl:variable name="html-stripped" select="replace(replace($val, '&lt;[^&gt;]+&gt;', ' '), '\\s+', ' ')"/>
 
-		<xsl:choose>
+		<xsl:choose>					
 			<xsl:when test="$element = 'subject' or $element = 'creator' or $element = 'contributor' or $element = 'spatial' or $element = 'coverage'">
-				<xsl:choose>
-					<!-- strip trailing period -->			
-					<xsl:when test="substring($html-stripped, string-length($html-stripped), 1) = '.'">
-						<xsl:value-of select="substring($html-stripped, 1, string-length($html-stripped) - 1)"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="$html-stripped"/>
-					</xsl:otherwise>
-				</xsl:choose>
+				<!-- do not strip trailing period from these elements -->	
+				<xsl:value-of select="$html-stripped"/>				
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:choose>
