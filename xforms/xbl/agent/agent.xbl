@@ -1,0 +1,276 @@
+<xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xbl="http://www.w3.org/ns/xbl"
+	xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom" xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester">
+	<xbl:binding id="harvester-agent" element="harvester|agent">
+		<xbl:template>
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
+				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
+				<xforms:group xxbl:scope="inner">
+					<xforms:var name="binding" as="node()?">
+						<xxforms:sequence select="." xxbl:scope="outer"/>
+					</xforms:var>
+
+					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
+						<xforms:setvalue ref="instance('search-query')" value="$binding/text()"/>
+					</xforms:action>
+
+					<div class="term">
+						<h4>
+							<xforms:output ref="$binding"/>
+						</h4>
+
+						<xforms:group ref=".[string-length($binding/@uri) &gt; 0]">
+							<xforms:trigger appearance="minimal">
+								<xforms:label>
+									<xforms:output ref="$binding/@uri"/><span class="glyphicon glyphicon-new-window"/>
+								</xforms:label>
+								<xforms:load ev:event="DOMActivate" resource="{$binding/@uri}" show="new"/>
+							</xforms:trigger>
+							<xforms:trigger appearance="minimal">
+								<xforms:label>
+									<span class="glyphicon glyphicon-remove"/>
+								</xforms:label>
+								<xforms:action ev:event="DOMActivate">
+									<!-- set the @uri value to empty to show the lookup mechanism again and reset all relevant values -->
+									<xforms:setvalue ref="$binding/@uri"/>
+									<xforms:setvalue ref="instance('control-instance')/uri"/>
+									<xforms:setvalue ref="instance('control-instance')/definition"/>
+									<xforms:delete nodeset="instance('getty-response')/*"/>
+
+									<!-- TODO: SPARQL/Update to remove Term-URI pair -->
+								</xforms:action>
+							</xforms:trigger>
+						</xforms:group>
+
+
+						<xforms:group ref=".[not(string($binding/@uri))]">
+							<div>
+								<radiogroup>
+									<xforms:select1 ref="instance('interface-type')" appearance="full">
+										<xforms:label>Interface Type</xforms:label>
+										<xforms:item>
+											<xforms:label>VIAF</xforms:label>
+											<xforms:value>viaf</xforms:value>
+										</xforms:item>
+										<xforms:item>
+											<xforms:label>SNAC</xforms:label>
+											<xforms:value>snac</xforms:value>
+										</xforms:item>
+										<xforms:item>
+											<xforms:label>Ignore</xforms:label>
+											<xforms:value>ignore</xforms:value>
+										</xforms:item>
+
+										<xforms:action ev:event="xforms-value-changed">
+											<xforms:action if=". = 'viaf'">
+												<!-- remove temporary values, applicable when switching back to persnames from local -->
+												<xforms:delete context="instance('rss')/*"/>
+												<xforms:setvalue ref="instance('control-instance')/uri"/>
+												<xforms:setvalue ref="instance('control-instance')/definition"/>
+												<xforms:toggle case="viaf-search"/>
+											</xforms:action>
+											<xforms:action if=". = 'snac'">
+												<!-- remove temporary values, applicable when switching back to persnames from local -->
+												<xforms:delete context="instance('snac-response')/*"/>
+												<xforms:setvalue ref="instance('control-instance')/uri"/>
+												<xforms:setvalue ref="instance('control-instance')/definition"/>
+												<xforms:toggle case="snac-search"/>
+											</xforms:action>
+											<xforms:action if=". = 'ignore'">
+												<xforms:delete context="instance('rss')/*"/>
+												<xforms:delete context="instance('snac-response')/*"/>
+												<xforms:setvalue ref="instance('control-instance')/uri"/>
+												<xforms:setvalue ref="instance('search-query')"/>
+												<xforms:setvalue ref="instance('control-instance')/uri"/>
+												<xforms:setvalue ref="instance('control-instance')/definition"/>
+												<xforms:toggle case="ignore"/>
+											</xforms:action>
+										</xforms:action>
+									</xforms:select1>
+								</radiogroup>
+								<xforms:switch>
+									<xforms:case id="viaf-search">
+										<div>
+											<xforms:input ref="instance('search-query')">
+												<xforms:label>Search</xforms:label>
+											</xforms:input>
+											<xforms:trigger>
+												<xforms:action ev:event="DOMActivate">													
+													<xforms:send submission="query-viaf"/>
+												</xforms:action>
+												<xforms:label>Search</xforms:label>
+											</xforms:trigger>
+										</div>
+										<xforms:group ref=".[string-length(instance('control-instance')/search-results)] &gt; 0">
+											<p class="text-muted">
+												<xforms:output ref="instance('control-instance')/search-results"/>
+											</p>
+										</xforms:group>
+										<xforms:group ref=".[count(instance('rss')//item) &gt; 0]">
+											<xforms:select1 ref="instance('control-instance')/uri" appearance="compact">
+												<xforms:label>Name</xforms:label>
+												<xforms:itemset nodeset="instance('rss')//item">
+													<xforms:label ref="title"/>
+													<xforms:value ref="link"/>
+												</xforms:itemset>
+												<xforms:setvalue ref="instance('control-instance')/definition" value="instance('rss')//item[link = instance('control-instance')/uri]/title" ev:event="xforms-value-changed"></xforms:setvalue>
+											</xforms:select1>
+											<xforms:trigger>
+												<xforms:label>Select</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<!-- set @uri, which switches to other interface -->
+													<xforms:setvalue ref="$binding/@uri" value="instance('control-instance')/uri"/>		
+													
+													<!-- TODO: SPARQL/Update to insert Term-URI pair -->
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										
+										<xforms:group ref="instance('control-instance')[string-length(definition) &gt; 0]">
+											<div>
+												<xforms:output ref="definition">
+													<xforms:label>Definition</xforms:label>
+												</xforms:output>
+												<xforms:trigger appearance="minimal">
+													<xforms:label><span class="glyphicon glyphicon-new-window"/></xforms:label>
+													<xforms:hint ref="uri"/>
+													<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
+												</xforms:trigger>
+											</div>
+										</xforms:group>
+									</xforms:case>
+									<xforms:case id="snac-search">
+										<div>
+											<xforms:input ref="instance('search-query')">
+												<xforms:label>Search</xforms:label>
+											</xforms:input>
+											<xforms:trigger>
+												<xforms:action ev:event="DOMActivate">													
+													<xforms:send submission="query-snac"/>
+												</xforms:action>
+												<xforms:label>Search</xforms:label>
+											</xforms:trigger>
+										</div>
+										<xforms:group ref=".[string-length(instance('control-instance')/search-results)] &gt; 0">
+											<p class="text-muted">
+												<xforms:output ref="instance('control-instance')/search-results"/>
+											</p>
+										</xforms:group>
+										<xforms:group ref=".[number(instance('snac-response')/@totalDocs) &gt; 0]">
+											<xforms:select1 ref="instance('control-instance')/uri" appearance="compact">
+												<xforms:label>Name</xforms:label>
+												<xforms:itemset nodeset="instance('snac-response')//docHit">
+													<xforms:label ref="meta/identity[1]"/>
+													<xforms:value ref="concat('http://socialarchive.iath.virginia.edu/ark:/', substring-after(tokenize(@path, '-')[1], ':'), '/', substring-before(tokenize(@path, '-')[2], '.xml'))"/>
+												</xforms:itemset>
+												<xforms:action ev:event="xforms-value-changed">.
+													<xforms:var name="path" select="concat('default:', tokenize(instance('control-instance')/uri, '/')[5], '-', tokenize(instance('control-instance')/uri, '/')[6] , '.xml')"/>
+													<xforms:setvalue ref="instance('control-instance')/definition" value="instance('snac-response')//docHit[@path=$path]/meta/identity[1]"></xforms:setvalue>
+												</xforms:action>
+											</xforms:select1>
+											<xforms:trigger>
+												<xforms:label>Select</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<!-- set @uri, which switches to other interface -->
+													<xforms:setvalue ref="$binding/@uri" value="instance('control-instance')/uri"/>		
+													
+													<!-- TODO: SPARQL/Update to insert Term-URI pair -->
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+										
+										<xforms:group ref="instance('control-instance')[string-length(definition) &gt; 0]">
+											<div>
+												<xforms:output ref="definition">
+													<xforms:label>Definition</xforms:label>
+												</xforms:output>
+												<xforms:trigger appearance="minimal">
+													<xforms:label><span class="glyphicon glyphicon-new-window"/></xforms:label>
+													<xforms:hint ref="uri"/>
+													<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
+												</xforms:trigger>
+											</div>
+										</xforms:group>
+									</xforms:case>
+									<xforms:case id="ignore"/>
+								</xforms:switch>
+							</div>
+						</xforms:group>
+
+						<hr/>
+					</div>
+					<!-- ***************** MODEL ***************-->
+					<xforms:model id="agent-model">
+						<!-- instances -->
+						<xforms:instance id="control-instance">
+							<control xmlns="">
+								<local-message/>
+								<uri/>
+								<definition/>
+								<search-results/>
+							</control>
+						</xforms:instance>
+
+						<!-- Instances containing the query string -->
+						<xforms:instance id="search-query">
+							<query xmlns=""/>
+						</xforms:instance>
+
+						<!-- interface type radio button -->
+						<xforms:instance id="interface-type">
+							<interface>viaf</interface>
+						</xforms:instance>
+
+						<!-- SNAC XML response -->
+						<xforms:instance id="snac-response" exclude-result-prefixed="#all">
+							<crossQueryResult/>
+						</xforms:instance>
+
+						<!-- VIAF RSS feed -->
+						<xforms:instance id="rss">
+							<rss/>
+						</xforms:instance>
+
+						<!-- submissions -->
+						<xforms:submission id="query-viaf" serialization="none" method="get"
+							action="http://viaf.org/viaf/search?query=local.names+all+%22{instance('search-query')}%22&amp;maximumRecords=100&amp;httpAccept=application/rss%2bxml"
+							instance="rss" replace="instance">
+							<xforms:header>
+								<xforms:name>User-Agent</xforms:name>
+								<xforms:value>XForms/harvester.orbiscascade.org</xforms:value>
+							</xforms:header>
+							<xforms:action ev:event="xforms-submit-done">
+								<xforms:var name="total" select="number(instance('rss')//opensearch:totalResults)"/>
+								<xforms:setvalue if="$total = 0" ref="instance('control-instance')/search-results">No results found for query.</xforms:setvalue>
+								<xforms:setvalue if="$total &gt; 0 and $total &lt;= 100" ref="instance('control-instance')/search-results"
+									value="concat('Displaying ', $total, ' result(s).')"/>
+								<xforms:setvalue if="$total &gt; 100" ref="instance('control-instance')/search-results"
+									value="concat('Displaying first 100 of ', $total, ' result(s).')"/>
+							</xforms:action>
+						</xforms:submission>
+
+						<xforms:submission id="query-snac" serialization="none" method="get"
+							action="http://socialarchive.iath.virginia.edu/snac/search?text={instance('search-query')}&amp;sectionType=identity&amp;rmode=slickgrid&amp;raw=1"
+							instance="snac-response" replace="instance">
+							<xforms:header>
+								<xforms:name>User-Agent</xforms:name>
+								<xforms:value>XForms/harvester.orbiscascade.org</xforms:value>
+							</xforms:header>
+							<xforms:message ev:event="xforms-submit-error" level="modal">Unable to query SNAC.</xforms:message>
+							<xforms:action ev:event="xforms-submit-done">
+								<xforms:var name="total" select="number(instance('snac-response')/@totalDocs)"/>
+								<xforms:setvalue if="$total = 0" ref="instance('control-instance')/search-results">No results found for query.</xforms:setvalue>
+								<xforms:setvalue if="$total &gt; 0 and $total &lt;= 100" ref="instance('control-instance')/search-results"
+									value="concat('Displaying ', $total, ' result(s).')"/>
+								<xforms:setvalue if="$total &gt; 100" ref="instance('control-instance')/search-results"
+									value="concat('Displaying first 100 of ', $total, ' result(s).')"/>
+							</xforms:action>
+						</xforms:submission>
+					</xforms:model>
+				</xforms:group>
+			</xforms:group>
+		</xbl:template>
+	</xbl:binding>
+
+</xbl:xbl>

@@ -11,6 +11,12 @@
 		<store>http://localhost:3030/nwda/data</store>
 		<update>http://localhost:3030/nwda/update</update>
 	</sparql>
+	<vocab_sparql>
+		<query>http://localhost:3030/vocabs/query</query>
+		<store>http://localhost:3030/vocabs/data</store>
+		<update>http://localhost:3030/vocabs/update</update>
+	</vocab_sparql>
+	<geonames_api_key>orbiscascade</geonames_api_key>
 	<sheets>
 		<places>https://spreadsheets.google.com/feeds/list/1EXyyhgKqRaQY4MecYzdPmriCj4yqdj4KWZVtLvCgxKw/od6/public/full</places>
 		<subjects>https://spreadsheets.google.com/feeds/list/1F1D4Pvch4iJuuvDjbuBM5Zj1FKX_dqFlPzBMKwKgO0M/od6/public/full</subjects>

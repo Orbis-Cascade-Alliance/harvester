@@ -12,8 +12,7 @@
 					</xforms:var>
 
 					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
-						<xforms:setvalue ref="instance('search-query')" value="$binding/text()"/>
-						<xforms:setvalue ref="instance('interface-type')" if="not(string($binding/@uri))">aat</xforms:setvalue>
+						<xforms:setvalue ref="instance('search-query')" value="$binding/text()"/>						
 					</xforms:action>
 					
 					<div class="term">
@@ -35,7 +34,7 @@
 									<xforms:setvalue ref="instance('control-instance')/definition"/>
 									<xforms:delete nodeset="instance('getty-response')/*"/>
 									
-									<!-- TODO: delete row from Google Spreadsheet -->
+									<!-- TODO: SPARQL/Update to remove Term-URI pair -->
 								</xforms:action>
 							</xforms:trigger>
 						</xforms:group>
@@ -61,7 +60,8 @@
 											
 											<xforms:action if=". = 'ignore'">
 												<xforms:setvalue ref="instance('control-instance')/uri"/>
-												<xforms:setvalue ref="instance('search-query')"/>												
+												<xforms:setvalue ref="instance('search-query')"/>			
+												<xforms:setvalue ref="instance('control-instance')/definition"/>
 												<xforms:toggle case="ignore"/>
 											</xforms:action>
 										</xforms:action>
@@ -108,7 +108,7 @@
 													<!-- set @uri, which switches to other interface -->
 													<xforms:setvalue ref="$binding/@uri" value="instance('control-instance')/uri"/>		
 													
-													<!-- TODO: insert row into Google Spreadsheet -->
+													<!-- TODO: SPARQL/Update to insert Term-URI pair -->
 												</xforms:action>
 											</xforms:trigger>
 											
@@ -156,7 +156,7 @@
 
 						<!-- interface type radio button -->
 						<xforms:instance id="interface-type">
-							<interface/>
+							<interface>aat</interface>
 						</xforms:instance>
 
 						<xforms:instance id="sparqlQueryTemplate">

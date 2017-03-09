@@ -384,6 +384,8 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 
 		<!-- include XBL -->
 		<xi:include href="xbl/type/type.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/agent/agent.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/place/place.xbl" xi:omit-xml-base="true"/>
 	</head>
 
 
@@ -462,6 +464,15 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 										</xforms:item>
 									</xforms:select1>
 								</div>
+								<h4>Normalize the following entity types</h4>
+								<xforms:repeat nodeset="instance('control-instance')/normalization/*">
+									<div>
+										<xforms:input ref=".">
+											<xforms:label value="concat(upper-case(substring(name(), 1, 1)), substring(name(), 2))"></xforms:label>
+										</xforms:input>
+									</div>									
+								</xforms:repeat>
+								
 								<xforms:trigger bind="upload-trigger">
 									<xforms:label><span class="glyphicon glyphicon-ok"></span>Validate</xforms:label>
 									<xforms:action ev:event="DOMActivate">
@@ -698,6 +709,38 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
 								<div>
 									<h3>Match agents to VIAF or SNAC</h3>
+									
+									<!-- display XBL components for AAT lookups -->
+									<xforms:group ref=".[count(agent) &gt; 0]">
+										<xforms:repeat nodeset="xxforms:sort(agent, ., 'text', 'ascending')">
+											<harvester:agent/>
+										</xforms:repeat>
+									</xforms:group>
+									
+									<xforms:group ref=".[count(agent) = 0]">
+										<p>No creators or contributors to match to controlled vocabulary systems.</p>
+									</xforms:group>
+									
+									<!-- display button for import if there are no entities to be normalized -->
+									<xforms:group ref=".[not(instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()])]">
+										<xforms:trigger>
+											<xforms:label><span class="glyphicon glyphicon-import"></span> Import</xforms:label>
+											<xforms:dispatch target="initiate-import" name="fr-show" ev:event="DOMActivate"/>
+										</xforms:trigger>
+									</xforms:group>
+									
+									<!-- display the next relevant normalization interface, if applicable -->
+									<xforms:group ref=".[instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]]">
+										<xforms:trigger>
+											<xforms:label>Next<span class="glyphicon glyphicon-chevron-right"></span></xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:var name="next"
+													select="instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]/name()"/>
+												<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface" value="$next"/>
+												<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
+											</xforms:action>
+										</xforms:trigger>
+									</xforms:group>
 								</div>
 							</xforms:group>
 						</xforms:case>
@@ -706,6 +749,38 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
 								<div>
 									<h3>Match places to Geonames</h3>
+									
+									<!-- display XBL components for AAT lookups -->
+									<xforms:group ref=".[count(place) &gt; 0]">
+										<xforms:repeat nodeset="xxforms:sort(place, ., 'text', 'ascending')">
+											<harvester:place/>
+										</xforms:repeat>
+									</xforms:group>
+									
+									<xforms:group ref=".[count(place) = 0]">
+										<p>No creators or contributors to match to Geonames.org.</p>
+									</xforms:group>
+									
+									<!-- display button for import if there are no entities to be normalized -->
+									<xforms:group ref=".[not(instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()])]">
+										<xforms:trigger>
+											<xforms:label><span class="glyphicon glyphicon-import"></span> Import</xforms:label>
+											<xforms:dispatch target="initiate-import" name="fr-show" ev:event="DOMActivate"/>
+										</xforms:trigger>
+									</xforms:group>
+									
+									<!-- display the next relevant normalization interface, if applicable -->
+									<xforms:group ref=".[instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]]">
+										<xforms:trigger>
+											<xforms:label>Next<span class="glyphicon glyphicon-chevron-right"></span></xforms:label>
+											<xforms:action ev:event="DOMActivate">
+												<xforms:var name="next"
+													select="instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]/name()"/>
+												<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface" value="$next"/>
+												<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
+											</xforms:action>
+										</xforms:trigger>
+									</xforms:group>
 								</div>
 							</xforms:group>
 						</xforms:case>
