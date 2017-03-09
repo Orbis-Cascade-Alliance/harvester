@@ -23,30 +23,44 @@
 			<namespace prefix="geo" uri="http://www.w3.org/2003/01/geo/wgs84_pos#"/>
 			<namespace prefix="prov" uri="http://www.w3.org/ns/prov#"/>
 			<namespace prefix="rdf" uri="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
-			<namespace prefix="xsd" uri="http://www.w3.org/2001/XMLSchema#"/>			
+			<namespace prefix="xsd" uri="http://www.w3.org/2001/XMLSchema#"/>
 		</namespaces>
 	</xsl:variable>
 
 	<xsl:template match="/">
-		<html lang="en">
-			<head>
-				<title>Archives West Harvester: <xsl:value-of select="//dcterms:title"/></title>
-				<meta name="viewport" content="width=device-width, initial-scale=1"/>
-				<!-- bootstrap -->
-				<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"/>
-				<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-				<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
-				<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
-				<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"/>
-				<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"/>
-				<script type="text/javascript" src="{$display_path}ui/javascript/display_functions.js"/>
-			</head>
-			<body>
-				<xsl:call-template name="header"/>
-				<xsl:call-template name="body"/>
-				<xsl:call-template name="footer"/>
-			</body>
-		</html>
+		<xsl:choose>
+			<xsl:when test="$output = 'ajax'">
+				<div class="container-fluid">
+					<xsl:apply-templates select="descendant::ore:Aggregation"/>
+				</div>
+			</xsl:when>
+			<xsl:otherwise>
+				<html lang="en">
+					<head>
+						<title>Archives West Harvester: <xsl:value-of
+								select="
+									if (count(//dcterms:title) &gt; 1) then
+										'Test'
+									else
+										//dcterms:title"/></title>
+						<meta name="viewport" content="width=device-width, initial-scale=1"/>
+						<!-- bootstrap -->
+						<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"/>
+						<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+						<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+						<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
+						<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"/>
+						<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"/>
+						<script type="text/javascript" src="{$display_path}ui/javascript/display_functions.js"/>
+					</head>
+					<body>
+						<xsl:call-template name="header"/>
+						<xsl:call-template name="body"/>
+						<xsl:call-template name="footer"/>
+					</body>
+				</html>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template name="body">
@@ -60,7 +74,7 @@
 		<div class="row">
 
 			<xsl:choose>
-				<xsl:when test="string($output)">				
+				<xsl:when test="string($output)">
 					<xsl:variable name="cho_uri" select="edm:aggregatedCHO/@rdf:resource"/>
 					<xsl:variable name="reference" select="edm:object/@rdf:resource"/>
 					<xsl:variable name="thumbnail" select="edm:preview/@rdf:resource"/>
@@ -75,7 +89,9 @@
 					<xsl:apply-templates select="self::node()" mode="render"/>
 
 					<!-- images -->
-					<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about = $thumbnail]|parent::node()/edm:WebResource[@rdf:about = $reference]" mode="render"/>					
+					<xsl:apply-templates
+						select="parent::node()/edm:WebResource[@rdf:about = $thumbnail] | parent::node()/edm:WebResource[@rdf:about = $reference]" mode="render"
+					/>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:variable name="hasCoords" as="xs:boolean">
@@ -126,7 +142,7 @@
 					<xsl:sort select="local-name()"/>
 				</xsl:apply-templates>
 			</dl>
-			
+
 			<xsl:if test="self::edm:WebResource and position() = last()">
 				<hr/>
 			</xsl:if>
@@ -156,7 +172,7 @@
 					<xsl:value-of select="@rdf:about"/>
 				</a>
 			</h4>
-		</div>		
+		</div>
 		<xsl:choose>
 			<xsl:when test="string($output)">
 				<div class="col-md-6">
@@ -172,7 +188,7 @@
 					</xsl:if>
 					<xsl:if test="string($thumbnail)">
 						<img src="{$thumbnail}" alt="Thumbnail image URL not dereferenceable" title="Reference" style="max-width:100%"/>
-					</xsl:if>					
+					</xsl:if>
 				</div>
 			</xsl:when>
 			<xsl:otherwise>
@@ -188,7 +204,7 @@
 						<div class="col-md-6">
 							<xsl:if test="string($reference)">
 								<img src="{$reference}" alt="Reference image URL not dereferenceable" style="max-width:100%"/>
-							</xsl:if>							
+							</xsl:if>
 						</div>
 						<div class="col-md-6">
 							<div id="map"/>

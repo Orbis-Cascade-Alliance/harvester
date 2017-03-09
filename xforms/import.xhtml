@@ -8,16 +8,18 @@
 		<title>OAI-PMH Harvester: Batch Import</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
 		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css" />
-		<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-		<script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+		<script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico" />
 		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png" />
 		<link rel="stylesheet" href="/apps/harvester/xforms/css/style.css" />
+		<script type="text/javascript" src="/apps/harvester/xforms/javascript/get_record.js"></script>
 
 		<xforms:model>
 			<xforms:instance id="control-instance" xxforms:exclude-result-prefixes="#all">
 				<controls xmlns="">
 					<status></status>
+					<id/>
 					<current></current>
 					<upload-trigger>false</upload-trigger>
 					<repository></repository>
@@ -479,12 +481,6 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 										<xforms:setvalue ref="instance('control-instance')/oai-service" value="normalize-space(instance('set')/set)"/>
 										<xforms:send submission="get-oai-pmh"/>
 
-										<!-- after the OAI-PMH harvesting and validation is completed, then switch the case -->
-										<!--<xforms:var name="interface"
-											select="if (instance('control-instance')/normalization/*[. = true()]) then concat(instance('control-instance')/normalization/*[. = true()][1]/name(), '-normalization') else 'import-complete'"/>
-										<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface" value="$interface"/>
-										<xforms:toggle case="{$interface}"/>-->
-
 										<!-- populate total and error count -->
 										<xforms:setvalue ref="instance('control-instance')/validation/total-count" value="count(instance('validation')/record)"/>
 										<xforms:setvalue ref="instance('control-instance')/validation/error-count"
@@ -612,13 +608,27 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 											<!-- display only 50 records at a time -->
 											<xforms:repeat
 												nodeset="record[position() &gt;= $min and position() &lt;= $max]">
+												<xforms:var name="id" select="@id"/>
+												<xforms:var name="hash" select="digest($id, 'MD5', 'hex')"/>
+												
 												<h4>
-													<xforms:output ref="@id"/><small>
-														<a href="#" class="toggle-record" id="{@id}-button">
-															<span class="glyphicon glyphicon-info-sign"></span>
-														</a></small>
-												</h4>
-
+													<xforms:output ref="@id"/>
+													<small class="expand">
+														<xforms:trigger appearance="minimal">
+															<xforms:label><span class="glyphicon glyphicon-info-sign"></span></xforms:label>
+															<xforms:action ev:event="DOMActivate">
+																<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>																
+																<xforms:var name="metadataPrefix" select="substring-after($params[contains(., 'metadataPrefix')][1], '=')"/>
+																
+																<xforms:setvalue ref="instance('control-instance')/id" value="$hash"/>																
+																<xforms:setvalue ref="instance('control-instance')/oai-service" value="concat(substring-before(instance('set')/set, '?'), '?verb=GetRecord&amp;metadataPrefix=', $metadataPrefix, '&amp;identifier=', $id)"/>
+																<xxforms:script>																						
+																	expand();
+																</xxforms:script>
+															</xforms:action>
+														</xforms:trigger>
+													</small>													
+												</h4>												
 												<dl class="dl-horizontal">
 													<dt>Title</dt>
 													<dd><xforms:output ref="title"/></dd>
@@ -631,7 +641,7 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 														</xforms:trigger>
 													</dd>
 												</dl>
-												<div id="{@id}-div" style="display:none"></div>
+												<div class="{$hash}_container hidden"></div>												
 												<hr />
 											</xforms:repeat>
 
@@ -788,6 +798,15 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 							<p>The ingestion process has been completed.</p>
 						</xforms:case>
 					</xforms:switch>
+					
+					
+					<div class="hidden">
+						<xforms:output ref="instance('control-instance')/id" id="id"></xforms:output>
+						<xforms:output ref="instance('control-instance')/oai-service" id="oai-service"></xforms:output>
+						<xforms:output ref="instance('set')/repository" id="repository"></xforms:output>
+						<xforms:output ref="instance('set')/rights" id="rights"></xforms:output>
+						<xforms:output ref="instance('set')/target" id="target"></xforms:output>
+					</div>
 
 					<!-- dialog asking to initiate the import -->
 					<fr:alert-dialog id="initiate-import">

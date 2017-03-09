@@ -34,6 +34,39 @@
 				<p:input name="data" href="#data"/>
 				<p:input name="request" href="#request"/>
 				<p:input name="config" href="../views/serializations/rdf/html.xpl"/>
+				<p:output name="data" id="model"/>
+			</p:processor>
+			
+			<p:processor name="oxf:html-converter">
+				<p:input name="data" href="#model"/>
+				<p:input name="config">
+					<config>
+						<version>5.0</version>
+						<indent>true</indent>
+						<content-type>text/html</content-type>
+						<encoding>utf-8</encoding>
+						<indent-amount>4</indent-amount>
+					</config>
+				</p:input>
+				<p:output name="data" ref="data"/>
+			</p:processor>
+		</p:when>
+		<p:when test="/output = 'ajax'">
+			<p:processor name="oxf:pipeline">
+				<p:input name="data" href="#data"/>
+				<p:input name="request" href="#request"/>
+				<p:input name="config" href="../views/serializations/rdf/html.xpl"/>
+				<p:output name="data" id="model"/>
+			</p:processor>
+			
+			<p:processor name="oxf:html-converter">
+				<p:input name="data" href="#model"/>
+				<p:input name="config">
+					<config>
+						<content-type>text/plain</content-type>
+						<encoding>utf-8</encoding>
+					</config>
+				</p:input>
 				<p:output name="data" ref="data"/>
 			</p:processor>
 		</p:when>

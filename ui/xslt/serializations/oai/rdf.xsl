@@ -26,6 +26,7 @@
 
 	<!-- request parameters -->
 	<xsl:param name="mode" select="doc('input:request')/request/parameters/parameter[name = 'mode']/value"/>
+	<xsl:param name="output" select="doc('input:request')/request/parameters/parameter[name = 'output']/value"/>
 	<xsl:param name="repository" select="/content/controls/repository"/>
 	<xsl:param name="set" select="/content/controls/set"/>
 	<xsl:param name="ark" select="/content/controls/ark"/>
@@ -56,22 +57,24 @@
 			xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:dcmitype="http://purl.org/dc/dcmitype/"
 			xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:doap="http://usefulinc.com/ns/doap#">
 
-			<!-- generate triples for describing the set -->
-			<xsl:variable name="setNode" as="element()*">
-				<xsl:copy-of select="document(concat($oai_service, '?verb=ListSets'))//oai:set[oai:setSpec=$setSpec]"/>
-			</xsl:variable>
-
-			<dcmitype:Collection rdf:about="{$set}">
-				<dcterms:title>
-					<xsl:value-of select="$setNode/oai:setName"/>
-				</dcterms:title>
-				<xsl:if test="$setNode/oai:setDescription">
-					<dcterms:description>
-						<xsl:value-of select="$setNode/oai:setDescription"/>
-					</dcterms:description>
-				</xsl:if>
-				<dcterms:publisher rdf:resource="{$repo_uri}"/>
-			</dcmitype:Collection>
+			<!-- generate triples for describing the set, but not for GetRecord -->
+			<xsl:if test="not($output = 'ajax')">
+				<xsl:variable name="setNode" as="element()*">
+					<xsl:copy-of select="document(concat($oai_service, '?verb=ListSets'))//oai:set[oai:setSpec=$setSpec]"/>
+				</xsl:variable>
+				
+				<dcmitype:Collection rdf:about="{$set}">
+					<dcterms:title>
+						<xsl:value-of select="$setNode/oai:setName"/>
+					</dcterms:title>
+					<xsl:if test="$setNode/oai:setDescription">
+						<dcterms:description>
+							<xsl:value-of select="$setNode/oai:setDescription"/>
+						</dcterms:description>
+					</xsl:if>
+					<dcterms:publisher rdf:resource="{$repo_uri}"/>
+				</dcmitype:Collection>
+			</xsl:if>
 
 			<!-- either process only those objects with a matching $ark when the process is instantiated by the finding aid upload, or process all objects for bulk uploading -->
 			<xsl:choose>

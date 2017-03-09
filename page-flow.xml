@@ -27,9 +27,13 @@
 	<page path="/harvester/void.jsonld" model="xpl/views/serializations/sparql/void.xpl" view="xpl/views/serializations/rdf/json-ld.xpl"/>
 	<page path="/harvester/download/[\d]+\.(?:ttl|rdf|jsonld)" view="xpl/models/sparql/aggregate.xpl"/>
 	
+	<!-- **** AJAX GETRECORD **** -->
+	<page path="/harvester/getrecord" model="xpl/controllers/getRDF.xpl" view="xpl/controllers/view.xpl"/>
+	
 	<!-- tests -->
 	<page path="/harvester/test" model="config.xml" view="xpl/views/pages/test.xpl"/>
 	<page path="/harvester/test/view" model="xpl/controllers/getRDF.xpl" view="xpl/controllers/view.xpl"/>
+	
 	
 	<!-- ****************
 	* ADMIN INTERFACE *
