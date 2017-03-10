@@ -139,7 +139,7 @@
 													<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/update"/>
 													<xforms:setvalue ref="instance('sparqlUpdate')"
 														value="replace(replace(replace(replace(replace(instance('sparqlUpdate-templates')/query[@id='insert-vocab'], 'URI', $hash), 'LABEL', $label), 'REPO', instance('control-instance')/repository), 'MATCH', $match), 'VOCAB', $vocab)"/>
-													<xforms:message level="modal" value="$vocab"/>
+													
 													<xforms:send submission="update-graph"/>
 												</xforms:action>
 											</xforms:trigger>

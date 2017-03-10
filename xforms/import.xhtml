@@ -21,11 +21,12 @@
 					<status></status>
 					<id></id>
 					<current></current>
+					<action></action>
 					<upload-trigger>false</upload-trigger>
 					<repository></repository>
 					<oai-service></oai-service>
 					<oai-set-code></oai-set-code>
-					<sparql-service/>
+					<sparql-service></sparql-service>
 					<admin>false</admin>
 					<initial-page>true</initial-page>
 					<normalization current-interface="">
@@ -40,8 +41,8 @@
 						<max-pos>50</max-pos>
 					</validation>
 					<vocabs>
-						<scheme/>
-						<type>skos:Concept</type>						
+						<scheme></scheme>
+						<type></type>
 					</vocabs>
 				</controls>
 			</xforms:instance>
@@ -156,16 +157,35 @@ INSERT DATA
 				</queries>
 			</xforms:instance>
 
+			<xforms:instance id="sparqlQuery-templates">
+				<queries xmlns="">
+					<query id="get-vocabs"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX dcam:	<http://purl.org/dc/dcam/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs:	<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?label ?uri WHERE {
+?s dcterms:source "REPO" ;
+rdf:type TYPE;
+skos:exactMatch ?uri ;
+rdfs:label ?label
+}]]></query>
+				</queries>
+			</xforms:instance>
+
 			<xforms:instance id="sparqlQuery">
 				<query></query>
 			</xforms:instance>
-			
+
 			<xforms:instance id="sparqlUpdate">
 				<query></query>
 			</xforms:instance>
 
-			<xforms:instance id="sparqlResponse">
-				<query></query>
+			<xforms:instance id="sparqlResponse" xxforms:exclude-result-prefixes="#all">
+				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
 			</xforms:instance>
 
 			<!-- lists for controlled vocabulary normalization -->
@@ -181,11 +201,24 @@ INSERT DATA
 				<agents repository="" xmlns=""></agents>
 			</xforms:instance>
 
+			<!-- lists of existing vocabularies -->
+			<xforms:instance id="type-vocabs" xxforms:exclude-result-prefixes="#all">
+				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
+			</xforms:instance>
+
+			<xforms:instance id="place-vocabs" xxforms:exclude-result-prefixes="#all">
+				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
+			</xforms:instance>
+
+			<xforms:instance id="agent-vocabs" xxforms:exclude-result-prefixes="#all">
+				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
+			</xforms:instance>
+
 			<!-- dump instance -->
 			<xforms:instance id="dump" xxforms:exclude-result-prefixes="#all">
 				<dump xmlns=""></dump>
 			</xforms:instance>
-			
+
 			<!-- test instances for vocabs -->
 			<xforms:instance id="test">
 				<type uri="http://vocab.getty.edu/aat/300026867">Clippings</type>
@@ -266,13 +299,19 @@ INSERT DATA
 
 									<xforms:action xxforms:iterate="$types">
 										<xforms:var name="val" select="normalize-space(.)"/>
-										<xforms:var name="dcmi-types"
-											select="('collection','dataset','event','image','interactiveresource','movingimage','physicalobject','service','software','sound','stillimage','text')"/>
 
-										<!-- insert only distinct values and if they aren't valid DCMI Types -->
-										<xforms:insert context="instance('type-list')" nodeset="./child::node()[last()]"
-											origin="xforms:element('type', (xforms:attribute('uri', ''), $val))"
-											if="not(instance('type-list')/type = $val) and not(index-of($dcmi-types, lower-case($val)))"/>
+										<xforms:action if="string-length($val) &gt; 0">
+											<xforms:var name="dcmi-types"
+												select="('collection','dataset','event','image','interactiveresource','movingimage','physicalobject','service','software','sound','stillimage','text')"/>
+
+											<!-- insert only distinct values and if they aren't valid DCMI Types -->
+											<xforms:action if="not(instance('type-list')/type = $val) and not(index-of($dcmi-types, lower-case($val)))">
+												<xforms:var name="uri"
+													select="if (instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]) then instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri else ''"/>
+												<xforms:insert context="instance('type-list')" nodeset="./child::node()[last()]"
+													origin="xforms:element('type', (xforms:attribute('uri', $uri), $val))"/>
+											</xforms:action>
+										</xforms:action>
 									</xforms:action>
 								</xforms:action>
 
@@ -285,9 +324,17 @@ INSERT DATA
 									<xforms:action xxforms:iterate="$agents">
 										<xforms:var name="val" select="normalize-space(.)"/>
 
-										<xforms:insert context="instance('agent-list')" nodeset="./child::node()[last()]"
-											origin="xforms:element('agent', (xforms:attribute('uri', ''), $val))" if="not(instance('agent-list')/agent = $val)"
-										/>
+										<xforms:action if="string-length($val) &gt; 0">
+											<!-- ignore unknowns -->
+											<xforms:action if="not(lower-case($val) = 'unknown')">
+												<xforms:var name="uri"
+													select="if (instance('agent-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]) then instance('agent-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri else ''"/>
+
+												<xforms:insert context="instance('agent-list')" nodeset="./child::node()[last()]"
+													origin="xforms:element('agent', (xforms:attribute('uri', $uri), $val))"
+													if="not(instance('agent-list')/agent = $val)"/>
+											</xforms:action>
+										</xforms:action>
 									</xforms:action>
 								</xforms:action>
 
@@ -300,11 +347,16 @@ INSERT DATA
 									<xforms:action xxforms:iterate="$places">
 										<xforms:var name="val" select="normalize-space(.)"/>
 
-										<!-- ignore individual lat or long elements and elements conforming to "lat,long" formatting -->
-										<xforms:action if="not($val castable as xs:decimal) and not(matches($val, '-?\d+\.\d+,\s?-?\d+\.\d+'))">
-											<xforms:insert context="instance('place-list')" nodeset="./child::node()[last()]"
-												origin="xforms:element('place', (xforms:attribute('uri', ''), $val))"
-												if="not(instance('place-list')/place = $val)"/>
+										<xforms:action if="string-length($val) &gt; 0">
+											<!-- ignore individual lat or long elements and elements conforming to "lat,long" formatting -->
+											<xforms:action if="not($val castable as xs:decimal) and not(matches($val, '-?\d+\.\d+,\s?-?\d+\.\d+'))">
+												<xforms:var name="uri"
+													select="if (instance('place-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]) then instance('place-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri else ''"/>
+												<xforms:insert context="instance('place-list')" nodeset="./child::node()[last()]"
+													origin="xforms:element('place', (xforms:attribute('uri', $uri), $val))"
+													if="not(instance('place-list')/place = $val)"/>
+
+											</xforms:action>
 										</xforms:action>
 									</xforms:action>
 								</xforms:action>
@@ -370,13 +422,14 @@ INSERT DATA
 			<xforms:submission id="get-rdf" serialization="none" method="get"
 				action="/harvester/admin/getRDF?sets={encode-for-uri(normalize-space(instance('set')/set))}&amp;repository={instance('set')/repository}&amp;rights={instance('set')/rights}&amp;target={instance('set')/target}"
 				replace="instance" instance="rdf">
-				<!-- set SPARQL service -->
-				<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/sparql/store"/>
-				
-				<!-- upon successful execution of getRDF, post the RDF into the triplestore -->
-				<xforms:send submission="post-rdf" ev:event="xforms-submit-done"/>
-				<!-- otherwise display a popup alert -->
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get RDF</xforms:message>
+				<xforms:action ev:event="xforms-submit-done">
+					<!-- set SPARQL service -->
+					<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/sparql/store"/>
+
+					<!-- upon successful execution of getRDF, post the RDF into the triplestore -->
+					<xforms:send submission="post-rdf"/>
+				</xforms:action>
 			</xforms:submission>
 
 			<!-- post RDF into the triplestore -->
@@ -388,13 +441,27 @@ INSERT DATA
 			</xforms:submission>
 
 			<!-- SPARQL queries -->
-			<xforms:submission id="submit-sparqlQuery" action="{instance('control-instance')/sparql-service}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
+			<xforms:submission id="submit-sparqlQuery"
+				action="{instance('control-instance')/sparql-service}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
 				ref="instance('sparqlResponse')" replace="instance" method="get">
 				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
+
+				<xforms:action ev:event="xforms-submit-done">
+					<!-- if there's an action, then move the results into the appropriate vocabulary list -->
+					<xforms:action if="instance('control-instance')/action = 'type'">
+						<xforms:insert context="instance('type-vocabs')" origin="instance('sparqlResponse')/res:results"/>
+					</xforms:action>
+					<xforms:action if="instance('control-instance')/action = 'place'">
+						<xforms:insert context="instance('place-vocabs')" origin="instance('sparqlResponse')/res:results"/>
+					</xforms:action>
+					<xforms:action if="instance('control-instance')/action = 'agent'">
+						<xforms:insert context="instance('agent-vocabs')" origin="instance('sparqlResponse')/res:results"/>
+					</xforms:action>
+				</xforms:action>
 			</xforms:submission>
 
-			<xforms:submission id="update-graph" action="{instance('control-instance')/sparql-service}" ref="instance('sparqlUpdate')" serialization="text/plain"
-				replace="none" method="post" mediatype="application/sparql-update">
+			<xforms:submission id="update-graph" action="{instance('control-instance')/sparql-service}" ref="instance('sparqlUpdate')"
+				serialization="text/plain" replace="none" method="post" mediatype="application/sparql-update">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
 				</xforms:action>
@@ -418,6 +485,10 @@ INSERT DATA
 					<xforms:insert context="instance('control-instance')" nodeset="status" position="after"
 						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"/>
 					<xforms:setvalue ref="instance('set')/repository" value="instance('control-instance')/request-security/role"/>
+					
+					<xforms:setvalue ref="instance('type-list')/@repository" value="instance('set')/repository"/>
+					<xforms:setvalue ref="instance('agent-list')/@repository" value="instance('set')/repository"/>
+					<xforms:setvalue ref="instance('place-list')/@repository" value="instance('set')/repository"/>
 				</xforms:action>
 			</xforms:action>
 		</xforms:model>
@@ -495,7 +566,7 @@ INSERT DATA
 									</xforms:action>
 								</xforms:trigger>
 							</xforms:group>
-						</xforms:case>-->						
+						</xforms:case>-->
 						<xforms:case id="import-form">
 							<xforms:group ref="instance('set')">
 								<p>Input the following information to harvest the OAI-PMH into the system:</p>
@@ -569,6 +640,34 @@ INSERT DATA
 								<xforms:trigger bind="upload-trigger">
 									<xforms:label><span class="glyphicon glyphicon-ok"></span>Validate</xforms:label>
 									<xforms:action ev:event="DOMActivate">
+										<!-- submit SPARQL queries in order to get relevant vocabulary lookups -->
+										<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/query"/>
+
+										<xforms:action if="instance('control-instance')/normalization/types = true()">
+											<xforms:setvalue ref="instance('control-instance')/action">type</xforms:setvalue>
+											<xforms:setvalue ref="instance('sparqlQuery')"
+												value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', instance('set')/repository), 'TYPE', 'skos:Concept')"/>
+											<xforms:send submission="submit-sparqlQuery"/>
+										</xforms:action>
+
+										<xforms:action if="instance('control-instance')/normalization/places = true()">
+											<xforms:setvalue ref="instance('control-instance')/action">place</xforms:setvalue>
+											<xforms:setvalue ref="instance('sparqlQuery')"
+												value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', instance('set')/repository), 'TYPE', 'edm:Place')"/>
+											<xforms:send submission="submit-sparqlQuery"/>
+										</xforms:action>
+
+										<xforms:action if="instance('control-instance')/normalization/agents = true()">
+											<xforms:setvalue ref="instance('control-instance')/action">agent</xforms:setvalue>
+											<xforms:setvalue ref="instance('sparqlQuery')"
+												value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', instance('set')/repository), 'TYPE', 'edm:Agent')"/>
+											<xforms:send submission="submit-sparqlQuery"/>
+										</xforms:action>
+
+										<!-- reset action -->
+										<xforms:setvalue ref="instance('control-instance')/action"/>
+
+										<!-- get the OAI-PMH feed -->
 										<xforms:setvalue ref="instance('control-instance')/oai-service" value="normalize-space(instance('set')/set)"/>
 										<xforms:send submission="get-oai-pmh"/>
 
@@ -712,8 +811,8 @@ INSERT DATA
 															<xforms:action ev:event="DOMActivate">
 																<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
 																<xforms:var name="metadataPrefix"
-																	select="substring-after($params[contains(., 'metadataPrefix')][1], '=')"/> <xforms:setvalue
-																	ref="instance('control-instance')/id" value="$hash"/>
+																	select="substring-after($params[contains(., 'metadataPrefix')][1], '=')"/>
+																<xforms:setvalue ref="instance('control-instance')/id" value="$hash"/>
 																<xforms:setvalue ref="instance('control-instance')/oai-service"
 																	value="concat(substring-before(instance('set')/set, '?'), '?verb=GetRecord&amp;metadataPrefix=', $metadataPrefix, '&amp;identifier=', $id)"/>
 																<xxforms:script>expand();</xxforms:script>
@@ -913,9 +1012,9 @@ INSERT DATA
 							<xforms:action ev:event="DOMActivate">
 								<!-- set SPARQL service -->
 								<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/sparql/update"/>
-								
+
 								<!-- delete the set from the SPARQL endpoint -->
-								<xforms:setvalue ref="instance('sparqlQuery')"
+								<xforms:setvalue ref="instance('sparqlUpdate')"
 									value="replace(instance('sparqlUpdate-templates')/query[@id='delete-set'], 'SET', normalize-space(instance('set')/set))"/>
 								<xforms:send submission="update-graph"/>
 								<!-- call the getRDF web service to transform OAI-PMH into RDF. It will make use to any terms normalized and inserted into Google Sheets -->
@@ -927,7 +1026,7 @@ INSERT DATA
 						</fr:positive-choice>
 					</fr:alert-dialog>
 
-					<fr:xforms-inspector/>
+					<!--<fr:xforms-inspector/>-->
 				</div>
 			</div>
 		</div>

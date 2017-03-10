@@ -68,15 +68,15 @@ rdfs:label ?label
 	</xsl:variable>
 	
 	<xsl:variable name="agents" as="node()*">
-		<types>
+		<agents>
 			<xsl:copy-of select="document(concat($sparql_endpoint, '?query=', encode-for-uri($agent-query), '&amp;output=xml'))//res:result"/>
-		</types>
+		</agents>
 	</xsl:variable>
 	
 	<xsl:variable name="places" as="node()*">
-		<types>
+		<places>
 			<xsl:copy-of select="document(concat($sparql_endpoint, '?query=', encode-for-uri($place-query), '&amp;output=xml'))//res:result"/>
-		</types>
+		</places>
 	</xsl:variable>
 
 	<xsl:variable name="dams" select="/content/config/dams//repository[. = $repository][contains($set, @pattern)]/parent::node()/name()"/>
@@ -93,8 +93,6 @@ rdfs:label ?label
 					<xsl:copy-of select="document(concat($oai_service, '?verb=ListSets'))//oai:set[oai:setSpec=$setSpec]"/>
 				</xsl:variable>
 				
-				<xsl:copy-of select="$types"/>
-				
 				<dcmitype:Collection rdf:about="{$set}">
 					<dcterms:title>
 						<xsl:value-of select="$setNode/oai:setName"/>
@@ -109,16 +107,14 @@ rdfs:label ?label
 			</xsl:if>
 
 			<!-- either process only those objects with a matching $ark when the process is instantiated by the finding aid upload, or process all objects for bulk uploading -->
-			<!--<xsl:choose>
+			<xsl:choose>
 				<xsl:when test="$mode = 'test'">
 					<xsl:apply-templates select="descendant::oai:record[not(oai:header/@status = 'deleted')][position() &lt;= 10]"/>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:apply-templates select="descendant::oai:record[not(oai:header/@status = 'deleted')]"/>
 				</xsl:otherwise>
-			</xsl:choose>-->
-
-			<xsl:apply-templates select="descendant::oai:record[not(oai:header/@status = 'deleted')]"/>
+			</xsl:choose>
 
 			<xsl:if test="not($mode = 'test')">
 				<xsl:if test="descendant::oai:resumptionToken[string-length(normalize-space(.)) &gt; 0]">
@@ -510,7 +506,7 @@ rdfs:label ?label
 				<xsl:variable name="val" select="harvester:cleanText(normalize-space(.), $property)"/>
 				<!-- conditionals for ignoring or processing specific properties differently -->
 				<xsl:choose>
-					<xsl:when test="$property='creator'">
+					<xsl:when test="$property='creator' or $property='contributor'">
 						<xsl:if test="not(contains(lower-case($val), 'unknown'))">
 							<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
 								<xsl:choose>
