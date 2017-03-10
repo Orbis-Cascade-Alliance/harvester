@@ -14,7 +14,7 @@ function expand() {
     
     var container = id + '_container';
     //call getrecord web service/AJAX if the div is blank
-    if (ORBEON.jQuery('.' + container).html().indexOf('<div>') < 0) {
+    if (ORBEON.jQuery('.' + container).html().indexOf('<div') < 0) {
         ORBEON.jQuery.get('../getrecord', {
             sets: service,
             repository: repository,
@@ -33,4 +33,10 @@ function expand() {
             ORBEON.jQuery('.' + container).addClass('hidden');
         }
     }
+}
+
+//clear contents of a container div so that a new ajax call can be made.
+function clear() {
+    ORBEON.jQuery('.ajax_container').html('');
+    ORBEON.jQuery('.ajax_container').addClass('hidden');
 }

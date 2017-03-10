@@ -13,6 +13,7 @@
 
 					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
 						<xforms:setvalue ref="instance('search-query')" value="$binding/text()"/>
+						<xforms:setvalue ref="instance('control-instance')/repository" value="$binding/parent::node()/@repository"/>
 					</xforms:action>
 
 					<div class="term">
@@ -39,6 +40,11 @@
 									<xforms:delete nodeset="instance('getty-response')/*"/>
 
 									<!-- TODO: SPARQL/Update to remove Term-URI pair -->
+									<xforms:var name="hash" select="concat(instance('config')/url, 'vocab/', digest(concat(instance('control-instance')/repository, ':', $binding), 'MD5', 'hex'))"/>
+									<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/update"/>
+									<xforms:setvalue ref="instance('sparqlUpdate')"
+										value="replace(instance('sparqlUpdate-templates')/query[@id='delete-vocab'], 'URI', $hash)"/>
+									<xforms:send submission="update-graph"/>
 								</xforms:action>
 							</xforms:trigger>
 						</xforms:group>
@@ -123,6 +129,18 @@
 													<xforms:setvalue ref="$binding/@uri" value="instance('control-instance')/uri"/>		
 													
 													<!-- TODO: SPARQL/Update to insert Term-URI pair -->
+													<!-- create a unique id for the URI to avoid blank nodes -->
+													<xforms:var name="hash" select="concat(instance('config')/url, 'vocab/', digest(concat(instance('control-instance')/repository, ':', $binding), 'MD5', 'hex'))"/>
+													<xforms:var name="match" select="$binding/@uri"/>
+													<xforms:var name="label" select="$binding"/>
+													<xforms:var name="vocab" select="if (contains($binding/@uri, 'viaf.org')) then 'http://viaf.org/' else 'http://socialarchive.iath.virginia.edu/'"/>
+													
+													<!-- set the SPARQL/Update to insert the vocabulary -->
+													<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/update"/>
+													<xforms:setvalue ref="instance('sparqlUpdate')"
+														value="replace(replace(replace(replace(replace(instance('sparqlUpdate-templates')/query[@id='insert-vocab'], 'URI', $hash), 'LABEL', $label), 'REPO', instance('control-instance')/repository), 'MATCH', $match), 'VOCAB', $vocab)"/>
+													<xforms:message level="modal" value="$vocab"/>
+													<xforms:send submission="update-graph"/>
 												</xforms:action>
 											</xforms:trigger>
 										</xforms:group>
@@ -176,6 +194,18 @@
 													<xforms:setvalue ref="$binding/@uri" value="instance('control-instance')/uri"/>		
 													
 													<!-- TODO: SPARQL/Update to insert Term-URI pair -->
+													<!-- create a unique id for the URI to avoid blank nodes -->
+													<xforms:var name="hash" select="concat(instance('config')/url, 'vocab/', digest(concat(instance('control-instance')/repository, ':', $binding), 'MD5', 'hex'))"/>
+													<xforms:var name="match" select="$binding/@uri"/>
+													<xforms:var name="label" select="$binding"/>
+													<xforms:var name="vocab" select="if (contains($binding/@uri, 'viaf.org')) then 'http://viaf.org/' else 'http://socialarchive.iath.virginia.edu/'"/>
+													
+													<!-- set the SPARQL/Update to insert the vocabulary -->
+													<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/update"/>
+													<xforms:setvalue ref="instance('sparqlUpdate')"
+														value="replace(replace(replace(replace(replace(instance('sparqlUpdate-templates')/query[@id='insert-vocab'], 'URI', $hash), 'LABEL', $label), 'REPO', instance('control-instance')/repository), 'MATCH', $match), 'VOCAB', $vocab)"/>
+													
+													<xforms:send submission="update-graph"/>
 												</xforms:action>
 											</xforms:trigger>
 										</xforms:group>
@@ -194,14 +224,17 @@
 										</xforms:group>
 									</xforms:case>
 									<xforms:case id="ignore"/>
-								</xforms:switch>
+								</xforms:switch>								
 							</div>
 						</xforms:group>
-
 						<hr/>
 					</div>
 					<!-- ***************** MODEL ***************-->
 					<xforms:model id="agent-model">
+						<xforms:instance id="config">
+							<xi:include href="../../../config.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+						</xforms:instance>
+						
 						<!-- instances -->
 						<xforms:instance id="control-instance">
 							<control xmlns="">
@@ -209,6 +242,8 @@
 								<uri/>
 								<definition/>
 								<search-results/>
+								<repository/>
+								<sparql-service/>
 							</control>
 						</xforms:instance>
 
@@ -220,6 +255,35 @@
 						<!-- interface type radio button -->
 						<xforms:instance id="interface-type">
 							<interface>viaf</interface>
+						</xforms:instance>
+						
+						<!-- SPARQL Update -->
+						<xforms:instance id="sparqlUpdate-templates">
+							<queries xmlns="">								
+								<query id="delete-vocab"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+DELETE {?s ?p ?o} WHERE { 
+?s ?p ?o . FILTER (?s = <URI>)
+}]]></query>
+								<query id="insert-vocab"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX dcam:	<http://purl.org/dc/dcam/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs:	<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
+INSERT DATA
+{
+  <URI> rdf:type edm:Agent ; 
+  		rdfs:label "LABEL" ;
+  		dcterms:source "REPO" ;
+  		skos:exactMatch <MATCH> ;
+  		dcam:memberOf <VOCAB>
+}]]></query>
+							</queries>
+						</xforms:instance>
+						
+						<xforms:instance id="sparqlUpdate">
+							<query></query>
 						</xforms:instance>
 
 						<!-- SNAC XML response -->
@@ -265,6 +329,14 @@
 									value="concat('Displaying ', $total, ' result(s).')"/>
 								<xforms:setvalue if="$total &gt; 100" ref="instance('control-instance')/search-results"
 									value="concat('Displaying first 100 of ', $total, ' result(s).')"/>
+							</xforms:action>
+						</xforms:submission>
+						
+						<!-- update vocab graph -->
+						<xforms:submission id="update-graph" action="{instance('control-instance')/sparql-service}" ref="instance('sparqlUpdate')" serialization="text/plain"
+							replace="none" method="post" mediatype="application/sparql-update">
+							<xforms:action ev:event="xforms-submit-error">
+								<xforms:message level="modal">SPARQL update failed.</xforms:message>
 							</xforms:action>
 						</xforms:submission>
 					</xforms:model>

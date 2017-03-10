@@ -19,12 +19,13 @@
 			<xforms:instance id="control-instance" xxforms:exclude-result-prefixes="#all">
 				<controls xmlns="">
 					<status></status>
-					<id/>
+					<id></id>
 					<current></current>
 					<upload-trigger>false</upload-trigger>
 					<repository></repository>
 					<oai-service></oai-service>
 					<oai-set-code></oai-set-code>
+					<sparql-service/>
 					<admin>false</admin>
 					<initial-page>true</initial-page>
 					<normalization current-interface="">
@@ -38,6 +39,10 @@
 						<min-pos>1</min-pos>
 						<max-pos>50</max-pos>
 					</validation>
+					<vocabs>
+						<scheme/>
+						<type>skos:Concept</type>						
+					</vocabs>
 				</controls>
 			</xforms:instance>
 
@@ -114,8 +119,9 @@
 			</xforms:instance>
 
 			<!-- sparql update -->
-			<xforms:instance id="delete-set">
-				<query><![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
+			<xforms:instance id="sparqlUpdate-templates">
+				<queries xmlns="">
+					<query id="delete-set"><![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX prov:	<http://www.w3.org/ns/prov#>
 PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
@@ -128,9 +134,33 @@ UNION {?s dcterms:isPartOf <SET> . ?s ?p ?o }
 UNION {?s prov:wasDerivedFrom <SET> . ?s ?p ?o }
 UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 }]]></query>
+					<query id="delete-vocab"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+DELETE {?s ?p ?o} WHERE { 
+?s ?p ?o . FILTER (?s = <URI>)
+}]]></query>
+					<query id="insert-vocab"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX dcam:	<http://purl.org/dc/dcam/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs:	<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
+INSERT DATA
+{
+  <URI> rdf:type skos:Concept ; 
+  		rdfs:label "LABEL" ;
+  		dcterms:source "REPO" ;
+  		skos:exactMatch <MATCH> ;
+  		dcam:memberOf <http://vocabs.getty.edu/aat/>
+}]]></query>
+				</queries>
 			</xforms:instance>
 
 			<xforms:instance id="sparqlQuery">
+				<query></query>
+			</xforms:instance>
+			
+			<xforms:instance id="sparqlUpdate">
 				<query></query>
 			</xforms:instance>
 
@@ -140,20 +170,25 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 
 			<!-- lists for controlled vocabulary normalization -->
 			<xforms:instance id="type-list">
-				<types xmlns=""></types>
+				<types repository="" xmlns=""></types>
 			</xforms:instance>
 
 			<xforms:instance id="place-list">
-				<places xmlns=""></places>
+				<places repository="" xmlns=""></places>
 			</xforms:instance>
 
 			<xforms:instance id="agent-list">
-				<agents xmlns=""></agents>
+				<agents repository="" xmlns=""></agents>
 			</xforms:instance>
 
 			<!-- dump instance -->
 			<xforms:instance id="dump" xxforms:exclude-result-prefixes="#all">
 				<dump xmlns=""></dump>
+			</xforms:instance>
+			
+			<!-- test instances for vocabs -->
+			<xforms:instance id="test">
+				<type uri="http://vocab.getty.edu/aat/300026867">Clippings</type>
 			</xforms:instance>
 
 			<!-- ************************* BINDINGS ************************** -->
@@ -335,6 +370,9 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 			<xforms:submission id="get-rdf" serialization="none" method="get"
 				action="/harvester/admin/getRDF?sets={encode-for-uri(normalize-space(instance('set')/set))}&amp;repository={instance('set')/repository}&amp;rights={instance('set')/rights}&amp;target={instance('set')/target}"
 				replace="instance" instance="rdf">
+				<!-- set SPARQL service -->
+				<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/sparql/store"/>
+				
 				<!-- upon successful execution of getRDF, post the RDF into the triplestore -->
 				<xforms:send submission="post-rdf" ev:event="xforms-submit-done"/>
 				<!-- otherwise display a popup alert -->
@@ -342,7 +380,7 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 			</xforms:submission>
 
 			<!-- post RDF into the triplestore -->
-			<xforms:submission id="post-rdf" action="{instance('config')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post"
+			<xforms:submission id="post-rdf" action="{instance('control-instance')/sparql-service}?default" ref="instance('rdf')" replace="none" method="post"
 				mediatype="application/rdf+xml">
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status"
 					value="concat(instance('set')/set, ': Successfully posted to endpoint.')"/>
@@ -350,12 +388,12 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 			</xforms:submission>
 
 			<!-- SPARQL queries -->
-			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
+			<xforms:submission id="submit-sparqlQuery" action="{instance('control-instance')/sparql-service}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
 				ref="instance('sparqlResponse')" replace="instance" method="get">
 				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
 			</xforms:submission>
 
-			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlQuery')" serialization="text/plain"
+			<xforms:submission id="update-graph" action="{instance('control-instance')/sparql-service}" ref="instance('sparqlUpdate')" serialization="text/plain"
 				replace="none" method="post" mediatype="application/sparql-update">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
@@ -412,6 +450,52 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 					<a href="../admin/"><span class="glyphicon glyphicon-arrow-left"></span>Return to Admin</a>
 
 					<xforms:switch>
+						<!--<xforms:case id="test-vocabs">
+							<xforms:group ref="instance('test')">
+								<div>
+									<xforms:input ref=".">
+										<xforms:label>Label</xforms:label>
+									</xforms:input>
+								</div>
+								<div>
+									<xforms:input ref="@uri">
+										<xforms:label>URI</xforms:label>
+									</xforms:input>
+								</div>
+								
+								<xforms:trigger>
+									<xforms:label>Insert Vocab</xforms:label>
+									<xforms:action ev:event="DOMActivate">
+										<!-\- create a unique id for the URI to avoid blank nodes -\->
+										<xforms:var name="hash" select="concat(instance('config')/url, 'vocab/', digest(concat(instance('control-instance')/repository, ':', .), 'MD5', 'hex'))"/>
+										<xforms:var name="match" select="@uri"/>
+										<xforms:var name="label" select="."/>
+										
+										<!-\- set the SPARQL/Update to insert the vocabulary -\->
+										<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/update"/>
+										<xforms:setvalue ref="instance('sparqlUpdate')"
+											value="replace(replace(replace(replace(instance('sparqlUpdate-templates')/query[@id='insert-vocab'], 'URI', $hash), 'LABEL', $label), 'REPO', instance('control-instance')/repository), 'MATCH', $match)"/>
+										<xforms:send submission="update-graph"/>
+									</xforms:action>
+								</xforms:trigger>
+								
+								<xforms:trigger>
+									<xforms:label>Delete Vocab</xforms:label>
+									<xforms:action ev:event="DOMActivate">
+										<!-\- create a unique id for the URI to avoid blank nodes -\->
+										<xforms:var name="hash" select="concat(instance('config')/url, 'vocab/', digest(concat(instance('control-instance')/repository, ':', .), 'MD5', 'hex'))"/>
+										<xforms:var name="match" select="@uri"/>
+										<xforms:var name="label" select="."/>
+										
+										<!-\- set the SPARQL/Update to insert the vocabulary -\->
+										<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/update"/>
+										<xforms:setvalue ref="instance('sparqlUpdate')"
+											value="replace(instance('sparqlUpdate-templates')/query[@id='delete-vocab'], 'URI', $hash)"/>
+										<xforms:send submission="update-graph"/>
+									</xforms:action>
+								</xforms:trigger>
+							</xforms:group>
+						</xforms:case>-->						
 						<xforms:case id="import-form">
 							<xforms:group ref="instance('set')">
 								<p>Input the following information to harvest the OAI-PMH into the system:</p>
@@ -433,6 +517,13 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 											<xforms:label ref="."/>
 											<xforms:value ref="."/>
 										</xforms:itemset>
+										<!-- set the @repository of the controlled vocabulary lists -->
+										<xforms:action ev:event="xforms-value-changed">
+											<xforms:var name="val" select="."/>
+											<xforms:setvalue ref="instance('type-list')/@repository" value="$val"/>
+											<xforms:setvalue ref="instance('agent-list')/@repository" value="$val"/>
+											<xforms:setvalue ref="instance('place-list')/@repository" value="$val"/>
+										</xforms:action>
 									</xforms:select1>
 								</div>
 								<div>
@@ -470,11 +561,11 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 								<xforms:repeat nodeset="instance('control-instance')/normalization/*">
 									<div>
 										<xforms:input ref=".">
-											<xforms:label value="concat(upper-case(substring(name(), 1, 1)), substring(name(), 2))"></xforms:label>
+											<xforms:label value="concat(upper-case(substring(name(), 1, 1)), substring(name(), 2))"/>
 										</xforms:input>
-									</div>									
+									</div>
 								</xforms:repeat>
-								
+
 								<xforms:trigger bind="upload-trigger">
 									<xforms:label><span class="glyphicon glyphicon-ok"></span>Validate</xforms:label>
 									<xforms:action ev:event="DOMActivate">
@@ -502,9 +593,9 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 											<h3>Errors</h3>
 											<div class="bg-warning alert-box"><span class="glyphicon glyphicon-exclamation-sign"
 													></span><strong>Warning:</strong>
-												<strong><xforms:output ref="instance('control-instance')/validation/error-count"/></strong> records of <strong><xforms:output
-													ref="instance('control-instance')/validation/total-count"/></strong> total have reported errors. Up to 20 are
-												displayed below. Please download CSV for full report.</div>
+												<strong><xforms:output ref="instance('control-instance')/validation/error-count"/></strong> records of
+														<strong><xforms:output ref="instance('control-instance')/validation/total-count"/></strong> total have
+												reported errors. Up to 20 are displayed below. Please download CSV for full report.</div>
 											<xforms:repeat nodeset="record[error][position() &lt;= 20]">
 
 												<h4>
@@ -528,8 +619,8 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 								<xforms:group ref=".[instance('control-instance')/validation/error-count = 0]">
 									<xforms:var name="min" select="number(instance('control-instance')/validation/min-pos)"/>
 									<xforms:var name="max" select="number(instance('control-instance')/validation/max-pos)"/>
-									<xforms:var name="numFound" select="number(instance('control-instance')/validation/total-count)"/>									
-									
+									<xforms:var name="numFound" select="number(instance('control-instance')/validation/total-count)"/>
+
 									<div class="row">
 										<div class="col-md-12">
 											<h3>Results</h3>
@@ -579,7 +670,8 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 													</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:setvalue ref="instance('control-instance')/validation/min-pos" value="$min - 50"/>
-														<xforms:setvalue ref="instance('control-instance')/validation/max-pos" value="$max - 50"/>														
+														<xforms:setvalue ref="instance('control-instance')/validation/max-pos" value="$max - 50"/>
+														<xxforms:script>clear();</xxforms:script>
 													</xforms:action>
 												</xforms:trigger>
 											</xforms:group>
@@ -590,7 +682,9 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 													</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<xforms:setvalue ref="instance('control-instance')/validation/min-pos" value="$min + 50"/>
-														<xforms:setvalue ref="instance('control-instance')/validation/max-pos" value="if ($max + 50 &gt; $numFound) then $numFound else $max + 50"/>														
+														<xforms:setvalue ref="instance('control-instance')/validation/max-pos"
+															value="if ($max + 50 &gt; $numFound) then $numFound else $max + 50"/>
+														<xxforms:script>clear();</xxforms:script>
 													</xforms:action>
 												</xforms:trigger>
 											</xforms:group>
@@ -606,29 +700,27 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 									<div class="row">
 										<div class="col-md-12">
 											<!-- display only 50 records at a time -->
-											<xforms:repeat
-												nodeset="record[position() &gt;= $min and position() &lt;= $max]">
+											<xforms:repeat nodeset="record[position() &gt;= $min and position() &lt;= $max]">
 												<xforms:var name="id" select="@id"/>
 												<xforms:var name="hash" select="digest($id, 'MD5', 'hex')"/>
-												
+
 												<h4>
 													<xforms:output ref="@id"/>
-													<small class="expand">
+													<small class="expand {$hash}-button">
 														<xforms:trigger appearance="minimal">
 															<xforms:label><span class="glyphicon glyphicon-info-sign"></span></xforms:label>
 															<xforms:action ev:event="DOMActivate">
-																<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>																
-																<xforms:var name="metadataPrefix" select="substring-after($params[contains(., 'metadataPrefix')][1], '=')"/>
-																
-																<xforms:setvalue ref="instance('control-instance')/id" value="$hash"/>																
-																<xforms:setvalue ref="instance('control-instance')/oai-service" value="concat(substring-before(instance('set')/set, '?'), '?verb=GetRecord&amp;metadataPrefix=', $metadataPrefix, '&amp;identifier=', $id)"/>
-																<xxforms:script>																						
-																	expand();
-																</xxforms:script>
+																<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
+																<xforms:var name="metadataPrefix"
+																	select="substring-after($params[contains(., 'metadataPrefix')][1], '=')"/> <xforms:setvalue
+																	ref="instance('control-instance')/id" value="$hash"/>
+																<xforms:setvalue ref="instance('control-instance')/oai-service"
+																	value="concat(substring-before(instance('set')/set, '?'), '?verb=GetRecord&amp;metadataPrefix=', $metadataPrefix, '&amp;identifier=', $id)"/>
+																<xxforms:script>expand();</xxforms:script>
 															</xforms:action>
 														</xforms:trigger>
-													</small>													
-												</h4>												
+													</small>
+												</h4>
 												<dl class="dl-horizontal">
 													<dt>Title</dt>
 													<dd><xforms:output ref="title"/></dd>
@@ -641,7 +733,7 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 														</xforms:trigger>
 													</dd>
 												</dl>
-												<div class="{$hash}_container hidden"></div>												
+												<div class="{$hash}_container ajax_container hidden"></div>
 												<hr />
 											</xforms:repeat>
 
@@ -719,18 +811,18 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
 								<div>
 									<h3>Match agents to VIAF or SNAC</h3>
-									
+
 									<!-- display XBL components for AAT lookups -->
 									<xforms:group ref=".[count(agent) &gt; 0]">
 										<xforms:repeat nodeset="xxforms:sort(agent, ., 'text', 'ascending')">
 											<harvester:agent/>
 										</xforms:repeat>
 									</xforms:group>
-									
+
 									<xforms:group ref=".[count(agent) = 0]">
 										<p>No creators or contributors to match to controlled vocabulary systems.</p>
 									</xforms:group>
-									
+
 									<!-- display button for import if there are no entities to be normalized -->
 									<xforms:group ref=".[not(instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()])]">
 										<xforms:trigger>
@@ -738,7 +830,7 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 											<xforms:dispatch target="initiate-import" name="fr-show" ev:event="DOMActivate"/>
 										</xforms:trigger>
 									</xforms:group>
-									
+
 									<!-- display the next relevant normalization interface, if applicable -->
 									<xforms:group ref=".[instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]]">
 										<xforms:trigger>
@@ -759,18 +851,18 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
 								<div>
 									<h3>Match places to Geonames</h3>
-									
+
 									<!-- display XBL components for AAT lookups -->
 									<xforms:group ref=".[count(place) &gt; 0]">
 										<xforms:repeat nodeset="xxforms:sort(place, ., 'text', 'ascending')">
 											<harvester:place/>
 										</xforms:repeat>
 									</xforms:group>
-									
+
 									<xforms:group ref=".[count(place) = 0]">
 										<p>No creators or contributors to match to Geonames.org.</p>
 									</xforms:group>
-									
+
 									<!-- display button for import if there are no entities to be normalized -->
 									<xforms:group ref=".[not(instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()])]">
 										<xforms:trigger>
@@ -778,7 +870,7 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 											<xforms:dispatch target="initiate-import" name="fr-show" ev:event="DOMActivate"/>
 										</xforms:trigger>
 									</xforms:group>
-									
+
 									<!-- display the next relevant normalization interface, if applicable -->
 									<xforms:group ref=".[instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]]">
 										<xforms:trigger>
@@ -798,14 +890,14 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 							<p>The ingestion process has been completed.</p>
 						</xforms:case>
 					</xforms:switch>
-					
-					
+
+
 					<div class="hidden">
-						<xforms:output ref="instance('control-instance')/id" id="id"></xforms:output>
-						<xforms:output ref="instance('control-instance')/oai-service" id="oai-service"></xforms:output>
-						<xforms:output ref="instance('set')/repository" id="repository"></xforms:output>
-						<xforms:output ref="instance('set')/rights" id="rights"></xforms:output>
-						<xforms:output ref="instance('set')/target" id="target"></xforms:output>
+						<xforms:output ref="instance('control-instance')/id" id="id"/>
+						<xforms:output ref="instance('control-instance')/oai-service" id="oai-service"/>
+						<xforms:output ref="instance('set')/repository" id="repository"/>
+						<xforms:output ref="instance('set')/rights" id="rights"/>
+						<xforms:output ref="instance('set')/target" id="target"/>
 					</div>
 
 					<!-- dialog asking to initiate the import -->
@@ -819,10 +911,13 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
 						<fr:positive-choice>
 							<fr:label>Yes</fr:label>
 							<xforms:action ev:event="DOMActivate">
+								<!-- set SPARQL service -->
+								<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/sparql/update"/>
+								
 								<!-- delete the set from the SPARQL endpoint -->
 								<xforms:setvalue ref="instance('sparqlQuery')"
-									value="replace(instance('delete-set'), 'SET', normalize-space(instance('set')/set))"/>
-								<xforms:send submission="delete-graph"/>
+									value="replace(instance('sparqlUpdate-templates')/query[@id='delete-set'], 'SET', normalize-space(instance('set')/set))"/>
+								<xforms:send submission="update-graph"/>
 								<!-- call the getRDF web service to transform OAI-PMH into RDF. It will make use to any terms normalized and inserted into Google Sheets -->
 								<xforms:action ev:event="xforms-submit-done">
 									<xforms:send submission="get-rdf"/>

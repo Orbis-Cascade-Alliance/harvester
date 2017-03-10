@@ -4,7 +4,7 @@
 	xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester">
 	<xbl:binding id="harvester-type" element="harvester|type">
 		<xbl:template>
-			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">				
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
 					<xforms:var name="binding" as="node()?">
@@ -12,14 +12,14 @@
 					</xforms:var>
 
 					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
-						<xforms:setvalue ref="instance('search-query')" value="$binding/text()"/>						
+						<xforms:setvalue ref="instance('search-query')" value="$binding/text()"/>	
+						<xforms:setvalue ref="instance('control-instance')/repository" value="$binding/parent::node()/@repository"/>
 					</xforms:action>
-					
+						
 					<div class="term">
 						<h4>
 							<xforms:output ref="$binding"/>
 						</h4>
-						
 						<xforms:group ref=".[string-length($binding/@uri) &gt; 0]">
 							<xforms:trigger appearance="minimal">
 								<xforms:label><xforms:output ref="$binding/@uri"/> <span class="glyphicon glyphicon-new-window"/></xforms:label>							
@@ -35,6 +35,11 @@
 									<xforms:delete nodeset="instance('getty-response')/*"/>
 									
 									<!-- TODO: SPARQL/Update to remove Term-URI pair -->
+									<xforms:var name="hash" select="concat(instance('config')/url, 'vocab/', digest(concat(instance('control-instance')/repository, ':', $binding), 'MD5', 'hex'))"/>
+									<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/update"/>
+									<xforms:setvalue ref="instance('sparqlUpdate')"
+										value="replace(instance('sparqlUpdate-templates')/query[@id='delete-vocab'], 'URI', $hash)"/>
+									<xforms:send submission="update-graph"/>
 								</xforms:action>
 							</xforms:trigger>
 						</xforms:group>
@@ -109,6 +114,16 @@
 													<xforms:setvalue ref="$binding/@uri" value="instance('control-instance')/uri"/>		
 													
 													<!-- TODO: SPARQL/Update to insert Term-URI pair -->
+													<!-- create a unique id for the URI to avoid blank nodes -->
+													<xforms:var name="hash" select="concat(instance('config')/url, 'vocab/', digest(concat(instance('control-instance')/repository, ':', $binding), 'MD5', 'hex'))"/>
+													<xforms:var name="match" select="$binding/@uri"/>
+													<xforms:var name="label" select="$binding"/>
+													
+													<!-- set the SPARQL/Update to insert the vocabulary -->
+													<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/update"/>
+													<xforms:setvalue ref="instance('sparqlUpdate')"
+														value="replace(replace(replace(replace(instance('sparqlUpdate-templates')/query[@id='insert-vocab'], 'URI', $hash), 'LABEL', $label), 'REPO', instance('control-instance')/repository), 'MATCH', $match)"/>
+													<xforms:send submission="update-graph"/>
 												</xforms:action>
 											</xforms:trigger>
 											
@@ -139,6 +154,10 @@
 					<fr:xforms-inspector xmlns:fr="http://orbeon.org/oxf/xml/form-runner" />-->
 					<!-- ***************** MODEL ***************-->
 					<xforms:model id="type-model">
+						<xforms:instance id="config">
+							<xi:include href="../../../config.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+						</xforms:instance>
+						
 						<!-- instances -->
 						<xforms:instance id="control-instance">
 							<control xmlns="">
@@ -146,6 +165,8 @@
 								<uri/>
 								<definition/>
 								<search-results/>
+								<repository/>
+								<sparql-service/>
 							</control>
 						</xforms:instance>
 
@@ -173,9 +194,37 @@ OPTIONAL {?c skos:scopeNote ?note .
 ?note rdf:value ?def FILTER langMatches(lang(?def), "en")}} LIMIT 20]]>
 							</query>
 						</xforms:instance>
+						
+						<xforms:instance id="sparqlUpdate-templates">
+							<queries xmlns="">								
+								<query id="delete-vocab"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+DELETE {?s ?p ?o} WHERE { 
+?s ?p ?o . FILTER (?s = <URI>)
+}]]></query>
+								<query id="insert-vocab"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX dcam:	<http://purl.org/dc/dcam/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs:	<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
+INSERT DATA
+{
+  <URI> rdf:type skos:Concept ; 
+  		rdfs:label "LABEL" ;
+  		dcterms:source "REPO" ;
+  		skos:exactMatch <MATCH> ;
+  		dcam:memberOf <http://vocabs.getty.edu/aat/>
+}]]></query>
+							</queries>
+						</xforms:instance>
 
 						<xforms:instance id="sparqlQuery">
 							<query xmlns=""/>
+						</xforms:instance>
+						
+						<xforms:instance id="sparqlUpdate">
+							<query></query>
 						</xforms:instance>
 
 						<xforms:instance id="getty-response">
@@ -183,6 +232,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 						</xforms:instance>
 
 						<!-- submissions -->
+						<!-- lookup -->
 						<xforms:submission id="query-getty" action="http://vocab.getty.edu/sparql?query={encode-for-uri(instance('sparqlQuery'))}"
 							ref="instance('getty-response')" replace="instance" method="get">
 							<xforms:header>
@@ -205,10 +255,17 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<xforms:setvalue if="$total &gt; 20" ref="instance('control-instance')/search-results)" value="concat('Displaying first 20 of ', $total, ' result(s).')"/>
 							</xforms:action>
 						</xforms:submission>
+						
+						<!-- update vocab graph -->
+						<xforms:submission id="update-graph" action="{instance('control-instance')/sparql-service}" ref="instance('sparqlUpdate')" serialization="text/plain"
+							replace="none" method="post" mediatype="application/sparql-update">
+							<xforms:action ev:event="xforms-submit-error">
+								<xforms:message level="modal">SPARQL update failed.</xforms:message>
+							</xforms:action>
+						</xforms:submission>
 					</xforms:model>
 				</xforms:group>
 			</xforms:group>
 		</xbl:template>
 	</xbl:binding>
-
 </xbl:xbl>

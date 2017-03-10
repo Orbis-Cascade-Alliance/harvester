@@ -20,8 +20,8 @@
 	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:edm="http://www.europeana.eu/schemas/edm/"
 	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/"
 	xmlns:prov="http://www.w3.org/ns/prov#" xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"
-	xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester" xmlns:digest="org.apache.commons.codec.digest.DigestUtils"
-	exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest" version="2.0">
+	xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester" xmlns:digest="org.apache.commons.codec.digest.DigestUtils" xmlns:res="http://www.w3.org/2005/sparql-results#"
+	exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest res" version="2.0">
 	<xsl:output indent="yes" encoding="UTF-8"/>
 
 	<!-- request parameters -->
@@ -34,19 +34,49 @@
 	<xsl:param name="rightsStatement" select="/content/controls/rights"/>
 	<xsl:param name="url" select="/content/config/url"/>
 	<xsl:param name="production_server" select="/content/config/production_server"/>
+	<xsl:param name="sparql_endpoint" select="/content/config/vocab_sparql/query"/>
 	<xsl:variable name="repo_uri" select="concat($production_server, 'contact#', $repository)"/>
 
 	<!-- break down information about the OAI-PMH service -->
 	<xsl:variable name="oai_service" select="/content/oai:OAI-PMH/oai:request"/>
 	<xsl:variable name="setSpec" select="/content/oai:OAI-PMH/oai:request/@set"/>
 
-	<!-- load Google Sheets Atom feeds into variables for normalization -->
-	<xsl:variable name="places" as="element()*">
-		<xsl:copy-of select="document(/content/config/sheets/places)/*"/>
-	</xsl:variable>
+	<!-- load controlled vocabulary lists from SPARQL -->
+	<xsl:variable name="sparqlQuery-template"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX dcam:	<http://purl.org/dc/dcam/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs:	<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
 
-	<xsl:variable name="subjects" as="element()*">
-		<xsl:copy-of select="document(/content/config/sheets/subjects)/*"/>
+SELECT ?label ?uri WHERE {
+?s dcterms:source "%REPO%" ;
+rdf:type %TYPE%;
+skos:exactMatch ?uri ;
+rdfs:label ?label
+}]]></xsl:variable>
+	
+	<xsl:variable name="type-query" select="replace(replace($sparqlQuery-template, '%REPO%', $repository), '%TYPE%', 'skos:Concept')"/>
+	<xsl:variable name="agent-query" select="replace(replace($sparqlQuery-template, '%REPO%', $repository), '%TYPE%', 'edm:Agent')"/>
+	<xsl:variable name="place-query" select="replace(replace($sparqlQuery-template, '%REPO%', $repository), '%TYPE%', 'edm:Place')"/>
+	
+	<xsl:variable name="types" as="node()*">
+		<types>
+			<xsl:copy-of select="document(concat($sparql_endpoint, '?query=', encode-for-uri($type-query), '&amp;output=xml'))//res:result"/>
+		</types>
+	</xsl:variable>
+	
+	<xsl:variable name="agents" as="node()*">
+		<types>
+			<xsl:copy-of select="document(concat($sparql_endpoint, '?query=', encode-for-uri($agent-query), '&amp;output=xml'))//res:result"/>
+		</types>
+	</xsl:variable>
+	
+	<xsl:variable name="places" as="node()*">
+		<types>
+			<xsl:copy-of select="document(concat($sparql_endpoint, '?query=', encode-for-uri($place-query), '&amp;output=xml'))//res:result"/>
+		</types>
 	</xsl:variable>
 
 	<xsl:variable name="dams" select="/content/config/dams//repository[. = $repository][contains($set, @pattern)]/parent::node()/name()"/>
@@ -63,6 +93,8 @@
 					<xsl:copy-of select="document(concat($oai_service, '?verb=ListSets'))//oai:set[oai:setSpec=$setSpec]"/>
 				</xsl:variable>
 				
+				<xsl:copy-of select="$types"/>
+				
 				<dcmitype:Collection rdf:about="{$set}">
 					<dcterms:title>
 						<xsl:value-of select="$setNode/oai:setName"/>
@@ -77,14 +109,16 @@
 			</xsl:if>
 
 			<!-- either process only those objects with a matching $ark when the process is instantiated by the finding aid upload, or process all objects for bulk uploading -->
-			<xsl:choose>
+			<!--<xsl:choose>
 				<xsl:when test="$mode = 'test'">
 					<xsl:apply-templates select="descendant::oai:record[not(oai:header/@status = 'deleted')][position() &lt;= 10]"/>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:apply-templates select="descendant::oai:record[not(oai:header/@status = 'deleted')]"/>
 				</xsl:otherwise>
-			</xsl:choose>
+			</xsl:choose>-->
+
+			<xsl:apply-templates select="descendant::oai:record[not(oai:header/@status = 'deleted')]"/>
 
 			<xsl:if test="not($mode = 'test')">
 				<xsl:if test="descendant::oai:resumptionToken[string-length(normalize-space(.)) &gt; 0]">
@@ -384,10 +418,10 @@
 				<xsl:for-each select="$pieces">
 					<xsl:variable name="label" select="harvester:cleanText(normalize-space(.), $element)"/>
 
-					<dcterms:spatial>
+					<dcterms:spatial>						
 						<xsl:choose>
-							<xsl:when test="$places//atom:entry[gsx:label = $label]">
-								<xsl:attribute name="rdf:resource" select="$places//atom:entry[gsx:label = $label]/gsx:uri"/>
+							<xsl:when test="$places//res:result[res:binding[@name='label']/res:literal = $label]">
+								<xsl:attribute name="rdf:resource" select="$places//res:result[res:binding[@name='label']/res:literal = $label]/res:binding[@name='uri']/res:uri"/>
 							</xsl:when>
 							<xsl:otherwise>
 								<xsl:value-of select="$label"/>
@@ -446,7 +480,16 @@
 					</xsl:when>
 					<xsl:otherwise>
 						<edm:hasType>
-							<xsl:value-of select="harvester:cleanText(normalize-space(.), 'type')"/>
+							<xsl:variable name="norm" select="normalize-space(.)"/>
+							
+							<xsl:choose>
+								<xsl:when test="$types//res:result[res:binding[@name='label']/res:literal = $norm]">
+									<xsl:attribute name="rdf:resource" select="$types//res:result[res:binding[@name='label']/res:literal = $norm]/res:binding[@name='uri']/res:uri"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="harvester:cleanText(normalize-space(.), 'type')"/>
+								</xsl:otherwise>
+							</xsl:choose>
 						</edm:hasType>
 					</xsl:otherwise>
 				</xsl:choose>
@@ -470,7 +513,14 @@
 					<xsl:when test="$property='creator'">
 						<xsl:if test="not(contains(lower-case($val), 'unknown'))">
 							<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
-								<xsl:value-of select="$val"/>
+								<xsl:choose>
+									<xsl:when test="$agents//res:result[res:binding[@name='label']/res:literal = $val]">
+										<xsl:attribute name="rdf:resource" select="$agents//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="$val"/>
+									</xsl:otherwise>
+								</xsl:choose>
 							</xsl:element>
 						</xsl:if>
 					</xsl:when>
@@ -480,9 +530,8 @@
 							<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
 								<xsl:value-of select="$val"/>
 							</xsl:element>
-							<!--<xsl:element name="edm:hasType" namespace="http://www.europeana.eu/schemas/edm/">placeholder for AAT URI</xsl:element>-->
 						</xsl:if>
-					</xsl:when>
+					</xsl:when>					
 					<xsl:otherwise>
 						<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
 							<!-- normalization -->
@@ -490,14 +539,15 @@
 								<xsl:when test="$property = 'subject'">
 									<xsl:variable name="label" select="$val"/>
 
-									<xsl:choose>
+									<!--<xsl:choose>
 										<xsl:when test="$subjects//atom:entry[gsx:label = $label]">
 											<xsl:attribute name="rdf:resource" select="$subjects//atom:entry[gsx:label = $label]/gsx:uri"/>
 										</xsl:when>
 										<xsl:otherwise>
 											<xsl:value-of select="$val"/>
 										</xsl:otherwise>
-									</xsl:choose>
+									</xsl:choose>-->
+									<xsl:value-of select="$val"/>
 								</xsl:when>
 								<xsl:otherwise>
 									<xsl:value-of select="$val"/>
