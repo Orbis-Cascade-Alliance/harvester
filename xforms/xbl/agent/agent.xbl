@@ -98,6 +98,19 @@
 								<xforms:switch>
 									<xforms:case id="viaf-search">
 										<div>
+											<xforms:select1 ref="instance('control-instance')/heading" appearance="full">
+												<xforms:label>Name Type</xforms:label>
+												<xforms:item>
+													<xforms:label>Personal</xforms:label>
+													<xforms:value>local.personalNames+all</xforms:value>
+												</xforms:item>
+												<xforms:item>
+													<xforms:label>Corporate</xforms:label>
+													<xforms:value>local.corporateNames+all</xforms:value>
+												</xforms:item>
+											</xforms:select1>
+										</div>
+										<div>
 											<xforms:input ref="instance('search-query')">
 												<xforms:label>Search</xforms:label>
 											</xforms:input>
@@ -244,6 +257,7 @@
 								<search-results/>
 								<repository/>
 								<sparql-service/>
+								<heading>local.personalNames+all</heading>
 							</control>
 						</xforms:instance>
 
@@ -298,7 +312,7 @@ INSERT DATA
 
 						<!-- submissions -->
 						<xforms:submission id="query-viaf" serialization="none" method="get"
-							action="http://viaf.org/viaf/search?query=local.names+all+%22{instance('search-query')}%22&amp;maximumRecords=100&amp;httpAccept=application/rss%2bxml"
+							action="http://viaf.org/viaf/search?query={instance('control-instance')/heading}+%22{instance('search-query')}%22&amp;maximumRecords=100&amp;httpAccept=application/rss%2bxml"
 							instance="rss" replace="instance">
 							<xforms:header>
 								<xforms:name>User-Agent</xforms:name>
