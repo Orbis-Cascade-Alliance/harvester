@@ -54,7 +54,7 @@
 							<div>
 								<radiogroup>
 									<xforms:select1 ref="instance('interface-type')" appearance="full">
-										<xforms:label>Interface Type</xforms:label>
+										<xforms:label>Vocabulary</xforms:label>
 										<xforms:item>
 											<xforms:label>VIAF</xforms:label>
 											<xforms:value>viaf</xforms:value>
