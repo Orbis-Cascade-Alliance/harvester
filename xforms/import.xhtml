@@ -298,7 +298,7 @@ rdfs:label ?label
 									<xforms:var name="types" select="tokenize($binding/dc:type, ';')"/>
 
 									<xforms:action xxforms:iterate="$types">
-										<xforms:var name="val" select="normalize-space(.)"/>
+										<xforms:var name="val" select="if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1) else normalize-space(.)"/>
 
 										<xforms:action if="string-length($val) &gt; 0">
 											<xforms:var name="dcmi-types"
@@ -345,7 +345,7 @@ rdfs:label ?label
 									<xforms:var name="places" select="tokenize($all-elements, ';')"/>
 
 									<xforms:action xxforms:iterate="$places">
-										<xforms:var name="val" select="normalize-space(.)"/>
+										<xforms:var name="val" select="if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1) else normalize-space(.)"/>
 
 										<xforms:action if="string-length($val) &gt; 0">
 											<!-- ignore individual lat or long elements and elements conforming to "lat,long" formatting -->

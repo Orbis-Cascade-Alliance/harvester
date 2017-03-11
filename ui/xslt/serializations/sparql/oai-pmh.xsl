@@ -247,7 +247,7 @@
 					<xsl:apply-templates select="descendant::dpla:SourceResource">
 						<xsl:with-param name="depiction" select="edm:object/@rdf:resource"/>
 						<xsl:with-param name="thumbnail" select="edm:preview/@rdf:resource"/>
-						<xsl:with-param name="publisher" select="edm:dataProvider/@rdf:resource"/>
+						<xsl:with-param name="dataProvider" select="edm:dataProvider/@rdf:resource"/>
 					</xsl:apply-templates>
 				</metadata>
 			</xsl:if>
@@ -255,14 +255,23 @@
 	</xsl:template>
 
 	<xsl:template match="dpla:SourceResource">
-		<xsl:param name="publisher"/>
+		<xsl:param name="dataProvider"/>
 		<xsl:param name="thumbnail"/>
 		<xsl:param name="depiction"/>
 
 		<oai_dc:dc>
 			<xsl:apply-templates select="*"/>
 			<dc:publisher>
-				<xsl:value-of select="$publisher"/>
+				<xsl:choose>
+					<xsl:when test="contains($dataProvider, 'archiveswest')">
+						<xsl:variable name="code" select="substring-after($dataProvider, '#')"/>
+							
+						<xsl:value-of select="//config/codes/repository[@marc=$code]/@exlibris"/>
+					</xsl:when>
+					<xsl:when test="contains($dataProvider, 'harvester')">
+						<!-- placeholder for harvester agency URIs -->
+					</xsl:when>
+				</xsl:choose>				
 			</dc:publisher>
 
 			<dc:identifier>

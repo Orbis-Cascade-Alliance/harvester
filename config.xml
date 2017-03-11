@@ -20,12 +20,74 @@
 	<limit>24</limit>
 	<dpla_limit>10000</dpla_limit>
 	<oai-pmh_limit>100</oai-pmh_limit>
+	<codes>
+		<repository marc="idbb" exlibris=""/>
+		<repository marc="orbec" exlibris="COCC"/>
+		<repository marc="waeic" exlibris="CWU"/>
+		<repository marc="orsac" exlibris="CHEMEK"/>
+		<repository marc="orocc" exlibris=""/>
+		<repository marc="wavc" exlibris="CC"/>
+		<repository marc="orpcc" exlibris="CONC"/>
+		<repository marc="orsitcc" exlibris=""/>
+		<repository marc="orlge" exlibris="EOU"/>
+		<repository marc="wachene" exlibris="EWU"/>
+		<repository marc="orngf" exlibris="GFOX"/>
+		<repository marc="orel" exlibris="LANECC"/>
+		<repository marc="orpl" exlibris="LCC"/>
+		<repository marc="ormcl" exlibris="LINF"/>
+		<repository marc="ormac" exlibris="MRY"/>
+		<repository marc="orgrc" exlibris="MHCC"/>
+		<repository marc="mthi" exlibris=""/>
+		<repository marc="mtbc" exlibris=""/>
+		<repository marc="wasmhi" exlibris=""/>
+		<repository marc="orphs" exlibris="OHSU"/>
+		<repository marc="orhi" exlibris=""/>
+		<repository marc="orkt" exlibris="OIT"/>
+		<repository marc="orcs" exlibris="OSU"/>
+		<repository marc="wapip" exlibris=""/>
+		<repository marc="orfp" exlibris="PU"/>
+		<repository marc="orppc" exlibris="PCC"/>
+		<repository marc="orps" exlibris="PSU"/>
+		<repository marc="orpr" exlibris="REED"/>
+		<repository marc="walsm" exlibris="STMU"/>
+		<repository marc="utwvslc" exlibris=""/>
+		<repository marc="wasmar" exlibris=""/>
+		<repository marc="waspc" exlibris="SPU"/>
+		<repository marc="wasu" exlibris="SEAU"/>
+		<repository marc="orashs" exlibris="SOU"/>
+		<repository marc="wat" exlibris=""/>
+		<repository marc="waoe" exlibris="EVSC"/>
+		<repository marc="idu" exlibris="UID"/>
+		<repository marc="mtu" exlibris=""/>
+		<repository marc="oru" exlibris="UO"/>
+		<repository marc="oreuurm" exlibris="UO"/>
+		<repository marc="oru" exlibris="UO"/>
+		<repository marc="orpu" exlibris="UPORT"/>
+		<repository marc="watu" exlibris="UPUGS"/>
+		<repository marc="uu" exlibris=""/>
+		<repository marc="uuml" exlibris=""/>
+		<repository marc="wau-ar" exlibris="UW"/>
+		<repository marc="waseumc" exlibris="UW"/>
+		<repository marc="wau" exlibris="UW"/>
+		<repository marc="ula" exlibris=""/>
+		<repository marc="wawc" exlibris="WALLA"/>
+		<repository marc="orpwp" exlibris="WPC"/>
+		<repository marc="waps" exlibris="WSU"/>
+		<repository marc="ormonw" exlibris="WOU"/>
+		<repository marc="wabewwuh" exlibris="WWU"/>
+		<repository marc="wabewwua" exlibris="WWU"/>
+		<repository marc="wabewwus" exlibris="WWU"/>
+		<repository marc="wabewh" exlibris="WWU"/>
+		<repository marc="waww" exlibris="WHITC"/>
+		<repository marc="waspw" exlibris="WW"/>
+		<repository marc="orsaw" exlibris="WU"/>
+	</codes>
 	<dams>
 		<contentdm-default>
 			<repository pattern="content">waps</repository>
 			<repository>idbb</repository>
-			<repository>US-ula</repository>
-			<repository>US-uuml</repository>
+			<repository>ula</repository>
+			<repository>uuml</repository>
 			<repository>wauar</repository>
 			<repository>wabewwuh</repository>
 			<repository pattern="contentdm">wachene</repository>
