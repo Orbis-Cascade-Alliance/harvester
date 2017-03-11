@@ -22,7 +22,8 @@
 		<p:input name="data" href="../../../config.xml"/>
 		<p:input name="config">
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-				<xsl:param name="id" select="tokenize(doc('input:request')/request/request-url, '/')[last()]"/>
+				<xsl:param name="identifier" select="doc('input:request')/request/parameters/parameter[name='identifier']/value"/>
+				<xsl:param name="id" select="if (string($identifier)) then tokenize($identifier, ':')[3] else tokenize(doc('input:request')/request/request-url, '/')[last()]"/>
 				
 				<!-- config variables -->
 				<xsl:variable name="uri" select="concat(config/url, 'record/', $id)"/>
@@ -37,7 +38,7 @@ PREFIX dpla:	<http://dp.la/terms/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
-PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
 PREFIX vcard:	<http://www.w3.org/2006/vcard/ns#>
 PREFIX arch:	<http://purl.org/archival/vocab/arch#>
 PREFIX nwda:	<https://github.com/Orbis-Cascade-Alliance/nwda-editor#>

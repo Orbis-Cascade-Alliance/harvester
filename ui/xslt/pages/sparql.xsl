@@ -36,7 +36,7 @@ PREFIX dpla:	<http://dp.la/terms/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
-PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
 PREFIX vcard:	<http://www.w3.org/2006/vcard/ns#>
 PREFIX arch:	<http://purl.org/archival/vocab/arch#>
 PREFIX nwda:	<https://github.com/Orbis-Cascade-Alliance/nwda-editor#>

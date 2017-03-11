@@ -4,7 +4,7 @@
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
 	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:prov="http://www.w3.org/ns/prov#"
 	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#" xmlns:ore="http://www.openarchives.org/ore/terms/"
-	xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:dcmitype="http://purl.org/dc/dcmitype/"
+	xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:doap="http://usefulinc.com/ns/doap#"
 	exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda dpla ore digest prov geo dcmitype" version="2.0">
 
 	<xsl:variable name="url" select="//config/url"/>
@@ -186,47 +186,11 @@
 					</xsl:choose>
 				</xsl:when>
 				<xsl:when test="$verb = 'GetRecord'">
-					<xsl:choose>
-						<xsl:when test="$identifier">
-							<xsl:variable name="identifier-valid" select="iri-to-uri($identifier) castable as xs:anyURI" as="xs:boolean"/>
-							<xsl:variable name="character-pass" as="xs:boolean">
-								<xsl:choose>
-									<xsl:when test="$identifier-valid = true()">
-										<xsl:choose>
-											<xsl:when
-												test="contains($identifier, '!') or contains($identifier, '&#x022;') or contains($identifier, '#') or contains($identifier, '[') or contains($identifier, ']') or contains($identifier, '(') or contains($identifier, ')') or contains($identifier, '{') or contains($identifier, '}')"
-												>false</xsl:when>
-											<xsl:otherwise>true</xsl:otherwise>
-										</xsl:choose>
-									</xsl:when>
-									<xsl:otherwise>false</xsl:otherwise>
-								</xsl:choose>
-							</xsl:variable>
-							<xsl:choose>
-								<xsl:when test="string($metadataPrefix) and $character-pass = true()">
-									<xsl:choose>
-										<xsl:when test="$metadataPrefix = 'oai_dc'">
-											<GetRecord>
-												<xsl:apply-templates select="descendant::ore:Aggregation">
-													<xsl:with-param name="verb" select="$verb"/>
-												</xsl:apply-templates>
-											</GetRecord>
-										</xsl:when>
-										<xsl:otherwise>
-											<error code="cannotDisseminateFormat">Cannot disseminate format.</error>
-										</xsl:otherwise>
-									</xsl:choose>
-								</xsl:when>
-								<xsl:otherwise>
-									<error code="badArgument">Bad OAI Argument</error>
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:when>
-						<xsl:otherwise>
-							<error code="badArgument">Bad OAI Argument: No identifier</error>
-						</xsl:otherwise>
-					</xsl:choose>
-
+					<GetRecord>
+						<xsl:apply-templates select="descendant::ore:Aggregation">
+							<xsl:with-param name="verb" select="$verb"/>
+						</xsl:apply-templates>
+					</GetRecord>
 				</xsl:when>
 				<xsl:otherwise>
 					<error code="badVerb">Illegal OAI verb</error>
@@ -246,20 +210,6 @@
 	</xsl:template>
 
 	<!-- *************** TEMPLATES FOR PROCESSING RDF BACK INTO OAI-PMH METADATA **************** -->
-	<xsl:template match="ore:Aggregation">
-		<header>
-			<identifier>
-				<xsl:value-of select="descendant::dpla:SourceResource/@rdf:about"/>
-			</identifier>
-			<datestamp>
-				<xsl:value-of select="dcterms:modified"/>
-			</datestamp>
-			<setSpec>
-				<xsl:value-of select="$set"/>
-			</setSpec>
-		</header>
-	</xsl:template>
-
 	<xsl:template match="ore:Aggregation">
 		<xsl:param name="verb"/>
 
@@ -285,9 +235,11 @@
 				<datestamp>
 					<xsl:value-of select="substring(prov:generatedAtTime, 1, 10)"/>
 				</datestamp>
-				<setSpec>
-					<xsl:value-of select="$set"/>
-				</setSpec>
+				<xsl:for-each select="doap:audience[. = 'primo']">
+					<setSpec>
+						<xsl:value-of select="."/>
+					</setSpec>					
+				</xsl:for-each>
 			</header>
 
 			<xsl:if test="$verb = 'GetRecord' or $verb = 'ListRecords'">

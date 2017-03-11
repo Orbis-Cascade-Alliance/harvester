@@ -23,19 +23,37 @@
 		<p:input name="data" href="#data"/>
 		<p:input name="config">
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xsl:param name="from" select="doc('input:request')/request/parameters/parameter[name = 'from']/value"/>
+				<xsl:param name="until" select="doc('input:request')/request/parameters/parameter[name = 'until']/value"/>
 				<xsl:variable name="sparql_endpoint" select="/config/sparql/query"/>
+
+				<xsl:variable name="filter">
+					<xsl:choose>
+						<xsl:when test="$from castable as xs:date and not(string($until))">
+							<xsl:value-of select="concat('FILTER (?mod &gt;= xsd:dateTime(&#x022;', $from, 'T00:00:00Z&#x022;))')"/>
+						</xsl:when>
+						<xsl:when test="not(string($from)) and $until castable as xs:date">
+							<xsl:value-of select="concat('FILTER (?mod &lt;= xsd:dateTime(&#x022;', $until, 'T12:59:59Z&#x022;))')"/>
+						</xsl:when>
+						<xsl:when test="$from castable as xs:date and $until castable as xs:date">
+							<xsl:value-of select="concat('FILTER (?mod &gt;= xsd:dateTime(&#x022;', $from, 'T00:00:00Z&#x022;) &amp;&amp; ?mod &lt;= xsd:dateTime(&#x022;', $until, 'T12:59:59Z&#x022;))')"/>
+						</xsl:when>						
+					</xsl:choose>
+				</xsl:variable>
 
 				<xsl:variable name="query"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
 PREFIX doap:	<http://usefulinc.com/ns/doap#>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
+PREFIX prov:	<http://www.w3.org/ns/prov#>
 
 SELECT (count(?agg) as ?count) WHERE {
   ?agg a ore:Aggregation ;
-  	doap:audience "primo"
-}]]>
-				</xsl:variable>
+    prov:generatedAtTime ?mod;
+  	doap:audience "primo" %FILTER%
+}]]></xsl:variable>
 
-				<xsl:variable name="service" select="concat($sparql_endpoint, '?query=', encode-for-uri($query), '&amp;output=xml')"/>
+				<xsl:variable name="service" select="concat($sparql_endpoint, '?query=', encode-for-uri(replace($query, '%FILTER%', $filter)), '&amp;output=xml')"/>
 
 				<xsl:template match="/">
 					<config>

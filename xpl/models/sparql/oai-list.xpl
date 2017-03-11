@@ -26,8 +26,10 @@
 				<!-- Note: resumptionToken format is {$set}:{$metadataPrefix}:{$offset} -->
 				
 				<xsl:param name="resumptionToken" select="doc('input:request')/request/parameters/parameter[name = 'resumptionToken']/value"/>
+				<xsl:param name="from" select="doc('input:request')/request/parameters/parameter[name = 'from']/value"/>
+				<xsl:param name="until" select="doc('input:request')/request/parameters/parameter[name = 'until']/value"/>
 				<xsl:param name="set" select="if (string-length($resumptionToken) &gt; 0) then tokenize($resumptionToken, ':')[1] else doc('input:request')/request/parameters/parameter[name = 'set']/value"/>
-				
+
 				<xsl:param name="offset">
 					<xsl:choose>
 						<xsl:when test="string-length($resumptionToken) &gt; 0">
@@ -36,6 +38,21 @@
 						<xsl:otherwise>0</xsl:otherwise>
 					</xsl:choose>
 				</xsl:param>
+				
+				<xsl:variable name="filter">
+					<!--FILTER (?mod >= xsd:dateTime("2017-02-10T00:00:00Z") && ?mod <= xsd:dateTime("2017-03-11T12:59:59Z"))-->
+					<xsl:choose>
+						<xsl:when test="$from castable as xs:date and not(string($until))">
+							<xsl:value-of select="concat('FILTER (?mod &gt;= xsd:dateTime(&#x022;', $from, 'T00:00:00Z&#x022;))')"/>
+						</xsl:when>
+						<xsl:when test="not(string($from)) and $until castable as xs:date">
+							<xsl:value-of select="concat('FILTER (?mod &lt;= xsd:dateTime(&#x022;', $until, 'T12:59:59Z&#x022;))')"/>
+						</xsl:when>
+						<xsl:when test="$from castable as xs:date and $until castable as xs:date">
+							<xsl:value-of select="concat('FILTER (?mod &gt;= xsd:dateTime(&#x022;', $from, 'T00:00:00Z&#x022;) &amp;&amp; ?mod &lt;= xsd:dateTime(&#x022;', $until, 'T12:59:59Z&#x022;))')"/>
+						</xsl:when>						
+					</xsl:choose>
+				</xsl:variable>
 				
 				<!-- config variables -->
 				<xsl:variable name="limit" select="if ($set = 'primo-test') then '50' else /config/oai-pmh_limit"/>				
@@ -48,7 +65,7 @@ PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
-PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
 PREFIX vcard:	<http://www.w3.org/2006/vcard/ns#>
 PREFIX arch:	<http://purl.org/archival/vocab/arch#>
 PREFIX nwda:	<https://github.com/Orbis-Cascade-Alliance/nwda-editor#>
@@ -62,12 +79,12 @@ DESCRIBE * WHERE {
          ?agg a ore:Aggregation ;
                 edm:isShownAt ?cho ;
                 prov:generatedAtTime ?mod;
-                doap:audience "primo" }         
+                doap:audience "primo" %FILTER%}         
        }
 } ORDER BY DESC(?mod) OFFSET %OFFSET% LIMIT %LIMIT% ]]>
 				</xsl:variable>
 	
-				<xsl:variable name="service" select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%LIMIT%', $limit), '%OFFSET%', $offset)), '&amp;output=xml')"/>					
+				<xsl:variable name="service" select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace(replace($query, '%LIMIT%', $limit), '%OFFSET%', $offset), '%FILTER%', $filter)), '&amp;output=xml')"/>					
 				
 
 				<xsl:template match="/">
