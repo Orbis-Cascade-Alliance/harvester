@@ -8,6 +8,7 @@
 
 	<!-- request params -->
 	<xsl:param name="page" select="doc('input:request')/request/parameters/parameter[name='page']/value"/>
+	<xsl:param name="numFound" select="doc('input:numFound')/descendant::res:binding[@name='numFound']/res:literal"/>
 	<xsl:param name="limit" as="xs:integer">10</xsl:param>
 	<xsl:variable name="offset">
 		<xsl:choose>
@@ -20,7 +21,7 @@
 	
 
 	<xsl:template match="/">
-		<xsl:variable name="numFound" select="descendant::res:binding[@name='numFound']/res:literal"/>
+		
 		<xsl:variable name="last" select="ceiling($numFound div $limit)"/>
 		<xsl:variable name="next" select="($offset div $limit) + 2"/>
 
@@ -38,7 +39,7 @@
 			<author>
 				<name>Orbis Cascade Alliance</name>
 			</author>
-			<xsl:apply-templates select="descendant::res:sparql[2]//res:result" mode="entry"/>
+			<xsl:apply-templates select="descendant::res:result" mode="entry"/>
 		</feed>
 
 	</xsl:template>

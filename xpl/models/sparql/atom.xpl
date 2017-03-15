@@ -27,10 +27,10 @@
 				<xsl:variable name="sparql_endpoint" select="/config/sparql/query"/>
 				<xsl:variable name="query">
 					<![CDATA[ PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX dpla:	<http://dp.la/terms/>
 
 SELECT (count(?s) as ?numFound) WHERE {
-?s dcterms:title ?title
+?s a dpla:SourceResource
 }]]>
 				</xsl:variable>
 				
@@ -79,7 +79,7 @@ PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
 SELECT ?cho ?title ?repository ?description ?modified ?thumbnail WHERE {
   ?cho a dpla:SourceResource ;
         dcterms:title ?title ;
-        dcterms:relation ?repository .
+        dcterms:isPartOf ?repository .
   OPTIONAL {?cho dcterms:description ?description}
   ?agg edm:aggregatedCHO ?cho ;
        dcterms:modified ?modified .
@@ -124,7 +124,8 @@ OFFSET %OFFSET%]]>
 	</p:processor>
 	
 	<p:processor name="oxf:identity">
-		<p:input name="data" href="aggregate('content', #numFound, #results)"/>
+		<p:input name="numFound" href="#numFound"/>
+		<p:input name="data" href="#results"/>
 		<p:output name="data" ref="data"/>
 	</p:processor>
 </p:config>
