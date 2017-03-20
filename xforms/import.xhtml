@@ -816,7 +816,33 @@ rdfs:label ?label
 							<h2><xforms:output ref="instance('oai-set')//oai:set[oai:setSpec = instance('control-instance')/oai-set-code]/oai:setName"/></h2>
 							<h3><xforms:load ev:event="DOMActivate" resource="{instance('set')/set}" show="new"/></h3>
 							<h3>Optimal Enrichment</h3>
-							<xforms:group ref="instance('control-instance')/normalization">
+							<xforms:group ref="instance('control-instance')/normalization">								
+								<div>
+									<h4>Creators</h4>
+									<xforms:select1 ref="creators" appearance="full">
+										<xforms:item>
+											<xforms:label>I do not want to enrich creator metadata</xforms:label>
+											<xforms:value value="false()"/>
+										</xforms:item>
+										<xforms:item>
+											<xforms:label>I want to enrich creator metadata</xforms:label>
+											<xforms:value value="true()"/>
+										</xforms:item>
+									</xforms:select1>
+								</div>
+								<div>
+									<h4>Contributors</h4>
+									<xforms:select1 ref="contributors" appearance="full">
+										<xforms:item>
+											<xforms:label>I do not want to enrich contributor metadata</xforms:label>
+											<xforms:value value="false()"/>
+										</xforms:item>
+										<xforms:item>
+											<xforms:label>I want to enrich contributor metadata</xforms:label>
+											<xforms:value value="true()"/>
+										</xforms:item>
+									</xforms:select1>
+								</div>
 								<div>
 									<h4>Types</h4>
 									<xforms:select1 ref="types" appearance="full">
@@ -830,33 +856,6 @@ rdfs:label ?label
 										</xforms:item>
 									</xforms:select1>
 								</div>
-								<div>
-									<h4>Creators</h4>
-									<xforms:select1 ref="types" appearance="full">
-										<xforms:item>
-											<xforms:label>I do not want to enrich type metadata</xforms:label>
-											<xforms:value value="false()"/>
-										</xforms:item>
-										<xforms:item>
-											<xforms:label>I want to enrich type metadata</xforms:label>
-											<xforms:value value="true()"/>
-										</xforms:item>
-									</xforms:select1>
-								</div>
-								<div>
-									<h4>Contributors</h4>
-									<xforms:select1 ref="types" appearance="full">
-										<xforms:item>
-											<xforms:label>I do not want to enrich type metadata</xforms:label>
-											<xforms:value value="false()"/>
-										</xforms:item>
-										<xforms:item>
-											<xforms:label>I want to enrich type metadata</xforms:label>
-											<xforms:value value="true()"/>
-										</xforms:item>
-									</xforms:select1>
-								</div>
-
 								<!-- places commented out for now -->
 								<!--<div>
 									<h4>Places</h4>
@@ -920,12 +919,6 @@ rdfs:label ?label
 											<!-- get the OAI-PMH feed -->
 											<xforms:setvalue ref="instance('control-instance')/oai-service" value="normalize-space(instance('set')/set)"/>
 											<xforms:send submission="get-oai-pmh"/>
-											<!-- populate total and error count -->
-											<xforms:setvalue ref="instance('control-instance')/validation/total-count"
-												value="count(instance('validation')/record)"/>
-											<xforms:setvalue ref="instance('control-instance')/validation/error-count"
-												value="count(instance('validation')/record[error])"/>
-
 											<xforms:toggle case="validation-results"/>
 										</xforms:action>
 									</xforms:trigger>
@@ -974,7 +967,7 @@ rdfs:label ?label
 								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
 								<div>
 									<h3>Match Creators to VIAF</h3>
-									<!-- display XBL components for AAT lookups -->
+									<!-- display XBL components for VIAF lookups -->
 									<xforms:group ref=".[count(creator) &gt; 0]">
 										<xforms:repeat nodeset="xxforms:sort(creator, ., 'text', 'ascending')">
 											<harvester:agent/>
@@ -1010,7 +1003,7 @@ rdfs:label ?label
 								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
 								<div>
 									<h3>Match Contributors to VIAF</h3>
-									<!-- display XBL components for AAT lookups -->
+									<!-- display XBL components for VIAF lookups -->
 									<xforms:group ref=".[count(contributor) &gt; 0]">
 										<xforms:repeat nodeset="xxforms:sort(contributor, ., 'text', 'ascending')">
 											<harvester:agent/>
@@ -1046,7 +1039,7 @@ rdfs:label ?label
 								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
 								<div>
 									<h3>Match places to Geonames</h3>
-									<!-- display XBL components for AAT lookups -->
+									<!-- display XBL components for Geonames lookups -->
 									<xforms:group ref=".[count(place) &gt; 0]">
 										<xforms:repeat nodeset="xxforms:sort(place, ., 'text', 'ascending')">
 											<harvester:place/>

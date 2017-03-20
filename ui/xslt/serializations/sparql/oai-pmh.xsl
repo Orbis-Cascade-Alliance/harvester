@@ -297,10 +297,43 @@
 			<xsl:value-of select="tokenize(@rdf:resource, '/')[last()]"/>
 		</dc:type>
 	</xsl:template>
+	
+	<xsl:template match="dcterms:creator|dcterms:contributor">
+		<xsl:variable name="element" select="local-name()"/>
+		<xsl:element name="dc:{$element}" namespace="http://purl.org/dc/elements/1.1/">
+			<xsl:choose>
+				<xsl:when test="@rdf:resource">
+					<xsl:value-of select="@rdf:resource"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="."/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:element>
+		
+		
+		<!-- strip dates for a text-only value -->
+		<xsl:if test="string-length(text()) &gt; 0">
+			<xsl:analyze-string select="text()" regex="(.*),\s\d{{4}}">
+				<xsl:matching-substring>
+					<xsl:element name="dc:{$element}.undated" namespace="http://purl.org/dc/elements/1.1/">
+						<xsl:value-of select="regex-group(1)"/>
+					</xsl:element>					
+				</xsl:matching-substring>
+			</xsl:analyze-string>
+		</xsl:if>
+	</xsl:template>
 
 	<xsl:template match="edm:hasType">
 		<dc:genre>
-			<xsl:value-of select="."/>
+			<xsl:choose>
+				<xsl:when test="@rdf:resource">
+					<xsl:value-of select="@rdf:resource"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="."/>
+				</xsl:otherwise>
+			</xsl:choose>
 		</dc:genre>
 	</xsl:template>
 
