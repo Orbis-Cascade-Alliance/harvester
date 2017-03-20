@@ -59,10 +59,10 @@
 											<xforms:label>VIAF</xforms:label>
 											<xforms:value>viaf</xforms:value>
 										</xforms:item>
-										<xforms:item>
+										<!--<xforms:item>
 											<xforms:label>SNAC</xforms:label>
 											<xforms:value>snac</xforms:value>
-										</xforms:item>
+										</xforms:item>-->
 										<xforms:item>
 											<xforms:label>Ignore</xforms:label>
 											<xforms:value>ignore</xforms:value>

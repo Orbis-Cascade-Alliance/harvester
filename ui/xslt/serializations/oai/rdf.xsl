@@ -27,11 +27,18 @@
 	<!-- request parameters -->
 	<xsl:param name="mode" select="doc('input:request')/request/parameters/parameter[name = 'mode']/value"/>
 	<xsl:param name="output" select="doc('input:request')/request/parameters/parameter[name = 'output']/value"/>
-	<xsl:param name="repository" select="/content/controls/repository"/>
-	<xsl:param name="set" select="/content/controls/set"/>
-	<xsl:param name="ark" select="/content/controls/ark"/>
-	<xsl:param name="target" select="/content/controls/target"/>
-	<xsl:param name="rightsStatement" select="/content/controls/rights"/>
+	<xsl:param name="set" select="normalize-space(doc('input:request')/request/parameters/parameter[name='sets']/value)"/>
+	<xsl:param name="repository" select="doc('input:request')/request/parameters/parameter[name='repository']/value"/>
+	<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
+	<xsl:param name="target" select="doc('input:request')/request/parameters/parameter[name='target']/value"/>
+	<xsl:param name="rightsStatement" select="doc('input:request')/request/parameters/parameter[name='rights']/value"/>
+	<xsl:param name="rightsText" select="doc('input:request')/request/parameters/parameter[name='rightsText']/value"/>
+	<xsl:param name="type" select="doc('input:request')/request/parameters/parameter[name='type']/value"/>
+	<xsl:param name="format" select="doc('input:request')/request/parameters/parameter[name='format']/value"/>
+	<xsl:param name="genre" select="doc('input:request')/request/parameters/parameter[name='genre']/value"/>
+	<xsl:param name="language" select="doc('input:request')/request/parameters/parameter[name='language']/value"/>
+	
+	<!-- config variables -->
 	<xsl:param name="url" select="/content/config/url"/>
 	<xsl:param name="production_server" select="/content/config/production_server"/>
 	<xsl:param name="sparql_endpoint" select="/content/config/vocab_sparql/query"/>
@@ -382,20 +389,18 @@ rdfs:label ?label
 
 	<!-- parse rights. Always include textual statement if available -->
 	<xsl:template match="dc:rights">
-		<xsl:for-each select="tokenize(., ';')[1]">
-			<xsl:choose>
-				<xsl:when test="matches(., '^https?://') and not(string($rightsStatement))">
-					<dcterms:rights>
-						<xsl:attribute name="rdf:resource" select="normalize-space(.)"/>
-					</dcterms:rights>
-				</xsl:when>
-				<xsl:otherwise>
-					<dcterms:rights>
-						<xsl:value-of select="harvester:cleanText(normalize-space(.), 'rights')"/>
-					</dcterms:rights>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:for-each>
+		<xsl:choose>
+			<xsl:when test="matches(., '^https?://') and not(contains(., ' ')) and not(string($rightsStatement))">
+				<dcterms:rights>
+					<xsl:attribute name="rdf:resource" select="normalize-space(.)"/>
+				</dcterms:rights>
+			</xsl:when>
+			<xsl:otherwise>
+				<dcterms:rights>
+					<xsl:value-of select="harvester:cleanText(normalize-space(.), 'rights')"/>
+				</dcterms:rights>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<!-- evaluate languages, ensure they are valid to xs:lanugate -->

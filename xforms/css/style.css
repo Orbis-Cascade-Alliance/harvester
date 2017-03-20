@@ -14,7 +14,7 @@
 .orbeon .xforms-select1-appearance-full .xforms-label {
 	vertical-align: top
 }
-.orbeon .xforms-input input, .orbeon .xforms-secret input, .orbeon .xforms-textarea textarea, .orbeon .xforms-select1 select {
+.orbeon .xforms-input input[type=text], .orbeon .xforms-textarea textarea, .orbeon .xforms-select1 select {
 	width: 20em;
 	margin-bottom: 2px;
 }
@@ -59,12 +59,6 @@
 .xbl-component {
 	margin:5px 0;
 }
-.short-input select {
-	width:25px;
-}
-.orbeon .xforms-input input[type=checkbox] {
-	width:5em;
-}
 /*
   ****************************************
   LAYOUT
@@ -76,10 +70,12 @@
 	text-align:center;
 	width:50%;
 }
-.alert {
+.alert-box {
 	width:50%;
 	margin:20px auto;
 	padding:5px;
+	border-radius: 4px;
+	border: 1px solid gray;
 }
 .subsection {
 	margin-bottom:20px;
