@@ -132,9 +132,9 @@
 		</omeka>
 		<oregondigital>
 			<repository pattern="oregondigital">oru</repository>
+			<repository pattern="oregondigital">orcs</repository>
 		</oregondigital>
 		<other>			
-			<repository>orcs</repository>
 			<repository note="some other contentdm">orsaw</repository>
 		</other>
 	</dams>
