@@ -25,6 +25,8 @@ function expand() {
         function (data) {
             ORBEON.jQuery('.' + container).html(data);
             ORBEON.jQuery('.' + container).removeClass('hidden');
+        }).fail(function (){
+            alert("Error requesting page " + service);
         });
     } else {
         if (ORBEON.jQuery('.' + container).hasClass('hidden')) {

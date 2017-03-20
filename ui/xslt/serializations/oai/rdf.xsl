@@ -95,7 +95,7 @@ rdfs:label ?label
 			xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:doap="http://usefulinc.com/ns/doap#">
 
 			<!-- generate triples for describing the set, but not for GetRecord -->
-			<xsl:if test="not($output = 'ajax')">
+			<xsl:if test="not(contains($set, 'GetRecord'))">
 				<xsl:variable name="setNode" as="element()*">
 					<xsl:copy-of select="document(concat($oai_service, '?verb=ListSets'))//oai:set[oai:setSpec=$setSpec]"/>
 				</xsl:variable>
@@ -297,7 +297,7 @@ rdfs:label ?label
 		SPECIFIC DUBLIC CORE ELEMENT TEMPLATES MUST COME BEFORE THE GENERIC DC:* TEMPLATE
 		 ******-->
 	<!-- RDF date/date range parsing -->
-	<xsl:template match="dc:date">
+	<xsl:template match="dc:date">		
 		<xsl:choose>
 			<xsl:when test="contains(., ';')">
 				<!-- only accept first year value when they are joined by semicolons -->
@@ -344,7 +344,7 @@ rdfs:label ?label
 					</xsl:if>
 				</xsl:if>
 			</xsl:when>
-			<xsl:when test="contains(., '-')">
+			<xsl:when test="matches(., '\d{4}\s?-\s?\d{4}')">
 				<xsl:variable name="date-tokens" select="tokenize(., '-')"/>
 				
 				<!-- only process if there is a definite date range -->

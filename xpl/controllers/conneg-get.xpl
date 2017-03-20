@@ -248,7 +248,7 @@ SELECT ?cho ?title ?repo_uri ?repository ?description ?date ?thumbnail ?depictio
 	<p:choose href="#url-data-checked">
 		<p:when test="//*/@status-code != '200'">
 			<p:processor name="oxf:pipeline">
-				<p:input name="data" href="#url-data"/>
+				<p:input name="data" href="#url-data-checked"/>
 				<p:input name="config" href="error.xpl"/>
 				<p:output name="data" ref="data"/>
 			</p:processor>

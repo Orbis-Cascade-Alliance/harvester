@@ -42,14 +42,36 @@
 	<!-- get OAI-PMH feed -->
 	<p:processor name="oxf:url-generator">
 		<p:input name="config" href="#url-generator-config"/>
-		<p:output name="data" id="oai-pmh"/>
+		<p:output name="data" id="url-data"/>
 	</p:processor>
-
-	<!-- execute XSLT transformation from OAI to RDF/XML -->
-	<p:processor name="oxf:pipeline">
-		<p:input name="data" href="#oai-pmh"/>
-		<p:input name="request" href="#request"/>
-		<p:input name="config" href="../views/serializations/oai/rdf.xpl"/>
-		<p:output name="data" ref="data"/>
+	
+	<!-- validate for well-formedness of XML response -->
+	<p:processor name="oxf:exception-catcher">
+		<p:input name="data" href="#url-data"/>
+		<p:output name="data" id="url-data-checked"/>
 	</p:processor>
+	
+	<p:choose href="#url-data-checked">
+		<p:when test="/exceptions">
+			<p:processor name="oxf:pipeline">
+				<p:input name="data" href="#url-data-checked"/>
+				<p:input name="config" href="error.xpl"/>
+				<p:output name="data" ref="data"/>
+			</p:processor>
+		</p:when>
+		<p:otherwise>
+			<p:processor name="oxf:identity">
+				<p:input name="data" href="#url-data-checked"/>
+				<p:output name="data" id="model"/>
+			</p:processor>
+			
+			<!-- execute XSLT transformation from OAI to RDF/XML -->
+			<p:processor name="oxf:pipeline">
+				<p:input name="data" href="#model"/>
+				<p:input name="request" href="#request"/>
+				<p:input name="config" href="../views/serializations/oai/rdf.xpl"/>
+				<p:output name="data" ref="data"/>
+			</p:processor>
+		</p:otherwise>
+	</p:choose>
 </p:pipeline>
