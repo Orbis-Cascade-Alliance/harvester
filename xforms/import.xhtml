@@ -611,7 +611,7 @@ rdfs:label ?label
 					<xforms:group ref=".[string-length(instance('control-instance')/error) &gt; 0]">
 						<div class="bg-danger alert-box">
 							<span class="glyphicon glyphicon-exclamation-sign"></span>
-							<strong>Alert:</strong> Definition languages must be unique. </div>
+							<strong>Alert:</strong> <xforms:output ref="instance('control-instance')/error"/>. </div>
 					</xforms:group>
 				</div>
 			</div>
@@ -685,7 +685,7 @@ rdfs:label ?label
 														<!-- get set -->
 														<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
 														<xforms:setvalue ref="instance('control-instance')/oai-set-code"
-															value="substring-after($params[contains(., 'set=')][1], '=')"/>
+															value="substring-after($params[starts-with(., 'set=')][1], '=')"/>
 														<xforms:setvalue ref="instance('control-instance')/oai-service"
 															value="concat(substring-before(instance('set')/set, '?'), '?verb=ListSets')"/>
 														<xforms:send submission="get-oai-set"/>
@@ -708,7 +708,7 @@ rdfs:label ?label
 														<!-- get set -->
 														<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
 														<xforms:setvalue ref="instance('control-instance')/oai-set-code"
-															value="substring-after($params[contains(., 'set=')][1], '=')"/>
+															value="substring-after($params[starts-with(., 'set=')][1], '=')"/>
 														<xforms:setvalue ref="instance('control-instance')/oai-service"
 															value="concat(substring-before(instance('set')/set, '?'), '?verb=ListSets')"/>
 														<xforms:send submission="get-oai-set"/>
@@ -727,7 +727,7 @@ rdfs:label ?label
 														<!-- get set -->
 														<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
 														<xforms:setvalue ref="instance('control-instance')/oai-set-code"
-															value="substring-after($params[contains(., 'set=')][1], '=')"/>
+															value="substring-after($params[starts-with(., 'set=')][1], '=')"/>
 														<xforms:setvalue ref="instance('control-instance')/oai-service"
 															value="concat(substring-before(instance('set')/set, '?'), '?verb=ListSets')"/>
 														<xforms:send submission="get-oai-set"/>
