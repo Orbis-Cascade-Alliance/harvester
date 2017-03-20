@@ -598,7 +598,7 @@ rdfs:label ?label
 		<xsl:param name="rights"/>
 
 
-
+		<!-- process by default DAMS -->
 		<xsl:choose>
 			<xsl:when test="$dams = 'contentdm-default'">
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}">
@@ -612,6 +612,20 @@ rdfs:label ?label
 					</xsl:if>
 				</edm:WebResource>
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}">
+					<xsl:if test="string-length($content-type) &gt; 0">
+						<dcterms:format>
+							<xsl:value-of select="$content-type"/>
+						</dcterms:format>
+					</xsl:if>
+					<xsl:if test="string($rights)">
+						<edm:rights rdf:resource="{$rights}"/>
+					</xsl:if>
+				</edm:WebResource>
+			</xsl:when>
+			<xsl:when test="$dams='oregondigital'">
+				<xsl:variable name="filename" select="concat(substring-after(tokenize($cho_uri, '/')[last()], ':'), '.jpg')"/>
+				
+				<edm:WebResource rdf:about="http://oregondigital.org/thumbnails/oregondigital-{$filename}">
 					<xsl:if test="string-length($content-type) &gt; 0">
 						<dcterms:format>
 							<xsl:value-of select="$content-type"/>
@@ -654,6 +668,7 @@ rdfs:label ?label
 				</xsl:if>
 			</xsl:when>
 			<xsl:otherwise>
+				<!-- individual repository logic -->
 				<xsl:choose>
 					<xsl:when test="$repository = 'orphs'">
 						<xsl:if test="dc:identifier[matches(., '.jpg$')]">
@@ -718,6 +733,11 @@ rdfs:label ?label
 				<xsl:if test="dc:identifier[contains(., 'files/original')]">
 					<edm:object rdf:resource="{dc:identifier[contains(., 'files/original')]}"/>
 				</xsl:if>
+			</xsl:when>
+			<xsl:when test="$dams='oregondigital'">
+				<xsl:variable name="filename" select="concat(substring-after(tokenize($cho_uri, '/')[last()], ':'), '.jpg')"/>
+				
+				<edm:preview rdf:resource="http://oregondigital.org/thumbnails/oregondigital-{$filename}"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:choose>

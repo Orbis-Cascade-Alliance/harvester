@@ -130,9 +130,9 @@
 			<repository>orpl</repository>
 			<repository pattern="oai-pmh-repository">orphs</repository>
 		</omeka>
-		<hydra>
+		<oregondigital>
 			<repository pattern="oregondigital">oru</repository>
-		</hydra>
+		</oregondigital>
 		<other>			
 			<repository>orcs</repository>
 			<repository note="some other contentdm">orsaw</repository>
