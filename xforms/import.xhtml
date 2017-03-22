@@ -33,6 +33,9 @@
 					<sparql-service></sparql-service>
 					<admin>false</admin>
 					<initial-page>true</initial-page>
+					<uri/>
+					<search-results/>
+					<definition/>
 					<remediation>
 						<rights>false</rights>
 						<type>false</type>
@@ -110,6 +113,8 @@
 					<type value="Text">Text</type>
 				</types>
 			</xforms:instance>
+
+			<xforms:instance id="languages" src="oxf:/apps/harvester/xforms/instances/languages.xml"/>
 
 			<!-- instances for REST interactions -->
 			<xforms:instance id="oai-response" xxforms:exclude-result-prefixes="#all">
@@ -206,6 +211,18 @@ rdf:type TYPE;
 skos:exactMatch ?uri ;
 rdfs:label ?label
 }]]></query>
+					<query id="query-getty"><![CDATA[PREFIX gvp: <http://vocab.getty.edu/ontology#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX luc: <http://www.ontotext.com/owlim/lucene#>
+PREFIX aat: <http://vocab.getty.edu/aat/>
+SELECT ?c ?label ?def WHERE {
+?c a gvp:Concept ;
+skos:inScheme aat: ;
+gvp:prefLabelGVP/xl:literalForm ?label ;
+luc:term "SEARCH_QUERY" FILTER langMatches(lang(?label), "en")
+OPTIONAL {?c skos:scopeNote ?note .
+?note rdf:value ?def FILTER langMatches(lang(?def), "en")}} LIMIT 20]]>
+					</query>
 				</queries>
 			</xforms:instance>
 
@@ -219,6 +236,10 @@ rdfs:label ?label
 
 			<xforms:instance id="sparqlResponse" xxforms:exclude-result-prefixes="#all">
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
+			</xforms:instance>
+			
+			<xforms:instance id="search-query">
+				<query></query>
 			</xforms:instance>
 
 			<!-- lists for controlled vocabulary normalization -->
@@ -244,6 +265,11 @@ rdfs:label ?label
 			</xforms:instance>
 
 			<xforms:instance id="agent-vocabs" xxforms:exclude-result-prefixes="#all">
+				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
+			</xforms:instance>
+			
+			<!-- getty vocabs -->
+			<xforms:instance id="getty-response" xxforms:exclude-result-prefixes="#all">
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
 			</xforms:instance>
 
@@ -475,7 +501,7 @@ rdfs:label ?label
 
 			<!-- get the RDF through the administrative getRDF API -->
 			<xforms:submission id="get-rdf" serialization="none" method="get"
-				action="/harvester/admin/getRDF?sets={encode-for-uri(normalize-space(instance('set')/set))}&amp;repository={instance('set')/repository}&amp;rights={instance('set')/rights}&amp;target={instance('set')/target}"
+				action="/harvester/admin/getRDF?sets={encode-for-uri(normalize-space(instance('set')/set))}&amp;repository={instance('set')/repository}&amp;rights={instance('set')/rights}&amp;rightsText={instance('set')/rightsText}&amp;target={instance('set')/target}&amp;genre={encode-for-uri(instance('set')/genre)}&amp;format={instance('set')/format}&amp;language={instance('set')/language}&amp;type={instance('set')/type}"
 				replace="instance" instance="rdf">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get RDF</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
@@ -519,6 +545,30 @@ rdfs:label ?label
 				serialization="text/plain" replace="none" method="post" mediatype="application/sparql-update">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
+				</xforms:action>
+			</xforms:submission>
+
+			<!-- query the getty vocabularies for genres -->
+			<xforms:submission id="query-getty" action="http://vocab.getty.edu/sparql?query={encode-for-uri(instance('sparqlQuery'))}"
+				ref="instance('getty-response')" replace="instance" method="get">
+				<xforms:header>
+					<xforms:name>User-Agent</xforms:name>
+					<xforms:value>XForms/harvester.orbiscascade.org</xforms:value>
+				</xforms:header>
+				<xforms:header>
+					<xforms:name>Accept</xforms:name>
+					<xforms:value>application/sparql-results+xml</xforms:value>
+				</xforms:header>
+				<xforms:message ev:event="xforms-submit-error" level="modal">
+					<!--SPARQL query failed.-->
+					<xforms:output value="event('response-headers')"/>
+				</xforms:message>
+				<!-- set the search results text -->
+				<xforms:action ev:event="xforms-submit-done">
+					<xforms:var name="total" select="count(instance('getty-response')//res:result)"/>
+					<xforms:setvalue if="$total = 0" ref="instance('control-instance')/search-results)">No results found for query.</xforms:setvalue>
+					<xforms:setvalue if="$total &gt; 0 and $total &lt;= 20" ref="instance('control-instance')/search-results)" value="concat('Displaying ', $total, ' result(s).')"/>
+					<xforms:setvalue if="$total &gt; 20" ref="instance('control-instance')/search-results)" value="concat('Displaying first 20 of ', $total, ' result(s).')"/>
 				</xforms:action>
 			</xforms:submission>
 
@@ -765,14 +815,156 @@ rdfs:label ?label
 							</h3>
 							<xforms:group ref="instance('control-instance')/remediation">
 								<div>
-									<h4>Rights</h4>
-									<xforms:select1 ref="rights" appearance="full">
+									<h4>Genre</h4>
+									<xforms:select1 ref="genre" appearance="full">
 										<xforms:item>
-											<xforms:label>I do not need to apply the same rights statement to every item in the OAI set</xforms:label>
+											<xforms:label>I do not want to apply the same genre to every record in this set</xforms:label>
 											<xforms:value value="false()"/>
 										</xforms:item>
 										<xforms:item>
-											<xforms:label>I need to apply the same rights statement to all objects in this OAI set. I would like to apply:</xforms:label>
+											<xforms:label>I want to apply the same genre to all records in this set. I would like to apply:</xforms:label>
+											<xforms:value value="true()"/>
+										</xforms:item>
+									</xforms:select1>
+									<xforms:group ref=".[genre = true()]">
+										<div>
+											<!-- display Getty AAT lookup mechanism -->
+											<xforms:group ref=".[string-length(instance('set')/genre) = 0]">
+												<xforms:input ref="instance('search-query')"/>
+												<xforms:trigger>
+													<xforms:action ev:event="DOMActivate">
+														<xforms:var name="search_query" select="string-join(tokenize(instance('search-query'), ' '), ' AND ')"/>
+														<xforms:setvalue ref="instance('sparqlQuery')"
+															value="normalize-space(replace(instance('sparqlQuery-templates')/query[@id='query-getty'], 'SEARCH_QUERY', $search_query))"/>
+														<xforms:send submission="query-getty"/>
+													</xforms:action>
+													<xforms:label>Search</xforms:label>
+												</xforms:trigger>
+												<xforms:group ref=".[string-length(instance('control-instance')/search-results)] &gt; 0">
+													<p class="text-muted">
+														<xforms:output ref="instance('control-instance')/search-results)"/>
+													</p>
+												</xforms:group>
+												<xforms:group ref=".[count(instance('getty-response')//res:result) &gt; 0]">
+													<xforms:select1 ref="instance('control-instance')/uri" appearance="compact" length="20">
+														<xforms:label>Term</xforms:label>
+														<xforms:itemset nodeset="instance('getty-response')//res:result">
+															<xforms:label ref="res:binding[@name='label']/res:literal"/>
+															<xforms:value ref="res:binding[@name='c']/res:uri"/>
+														</xforms:itemset>
+														
+														<!-- update the scopeNote on value-changed -->
+														<xforms:setvalue ref="instance('control-instance')/definition" value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri =
+															instance('control-instance')/uri]/res:binding[@name='def']/res:literal" ev:event="xforms-value-changed"/>
+													</xforms:select1>
+													<xforms:trigger>
+														<xforms:label>Select</xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<!-- set @uri, which switches to other interface -->
+															<xforms:setvalue ref="instance('set')/genre" value="instance('control-instance')/uri"/>
+														</xforms:action>
+													</xforms:trigger>
+													
+													<xforms:group ref="instance('control-instance')[string-length(definition) &gt; 0]">
+														<div>
+															<xforms:output ref="definition">
+																<xforms:label>Definition</xforms:label>
+															</xforms:output>
+															<xforms:trigger appearance="minimal">
+																<xforms:label><span class="glyphicon glyphicon-new-window"/></xforms:label>
+																<xforms:hint ref="uri"/>
+																<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
+															</xforms:trigger>
+														</div>
+													</xforms:group>
+												</xforms:group>
+											</xforms:group>
+											
+											<!-- and display removal if applicable -->
+											<xforms:group ref=".[string-length(instance('set')/genre) &gt; 0]">
+												<xforms:trigger appearance="minimal">
+													<xforms:label><xforms:output ref="instance('set')/genre"/> <span class="glyphicon glyphicon-new-window"/></xforms:label>							
+													<xforms:load ev:event="DOMActivate" resource="{instance('set')/genre}" show="new"/>
+												</xforms:trigger>
+												<xforms:trigger appearance="minimal">
+													<xforms:label><span class="glyphicon glyphicon-remove"/></xforms:label>
+													<xforms:action ev:event="DOMActivate">
+														<!-- set the @uri value to empty to show the lookup mechanism again and reset all relevant values -->
+														<xforms:setvalue ref="instance('set')/genre"/>
+														<xforms:setvalue ref="instance('control-instance')/uri"/>
+														<xforms:setvalue ref="instance('control-instance')/definition"/>
+														<xforms:delete nodeset="instance('getty-response')/*"/>
+													</xforms:action>
+												</xforms:trigger>
+											</xforms:group>
+										</div>
+									</xforms:group>
+									<hr/>
+								</div>
+								<div>
+									<h4>Format</h4>
+									<xforms:select1 ref="format" appearance="full">
+										<xforms:item>
+											<xforms:label>I do not want to apply the same format to every record in this set</xforms:label>
+											<xforms:value value="false()"/>
+										</xforms:item>
+										<xforms:item>
+											<xforms:label>I want to apply the same format to all records in this set. I would like to apply:</xforms:label>
+											<xforms:value value="true()"/>
+										</xforms:item>
+									</xforms:select1>
+									<xforms:group ref=".[format = true()]">
+										<!--<xforms:select1 ref="instance('set')/format">
+											<xforms:label>Language</xforms:label>
+											<xforms:item>
+												<xforms:label>Select below...</xforms:label>
+												<xforms:value/>
+											</xforms:item>
+											<xforms:itemset nodeset="instance('languages')//language">
+												<xforms:label ref="name"/>
+												<xforms:value ref="code"/>
+											</xforms:itemset>
+										</xforms:select1>-->
+									</xforms:group>
+									<hr/>
+								</div>
+								<div>
+									<h4>Language</h4>
+									<xforms:select1 ref="language" appearance="full">
+										<xforms:item>
+											<xforms:label>I do not want to apply the same language to every record in this set</xforms:label>
+											<xforms:value value="false()"/>
+										</xforms:item>
+										<xforms:item>
+											<xforms:label>I want to apply the same language to all records in this set. I would like to apply:</xforms:label>
+											<xforms:value value="true()"/>
+										</xforms:item>
+									</xforms:select1>
+									<xforms:group ref=".[language = true()]">
+										<div>
+											<xforms:select1 ref="instance('set')/language">											
+												<xforms:item>
+													<xforms:label>Select below...</xforms:label>
+													<xforms:value/>
+												</xforms:item>
+												<xforms:itemset nodeset="instance('languages')//language">
+													<xforms:label ref="name"/>
+													<xforms:value ref="code"/>
+												</xforms:itemset>
+											</xforms:select1>
+										</div>										
+									</xforms:group>
+									<hr/>
+								</div>
+								<div>
+									<h4>Rights</h4>
+									<xforms:select1 ref="rights" appearance="full">
+										<xforms:item>
+											<xforms:label>I do not want to apply the same rights statement to every record in this set</xforms:label>
+											<xforms:value value="false()"/>
+										</xforms:item>
+										<xforms:item>
+											<xforms:label>I want to apply the same rights statement to all records in this set. I would like to apply:</xforms:label>
 											<xforms:value value="true()"/>
 										</xforms:item>
 									</xforms:select1>
@@ -782,7 +974,7 @@ rdfs:label ?label
 												<xforms:label>Rights Statement</xforms:label>
 												<xforms:hint>Optional standardized rights statement</xforms:hint>
 												<xforms:item>
-													<xforms:label>Select...</xforms:label>
+													<xforms:label>Select below...</xforms:label>
 													<xforms:value/>
 												</xforms:item>
 												<xforms:itemset nodeset="instance('rights-statements')//statement">
@@ -798,16 +990,17 @@ rdfs:label ?label
 											</xforms:textarea>
 										</div>
 									</xforms:group>
+									<hr/>
 								</div>
 								<div>
 									<h4>Type</h4>
 									<xforms:select1 ref="type" appearance="full">
 										<xforms:item>
-											<xforms:label>I do not need to apply the same type to every item in this OAI set</xforms:label>
+											<xforms:label>I do not want to apply the same type to every record in this set</xforms:label>
 											<xforms:value value="false()"/>
 										</xforms:item>
 										<xforms:item>
-											<xforms:label>I need to apply the same type to all objects in this set. I would like to apply:</xforms:label>
+											<xforms:label>I want to apply the same type to all records in this set. I would like to apply:</xforms:label>
 											<xforms:value value="true()"/>
 										</xforms:item>
 									</xforms:select1>
@@ -817,7 +1010,7 @@ rdfs:label ?label
 												<xforms:label>DCMI Type</xforms:label>
 												<xforms:hint>Type of resource according to Dublin Core Metadata Initiative controlled vocabulary</xforms:hint>
 												<xforms:item>
-													<xforms:label>Select...</xforms:label>
+													<xforms:label>Select below...</xforms:label>
 													<xforms:value/>
 												</xforms:item>
 												<xforms:itemset nodeset="instance('dcmi-types')//type">

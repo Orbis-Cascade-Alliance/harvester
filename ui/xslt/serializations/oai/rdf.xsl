@@ -14,30 +14,31 @@
                         image URLs.
 -->
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dpla="http://dp.la/terms/" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
-	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:edm="http://www.europeana.eu/schemas/edm/"
-	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/"
-	xmlns:prov="http://www.w3.org/ns/prov#" xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"
-	xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester" xmlns:digest="org.apache.commons.codec.digest.DigestUtils" xmlns:res="http://www.w3.org/2005/sparql-results#"
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dpla="http://dp.la/terms/"
+	xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:doap="http://usefulinc.com/ns/doap#"
+	xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester"
+	xmlns:digest="org.apache.commons.codec.digest.DigestUtils" xmlns:res="http://www.w3.org/2005/sparql-results#"
 	exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest res" version="2.0">
 	<xsl:output indent="yes" encoding="UTF-8"/>
 
 	<!-- request parameters -->
 	<xsl:param name="mode" select="doc('input:request')/request/parameters/parameter[name = 'mode']/value"/>
 	<xsl:param name="output" select="doc('input:request')/request/parameters/parameter[name = 'output']/value"/>
-	<xsl:param name="set" select="normalize-space(doc('input:request')/request/parameters/parameter[name='sets']/value)"/>
-	<xsl:param name="repository" select="doc('input:request')/request/parameters/parameter[name='repository']/value"/>
-	<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
-	<xsl:param name="target" select="doc('input:request')/request/parameters/parameter[name='target']/value"/>
-	<xsl:param name="rightsStatement" select="doc('input:request')/request/parameters/parameter[name='rights']/value"/>
-	<xsl:param name="rightsText" select="doc('input:request')/request/parameters/parameter[name='rightsText']/value"/>
-	<xsl:param name="type" select="doc('input:request')/request/parameters/parameter[name='type']/value"/>
-	<xsl:param name="format" select="doc('input:request')/request/parameters/parameter[name='format']/value"/>
-	<xsl:param name="genre" select="doc('input:request')/request/parameters/parameter[name='genre']/value"/>
-	<xsl:param name="language" select="doc('input:request')/request/parameters/parameter[name='language']/value"/>
-	
+	<xsl:param name="set" select="normalize-space(doc('input:request')/request/parameters/parameter[name = 'sets']/value)"/>
+	<xsl:param name="repository" select="doc('input:request')/request/parameters/parameter[name = 'repository']/value"/>
+	<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name = 'ark']/value"/>
+	<xsl:param name="target" select="doc('input:request')/request/parameters/parameter[name = 'target']/value"/>
+	<xsl:param name="rightsStatement" select="doc('input:request')/request/parameters/parameter[name = 'rights']/value"/>
+	<xsl:param name="rightsText" select="doc('input:request')/request/parameters/parameter[name = 'rightsText']/value"/>
+	<xsl:param name="type" select="doc('input:request')/request/parameters/parameter[name = 'type']/value"/>
+	<xsl:param name="format" select="doc('input:request')/request/parameters/parameter[name = 'format']/value"/>
+	<xsl:param name="genre" select="doc('input:request')/request/parameters/parameter[name = 'genre']/value"/>
+	<xsl:param name="language" select="doc('input:request')/request/parameters/parameter[name = 'language']/value"/>
+
 	<!-- config variables -->
 	<xsl:param name="url" select="/content/config/url"/>
 	<xsl:param name="production_server" select="/content/config/production_server"/>
@@ -63,27 +64,33 @@ rdf:type %TYPE%;
 skos:exactMatch ?uri ;
 rdfs:label ?label
 }]]></xsl:variable>
-	
-	<xsl:variable name="type-query" select="replace(replace($sparqlQuery-template, '%REPO%', $repository), '%TYPE%', 'skos:Concept')"/>
+
+	<xsl:variable name="genre-query" select="replace(replace($sparqlQuery-template, '%REPO%', $repository), '%TYPE%', 'skos:Concept')"/>
 	<xsl:variable name="agent-query" select="replace(replace($sparqlQuery-template, '%REPO%', $repository), '%TYPE%', 'edm:Agent')"/>
 	<xsl:variable name="place-query" select="replace(replace($sparqlQuery-template, '%REPO%', $repository), '%TYPE%', 'edm:Place')"/>
-	
-	<xsl:variable name="types" as="node()*">
+
+	<xsl:variable name="genres" as="node()*">
 		<types>
-			<xsl:copy-of select="document(concat($sparql_endpoint, '?query=', encode-for-uri($type-query), '&amp;output=xml'))//res:result"/>
+			<xsl:copy-of select="document(concat($sparql_endpoint, '?query=', encode-for-uri($genre-query), '&amp;output=xml'))//res:result"/>
 		</types>
 	</xsl:variable>
-	
+
 	<xsl:variable name="agents" as="node()*">
 		<agents>
 			<xsl:copy-of select="document(concat($sparql_endpoint, '?query=', encode-for-uri($agent-query), '&amp;output=xml'))//res:result"/>
 		</agents>
 	</xsl:variable>
-	
+
 	<xsl:variable name="places" as="node()*">
 		<places>
 			<xsl:copy-of select="document(concat($sparql_endpoint, '?query=', encode-for-uri($place-query), '&amp;output=xml'))//res:result"/>
 		</places>
+	</xsl:variable>
+
+	<xsl:variable name="languages" as="element()*">
+		<languages>
+			<xsl:copy-of select="document('oxf:/apps/harvester/xforms/instances/languages.xml')//language"/>
+		</languages>
 	</xsl:variable>
 
 	<xsl:variable name="dams" select="/content/config/dams//repository[. = $repository][contains($set, @pattern)]/parent::node()/name()"/>
@@ -91,15 +98,16 @@ rdfs:label ?label
 	<xsl:template match="/">
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
 			xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
-			xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:dcmitype="http://purl.org/dc/dcmitype/"
-			xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:doap="http://usefulinc.com/ns/doap#">
+			xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#"
+			xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+			xmlns:doap="http://usefulinc.com/ns/doap#">
 
 			<!-- generate triples for describing the set, but not for GetRecord -->
 			<xsl:if test="not(contains($set, 'GetRecord'))">
 				<xsl:variable name="setNode" as="element()*">
-					<xsl:copy-of select="document(concat($oai_service, '?verb=ListSets'))//oai:set[oai:setSpec=$setSpec]"/>
+					<xsl:copy-of select="document(concat($oai_service, '?verb=ListSets'))//oai:set[oai:setSpec = $setSpec]"/>
 				</xsl:variable>
-				
+
 				<dcmitype:Collection rdf:about="{$set}">
 					<dcterms:title>
 						<xsl:value-of select="$setNode/oai:setName"/>
@@ -126,7 +134,7 @@ rdfs:label ?label
 			<xsl:if test="not($mode = 'test')">
 				<xsl:if test="descendant::oai:resumptionToken[string-length(normalize-space(.)) &gt; 0]">
 					<xsl:call-template name="recurse">
-						<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>						
+						<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>
 					</xsl:call-template>
 				</xsl:if>
 			</xsl:if>
@@ -146,7 +154,7 @@ rdfs:label ?label
 		<xsl:if test="not($mode = 'test') and not($mode = 'form')">
 			<xsl:if test="descendant::oai:resumptionToken">
 				<xsl:call-template name="recurse">
-					<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>					
+					<xsl:with-param name="token" select="descendant::oai:resumptionToken"/>
 				</xsl:call-template>
 			</xsl:if>
 		</xsl:if>
@@ -221,8 +229,29 @@ rdfs:label ?label
 			</dcterms:title>
 
 			<!-- apply generic DC templates -->
-			<xsl:apply-templates select="dc:date[1] | dc:type | dc:creator | dc:language | dc:contributor | dc:rights | dc:format | dc:subject | dc:extent | dc:temporal"/>
+			<xsl:apply-templates select="dc:date[1]| dc:creator | dc:contributor | dc:rights | dc:subject | dc:format | dc:extent | dc:temporal"/>
 
+			<!-- conditionals for parameters passed from remediation page -->
+			<xsl:if test="string($genre)">
+				<edm:hasType rdf:resource="{$genre}"/>
+			</xsl:if>
+			<xsl:if test="string($type)">
+				<dcterms:type rdf:resource="{concat('http://purl.org/dc/dcmitype/', $type)}"/>
+			</xsl:if>
+			<xsl:apply-templates select="dc:type"/>
+			
+			<xsl:choose>
+				<xsl:when test="string($language)">
+					<dcterms:language>
+						<xsl:value-of select="$language"/>
+					</dcterms:language>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates select="dc:language"/>
+				</xsl:otherwise>
+			</xsl:choose>
+
+			<!-- process spatial fields -->
 			<xsl:if test="*[contains(local-name(), '.lat')] and *[contains(local-name(), '.long')]">
 				<xsl:call-template name="place">
 					<xsl:with-param name="lat" select="*[contains(local-name(), '.lat')][1]"/>
@@ -297,7 +326,7 @@ rdfs:label ?label
 		SPECIFIC DUBLIC CORE ELEMENT TEMPLATES MUST COME BEFORE THE GENERIC DC:* TEMPLATE
 		 ******-->
 	<!-- RDF date/date range parsing -->
-	<xsl:template match="dc:date">		
+	<xsl:template match="dc:date">
 		<xsl:choose>
 			<xsl:when test="contains(., ';')">
 				<!-- only accept first year value when they are joined by semicolons -->
@@ -346,12 +375,12 @@ rdfs:label ?label
 			</xsl:when>
 			<xsl:when test="matches(., '\d{4}\s?-\s?\d{4}')">
 				<xsl:variable name="date-tokens" select="tokenize(., '-')"/>
-				
+
 				<!-- only process if there is a definite date range -->
 				<xsl:if test="count($date-tokens) = 2">
 					<xsl:variable name="begin" select="normalize-space($date-tokens[1])"/>
 					<xsl:variable name="end" select="normalize-space($date-tokens[2])"/>
-					
+
 					<!-- only include the date range if both the begin and end dates are castable as xs date types -->
 					<xsl:if
 						test="($begin castable as xs:date or $begin castable as xs:gYearMonth or $begin castable as xs:gYear) and ($end castable as xs:date or $end castable as xs:gYearMonth or $end castable as xs:gYear)">
@@ -407,14 +436,39 @@ rdfs:label ?label
 	<xsl:template match="dc:language">
 		<xsl:for-each select="tokenize(., ';')">
 			<xsl:if test="string-length(normalize-space(.)) &gt; 0">
-				<dcterms:language>
-					<xsl:value-of select="lower-case(normalize-space(.))"/>
-				</dcterms:language>
+				<xsl:variable name="val" select="lower-case(normalize-space(.))"/>
+
+				<xsl:choose>
+					<!-- if 3 characters, assume it is the correct code -->
+					<xsl:when test="string-length($val) = 3">
+						<xsl:if test="$languages//language[code = $val]">
+							<dcterms:language>
+								<xsl:value-of select="$val"/>
+							</dcterms:language>
+						</xsl:if>
+
+					</xsl:when>
+					<!-- when it is too characters, look up the 3 letter code -->
+					<xsl:when test="string-length($val) = 2">
+						<xsl:if test="$languages//language[twoLetter = $val]">
+							<dcterms:language>
+								<xsl:value-of select="$languages//language[twoLetter = $val]/code"/>
+							</dcterms:language>
+						</xsl:if>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:if test="$languages//language[lower-case(name) = $val]">
+							<dcterms:language>
+								<xsl:value-of select="$languages//language[lower-case(name) = $val][1]/code"/>
+							</dcterms:language>
+						</xsl:if>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
 
-	<xsl:template match="*[local-name()='coverage']|*[local-name()='spatial']">
+	<xsl:template match="*[local-name() = 'coverage'] | *[local-name() = 'spatial']">
 		<xsl:variable name="element" select="local-name()"/>
 		<xsl:variable name="val" select="normalize-space(.)"/>
 
@@ -432,12 +486,13 @@ rdfs:label ?label
 			</xsl:when>
 			<xsl:when test="$val castable as xs:decimal">
 				<!-- if this element is a decimal and a following sibling is also a decimal, this is a lat and the other is a long -->
-				<xsl:if test="following-sibling::*[local-name()=$element][normalize-space(text()) castable as xs:decimal]">
+				<xsl:if test="following-sibling::*[local-name() = $element][normalize-space(text()) castable as xs:decimal]">
 					<xsl:choose>
 						<xsl:when test="$dams = 'digital-commons'">
 							<xsl:call-template name="place">
 								<xsl:with-param name="lat" select="$val"/>
-								<xsl:with-param name="long" select="following-sibling::*[local-name()=$element][normalize-space(text()) castable as xs:decimal][1]"/>
+								<xsl:with-param name="long"
+									select="following-sibling::*[local-name() = $element][normalize-space(text()) castable as xs:decimal][1]"/>
 							</xsl:call-template>
 						</xsl:when>
 					</xsl:choose>
@@ -449,10 +504,11 @@ rdfs:label ?label
 				<xsl:for-each select="$pieces">
 					<xsl:variable name="label" select="harvester:cleanText(normalize-space(.), $element)"/>
 
-					<dcterms:spatial>						
+					<dcterms:spatial>
 						<xsl:choose>
-							<xsl:when test="$places//res:result[res:binding[@name='label']/res:literal = $label]">
-								<xsl:attribute name="rdf:resource" select="$places//res:result[res:binding[@name='label']/res:literal = $label]/res:binding[@name='uri']/res:uri"/>
+							<xsl:when test="$places//res:result[res:binding[@name = 'label']/res:literal = $label]">
+								<xsl:attribute name="rdf:resource"
+									select="$places//res:result[res:binding[@name = 'label']/res:literal = $label]/res:binding[@name = 'uri']/res:uri"/>
 							</xsl:when>
 							<xsl:otherwise>
 								<xsl:value-of select="$label"/>
@@ -479,7 +535,6 @@ rdfs:label ?label
 				</geo:long>
 			</edm:Place>
 		</dcterms:spatial>
-
 	</xsl:template>
 
 	<!-- normalize to DCMI types -->
@@ -488,7 +543,7 @@ rdfs:label ?label
 			<xsl:variable name="val" select="lower-case(normalize-space(.))"/>
 
 			<xsl:if test="string-length($val) &gt; 0">
-				<xsl:variable name="type">
+				<xsl:variable name="typeURI">
 					<xsl:choose>
 						<xsl:when test="$val = 'collection'">http://purl.org/dc/dcmitype/Collection</xsl:when>
 						<xsl:when test="$val = 'dataset'">http://purl.org/dc/dcmitype/Dataset</xsl:when>
@@ -506,27 +561,35 @@ rdfs:label ?label
 				</xsl:variable>
 
 				<xsl:choose>
-					<xsl:when test="string($type)">
-						<dcterms:type rdf:resource="{$type}"/>
+					<xsl:when test="string($typeURI)">
+						<!-- only display types when they aren't provided by the remediation -->
+						<xsl:if test="not(string($type))">
+							<dcterms:type rdf:resource="{$typeURI}"/>
+						</xsl:if>						
 					</xsl:when>
 					<xsl:otherwise>
-						<edm:hasType>
-							<xsl:variable name="norm" select="normalize-space(.)"/>
-							
-							<xsl:choose>
-								<xsl:when test="$types//res:result[res:binding[@name='label']/res:literal = $norm]">
-									<xsl:attribute name="rdf:resource" select="$types//res:result[res:binding[@name='label']/res:literal = $norm]/res:binding[@name='uri']/res:uri"/>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:value-of select="harvester:cleanText(normalize-space(.), 'type')"/>
-								</xsl:otherwise>
-							</xsl:choose>
-						</edm:hasType>
+						<!-- only display genres when they aren't provided by the remediation -->
+						<xsl:if test="not(string($genre))">
+							<edm:hasType>
+								<xsl:variable name="norm" select="normalize-space(.)"/>
+								
+								<xsl:choose>
+									<xsl:when test="$genres//res:result[res:binding[@name = 'label']/res:literal = $norm]">
+										<xsl:attribute name="rdf:resource"
+											select="$genres//res:result[res:binding[@name = 'label']/res:literal = $norm]/res:binding[@name = 'uri']/res:uri"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="harvester:cleanText(normalize-space(.), 'type')"/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</edm:hasType>
+						</xsl:if>						
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
+	
 
 	<!-- ******
 		GENERIC DC:* HANDLING
@@ -541,12 +604,13 @@ rdfs:label ?label
 				<xsl:variable name="val" select="harvester:cleanText(normalize-space(.), $property)"/>
 				<!-- conditionals for ignoring or processing specific properties differently -->
 				<xsl:choose>
-					<xsl:when test="$property='creator' or $property='contributor'">
+					<xsl:when test="$property = 'creator' or $property = 'contributor'">
 						<xsl:if test="not(contains(lower-case($val), 'unknown'))">
 							<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
 								<xsl:choose>
-									<xsl:when test="$agents//res:result[res:binding[@name='label']/res:literal = $val]">
-										<xsl:attribute name="rdf:resource" select="$agents//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri"/>
+									<xsl:when test="$agents//res:result[res:binding[@name = 'label']/res:literal = $val]">
+										<xsl:attribute name="rdf:resource"
+											select="$agents//res:result[res:binding[@name = 'label']/res:literal = $val]/res:binding[@name = 'uri']/res:uri"/>
 									</xsl:when>
 									<xsl:otherwise>
 										<xsl:value-of select="$val"/>
@@ -555,14 +619,15 @@ rdfs:label ?label
 							</xsl:element>
 						</xsl:if>
 					</xsl:when>
+					<!-- ignore format for now -->
 					<xsl:when test="$property = 'format'">
 						<!-- suppress content types -->
-						<xsl:if test="not(contains(., '/'))">
+						<!--<xsl:if test="not(contains(., '/'))">
 							<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
 								<xsl:value-of select="$val"/>
 							</xsl:element>
-						</xsl:if>
-					</xsl:when>					
+						</xsl:if>-->
+					</xsl:when>
 					<xsl:otherwise>
 						<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
 							<!-- normalization -->
@@ -606,34 +671,25 @@ rdfs:label ?label
 						<dcterms:format>
 							<xsl:value-of select="$content-type"/>
 						</dcterms:format>
-					</xsl:if>
-					<xsl:if test="string($rights)">
-						<edm:rights rdf:resource="{$rights}"/>
-					</xsl:if>
+					</xsl:if>					
 				</edm:WebResource>
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}">
 					<xsl:if test="string-length($content-type) &gt; 0">
 						<dcterms:format>
 							<xsl:value-of select="$content-type"/>
 						</dcterms:format>
-					</xsl:if>
-					<xsl:if test="string($rights)">
-						<edm:rights rdf:resource="{$rights}"/>
-					</xsl:if>
+					</xsl:if>					
 				</edm:WebResource>
 			</xsl:when>
-			<xsl:when test="$dams='oregondigital'">
+			<xsl:when test="$dams = 'oregondigital'">
 				<xsl:variable name="filename" select="concat(substring-after(tokenize($cho_uri, '/')[last()], ':'), '.jpg')"/>
-				
+
 				<edm:WebResource rdf:about="http://oregondigital.org/thumbnails/oregondigital-{$filename}">
 					<xsl:if test="string-length($content-type) &gt; 0">
 						<dcterms:format>
 							<xsl:value-of select="$content-type"/>
 						</dcterms:format>
-					</xsl:if>
-					<xsl:if test="string($rights)">
-						<edm:rights rdf:resource="{$rights}"/>
-					</xsl:if>
+					</xsl:if>					
 				</edm:WebResource>
 			</xsl:when>
 			<xsl:when test="$dams = 'digital-commons'">
@@ -643,10 +699,7 @@ rdfs:label ?label
 							<dcterms:format>
 								<xsl:value-of select="$content-type"/>
 							</dcterms:format>
-						</xsl:if>
-						<xsl:if test="string($rights)">
-							<edm:rights rdf:resource="{$rights}"/>
-						</xsl:if>
+						</xsl:if>						
 					</edm:WebResource>
 				</xsl:if>
 			</xsl:when>
@@ -660,10 +713,7 @@ rdfs:label ?label
 							<dcterms:format>
 								<xsl:value-of select="$content-type"/>
 							</dcterms:format>
-						</xsl:if>
-						<xsl:if test="string($rights)">
-							<edm:rights rdf:resource="{$rights}"/>
-						</xsl:if>
+						</xsl:if>						
 					</edm:WebResource>
 				</xsl:if>
 			</xsl:when>
@@ -677,10 +727,7 @@ rdfs:label ?label
 									<dcterms:format>
 										<xsl:value-of select="$content-type"/>
 									</dcterms:format>
-								</xsl:if>
-								<xsl:if test="string($rights)">
-									<edm:rights rdf:resource="{$rights}"/>
-								</xsl:if>
+								</xsl:if>								
 							</edm:WebResource>
 						</xsl:if>
 					</xsl:when>
@@ -691,20 +738,14 @@ rdfs:label ?label
 								<dcterms:format>
 									<xsl:value-of select="$content-type"/>
 								</dcterms:format>
-							</xsl:if>
-							<xsl:if test="string($rights)">
-								<edm:rights rdf:resource="{$rights}"/>
-							</xsl:if>
+							</xsl:if>							
 						</edm:WebResource>
 						<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}">
 							<xsl:if test="string-length($content-type) &gt; 0">
 								<dcterms:format>
 									<xsl:value-of select="$content-type"/>
 								</dcterms:format>
-							</xsl:if>
-							<xsl:if test="string($rights)">
-								<edm:rights rdf:resource="{$rights}"/>
-							</xsl:if>
+							</xsl:if>							
 						</edm:WebResource>
 					</xsl:when>
 				</xsl:choose>
@@ -734,9 +775,9 @@ rdfs:label ?label
 					<edm:object rdf:resource="{dc:identifier[contains(., 'files/original')]}"/>
 				</xsl:if>
 			</xsl:when>
-			<xsl:when test="$dams='oregondigital'">
+			<xsl:when test="$dams = 'oregondigital'">
 				<xsl:variable name="filename" select="concat(substring-after(tokenize($cho_uri, '/')[last()], ':'), '.jpg')"/>
-				
+
 				<edm:preview rdf:resource="http://oregondigital.org/thumbnails/oregondigital-{$filename}"/>
 			</xsl:when>
 			<xsl:otherwise>
@@ -758,7 +799,7 @@ rdfs:label ?label
 	</xsl:template>
 
 	<xsl:template name="recurse">
-		<xsl:param name="token"/>		
+		<xsl:param name="token"/>
 
 		<xsl:variable name="oai" as="node()*">
 			<xsl:copy-of select="document(concat($oai_service, '?verb=ListRecords&amp;resumptionToken=', encode-for-uri($token)))"/>
@@ -768,7 +809,7 @@ rdfs:label ?label
 
 		<xsl:if test="$oai/descendant::oai:resumptionToken[string-length(normalize-space(.)) &gt; 0]">
 			<xsl:call-template name="recurse">
-				<xsl:with-param name="token" select="$oai/descendant::oai:resumptionToken"/>				
+				<xsl:with-param name="token" select="$oai/descendant::oai:resumptionToken"/>
 			</xsl:call-template>
 		</xsl:if>
 	</xsl:template>
@@ -780,14 +821,14 @@ rdfs:label ?label
 
 		<xsl:variable name="html-stripped" select="replace(replace($val, '&lt;[^&gt;]+&gt;', ' '), '\\s+', ' ')"/>
 
-		<xsl:choose>					
+		<xsl:choose>
 			<xsl:when test="$element = 'subject' or $element = 'creator' or $element = 'contributor' or $element = 'spatial' or $element = 'coverage'">
-				<!-- do not strip trailing period from these elements -->	
-				<xsl:value-of select="$html-stripped"/>				
+				<!-- do not strip trailing period from these elements -->
+				<xsl:value-of select="$html-stripped"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:choose>
-					<!-- strip trailing period -->			
+					<!-- strip trailing period -->
 					<xsl:when test="substring($html-stripped, string-length($html-stripped), 1) = '.'">
 						<xsl:value-of select="substring($html-stripped, 1, string-length($html-stripped) - 1)"/>
 					</xsl:when>
@@ -797,7 +838,7 @@ rdfs:label ?label
 				</xsl:choose>
 			</xsl:otherwise>
 		</xsl:choose>
-		
+
 	</xsl:function>
 
 	<xsl:function name="harvester:date_dataType">

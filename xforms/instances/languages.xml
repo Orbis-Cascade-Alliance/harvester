@@ -1,0 +1,2788 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The info:uri's listed below within each language element and for the file as a whole will be used in the future to create resolvable links for each language in the LOC handle server. -->
+<codelist>
+   <codelistId>iso639-2b</codelistId>
+   <title>MARC Code List for Languages</title>
+   <author>Network Development and MARC Standards Office, Library of Congress</author>
+   <uri>info:lc/vocabulary/languages</uri>
+   <languages>
+      <language>
+         <uri>info:lc/vocabulary/languages/abk</uri>
+         <name authorized="yes">Abkhaz</name>
+         <code>abk</code>
+         <twoLetter>ab</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ace</uri>
+         <name authorized="yes">Achinese</name>
+         <code>ace</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ach</uri>
+         <name authorized="yes">Acoli</name>
+         <code>ach</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ada</uri>
+         <name authorized="yes">Adangme</name>
+         <code>ada</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ady</uri>
+         <name authorized="yes">Adygei</name>
+         <code>ady</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/aar</uri>
+         <name authorized="yes">Afar</name>
+         <code>aar</code>
+         <twoLetter>aa</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/afh</uri>
+         <name authorized="yes">Afrihili (Artificial language)</name>
+         <code>afh</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/afr</uri>
+         <name authorized="yes">Afrikaans</name>
+         <code>afr</code>
+         <twoLetter>af</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/afa</uri>
+         <name>Afroasiatic (Other)</name>
+         <code>afa</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ain</uri>
+         <name authorized="yes">Ainu</name>
+         <code>ain</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/aka</uri>
+         <name authorized="yes">Akan</name>
+         <code>aka</code>
+         <twoLetter>ak</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/akk</uri>
+         <name authorized="yes">Akkadian</name>
+         <code>akk</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/alb</uri>
+         <name>Albanian</name>
+         <code>alb</code>
+         <twoLetter>sq</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ale</uri>
+         <name authorized="yes">Aleut</name>
+         <code>ale</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/alg</uri>
+         <name>Algonquian (Other)</name>
+         <code>alg</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ajm</uri>
+         <name>Aljamía</name>
+         <code status="obsolete">ajm</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/alt</uri>
+         <name authorized="yes">Altai</name>
+         <code>alt</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tut</uri>
+         <name>Altaic (Other)</name>
+         <code>tut</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/amh</uri>
+         <name authorized="yes">Amharic</name>
+         <code>amh</code>
+         <twoLetter>am</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/anp</uri>
+         <name authorized="yes">Angika</name>
+         <code>anp</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/apa</uri>
+         <name>Apache languages</name>
+         <code>apa</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ara</uri>
+         <name>Arabic</name>
+         <code>ara</code>
+         <twoLetter>ar</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/arg</uri>
+         <name authorized="yes">Aragonese Spanish</name>
+         <code>arg</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/arc</uri>
+         <name authorized="yes">Aramaic</name>
+         <code>arc</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/arp</uri>
+         <name authorized="yes">Arapaho</name>
+         <code>arp</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/arw</uri>
+         <name authorized="yes">Arawak</name>
+         <code>arw</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/arm</uri>
+         <name authorized="yes">Armenian</name>
+         <code>arm</code>
+         <twoLetter>hy</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/rup</uri>
+         <name authorized="yes">Aromanian</name>
+         <code>rup</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/art</uri>
+         <name>Artificial (Other)</name>
+         <code>art</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/asm</uri>
+         <name authorized="yes">Assamese</name>
+         <code>asm</code>
+         <twoLetter>as</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ath</uri>
+         <name>Athapascan (Other)</name>
+         <code>ath</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/aus</uri>
+         <name>Australian languages</name>
+         <code>aus</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/map</uri>
+         <name>Austronesian (Other)</name>
+         <code>map</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ava</uri>
+         <name authorized="yes">Avaric</name>
+         <code>ava</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ave</uri>
+         <name authorized="yes">Avestan</name>
+         <code>ave</code>
+         <twoLetter>ae</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/awa</uri>
+         <name authorized="yes">Awadhi</name>
+         <code>awa</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/aym</uri>
+         <name authorized="yes">Aymara</name>
+         <code>aym</code>
+         <twoLetter>ay</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/aze</uri>
+         <name>Azerbaijani</name>
+         <code>aze</code>
+         <twoLetter>az</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ast</uri>
+         <name authorized="yes">Bable</name>
+         <code>ast</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ban</uri>
+         <name authorized="yes">Balinese</name>
+         <code>ban</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bat</uri>
+         <name>Baltic (Other)</name>
+         <code>bat</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bal</uri>
+         <name authorized="yes">Baluchi</name>
+         <code>bal</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bam</uri>
+         <name authorized="yes">Bambara</name>
+         <code>bam</code>
+         <twoLetter>bm</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bai</uri>
+         <name>Bamileke languages</name>
+         <code>bai</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bad</uri>
+         <name>Banda languages</name>
+         <code>bad</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bnt</uri>
+         <name>Bantu (Other)</name>
+         <code>bnt</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bas</uri>
+         <name authorized="yes">Basa</name>
+         <code>bas</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bak</uri>
+         <name authorized="yes">Bashkir</name>
+         <code>bak</code>
+         <twoLetter>ba</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/baq</uri>
+         <name authorized="yes">Basque</name>
+         <code>baq</code>
+         <twoLetter>eu</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/btk</uri>
+         <name>Batak</name>
+         <code>btk</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bej</uri>
+         <name authorized="yes">Beja</name>
+         <code>bej</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bel</uri>
+         <name authorized="yes">Belarusian</name>
+         <code>bel</code>
+         <twoLetter>be</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bem</uri>
+         <name authorized="yes">Bemba</name>
+         <code>bem</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ben</uri>
+         <name>Bengali</name>
+         <code>ben</code>
+         <twoLetter>bn</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ber</uri>
+         <name>Berber (Other)</name>
+         <code>ber</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bho</uri>
+         <name>Bhojpuri</name>
+         <code>bho</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bih</uri>
+         <name>Bihari (Other)</name>
+         <code>bih</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bik</uri>
+         <name authorized="yes">Bikol</name>
+         <code>bik</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/byn</uri>
+         <name authorized="yes">Bilin</name>
+         <code>byn</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bis</uri>
+         <name authorized="yes">Bislama</name>
+         <code>bis</code>
+         <twoLetter>bi</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/zbl</uri>
+         <name authorized="yes">Blissymbolics</name>
+         <code>zbl</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bos</uri>
+         <name authorized="yes">Bosnian</name>
+         <code>bos</code>
+         <twoLetter>bs</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bra</uri>
+         <name authorized="yes">Braj</name>
+         <code>bra</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bre</uri>
+         <name authorized="yes">Breton</name>
+         <code>bre</code>
+         <twoLetter>br</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bug</uri>
+         <name authorized="yes">Bugis</name>
+         <code>bug</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bul</uri>
+         <name authorized="yes">Bulgarian</name>
+         <code>bul</code>
+         <twoLetter>bg</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bua</uri>
+         <name authorized="yes">Buriat</name>
+         <code>bua</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bur</uri>
+         <name authorized="yes">Burmese</name>
+         <code>bur</code>
+         <twoLetter>my</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cad</uri>
+         <name authorized="yes">Caddo</name>
+         <code>cad</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/car</uri>
+         <name authorized="yes">Carib</name>
+         <code>car</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cat</uri>
+         <name>Catalan</name>
+         <code>cat</code>
+         <twoLetter>ca</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cau</uri>
+         <name>Caucasian (Other)</name>
+         <code>cau</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ceb</uri>
+         <name authorized="yes">Cebuano</name>
+         <code>ceb</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cel</uri>
+         <name>Celtic (Other)</name>
+         <code>cel</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cai</uri>
+         <name>Central American Indian (Other)</name>
+         <code>cai</code>
+         <note>
+            <text>Use for the other languages of Central America and Mexico, as well as forthelanguages of the Azteco-Tanoan language phylum.</text>
+         </note>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/chg</uri>
+         <name authorized="yes">Chagatai</name>
+         <code>chg</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cmc</uri>
+         <name>Chamic languages</name>
+         <code>cmc</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cha</uri>
+         <name authorized="yes">Chamorro</name>
+         <code>cha</code>
+         <twoLetter>ch</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/che</uri>
+         <name authorized="yes">Chechen</name>
+         <code>che</code>
+         <twoLetter>ce</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/chr</uri>
+         <name authorized="yes">Cherokee</name>
+         <code>chr</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/chy</uri>
+         <name authorized="yes">Cheyenne</name>
+         <code>chy</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/chb</uri>
+         <name authorized="yes">Chibcha</name>
+         <code>chb</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/chi</uri>
+         <name authorized="yes">Chinese</name>
+         <code>chi</code>
+         <twoLetter>zh</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/chn</uri>
+         <name authorized="yes">Chinook jargon</name>
+         <code>chn</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/chp</uri>
+         <name authorized="yes">Chipewyan</name>
+         <code>chp</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cho</uri>
+         <name authorized="yes">Choctaw</name>
+         <code>cho</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/chu</uri>
+         <name authorized="yes">Church Slavic</name>
+         <code>chu</code>
+         <twoLetter>cu</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/chk</uri>
+         <name authorized="yes">Chuukese</name>
+         <code>chk</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/chv</uri>
+         <name authorized="yes">Chuvash</name>
+         <code>chv</code>
+         <twoLetter>cv</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cop</uri>
+         <name authorized="yes">Coptic</name>
+         <code>cop</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cor</uri>
+         <name authorized="yes">Cornish</name>
+         <code>cor</code>
+         <twoLetter>kw</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cos</uri>
+         <name authorized="yes">Corsican</name>
+         <code>cos</code>
+         <twoLetter>co</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cre</uri>
+         <name authorized="yes">Cree</name>
+         <code>cre</code>
+         <twoLetter>cr</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mus</uri>
+         <name authorized="yes">Creek</name>
+         <code>mus</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/crp</uri>
+         <name>Creoles and Pidgins (Other)</name>
+         <code>crp</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cpe</uri>
+         <name>Creoles and Pidgins, English-based (Other)</name>
+         <code>cpe</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cpf</uri>
+         <name>Creoles and Pidgins, French-based (Other)</name>
+         <code>cpf</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cpp</uri>
+         <name>Creoles and Pidgins, Portuguese-based (Other)</name>
+         <code>cpp</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/crh</uri>
+         <name authorized="yes">Crimean Tatar</name>
+         <code>crh</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/hrv</uri>
+         <name authorized="yes">Croatian</name>
+         <code>hrv</code>
+         <twoLetter>hr</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/scr</uri>
+         <name>Croatian</name>
+         <code status="obsolete">scr</code>
+         <twoLetter>hr</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cus</uri>
+         <name>Cushitic (Other)</name>
+         <code>cus</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cze</uri>
+         <name authorized="yes">Czech</name>
+         <code>cze</code>
+         <twoLetter>cs</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/dak</uri>
+         <name>Dakota</name>
+         <code>dak</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/dan</uri>
+         <name authorized="yes">Danish</name>
+         <code>dan</code>
+         <twoLetter>da</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/dar</uri>
+         <name authorized="yes">Dargwa</name>
+         <code>dar</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/day</uri>
+         <name>Dayak</name>
+         <code>day</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/del</uri>
+         <name>Delaware</name>
+         <code>del</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/din</uri>
+         <name authorized="yes">Dinka</name>
+         <code>din</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/div</uri>
+         <name authorized="yes">Divehi</name>
+         <code>div</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/doi</uri>
+         <name>Dogri</name>
+         <code>doi</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/dgr</uri>
+         <name authorized="yes">Dogrib</name>
+         <code>dgr</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/dra</uri>
+         <name>Dravidian (Other)</name>
+         <code>dra</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/dua</uri>
+         <name authorized="yes">Duala</name>
+         <code>dua</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/dut</uri>
+         <name authorized="yes">Dutch</name>
+         <code>dut</code>
+         <twoLetter>nl</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/dum</uri>
+         <name authorized="yes">Dutch, Middle (ca. 1050-1350)</name>
+         <code>dum</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/dyu</uri>
+         <name authorized="yes">Dyula</name>
+         <code>dyu</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/dzo</uri>
+         <name authorized="yes">Dzongkha</name>
+         <code>dzo</code>
+         <twoLetter>dz</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/frs</uri>
+         <name authorized="yes">East Frisian</name>
+         <code>frs</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bin</uri>
+         <name authorized="yes">Edo</name>
+         <code>bin</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/efi</uri>
+         <name>Efik</name>
+         <code>efi</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/egy</uri>
+         <name authorized="yes">Egyptian</name>
+         <code>egy</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/eka</uri>
+         <name authorized="yes">Ekajuk</name>
+         <code>eka</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/elx</uri>
+         <name authorized="yes">Elamite</name>
+         <code>elx</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/eng</uri>
+         <name authorized="yes">English</name>
+         <code>eng</code>
+         <twoLetter>en</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/enm</uri>
+         <name authorized="yes">English, Middle (1100-1500)</name>
+         <code>enm</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ang</uri>
+         <name authorized="yes">English, Old (ca. 450-1100)</name>
+         <code>ang</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/myv</uri>
+         <name authorized="yes">Erzya</name>
+         <code>myv</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/esk</uri>
+         <name>Eskimo languages</name>
+         <code status="obsolete">esk</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/epo</uri>
+         <name authorized="yes">Esperanto</name>
+         <code>epo</code>
+         <twoLetter>eo</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/esp</uri>
+         <name>Esperanto</name>
+         <code status="obsolete">esp</code>
+         <twoLetter>eo</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/est</uri>
+         <name>Estonian</name>
+         <code>est</code>
+         <twoLetter>et</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gez</uri>
+         <name authorized="yes">Ethiopic</name>
+         <code>gez</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/eth</uri>
+         <name>Ethiopic</name>
+         <code status="obsolete">eth</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ewe</uri>
+         <name authorized="yes">Ewe</name>
+         <code>ewe</code>
+         <twoLetter>ee</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ewo</uri>
+         <name authorized="yes">Ewondo</name>
+         <code>ewo</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/fan</uri>
+         <name authorized="yes">Fang</name>
+         <code>fan</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/fat</uri>
+         <name authorized="yes">Fanti</name>
+         <code>fat</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/fao</uri>
+         <name authorized="yes">Faroese</name>
+         <code>fao</code>
+         <twoLetter>fo</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/far</uri>
+         <name>Faroese</name>
+         <code status="obsolete">far</code>
+         <twoLetter>fo</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/fij</uri>
+         <name authorized="yes">Fijian</name>
+         <code>fij</code>
+         <twoLetter>fj</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/fil</uri>
+         <name authorized="yes">Filipino</name>
+         <code>fil</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/fin</uri>
+         <name authorized="yes">Finnish</name>
+         <code>fin</code>
+         <twoLetter>fi</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/fiu</uri>
+         <name>Finno-Ugrian (Other)</name>
+         <code>fiu</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/fon</uri>
+         <name authorized="yes">Fon</name>
+         <code>fon</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/fre</uri>
+         <name>French</name>
+         <code>fre</code>
+         <twoLetter>fr</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/frm</uri>
+         <name authorized="yes">French, Middle (ca. 1300-1600)</name>
+         <code>frm</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/fro</uri>
+         <name authorized="yes">French, Old (ca. 842-1300)</name>
+         <code>fro</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/fry</uri>
+         <name authorized="yes">Frisian</name>
+         <code>fry</code>
+         <twoLetter>fy</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/fri</uri>
+         <name>Frisian</name>
+         <code status="obsolete">fri</code>
+         <twoLetter>fy</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/fur</uri>
+         <name authorized="yes">Friulian</name>
+         <code>fur</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ful</uri>
+         <name>Fula</name>
+         <code>ful</code>
+         <twoLetter>ff</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gaa</uri>
+         <name authorized="yes">Gã</name>
+         <code>gaa</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/glg</uri>
+         <name authorized="yes">Galician</name>
+         <code>glg</code>
+         <twoLetter>gl</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gag</uri>
+         <name>Galician</name>
+         <code status="obsolete">gag</code>
+         <twoLetter>gl</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lug</uri>
+         <name authorized="yes">Ganda</name>
+         <code>lug</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gay</uri>
+         <name authorized="yes">Gayo</name>
+         <code>gay</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gba</uri>
+         <name authorized="yes">Gbaya</name>
+         <code>gba</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/geo</uri>
+         <name>Georgian</name>
+         <code>geo</code>
+         <twoLetter>ka</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ger</uri>
+         <name>German</name>
+         <code>ger</code>
+         <twoLetter>de</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gmh</uri>
+         <name authorized="yes">German, Middle High (ca. 1050-1500)</name>
+         <code>gmh</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/goh</uri>
+         <name authorized="yes">German, Old High (ca. 750-1050)</name>
+         <code>goh</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gem</uri>
+         <name>Germanic (Other)</name>
+         <code>gem</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gil</uri>
+         <name authorized="yes">Gilbertese</name>
+         <code>gil</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gon</uri>
+         <name authorized="yes">Gondi</name>
+         <code>gon</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gor</uri>
+         <name authorized="yes">Gorontalo</name>
+         <code>gor</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/got</uri>
+         <name authorized="yes">Gothic</name>
+         <code>got</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/grb</uri>
+         <name authorized="yes">Grebo</name>
+         <code>grb</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/grc</uri>
+         <name>Greek, Ancient (to 1453)</name>
+         <code>grc</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gre</uri>
+         <name>Greek, Modern (1453- )</name>
+         <code>gre</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/grn</uri>
+         <name>Guarani</name>
+         <code>grn</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gua</uri>
+         <name>Guarani</name>
+         <code status="obsolete">gua</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/guj</uri>
+         <name>Gujarati</name>
+         <code>guj</code>
+         <twoLetter>gu</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gwi</uri>
+         <name authorized="yes">Gwich'in</name>
+         <code>gwi</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/hai</uri>
+         <name authorized="yes">Haida</name>
+         <code>hai</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/hat</uri>
+         <name authorized="yes">Haitian French Creole</name>
+         <code>hat</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/hau</uri>
+         <name authorized="yes">Hausa</name>
+         <code>hau</code>
+         <twoLetter>ha</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/haw</uri>
+         <name authorized="yes">Hawaiian</name>
+         <code>haw</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/heb</uri>
+         <name authorized="yes">Hebrew</name>
+         <code>heb</code>
+         <twoLetter>he</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/her</uri>
+         <name>Herero</name>
+         <code>her</code>
+         <twoLetter>hz</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/hil</uri>
+         <name authorized="yes">Hiligaynon</name>
+         <code>hil</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/him</uri>
+         <name authorized="yes">Himachali</name>
+         <code>him</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/hin</uri>
+         <name>Hindi</name>
+         <code>hin</code>
+         <twoLetter>hi</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/hmo</uri>
+         <name authorized="yes">Hiri Motu</name>
+         <code>hmo</code>
+         <twoLetter>ho</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/hit</uri>
+         <name authorized="yes">Hittite</name>
+         <code>hit</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/hmn</uri>
+         <name>Hmong</name>
+         <code>hmn</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/hun</uri>
+         <name authorized="yes">Hungarian</name>
+         <code>hun</code>
+         <twoLetter>hu</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/hup</uri>
+         <name authorized="yes">Hupa</name>
+         <code>hup</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/iba</uri>
+         <name authorized="yes">Iban</name>
+         <code>iba</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ice</uri>
+         <name authorized="yes">Icelandic</name>
+         <code>ice</code>
+         <twoLetter>is</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ido</uri>
+         <name authorized="yes">Ido</name>
+         <code>ido</code>
+         <twoLetter>io</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ibo</uri>
+         <name authorized="yes">Igbo</name>
+         <code>ibo</code>
+         <twoLetter>ig</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ijo</uri>
+         <name>Ijo</name>
+         <code>ijo</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ilo</uri>
+         <name authorized="yes">Iloko</name>
+         <code>ilo</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/smn</uri>
+         <name authorized="yes">Inari Sami</name>
+         <code>smn</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/inc</uri>
+         <name>Indic (Other)</name>
+         <code>inc</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ine</uri>
+         <name>Indo-European (Other)</name>
+         <code>ine</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ind</uri>
+         <name authorized="yes">Indonesian</name>
+         <code>ind</code>
+         <twoLetter>id</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/inh</uri>
+         <name authorized="yes">Ingush</name>
+         <code>inh</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ina</uri>
+         <name authorized="yes">Interlingua (International Auxiliary Language Association)</name>
+         <code>ina</code>
+         <twoLetter>ia</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/int</uri>
+         <name>Interlingua (International Auxiliary Language Association)</name>
+         <code status="obsolete">int</code>
+         <twoLetter>ia</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ile</uri>
+         <name authorized="yes">Interlingue</name>
+         <code>ile</code>
+         <twoLetter>ie</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/iku</uri>
+         <name>Inuktitut</name>
+         <code>iku</code>
+         <twoLetter>iu</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ipk</uri>
+         <name authorized="yes">Inupiaq</name>
+         <code>ipk</code>
+         <twoLetter>ik</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ira</uri>
+         <name>Iranian (Other)</name>
+         <code>ira</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gle</uri>
+         <name authorized="yes">Irish</name>
+         <code>gle</code>
+         <twoLetter>ga</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/iri</uri>
+         <name>Irish</name>
+         <code status="obsolete">iri</code>
+         <twoLetter>ga</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mga</uri>
+         <name authorized="yes">Irish, Middle (ca. 1100-1550)</name>
+         <code>mga</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sga</uri>
+         <name authorized="yes">Irish, Old (to 1100)</name>
+         <code>sga</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/iro</uri>
+         <name>Iroquoian (Other)</name>
+         <code>iro</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ita</uri>
+         <name>Italian</name>
+         <code>ita</code>
+         <twoLetter>it</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/jpn</uri>
+         <name authorized="yes">Japanese</name>
+         <code>jpn</code>
+         <note>
+            <text>Use for related Japanese languages and dialects</text>
+         </note>
+         <twoLetter>ja</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/jav</uri>
+         <name authorized="yes">Javanese</name>
+         <code>jav</code>
+         <twoLetter>jv</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/jrb</uri>
+         <name authorized="yes">Judeo-Arabic</name>
+         <code>jrb</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/jpr</uri>
+         <name>Judeo-Persian</name>
+         <code>jpr</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kbd</uri>
+         <name authorized="yes">Kabardian</name>
+         <code>kbd</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kab</uri>
+         <name authorized="yes">Kabyle</name>
+         <code>kab</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kac</uri>
+         <name authorized="yes">Kachin</name>
+         <code>kac</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kal</uri>
+         <name>Kalâtdlisut</name>
+         <code>kal</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kam</uri>
+         <name authorized="yes">Kamba</name>
+         <code>kam</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kan</uri>
+         <name>Kannada</name>
+         <code>kan</code>
+         <twoLetter>kn</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kau</uri>
+         <name authorized="yes">Kanuri</name>
+         <code>kau</code>
+         <twoLetter>kr</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/krc</uri>
+         <name authorized="yes">Karachay-Balkar</name>
+         <code>krc</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kaa</uri>
+         <name authorized="yes">Kara-Kalpak</name>
+         <code>kaa</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/krl</uri>
+         <name authorized="yes">Karelian</name>
+         <code>krl</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kar</uri>
+         <name>Karen languages</name>
+         <code>kar</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kas</uri>
+         <name authorized="yes">Kashmiri</name>
+         <code>kas</code>
+         <twoLetter>ks</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/csb</uri>
+         <name authorized="yes">Kashubian</name>
+         <code>csb</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kaw</uri>
+         <name authorized="yes">Kawi</name>
+         <code>kaw</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kaz</uri>
+         <name authorized="yes">Kazakh</name>
+         <code>kaz</code>
+         <twoLetter>kk</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kha</uri>
+         <name authorized="yes">Khasi</name>
+         <code>kha</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/khm</uri>
+         <name authorized="yes">Khmer</name>
+         <code>khm</code>
+         <twoLetter>km</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/cam</uri>
+         <name>Khmer</name>
+         <code status="obsolete">cam</code>
+         <twoLetter>km</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/khi</uri>
+         <name>Khoisan (Other)</name>
+         <code>khi</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kho</uri>
+         <name authorized="yes">Khotanese</name>
+         <code>kho</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kik</uri>
+         <name authorized="yes">Kikuyu</name>
+         <code>kik</code>
+         <twoLetter>ki</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kmb</uri>
+         <name authorized="yes">Kimbundu</name>
+         <code>kmb</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kin</uri>
+         <name authorized="yes">Kinyarwanda</name>
+         <code>kin</code>
+         <twoLetter>rw</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tlh</uri>
+         <name authorized="yes">Klingon (Artificial language)</name>
+         <code>tlh</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kom</uri>
+         <name>Komi</name>
+         <code>kom</code>
+         <twoLetter>kv</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kon</uri>
+         <name>Kongo</name>
+         <code>kon</code>
+         <twoLetter>kg</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kok</uri>
+         <name authorized="yes">Konkani</name>
+         <code>kok</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kut</uri>
+         <name authorized="yes">Kootenai</name>
+         <code>kut</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kor</uri>
+         <name authorized="yes">Korean</name>
+         <code>kor</code>
+         <note>
+            <text>Use for related Korean languages and dialects</text>
+         </note>
+         <twoLetter>ko</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kos</uri>
+         <name authorized="yes">Kosraean</name>
+         <code>kos</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kpe</uri>
+         <name authorized="yes">Kpelle</name>
+         <code>kpe</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kro</uri>
+         <name>Kru (Other)</name>
+         <code>kro</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kua</uri>
+         <name authorized="yes">Kuanyama</name>
+         <code>kua</code>
+         <twoLetter>kj</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kum</uri>
+         <name authorized="yes">Kumyk</name>
+         <code>kum</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kur</uri>
+         <name authorized="yes">Kurdish</name>
+         <code>kur</code>
+         <twoLetter>ku</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kru</uri>
+         <name authorized="yes">Kurukh</name>
+         <code>kru</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kus</uri>
+         <name>Kusaie</name>
+         <code status="obsolete">kus</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/kir</uri>
+         <name authorized="yes">Kyrgyz</name>
+         <code>kir</code>
+         <twoLetter>ky</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lad</uri>
+         <name>Ladino</name>
+         <code>lad</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lah</uri>
+         <name>Lahndā</name>
+         <code>lah</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lam</uri>
+         <name authorized="yes">Lamba (Zambia and Congo)</name>
+         <code>lam</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lao</uri>
+         <name authorized="yes">Lao</name>
+         <code>lao</code>
+         <twoLetter>lo</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lat</uri>
+         <name authorized="yes">Latin</name>
+         <code>lat</code>
+         <twoLetter>la</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lav</uri>
+         <name authorized="yes">Latvian</name>
+         <code>lav</code>
+         <twoLetter>lv</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lez</uri>
+         <name authorized="yes">Lezgian</name>
+         <code>lez</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lim</uri>
+         <name authorized="yes">Limburgish</name>
+         <code>lim</code>
+         <twoLetter>li</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lin</uri>
+         <name authorized="yes">Lingala</name>
+         <code>lin</code>
+         <twoLetter>ln</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lit</uri>
+         <name authorized="yes">Lithuanian</name>
+         <code>lit</code>
+         <twoLetter>lt</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/jbo</uri>
+         <name authorized="yes">Lojban (Artificial language)</name>
+         <code>jbo</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nds</uri>
+         <name authorized="yes">Low German</name>
+         <code>nds</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/dsb</uri>
+         <name authorized="yes">Lower Sorbian</name>
+         <code>dsb</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/loz</uri>
+         <name authorized="yes">Lozi</name>
+         <code>loz</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lub</uri>
+         <name authorized="yes">Luba-Katanga</name>
+         <code>lub</code>
+         <twoLetter>lu</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lua</uri>
+         <name authorized="yes">Luba-Lulua</name>
+         <code>lua</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lui</uri>
+         <name authorized="yes">Luiseño</name>
+         <code>lui</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/smj</uri>
+         <name authorized="yes">Lule Sami</name>
+         <code>smj</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lun</uri>
+         <name authorized="yes">Lunda</name>
+         <code>lun</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/luo</uri>
+         <name authorized="yes">Luo (Kenya and Tanzania)</name>
+         <code>luo</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lus</uri>
+         <name authorized="yes">Lushai</name>
+         <code>lus</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ltz</uri>
+         <name authorized="yes">Luxembourgish</name>
+         <code>ltz</code>
+         <twoLetter>lb</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mac</uri>
+         <name authorized="yes">Macedonian</name>
+         <code>mac</code>
+         <twoLetter>mk</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mad</uri>
+         <name authorized="yes">Madurese</name>
+         <code>mad</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mag</uri>
+         <name authorized="yes">Magahi</name>
+         <code>mag</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mai</uri>
+         <name authorized="yes">Maithili</name>
+         <code>mai</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mak</uri>
+         <name authorized="yes">Makasar</name>
+         <code>mak</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mlg</uri>
+         <name>Malagasy</name>
+         <code>mlg</code>
+         <twoLetter>mg</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mla</uri>
+         <name>Malagasy</name>
+         <code status="obsolete">mla</code>
+         <twoLetter>mg</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/may</uri>
+         <name>Malay</name>
+         <code>may</code>
+         <twoLetter>ml ms</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mal</uri>
+         <name>Malayalam</name>
+         <code>mal</code>
+         <twoLetter>ml</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mlt</uri>
+         <name authorized="yes">Maltese</name>
+         <code>mlt</code>
+         <twoLetter>mt</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mnc</uri>
+         <name authorized="yes">Manchu</name>
+         <code>mnc</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mdr</uri>
+         <name authorized="yes">Mandar</name>
+         <code>mdr</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/man</uri>
+         <name authorized="yes">Mandingo</name>
+         <code>man</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mni</uri>
+         <name authorized="yes">Manipuri</name>
+         <code>mni</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mno</uri>
+         <name>Manobo languages</name>
+         <code>mno</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/glv</uri>
+         <name authorized="yes">Manx</name>
+         <code>glv</code>
+         <twoLetter>gv</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/max</uri>
+         <name>Manx</name>
+         <code status="obsolete">max</code>
+         <twoLetter>gv</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mao</uri>
+         <name>Maori</name>
+         <code>mao</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/arn</uri>
+         <name authorized="yes">Mapuche</name>
+         <code>arn</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mar</uri>
+         <name authorized="yes">Marathi</name>
+         <code>mar</code>
+         <twoLetter>mr</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/chm</uri>
+         <name authorized="yes">Mari</name>
+         <code>chm</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mah</uri>
+         <name authorized="yes">Marshallese</name>
+         <code>mah</code>
+         <twoLetter>mh</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mwr</uri>
+         <name>Marwari</name>
+         <code>mwr</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mas</uri>
+         <name authorized="yes">Massai</name>
+         <code>mas</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/myn</uri>
+         <name>Mayan languages</name>
+         <code>myn</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/men</uri>
+         <name authorized="yes">Mende</name>
+         <code>men</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mic</uri>
+         <name authorized="yes">Micmac</name>
+         <code>mic</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/min</uri>
+         <name authorized="yes">Minangkabau</name>
+         <code>min</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mwl</uri>
+         <name authorized="yes">Mirandese</name>
+         <code>mwl</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mis</uri>
+         <name>Miscellaneous languages</name>
+         <code>mis</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/moh</uri>
+         <name authorized="yes">Mohawk</name>
+         <code>moh</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mdf</uri>
+         <name authorized="yes">Moksha</name>
+         <code>mdf</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mol</uri>
+         <name>Moldavian</name>
+         <code status="obsolete">mol</code>
+         <twoLetter>ro</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mkh</uri>
+         <name>Mon-Khmer (Other)</name>
+         <code>mkh</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lol</uri>
+         <name authorized="yes">Mongo-Nkundu</name>
+         <code>lol</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mon</uri>
+         <name>Mongolian</name>
+         <code>mon</code>
+         <twoLetter>mn</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mos</uri>
+         <name>Mooré</name>
+         <code>mos</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mul</uri>
+         <name authorized="yes">Multiple languages</name>
+         <code>mul</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/mun</uri>
+         <name>Munda (Other)</name>
+         <code>mun</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nah</uri>
+         <name>Nahuatl</name>
+         <code>nah</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nau</uri>
+         <name authorized="yes">Nauru</name>
+         <code>nau</code>
+         <twoLetter>na</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nav</uri>
+         <name authorized="yes">Navajo</name>
+         <code>nav</code>
+         <twoLetter>nv</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nbl</uri>
+         <name authorized="yes">Ndebele (South Africa)</name>
+         <code>nbl</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nde</uri>
+         <name authorized="yes">Ndebele (Zimbabwe)</name>
+         <code>nde</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ndo</uri>
+         <name authorized="yes">Ndonga</name>
+         <code>ndo</code>
+         <twoLetter>ng</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nap</uri>
+         <name authorized="yes">Neapolitan Italian</name>
+         <code>nap</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nep</uri>
+         <name authorized="yes">Nepali</name>
+         <code>nep</code>
+         <twoLetter>ne</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/new</uri>
+         <name authorized="yes">Newari</name>
+         <code>new</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nwc</uri>
+         <name authorized="yes">Newari, Old</name>
+         <code>nwc</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nia</uri>
+         <name authorized="yes">Nias</name>
+         <code>nia</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nic</uri>
+         <name>Niger-Kordofanian (Other)</name>
+         <code>nic</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ssa</uri>
+         <name>Nilo-Saharan (Other)</name>
+         <code>ssa</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/niu</uri>
+         <name authorized="yes">Niuean</name>
+         <code>niu</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nqo</uri>
+         <name authorized="yes">N'Ko</name>
+         <code>nqo</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nog</uri>
+         <name authorized="yes">Nogai</name>
+         <code>nog</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/zxx</uri>
+         <name authorized="yes">No linguistic content</name>
+         <code>zxx</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nai</uri>
+         <name>North American Indian (Other)</name>
+         <code>nai</code>
+         <note>
+            <text>Use for the other languages of North America north of Mexico excludingthelanguages of the Azteco-Tanoan language phylum.</text>
+         </note>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/frr</uri>
+         <name authorized="yes">North Frisian</name>
+         <code>frr</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sme</uri>
+         <name authorized="yes">Northern Sami</name>
+         <code>sme</code>
+         <twoLetter>se</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nso</uri>
+         <name authorized="yes">Northern Sotho</name>
+         <code>nso</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/aze</uri>
+         <name>Azerbaijani</name>
+         <code>aze</code>
+         <twoLetter>az</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nor</uri>
+         <name>Norwegian</name>
+         <code>nor</code>
+         <twoLetter>nb nn no</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nob</uri>
+         <name authorized="yes">Norwegian (Bokmål)</name>
+         <code>nob</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nno</uri>
+         <name authorized="yes">Norwegian (Nynorsk)</name>
+         <code>nno</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nub</uri>
+         <name>Nubian languages</name>
+         <code>nub</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nym</uri>
+         <name authorized="yes">Nyamwezi</name>
+         <code>nym</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nya</uri>
+         <name>Nyanja</name>
+         <code>nya</code>
+         <twoLetter>ny</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nyn</uri>
+         <name authorized="yes">Nyankole</name>
+         <code>nyn</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nyo</uri>
+         <name authorized="yes">Nyoro</name>
+         <code>nyo</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/nzi</uri>
+         <name authorized="yes">Nzima</name>
+         <code>nzi</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/oci</uri>
+         <name>Occitan (post-1500)</name>
+         <code>oci</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lan</uri>
+         <name>Occitan (post 1500)</name>
+         <code status="obsolete">lan</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/xal</uri>
+         <name>Oirat</name>
+         <code>xal</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/oji</uri>
+         <name>Ojibwa</name>
+         <code>oji</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/non</uri>
+         <name authorized="yes">Old Norse</name>
+         <code>non</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/peo</uri>
+         <name authorized="yes">Old Persian (ca. 600-400 B.C.)</name>
+         <code>peo</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ori</uri>
+         <name>Oriya</name>
+         <code>ori</code>
+         <twoLetter>or</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/orm</uri>
+         <name>Oromo</name>
+         <code>orm</code>
+         <twoLetter>om</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gal</uri>
+         <name>Oromo</name>
+         <code status="obsolete">gal</code>
+         <twoLetter>om</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/osa</uri>
+         <name authorized="yes">Osage</name>
+         <code>osa</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/oss</uri>
+         <name authorized="yes">Ossetic</name>
+         <code>oss</code>
+         <twoLetter>os</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/oto</uri>
+         <name>Otomian languages</name>
+         <code>oto</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/pal</uri>
+         <name authorized="yes">Pahlavi</name>
+         <code>pal</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/pau</uri>
+         <name authorized="yes">Palauan</name>
+         <code>pau</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/pli</uri>
+         <name authorized="yes">Pali</name>
+         <code>pli</code>
+         <twoLetter>pi</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/pam</uri>
+         <name authorized="yes">Pampanga</name>
+         <code>pam</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/pag</uri>
+         <name authorized="yes">Pangasinan</name>
+         <code>pag</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/pan</uri>
+         <name authorized="yes">Panjabi</name>
+         <code>pan</code>
+         <twoLetter>pa</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/pap</uri>
+         <name authorized="yes">Papiamento</name>
+         <code>pap</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/paa</uri>
+         <name>Papuan (Other)</name>
+         <code>paa</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/per</uri>
+         <name>Persian</name>
+         <code>per</code>
+         <twoLetter>fa</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/phi</uri>
+         <name>Philippine (Other)</name>
+         <code>phi</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/phn</uri>
+         <name>Phoenician</name>
+         <code>phn</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/pon</uri>
+         <name authorized="yes">Pohnpeian</name>
+         <code>pon</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/pol</uri>
+         <name authorized="yes">Polish</name>
+         <code>pol</code>
+         <twoLetter>pl</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/por</uri>
+         <name authorized="yes">Portuguese</name>
+         <code>por</code>
+         <twoLetter>pt</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/pra</uri>
+         <name>Prakrit languages</name>
+         <code>pra</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/pro</uri>
+         <name authorized="yes">Provençal (to 1500)</name>
+         <code>pro</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/pus</uri>
+         <name authorized="yes">Pushto</name>
+         <code>pus</code>
+         <twoLetter>ps</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/que</uri>
+         <name>Quechua</name>
+         <code>que</code>
+         <twoLetter>qu</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/roh</uri>
+         <name authorized="yes">Raeto-Romance</name>
+         <code>roh</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/raj</uri>
+         <name>Rajasthani</name>
+         <code>raj</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/rap</uri>
+         <name authorized="yes">Rapanui</name>
+         <code>rap</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/rar</uri>
+         <name>Rarotongan</name>
+         <code>rar</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/roa</uri>
+         <name>Romance (Other)</name>
+         <code>roa</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/rom</uri>
+         <name authorized="yes">Romani</name>
+         <code>rom</code>
+         <twoLetter>ro</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/rum</uri>
+         <name>Romanian</name>
+         <code>rum</code>
+         <twoLetter>ro</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/run</uri>
+         <name authorized="yes">Rundi</name>
+         <code>run</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/rus</uri>
+         <name authorized="yes">Russian</name>
+         <code>rus</code>
+         <twoLetter>ru</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sal</uri>
+         <name>Salishan languages</name>
+         <code>sal</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sam</uri>
+         <name authorized="yes">Samaritan Aramaic</name>
+         <code>sam</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/smi</uri>
+         <name authorized="yes">Sami</name>
+         <code>smi</code>
+         <twoLetter>se</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/lap</uri>
+         <name>Sami</name>
+         <code status="obsolete">lap</code>
+         <twoLetter>se</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/smo</uri>
+         <name authorized="yes">Samoan</name>
+         <code>smo</code>
+         <twoLetter>sm</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sao</uri>
+         <name>Samoan</name>
+         <code status="obsolete">sao</code>
+         <twoLetter>sm</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sad</uri>
+         <name authorized="yes">Sandawe</name>
+         <code>sad</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sag</uri>
+         <name authorized="yes">Sango (Ubangi Creole)</name>
+         <code>sag</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/san</uri>
+         <name>Sanskrit</name>
+         <code>san</code>
+         <twoLetter>sa</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sat</uri>
+         <name authorized="yes">Santali</name>
+         <code>sat</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/srd</uri>
+         <name authorized="yes">Sardinian</name>
+         <code>srd</code>
+         <twoLetter>sc</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sas</uri>
+         <name authorized="yes">Sasak</name>
+         <code>sas</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sco</uri>
+         <name authorized="yes">Scots</name>
+         <code>sco</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gla</uri>
+         <name authorized="yes">Scottish Gaelic</name>
+         <code>gla</code>
+         <twoLetter>gd</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gae</uri>
+         <name>Scottish Gaelix</name>
+         <code status="obsolete">gae</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sel</uri>
+         <name authorized="yes">Selkup</name>
+         <code>sel</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sem</uri>
+         <name>Semitic (Other)</name>
+         <code>sem</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/srp</uri>
+         <name authorized="yes">Serbian</name>
+         <code>srp</code>
+         <twoLetter>sr</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/scc</uri>
+         <name>Serbian</name>
+         <code status="obsolete">scc</code>
+         <twoLetter>sr</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/srr</uri>
+         <name authorized="yes">Serer</name>
+         <code>srr</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/shn</uri>
+         <name authorized="yes">Shan</name>
+         <code>shn</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sna</uri>
+         <name>Shona</name>
+         <code>sna</code>
+         <twoLetter>sn</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sho</uri>
+         <name>Shona</name>
+         <code status="obsolete">sho</code>
+         <twoLetter>sn</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/iii</uri>
+         <name authorized="yes">Sichuan Yi</name>
+         <code>iii</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/scn</uri>
+         <name authorized="yes">Sicilian Italian</name>
+         <code>scn</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sid</uri>
+         <name authorized="yes">Sidamo</name>
+         <code>sid</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sgn</uri>
+         <name>Sign languages</name>
+         <code>sgn</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/bla</uri>
+         <name authorized="yes">Siksika</name>
+         <code>bla</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/snd</uri>
+         <name>Sindhi</name>
+         <code>snd</code>
+         <twoLetter>sd</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sin</uri>
+         <name authorized="yes">Sinhalese</name>
+         <code>sin</code>
+         <twoLetter>si</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/snh</uri>
+         <name>Sinhalese</name>
+         <code status="obsolete">snh</code>
+         <twoLetter>si</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sit</uri>
+         <name>Sino-Tibetan (Other)</name>
+         <code>sit</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sio</uri>
+         <name>Siouan (Other)</name>
+         <code>sio</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sms</uri>
+         <name authorized="yes">Skolt Sami</name>
+         <code>sms</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/den</uri>
+         <name>Slavey</name>
+         <code>den</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sla</uri>
+         <name>Slavic (Other)</name>
+         <code>sla</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/slo</uri>
+         <name authorized="yes">Slovak</name>
+         <code>slo</code>
+         <twoLetter>sk</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/slv</uri>
+         <name authorized="yes">Slovenian</name>
+         <code>slv</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sog</uri>
+         <name authorized="yes">Sogdian</name>
+         <code>sog</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/som</uri>
+         <name authorized="yes">Somali</name>
+         <code>som</code>
+         <twoLetter>so</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/son</uri>
+         <name>Songhai</name>
+         <code>son</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/snk</uri>
+         <name authorized="yes">Soninke</name>
+         <code>snk</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/wen</uri>
+         <name authorized="yes">Sorbian (Other)</name>
+         <code>wen</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sot</uri>
+         <name authorized="yes">Sotho</name>
+         <code>sot</code>
+         <twoLetter>st</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sso</uri>
+         <name>Sotho</name>
+         <code status="obsolete">sso</code>
+         <twoLetter>st</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sai</uri>
+         <name>South American Indian (Other)</name>
+         <code>sai</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sma</uri>
+         <name authorized="yes">Southern Sami</name>
+         <code>sma</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/spa</uri>
+         <name>Spanish</name>
+         <code>spa</code>
+         <twoLetter>es</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/srn</uri>
+         <name authorized="yes">Sranan</name>
+         <code>srn</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/suk</uri>
+         <name authorized="yes">Sukuma</name>
+         <code>suk</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sux</uri>
+         <name authorized="yes">Sumerian</name>
+         <code>sux</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sun</uri>
+         <name authorized="yes">Sundanese</name>
+         <code>sun</code>
+         <twoLetter>su</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sus</uri>
+         <name authorized="yes">Susu</name>
+         <code>sus</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/swa</uri>
+         <name>Swahili</name>
+         <code>swa</code>
+         <twoLetter>sw</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ssw</uri>
+         <name authorized="yes">Swazi</name>
+         <code>ssw</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/swz</uri>
+         <name>Swazi</name>
+         <code status="obsolete">swz</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/swe</uri>
+         <name authorized="yes">Swedish</name>
+         <code>swe</code>
+         <twoLetter>sv</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/gsw</uri>
+         <name authorized="yes">Swiss German</name>
+         <code>gsw</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/syc</uri>
+         <name authorized="yes">Syriac</name>
+         <code>syc</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/syr</uri>
+         <name authorized="yes">Syriac, Modern</name>
+         <code>syr</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tgl</uri>
+         <name authorized="yes">Tagalog</name>
+         <code>tgl</code>
+         <twoLetter>tl</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tag</uri>
+         <name>Tagalog</name>
+         <code status="obsolete">tag</code>
+         <twoLetter>tl</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tah</uri>
+         <name authorized="yes">Tahitian</name>
+         <code>tah</code>
+         <twoLetter>ty</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tai</uri>
+         <name>Tai (Other)</name>
+         <code>tai</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tgk</uri>
+         <name authorized="yes">Tajik</name>
+         <code>tgk</code>
+         <twoLetter>tg</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/taj</uri>
+         <name>Tajik</name>
+         <code status="obsolete">taj</code>
+         <twoLetter>tg</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tmh</uri>
+         <name authorized="yes">Tamashek</name>
+         <code>tmh</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tam</uri>
+         <name authorized="yes">Tamil</name>
+         <code>tam</code>
+         <twoLetter>ta</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tat</uri>
+         <name authorized="yes">Tatar</name>
+         <code>tat</code>
+         <twoLetter>tt</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tar</uri>
+         <name>Tatar</name>
+         <code status="obsolete">tar</code>
+         <twoLetter>tt</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tel</uri>
+         <name authorized="yes">Telugu</name>
+         <code>tel</code>
+         <twoLetter>te</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tem</uri>
+         <name authorized="yes">Temne</name>
+         <code>tem</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ter</uri>
+         <name authorized="yes">Terena</name>
+         <code>ter</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tet</uri>
+         <name authorized="yes">Tetum</name>
+         <code>tet</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tha</uri>
+         <name authorized="yes">Thai</name>
+         <code>tha</code>
+         <twoLetter>th</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tib</uri>
+         <name>Tibetan</name>
+         <code>tib</code>
+         <twoLetter>bo</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tig</uri>
+         <name authorized="yes">Tigré</name>
+         <code>tig</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tir</uri>
+         <name authorized="yes">Tigrinya</name>
+         <code>tir</code>
+         <twoLetter>ti</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tiv</uri>
+         <name authorized="yes">Tiv</name>
+         <code>tiv</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tli</uri>
+         <name>Tlingit</name>
+         <code>tli</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tpi</uri>
+         <name authorized="yes">Tok Pisin</name>
+         <code>tpi</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tkl</uri>
+         <name authorized="yes">Tokelauan</name>
+         <code>tkl</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tog</uri>
+         <name authorized="yes">Tonga (Nyasa)</name>
+         <code>tog</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ton</uri>
+         <name authorized="yes">Tongan</name>
+         <code>ton</code>
+         <twoLetter>to</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tru</uri>
+         <name>Truk</name>
+         <code status="obsolete">tru</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tsi</uri>
+         <name authorized="yes">Tsimshian</name>
+         <code>tsi</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tso</uri>
+         <name authorized="yes">Tsonga</name>
+         <code>tso</code>
+         <twoLetter>ts</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tsn</uri>
+         <name authorized="yes">Tswana</name>
+         <code>tsn</code>
+         <twoLetter>tn</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tsw</uri>
+         <name>Tswana</name>
+         <code status="obsolete">tsw</code>
+         <twoLetter>tn</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tum</uri>
+         <name authorized="yes">Tumbuka</name>
+         <code>tum</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tup</uri>
+         <name>Tupi languages</name>
+         <code>tup</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tur</uri>
+         <name authorized="yes">Turkish</name>
+         <code>tur</code>
+         <twoLetter>tr</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ota</uri>
+         <name authorized="yes">Turkish, Ottoman</name>
+         <code>ota</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tuk</uri>
+         <name authorized="yes">Turkmen</name>
+         <code>tuk</code>
+         <twoLetter>tk</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tvl</uri>
+         <name authorized="yes">Tuvaluan</name>
+         <code>tvl</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/tyv</uri>
+         <name authorized="yes">Tuvinian</name>
+         <code>tyv</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/twi</uri>
+         <name authorized="yes">Twi</name>
+         <code>twi</code>
+         <twoLetter>tw</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/udm</uri>
+         <name authorized="yes">Udmurt</name>
+         <code>udm</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/uga</uri>
+         <name authorized="yes">Ugaritic</name>
+         <code>uga</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/uig</uri>
+         <name authorized="yes">Uighur</name>
+         <code>uig</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ukr</uri>
+         <name authorized="yes">Ukrainian</name>
+         <code>ukr</code>
+         <twoLetter>uk</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/umb</uri>
+         <name authorized="yes">Umbundu</name>
+         <code>umb</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/und</uri>
+         <name authorized="yes">Undetermined</name>
+         <code>und</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/hsb</uri>
+         <name authorized="yes">Upper Sorbian</name>
+         <code>hsb</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/urd</uri>
+         <name>Urdu</name>
+         <code>urd</code>
+         <twoLetter>ur</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/uzb</uri>
+         <name authorized="yes">Uzbek</name>
+         <code>uzb</code>
+         <twoLetter>uz</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/vai</uri>
+         <name authorized="yes">Vai</name>
+         <code>vai</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ven</uri>
+         <name authorized="yes">Venda</name>
+         <code>ven</code>
+         <twoLetter>ve</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/vie</uri>
+         <name authorized="yes">Vietnamese</name>
+         <code>vie</code>
+         <twoLetter>vi</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/vol</uri>
+         <name authorized="yes">Volapük</name>
+         <code>vol</code>
+         <twoLetter>vo</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/vot</uri>
+         <name authorized="yes">Votic</name>
+         <code>vot</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/wak</uri>
+         <name>Wakashan languages</name>
+         <code>wak</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/wln</uri>
+         <name authorized="yes">Walloon</name>
+         <code>wln</code>
+         <twoLetter>wa</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/war</uri>
+         <name authorized="yes">Waray</name>
+         <code>war</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/was</uri>
+         <name authorized="yes">Washoe</name>
+         <code>was</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/wel</uri>
+         <name authorized="yes">Welsh</name>
+         <code>wel</code>
+         <twoLetter>cy</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/wal</uri>
+         <name>Wolayta</name>
+         <code>wal</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/wol</uri>
+         <name>Wolof</name>
+         <code>wol</code>
+         <twoLetter>wo</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/xho</uri>
+         <name authorized="yes">Xhosa</name>
+         <code>xho</code>
+         <twoLetter>xh</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/sah</uri>
+         <name authorized="yes">Yakut</name>
+         <code>sah</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/yao</uri>
+         <name authorized="yes">Yao (Africa)</name>
+         <code>yao</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/yap</uri>
+         <name authorized="yes">Yapese</name>
+         <code>yap</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/yid</uri>
+         <name authorized="yes">Yiddish</name>
+         <code>yid</code>
+         <twoLetter>yi</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/yor</uri>
+         <name authorized="yes">Yoruba</name>
+         <code>yor</code>
+         <twoLetter>yo</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/ypk</uri>
+         <name>Yupik languages</name>
+         <code>ypk</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/znd</uri>
+         <name>Zande languages</name>
+         <code>znd</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/zap</uri>
+         <name authorized="yes">Zapotec</name>
+         <code>zap</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/zza</uri>
+         <name authorized="yes">Zaza</name>
+         <code>zza</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/zen</uri>
+         <name authorized="yes">Zenaga</name>
+         <code>zen</code>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/zha</uri>
+         <name authorized="yes">Zhuang</name>
+         <code>zha</code>
+         <twoLetter>za</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/zul</uri>
+         <name authorized="yes">Zulu</name>
+         <code>zul</code>
+         <twoLetter>zu</twoLetter>
+      </language>
+      <language>
+         <uri>info:lc/vocabulary/languages/zun</uri>
+         <name authorized="yes">Zuni</name>
+         <code>zun</code>
+      </language>
+   </languages>
+</codelist>
