@@ -732,22 +732,14 @@ rdfs:label ?label
 					<xsl:when test="$repository = 'orphs'">
 						<xsl:if test="dc:identifier[matches(., '.jpg$')]">
 							<edm:WebResource rdf:about="{dc:identifier[matches(., '.jpg$')]}">
-								<xsl:if test="string-length($content-type) &gt; 0">
-									<dcterms:format>
-										<xsl:value-of select="$content-type"/>
-									</dcterms:format>
-								</xsl:if>
+								<dcterms:format>image/jpeg</dcterms:format>
 							</edm:WebResource>
 						</xsl:if>
 					</xsl:when>
 					<!-- Willamette - contentDM but with different CHO URI style -->
 					<xsl:when test="$repository = 'orsaw'">
 						<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getthumbnail/collection/$1/id/$2')}">
-							<xsl:if test="string-length($content-type) &gt; 0">
-								<dcterms:format>
-									<xsl:value-of select="$content-type"/>
-								</dcterms:format>
-							</xsl:if>
+							<dcterms:format>image/jpeg</dcterms:format>
 						</edm:WebResource>
 						<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}">
 							<xsl:if test="string-length($content-type) &gt; 0">
