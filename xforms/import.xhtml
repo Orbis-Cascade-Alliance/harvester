@@ -33,9 +33,9 @@
 					<sparql-service></sparql-service>
 					<admin>false</admin>
 					<initial-page>true</initial-page>
-					<uri/>
-					<search-results/>
-					<definition/>
+					<uri></uri>
+					<search-results></search-results>
+					<definition></definition>
 					<remediation>
 						<rights>false</rights>
 						<type>false</type>
@@ -66,11 +66,11 @@
 					<set></set>
 					<repository></repository>
 					<rights></rights>
-					<rightsText/>
-					<language/>
-					<format/>
-					<type/>
-					<genre/>
+					<rightsText></rightsText>
+					<language></language>
+					<format></format>
+					<type></type>
+					<genre></genre>
 					<target>both</target>
 				</set>
 			</xforms:instance>
@@ -96,7 +96,7 @@
 					<statement value="NKC">No known copyright</statement>
 				</rights>
 			</xforms:instance>
-			
+
 			<xforms:instance id="dcmi-types">
 				<types xmlns="">
 					<type value="Collection">Collection</type>
@@ -112,6 +112,43 @@
 					<type value="StillImage">Still Image</type>
 					<type value="Text">Text</type>
 				</types>
+			</xforms:instance>
+
+			<xforms:instance id="formats">
+				<formats xmlns="">
+					<format>application/msword</format>
+					<format>application/pdf</format>
+					<format>application/vnd.ms-excel</format>
+					<format>application/vnd.ms-powerpoint</format>
+					<format>audio/aiff</format>
+					<format>audio/flac</format>
+					<format>audio/mp4</format>
+					<format>audio/mpeg</format>
+					<format>audio/wav</format>
+					<format>audio/wma</format>
+					<format>audio/x-realaudio</format>
+					<format>image/gif</format>
+					<format>image/jp2</format>
+					<format>image/jpeg</format>
+					<format>image/png</format>
+					<format>image/tiff</format>
+					<format>image/vnd.adobe.photoshop</format>
+					<format>image/vnd.djvu</format>
+					<format>text/css</format>
+					<format>text/csv</format>
+					<format>text/plain</format>
+					<format>text/html</format>
+					<format>text/rtf</format>
+					<format>text/xml</format>
+					<format>video/avi</format>
+					<format>video/mjp2</format>
+					<format>video/mp4</format>
+					<format>video/mpeg</format>
+					<format>video/quicktime</format>
+					<format>video/wmv</format>
+					<format>video/x-flv</format>
+					<format>video/x-realvideo</format>
+				</formats>
 			</xforms:instance>
 
 			<xforms:instance id="languages" src="oxf:/apps/harvester/xforms/instances/languages.xml"/>
@@ -237,7 +274,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 			<xforms:instance id="sparqlResponse" xxforms:exclude-result-prefixes="#all">
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="search-query">
 				<query></query>
 			</xforms:instance>
@@ -251,10 +288,10 @@ OPTIONAL {?c skos:scopeNote ?note .
 				<places repository="" xmlns=""></places>
 			</xforms:instance>
 
-			<xforms:instance id="agent">
+			<xforms:instance id="agent-list">
 				<agents repository="" xmlns=""></agents>
 			</xforms:instance>
-			
+
 			<!-- lists of existing vocabularies -->
 			<xforms:instance id="type-vocabs" xxforms:exclude-result-prefixes="#all">
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
@@ -267,7 +304,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 			<xforms:instance id="agent-vocabs" xxforms:exclude-result-prefixes="#all">
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
 			</xforms:instance>
-			
+
 			<!-- getty vocabs -->
 			<xforms:instance id="getty-response" xxforms:exclude-result-prefixes="#all">
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
@@ -441,13 +478,14 @@ OPTIONAL {?c skos:scopeNote ?note .
 						<!-- populate total and error count -->
 						<xforms:setvalue ref="instance('control-instance')/validation/total-count" value="count(instance('validation')/record)"/>
 						<xforms:setvalue ref="instance('control-instance')/validation/error-count" value="count(instance('validation')/record[error])"/>
-						
+
 						<xforms:action if="instance('control-instance')/validation/error-count &gt; 0">
 							<xforms:insert nodeset="instance('csv')"
-								origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/errors-to-csv.xpl', 'data', instance('validation'), 'data')"></xforms:insert>
-							<xforms:setvalue ref="instance('csv-download')" value="saxon:string-to-base64Binary(saxon:serialize(instance('csv'), 'text'), 'UTF-8')"></xforms:setvalue>
+								origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/errors-to-csv.xpl', 'data', instance('validation'), 'data')"/>
+							<xforms:setvalue ref="instance('csv-download')"
+								value="saxon:string-to-base64Binary(saxon:serialize(instance('csv'), 'text'), 'UTF-8')"/>
 						</xforms:action>
-						
+
 
 						<!-- for a multipage feed, check for the existence of a resumptionToken for iteration -->
 						<!--<xforms:action if="instance('feed')//oai:resumptionToken">
@@ -501,7 +539,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 
 			<!-- get the RDF through the administrative getRDF API -->
 			<xforms:submission id="get-rdf" serialization="none" method="get"
-				action="/harvester/admin/getRDF?sets={encode-for-uri(normalize-space(instance('set')/set))}&amp;repository={instance('set')/repository}&amp;rights={instance('set')/rights}&amp;rightsText={instance('set')/rightsText}&amp;target={instance('set')/target}&amp;genre={encode-for-uri(instance('set')/genre)}&amp;format={instance('set')/format}&amp;language={instance('set')/language}&amp;type={instance('set')/type}"
+				action="/harvester/admin/getRDF?sets={encode-for-uri(normalize-space(instance('set')/set))}&amp;repository={instance('set')/repository}&amp;rights={instance('set')/rights}&amp;rightsText={instance('set')/rightsText}&amp;target={instance('set')/target}&amp;genre={encode-for-uri(instance('set')/genre)}&amp;format={encode-for-uri(instance('set')/format)}&amp;language={instance('set')/language}&amp;type={instance('set')/type}"
 				replace="instance" instance="rdf">
 				<xforms:message ev:event="xforms-submit-error" level="modal">Unable to get RDF</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
@@ -536,7 +574,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 						<xforms:insert context="instance('place-vocabs')" origin="instance('sparqlResponse')/res:results"/>
 					</xforms:action>
 					<xforms:action if="instance('control-instance')/action = 'agent'">
-						<xforms:insert context="instance('agent-vocabs')" origin="instance('sparqlResponse')/res:results"/>						
+						<xforms:insert context="instance('agent-vocabs')" origin="instance('sparqlResponse')/res:results"/>
 					</xforms:action>
 				</xforms:action>
 			</xforms:submission>
@@ -567,8 +605,10 @@ OPTIONAL {?c skos:scopeNote ?note .
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:var name="total" select="count(instance('getty-response')//res:result)"/>
 					<xforms:setvalue if="$total = 0" ref="instance('control-instance')/search-results)">No results found for query.</xforms:setvalue>
-					<xforms:setvalue if="$total &gt; 0 and $total &lt;= 20" ref="instance('control-instance')/search-results)" value="concat('Displaying ', $total, ' result(s).')"/>
-					<xforms:setvalue if="$total &gt; 20" ref="instance('control-instance')/search-results)" value="concat('Displaying first 20 of ', $total, ' result(s).')"/>
+					<xforms:setvalue if="$total &gt; 0 and $total &lt;= 20" ref="instance('control-instance')/search-results)"
+						value="concat('Displaying ', $total, ' result(s).')"/>
+					<xforms:setvalue if="$total &gt; 20" ref="instance('control-instance')/search-results)"
+						value="concat('Displaying first 20 of ', $total, ' result(s).')"/>
 				</xforms:action>
 			</xforms:submission>
 
@@ -598,7 +638,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 					<xforms:setvalue ref="instance('set')/repository" value="instance('control-instance')/request-security/role"/>
 
 					<xforms:setvalue ref="instance('type-list')/@repository" value="instance('set')/repository"/>
-					<xforms:setvalue ref="instance('agent-list')/@repository" value="instance('set')/repository"/>					
+					<xforms:setvalue ref="instance('agent-list')/@repository" value="instance('set')/repository"/>
 					<xforms:setvalue ref="instance('place-list')/@repository" value="instance('set')/repository"/>
 				</xforms:action>
 			</xforms:action>
@@ -627,7 +667,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 					<xforms:group ref=".[string-length(instance('control-instance')/error) &gt; 0]">
 						<div class="bg-danger alert-box">
 							<span class="glyphicon glyphicon-exclamation-sign"></span>
-							<strong>Alert:</strong> <xforms:output ref="instance('control-instance')/error"/>. </div>
+							<strong>Alert:</strong>
+							<xforms:output ref="instance('control-instance')/error"/>. </div>
 					</xforms:group>
 				</div>
 			</div>
@@ -639,18 +680,20 @@ OPTIONAL {?c skos:scopeNote ?note .
 							<div class="row">
 								<div class="col-md-12">
 									<h2>Set URL and destination(s)</h2>
-									<xforms:group ref="instance('set')">								
+									<hr />
+									<xforms:group ref="instance('set')">
 										<xforms:group ref=".[xxforms:is-user-in-role('harvester-admin')]">
 											<div class="subsection">
 												<h4>Repository Code</h4>
 												<div>
-													<xforms:select1 ref="repository">														
+													<xforms:select1 ref="repository">
 														<xforms:alert>Required</xforms:alert>
 														<xforms:item>
 															<xforms:label>Select...</xforms:label>
 															<xforms:value/>
 														</xforms:item>
-														<xforms:itemset nodeset="xxforms:sort(distinct-values(instance('config')//repository), ., 'text', 'ascending')">
+														<xforms:itemset
+															nodeset="xxforms:sort(distinct-values(instance('config')//repository), ., 'text', 'ascending')">
 															<xforms:label ref="."/>
 															<xforms:value ref="."/>
 														</xforms:itemset>
@@ -658,7 +701,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 														<xforms:action ev:event="xforms-value-changed">
 															<xforms:var name="val" select="."/>
 															<xforms:setvalue ref="instance('type-list')/@repository" value="$val"/>
-															<xforms:setvalue ref="instance('agent-list')/@repository" value="$val"/>															
+															<xforms:setvalue ref="instance('agent-list')/@repository" value="$val"/>
 															<xforms:setvalue ref="instance('place-list')/@repository" value="$val"/>
 														</xforms:action>
 													</xforms:select1>
@@ -667,25 +710,20 @@ OPTIONAL {?c skos:scopeNote ?note .
 										</xforms:group>
 										<div class="subsection">
 											<h4>Set URL</h4>
-											<p>Enter the OAI PMH request for one set.<br/>
-												Digital Commons contributors: set the metadata prefix equal to simple-dublin-core<br/>
-												All other contributors: set the metadata prefix equal to oai_dc</p>
+											<p>Enter the OAI PMH request for one set.<br /> Digital Commons contributors: set the metadata prefix equal to
+												simple-dublin-core<br /> All other contributors: set the metadata prefix equal to oai_dc</p>
 											<div>
 												<xforms:input ref="set">
 													<xforms:hint>Insert URL</xforms:hint>
 													<xforms:alert>Required</xforms:alert>
 												</xforms:input>
-											</div>	
-										</div>
-										<div class="subsection">
-											<h4>Optional Enrichment</h4>
-											<p>Would you like to enrich records in this set?</p>
-										</div>
+											</div>
+										</div>										
 										<div class="subsection">
 											<h4>Destination(s)</h4>
 											<p>You can contribute this set to one or both of the systems below. Select your preference:</p>
 											<div>
-												<xforms:select1 ref="target">													
+												<xforms:select1 ref="target">
 													<xforms:item>
 														<xforms:label>DPLA and Primo</xforms:label>
 														<xforms:value>both</xforms:value>
@@ -701,40 +739,41 @@ OPTIONAL {?c skos:scopeNote ?note .
 												</xforms:select1>
 											</div>
 										</div>
-									</xforms:group>
-								</div>								
-							</div>
-							<div class="row">
-								<div class="col-md-12">
-									<xforms:group ref="instance('control-instance')/normalization">								
-										<div>
-											<h5>Creators/Contributors</h5>
-											<xforms:select1 ref="agents" appearance="full">
-												<xforms:item>
-													<xforms:label>No thank you</xforms:label>
-													<xforms:value value="false()"/>
-												</xforms:item>
-												<xforms:item>
-													<xforms:label>Yes, I have addressed compliance with required fields and would like to enrich creators and contributors, replacing compatible strings with VIAF URIs.</xforms:label>
-													<xforms:value value="true()"/>
-												</xforms:item>
-											</xforms:select1>
-										</div>								
-										<div>
-											<h5>Genre</h5>
-											<xforms:select1 ref="types" appearance="full">
-												<xforms:item>
-													<xforms:label>No thank you</xforms:label>
-													<xforms:value value="false()"/>
-												</xforms:item>
-												<xforms:item>
-													<xforms:label>Yes, I have addressed compliance with required fields and would like to enrich genre values present in dc:type, replacing compatible strings with Getty Art and Architecture Thesaurus (AAT) URIs.</xforms:label>
-													<xforms:value value="true()"/>
-												</xforms:item>
-											</xforms:select1>
-										</div>
-										<!-- places commented out for now -->
-										<!--<div>
+										<div class="subsection">
+											<h4>Optional Enrichment</h4>
+											<p>Would you like to enrich records in this set?</p>
+											<xforms:group ref="instance('control-instance')/normalization">
+												<div>
+													<h5>Creators/Contributors</h5>
+													<xforms:select1 ref="agents" appearance="full">
+														<xforms:item>
+															<xforms:label>No thank you</xforms:label>
+															<xforms:value value="false()"/>
+														</xforms:item>
+														<xforms:item>
+															<xforms:label>Yes, I have addressed compliance with required fields and would like to enrich creators and
+																contributors, replacing compatible strings with VIAF URIs.</xforms:label>
+															<xforms:value value="true()"/>
+														</xforms:item>
+													</xforms:select1>
+												</div>
+												<div>
+													<h5>Genre</h5>
+													<xforms:select1 ref="types" appearance="full">
+														<xforms:item>
+															<xforms:label>No thank you</xforms:label>
+															<xforms:value value="false()"/>
+														</xforms:item>
+														<xforms:item>
+															<xforms:label>Yes, I have addressed compliance with required fields and would like to enrich genre values
+																present in dc:type, replacing compatible strings with Getty Art and Architecture Thesaurus (AAT)
+																URIs.</xforms:label>
+															<xforms:value value="true()"/>
+														</xforms:item>
+													</xforms:select1>
+												</div>
+												<!-- places commented out for now -->
+												<!--<div>
 										<h5>Places</h4>
 										<xforms:select1 ref="types" appearance="full">
 											<xforms:item>
@@ -747,53 +786,15 @@ OPTIONAL {?c skos:scopeNote ?note .
 											</xforms:item>
 										</xforms:select1>
 									</div>-->
-										
-										<!-- If one category is to be normalized, then submit the validation workflow, and then change to the next relevant normalization interface -->
-										<!--<xforms:group ref=".[instance('control-instance')/normalization/*[. = true()]]">
-											<xforms:trigger>
-												<xforms:label>Next<span class="glyphicon glyphicon-chevron-right"></span></xforms:label>
-												<xforms:action ev:event="DOMActivate">
-													<!-\- submit SPARQL queries in order to get relevant vocabulary lookups -\->
-													<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/query"/>
-													<xforms:action if="instance('control-instance')/normalization/types = true()">
-														<xforms:setvalue ref="instance('control-instance')/action">type</xforms:setvalue>
-														<xforms:setvalue ref="instance('sparqlQuery')"
-															value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', instance('set')/repository), 'TYPE', 'skos:Concept')"/>
-														<xforms:send submission="submit-sparqlQuery"/>
-													</xforms:action>
-													<xforms:action if="instance('control-instance')/normalization/places = true()">
-														<xforms:setvalue ref="instance('control-instance')/action">place</xforms:setvalue>
-														<xforms:setvalue ref="instance('sparqlQuery')"
-															value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', instance('set')/repository), 'TYPE', 'edm:Place')"/>
-														<xforms:send submission="submit-sparqlQuery"/>
-													</xforms:action>
-													<xforms:action
-														if="instance('control-instance')/normalization/agents = true()">
-														<xforms:setvalue ref="instance('control-instance')/action">agent</xforms:setvalue>
-														<xforms:setvalue ref="instance('sparqlQuery')"
-															value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', instance('set')/repository), 'TYPE', 'edm:Agent')"/>
-														<xforms:send submission="submit-sparqlQuery"/>
-													</xforms:action>
-													<!-\- reset action -\->
-													<xforms:setvalue ref="instance('control-instance')/action"/>
-													<!-\- get the OAI-PMH feed -\->
-													<xforms:setvalue ref="instance('control-instance')/oai-service" value="normalize-space(instance('set')/set)"/>
-													<xforms:send submission="get-oai-pmh"/>
-													
-													<!-\- toggle interface -\->
-													<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface"
-														value="instance('control-instance')/normalization/*[. = true()][1]/name()"/>
-													<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
-												</xforms:action>
-											</xforms:trigger>
-										</xforms:group>-->
+											</xforms:group>
+										</div>
 									</xforms:group>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-md-12 text-right">
 									<xforms:trigger bind="remediation-page-trigger">
-										<xforms:label>Continue</xforms:label>
+										<xforms:label>CONTINUE</xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<!-- get set -->
 											<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
@@ -807,12 +808,13 @@ OPTIONAL {?c skos:scopeNote ?note .
 									</xforms:trigger>
 								</div>
 							</div>
-						</xforms:case>						
+						</xforms:case>
 						<xforms:case id="remediation">
 							<h2>Would you like to edit records in this set?</h2>
 							<h3>
 								<xforms:output ref="instance('oai-set')//oai:set[oai:setSpec = instance('control-instance')/oai-set-code]/oai:setName"/>
 							</h3>
+							<hr />
 							<xforms:group ref="instance('control-instance')/remediation">
 								<div>
 									<h4>Genre</h4>
@@ -825,6 +827,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 											<xforms:label>I want to apply the same genre to all records in this set. I would like to apply:</xforms:label>
 											<xforms:value value="true()"/>
 										</xforms:item>
+										<xforms:setvalue ref="instance('set')/genre" ev:event="xforms-value-changed"/>
 									</xforms:select1>
 									<xforms:group ref=".[genre = true()]">
 										<div>
@@ -852,10 +855,12 @@ OPTIONAL {?c skos:scopeNote ?note .
 															<xforms:label ref="res:binding[@name='label']/res:literal"/>
 															<xforms:value ref="res:binding[@name='c']/res:uri"/>
 														</xforms:itemset>
-														
+
 														<!-- update the scopeNote on value-changed -->
-														<xforms:setvalue ref="instance('control-instance')/definition" value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri =
-															instance('control-instance')/uri]/res:binding[@name='def']/res:literal" ev:event="xforms-value-changed"/>
+														<xforms:setvalue ref="instance('control-instance')/definition"
+															value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri =
+															instance('control-instance')/uri]/res:binding[@name='def']/res:literal"
+															ev:event="xforms-value-changed"/>
 													</xforms:select1>
 													<xforms:trigger>
 														<xforms:label>Select</xforms:label>
@@ -864,14 +869,16 @@ OPTIONAL {?c skos:scopeNote ?note .
 															<xforms:setvalue ref="instance('set')/genre" value="instance('control-instance')/uri"/>
 														</xforms:action>
 													</xforms:trigger>
-													
+
 													<xforms:group ref="instance('control-instance')[string-length(definition) &gt; 0]">
 														<div>
 															<xforms:output ref="definition">
 																<xforms:label>Definition</xforms:label>
 															</xforms:output>
 															<xforms:trigger appearance="minimal">
-																<xforms:label><span class="glyphicon glyphicon-new-window"/></xforms:label>
+																<xforms:label>
+																	<span class="glyphicon glyphicon-new-window"></span>
+																</xforms:label>
 																<xforms:hint ref="uri"/>
 																<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
 															</xforms:trigger>
@@ -879,15 +886,20 @@ OPTIONAL {?c skos:scopeNote ?note .
 													</xforms:group>
 												</xforms:group>
 											</xforms:group>
-											
+
 											<!-- and display removal if applicable -->
 											<xforms:group ref=".[string-length(instance('set')/genre) &gt; 0]">
 												<xforms:trigger appearance="minimal">
-													<xforms:label><xforms:output ref="instance('set')/genre"/> <span class="glyphicon glyphicon-new-window"/></xforms:label>							
+													<xforms:label>
+														<xforms:output ref="instance('set')/genre"/>
+														<span class="glyphicon glyphicon-new-window"></span>
+													</xforms:label>
 													<xforms:load ev:event="DOMActivate" resource="{instance('set')/genre}" show="new"/>
 												</xforms:trigger>
 												<xforms:trigger appearance="minimal">
-													<xforms:label><span class="glyphicon glyphicon-remove"/></xforms:label>
+													<xforms:label>
+														<span class="glyphicon glyphicon-remove"></span>
+													</xforms:label>
 													<xforms:action ev:event="DOMActivate">
 														<!-- set the @uri value to empty to show the lookup mechanism again and reset all relevant values -->
 														<xforms:setvalue ref="instance('set')/genre"/>
@@ -899,7 +911,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 											</xforms:group>
 										</div>
 									</xforms:group>
-									<hr/>
+									<hr />
 								</div>
 								<div>
 									<h4>Format</h4>
@@ -912,21 +924,23 @@ OPTIONAL {?c skos:scopeNote ?note .
 											<xforms:label>I want to apply the same format to all records in this set. I would like to apply:</xforms:label>
 											<xforms:value value="true()"/>
 										</xforms:item>
+										<xforms:setvalue ref="instance('set')/format" ev:event="xforms-value-changed"/>
 									</xforms:select1>
 									<xforms:group ref=".[format = true()]">
-										<!--<xforms:select1 ref="instance('set')/format">
-											<xforms:label>Language</xforms:label>
-											<xforms:item>
-												<xforms:label>Select below...</xforms:label>
-												<xforms:value/>
-											</xforms:item>
-											<xforms:itemset nodeset="instance('languages')//language">
-												<xforms:label ref="name"/>
-												<xforms:value ref="code"/>
-											</xforms:itemset>
-										</xforms:select1>-->
+										<div>
+											<xforms:select1 ref="instance('set')/format">
+												<xforms:item>
+													<xforms:label>Select below...</xforms:label>
+													<xforms:value/>
+												</xforms:item>
+												<xforms:itemset nodeset="instance('formats')//format">
+													<xforms:label ref="."/>
+													<xforms:value ref="."/>
+												</xforms:itemset>
+											</xforms:select1>
+										</div>
 									</xforms:group>
-									<hr/>
+									<hr />
 								</div>
 								<div>
 									<h4>Language</h4>
@@ -939,10 +953,11 @@ OPTIONAL {?c skos:scopeNote ?note .
 											<xforms:label>I want to apply the same language to all records in this set. I would like to apply:</xforms:label>
 											<xforms:value value="true()"/>
 										</xforms:item>
+										<xforms:setvalue ref="instance('set')/language" ev:event="xforms-value-changed"/>
 									</xforms:select1>
 									<xforms:group ref=".[language = true()]">
 										<div>
-											<xforms:select1 ref="instance('set')/language">											
+											<xforms:select1 ref="instance('set')/language">
 												<xforms:item>
 													<xforms:label>Select below...</xforms:label>
 													<xforms:value/>
@@ -952,9 +967,9 @@ OPTIONAL {?c skos:scopeNote ?note .
 													<xforms:value ref="code"/>
 												</xforms:itemset>
 											</xforms:select1>
-										</div>										
+										</div>
 									</xforms:group>
-									<hr/>
+									<hr />
 								</div>
 								<div>
 									<h4>Rights</h4>
@@ -964,9 +979,15 @@ OPTIONAL {?c skos:scopeNote ?note .
 											<xforms:value value="false()"/>
 										</xforms:item>
 										<xforms:item>
-											<xforms:label>I want to apply the same rights statement to all records in this set. I would like to apply:</xforms:label>
+											<xforms:label>I want to apply the same rights statement to all records in this set. I would like to
+												apply:</xforms:label>
 											<xforms:value value="true()"/>
 										</xforms:item>
+										<xforms:action ev:event="xforms-value-changed">
+											<xforms:setvalue ref="instance('set')/rights"/>
+											<xforms:setvalue ref="instance('set')/rightsText"/>
+										</xforms:action>
+										
 									</xforms:select1>
 									<xforms:group ref=".[rights = true()]">
 										<div>
@@ -986,11 +1007,11 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<div>
 											<xforms:textarea ref="instance('set')/rightsText">
 												<xforms:label>Rights Statement</xforms:label>
-												<xforms:hint>Textual rights statement</xforms:hint>												
+												<xforms:hint>Textual rights statement</xforms:hint>
 											</xforms:textarea>
 										</div>
 									</xforms:group>
-									<hr/>
+									<hr />
 								</div>
 								<div>
 									<h4>Type</h4>
@@ -1003,6 +1024,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 											<xforms:label>I want to apply the same type to all records in this set. I would like to apply:</xforms:label>
 											<xforms:value value="true()"/>
 										</xforms:item>
+										<xforms:setvalue ref="instance('set')/type" ev:event="xforms-value-changed"/>
 									</xforms:select1>
 									<xforms:group ref=".[type = true()]">
 										<div>
@@ -1018,16 +1040,121 @@ OPTIONAL {?c skos:scopeNote ?note .
 													<xforms:value ref="@value"/>
 												</xforms:itemset>
 											</xforms:select1>
-										</div>										
+										</div>
 									</xforms:group>
 								</div>
-							</xforms:group>							
+							</xforms:group>
+
+							<div class="text-right">
+								<!-- If one category is to be normalized, then submit the validation workflow, and then change to the next relevant normalization interface -->
+								<xforms:group ref=".[instance('control-instance')/normalization/*[. = true()]]">
+									<xforms:trigger>
+										<xforms:label>CONTINUE</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<!-- submit SPARQL queries in order to get relevant vocabulary lookups -->
+											<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/query"/>
+											<xforms:action if="instance('control-instance')/normalization/types = true()">
+												<xforms:setvalue ref="instance('control-instance')/action">type</xforms:setvalue>
+												<xforms:setvalue ref="instance('sparqlQuery')"
+													value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', instance('set')/repository), 'TYPE', 'skos:Concept')"/>
+												<xforms:send submission="submit-sparqlQuery"/>
+											</xforms:action>
+											<xforms:action if="instance('control-instance')/normalization/places = true()">
+												<xforms:setvalue ref="instance('control-instance')/action">place</xforms:setvalue>
+												<xforms:setvalue ref="instance('sparqlQuery')"
+													value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', instance('set')/repository), 'TYPE', 'edm:Place')"/>
+												<xforms:send submission="submit-sparqlQuery"/>
+											</xforms:action>
+											<xforms:action if="instance('control-instance')/normalization/agents = true()">
+												<xforms:setvalue ref="instance('control-instance')/action">agent</xforms:setvalue>
+												<xforms:setvalue ref="instance('sparqlQuery')"
+													value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', instance('set')/repository), 'TYPE', 'edm:Agent')"/>
+												<xforms:send submission="submit-sparqlQuery"/>
+											</xforms:action>
+											<!-- reset action -->
+											<xforms:setvalue ref="instance('control-instance')/action"/>
+											<!-- get the OAI-PMH feed -->
+											<xforms:setvalue ref="instance('control-instance')/oai-service" value="normalize-space(instance('set')/set)"/>
+											<xforms:send submission="get-oai-pmh"/>
+	
+											<!-- toggle interface -->
+											<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface"
+												value="instance('control-instance')/normalization/*[. = true()][1]/name()"/>
+											<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
+										</xforms:action>
+									</xforms:trigger>
+								</xforms:group>
+								
+								<!-- or just diplay the validation results -->
+								<xforms:group ref=".[not(instance('control-instance')/normalization/*[. = true()])]">									
+									<xforms:trigger>
+										<xforms:label>CONTINUE</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<!-- get the OAI-PMH feed -->
+											<xforms:setvalue ref="instance('control-instance')/oai-service" value="normalize-space(instance('set')/set)"/>
+											<xforms:send submission="get-oai-pmh"/>
+											<xforms:toggle case="validation-results"/>
+										</xforms:action>										
+									</xforms:trigger>
+								</xforms:group>
+							</div>
+						</xforms:case>
+						<xforms:case id="agents-normalization">
+							<xforms:group ref="instance('agent-list')">
+								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
+								<div>
+									<h2>Match creator &amp; contributor values to VIAF</h2>
+									<h3>
+										<xforms:output ref="instance('oai-set')//oai:set[oai:setSpec = instance('control-instance')/oai-set-code]/oai:setName"/>
+									</h3>
+									<p>Review the following matches for accuracy. To dismiss these matches, click on the "x" icon, to the right of the URI.</p>
+									<hr />
+									<!-- display XBL components for VIAF lookups -->
+									<xforms:group ref=".[count(agent) &gt; 0]">
+										<xforms:repeat nodeset="xxforms:sort(agent, ., 'text', 'ascending')">
+											<harvester:agent/>
+										</xforms:repeat>
+									</xforms:group>
+									<xforms:group ref=".[count(agent) = 0]">
+										<p>No creators or contributors to match to controlled vocabulary systems.</p>
+									</xforms:group>									
+									
+									<div class="text-right">
+										<!-- display button for import if there are no entities to be normalized -->
+										<xforms:group ref=".[not(instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()])]">
+											<xforms:trigger>
+												<xforms:label>CONTINUE</xforms:label>
+												<xforms:toggle case="validation-results" ev:event="DOMActivate"/>
+											</xforms:trigger>
+										</xforms:group>
+										<!-- display the next relevant normalization interface, if applicable -->
+										<xforms:group ref=".[instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]]">											
+											<xforms:trigger>
+												<xforms:label>CONTINUE</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:var name="next"
+														select="instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]/name()"/>
+													<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface" value="$next"/>
+													<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+									</div>
+								</div>
+							</xforms:group>
 						</xforms:case>
 						<xforms:case id="types-normalization">
 							<xforms:group ref="instance('type-list')">
 								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
 								<div>
-									<h3>Match types to the Getty Art &amp; Architecture Thesaurus</h3>
+									<h2>Match genre values to the Getty Art &amp; Architecture Thesaurus</h2>
+									<h3>
+										<xforms:output ref="instance('oai-set')//oai:set[oai:setSpec = instance('control-instance')/oai-set-code]/oai:setName"/>
+									</h3>
+									<p>Review the following matches for accuracy. To dismiss these matches, click on the "x" icon.</p>
+									<p>When an AAT match is not found, you will be presented with two options. You may choose to search for the appropriate AAT
+										term. Or you may choose to "Ignore". When you select "Ignore", the genre value will be preserved as a text string.</p>
+									<hr />
 									<!-- display XBL components for AAT lookups -->
 									<xforms:group ref=".[count(type) &gt; 0]">
 										<xforms:repeat nodeset="xxforms:sort(type, ., 'text', 'ascending')">
@@ -1037,64 +1164,32 @@ OPTIONAL {?c skos:scopeNote ?note .
 									<xforms:group ref=".[count(type) = 0]">
 										<p>No dc:types (excluding those that match DCMI Types) available to link to the AAT.</p>
 									</xforms:group>
-									<!-- display button for import if there are no entities to be normalized -->
-									<xforms:group ref=".[not(instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()])]">
-										<xforms:trigger>
-											<xforms:label><span class="glyphicon glyphicon-import"></span> Validation Results</xforms:label>
-											<xforms:toggle case="validation-results" ev:event="DOMActivate"/>
-										</xforms:trigger>
-									</xforms:group>
-									<!-- display the next relevant normalization interface, if applicable -->
-									<xforms:group ref=".[instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]]">
-										<xforms:trigger>
-											<xforms:label>Next<span class="glyphicon glyphicon-chevron-right"></span></xforms:label>
-											<xforms:action ev:event="DOMActivate">
-												<xforms:var name="next"
-													select="instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]/name()"/>
-												<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface" value="$next"/>
-												<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
-											</xforms:action>
-										</xforms:trigger>
-									</xforms:group>
+									
+									<div class="text-right">
+										<!-- display button for import if there are no entities to be normalized -->
+										<xforms:group ref=".[not(instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()])]">
+											<xforms:trigger>
+												<xforms:label>CONTINUE</xforms:label>
+												<xforms:toggle case="validation-results" ev:event="DOMActivate"/>
+											</xforms:trigger>
+										</xforms:group>
+										
+										<!-- display the next relevant normalization interface, if applicable -->
+										<xforms:group ref=".[instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]]">
+											<xforms:trigger>
+												<xforms:label>CONTINUE</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:var name="next"
+														select="instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]/name()"/>
+													<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface" value="$next"/>
+													<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+									</div>	
 								</div>
 							</xforms:group>
 						</xforms:case>
-						<xforms:case id="agents-normalization">
-							<xforms:group ref="instance('agent-list')">
-								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
-								<div>
-									<h3>Match Creators or Contributors to VIAF</h3>
-									<!-- display XBL components for VIAF lookups -->
-									<xforms:group ref=".[count(agent) &gt; 0]">
-										<xforms:repeat nodeset="xxforms:sort(agent, ., 'text', 'ascending')">
-											<harvester:agent/>
-										</xforms:repeat>
-									</xforms:group>
-									<xforms:group ref=".[count(agent) = 0]">
-										<p>No creators or contributors to match to controlled vocabulary systems.</p>
-									</xforms:group>
-									<!-- display button for import if there are no entities to be normalized -->
-									<xforms:group ref=".[not(instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()])]">
-										<xforms:trigger>
-											<xforms:label><span class="glyphicon glyphicon-import"></span> Validation Results</xforms:label>
-											<xforms:toggle case="validation-results" ev:event="DOMActivate"/>
-										</xforms:trigger>
-									</xforms:group>
-									<!-- display the next relevant normalization interface, if applicable -->
-									<xforms:group ref=".[instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]]">
-										<xforms:trigger>
-											<xforms:label>Next<span class="glyphicon glyphicon-chevron-right"></span></xforms:label>
-											<xforms:action ev:event="DOMActivate">
-												<xforms:var name="next"
-													select="instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]/name()"/>
-												<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface" value="$next"/>
-												<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
-											</xforms:action>
-										</xforms:trigger>
-									</xforms:group>
-								</div>
-							</xforms:group>
-						</xforms:case>						
 						<xforms:case id="places-normalization">
 							<xforms:group ref="instance('place-list')">
 								<xforms:var name="interface" select="instance('control-instance')/normalization/@current-interface"/>
@@ -1109,30 +1204,52 @@ OPTIONAL {?c skos:scopeNote ?note .
 									<xforms:group ref=".[count(place) = 0]">
 										<p>No places to match to Geonames.org.</p>
 									</xforms:group>
-									<!-- display button for import if there are no entities to be normalized -->
-									<xforms:group ref=".[not(instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()])]">
-										<xforms:trigger>
-											<xforms:label><span class="glyphicon glyphicon-import"></span> Validation Results</xforms:label>
-											<xforms:toggle case="validation-results" ev:event="DOMActivate"/>
-										</xforms:trigger>
-									</xforms:group>
-									<!-- display the next relevant normalization interface, if applicable -->
-									<xforms:group ref=".[instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]]">
-										<xforms:trigger>
-											<xforms:label>Next<span class="glyphicon glyphicon-chevron-right"></span></xforms:label>
-											<xforms:action ev:event="DOMActivate">
-												<xforms:var name="next"
-													select="instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]/name()"/>
-												<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface" value="$next"/>
-												<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
-											</xforms:action>
-										</xforms:trigger>
-									</xforms:group>
+									
+									<div class="text-right">
+										<!-- display button for import if there are no entities to be normalized -->
+										<xforms:group ref=".[not(instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()])]">
+											<xforms:trigger>
+												<xforms:label>CONTINUE</xforms:label>
+												<xforms:toggle case="validation-results" ev:event="DOMActivate"/>
+											</xforms:trigger>
+										</xforms:group>
+										<!-- display the next relevant normalization interface, if applicable -->
+										<xforms:group ref=".[instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]]">
+											<xforms:trigger>
+												<xforms:label>CONTINUE</xforms:label>
+												<xforms:action ev:event="DOMActivate">
+													<xforms:var name="next"
+														select="instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]/name()"/>
+													<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface" value="$next"/>
+													<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
+												</xforms:action>
+											</xforms:trigger>
+										</xforms:group>
+									</div>
 								</div>
 							</xforms:group>
 						</xforms:case>
 						<xforms:case id="validation-results">
-							<h3>OAI-PMH Validation Results</h3>
+							<h2>OAI-PMH Validation Results</h2>
+							<h3>
+								<xforms:output ref="instance('oai-set')//oai:set[oai:setSpec = instance('control-instance')/oai-set-code]/oai:setName"/>
+							</h3>
+							
+							<xforms:group ref=".[instance('control-instance')/validation/error-count = 0]">
+								<div class="col-md-6">
+									<p>Before contributing this set, review the following sample records to confirm that the data are consistent with your expectations.
+										Clicking the arrow to the left of the record's title will display the record's metadata.</p>
+									<p>Click the CONTRIBUTE button to initiate the harvest for this set.</p>
+								</div>
+								<div class="col-md-6 text-right">
+									<xforms:trigger>
+										<xforms:label>CONTRIBUTE</xforms:label>
+										<xforms:dispatch target="initiate-import" name="fr-show" ev:event="DOMActivate"/>
+									</xforms:trigger>
+								</div>								
+							</xforms:group>
+							
+							<hr />
 							<xforms:group ref="instance('validation')">
 								<!-- display limited error response if there are errors, with a link to download full results as CSV -->
 								<xforms:group ref=".[instance('control-instance')/validation/error-count &gt; 0]">
@@ -1145,7 +1262,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 												<strong><xforms:output ref="instance('control-instance')/validation/error-count"/></strong> records of
 														<strong><xforms:output ref="instance('control-instance')/validation/total-count"/></strong> total have
 												reported errors. Up to 20 are displayed below. Please download CSV for full report.</div>
-											
+
 											<!--<div>												
 												<xforms:output ref="instance('csv-download')" appearance="xxforms:download">
 													<xforms:label>Download CSV</xforms:label>
@@ -1153,7 +1270,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 													<xforms:filename ref="concat(instance('control-instance')/oai-set-code, '.csv')"></xforms:filename>													
 												</xforms:output>
 											</div>-->
-											
+
 											<xforms:repeat nodeset="record[error][position() &lt;= 20]">
 												<h4>
 													<xforms:output ref="@id"/>
@@ -1174,21 +1291,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<xforms:group ref=".[instance('control-instance')/validation/error-count = 0]">
 									<xforms:var name="min" select="number(instance('control-instance')/validation/min-pos)"/>
 									<xforms:var name="max" select="number(instance('control-instance')/validation/max-pos)"/>
-									<xforms:var name="numFound" select="number(instance('control-instance')/validation/total-count)"/>
-									<div class="row">
-										<div class="col-md-12">
-											<h3>Results</h3>
-											<div>
-												<!-- display button for import if there are no entities to be normalized -->
-												<xforms:group ref=".[not(instance('control-instance')/normalization/*[. = true()])]">
-													<xforms:trigger>
-														<xforms:label><span class="glyphicon glyphicon-import"></span> Import</xforms:label>
-														<xforms:dispatch target="initiate-import" name="fr-show" ev:event="DOMActivate"/>
-													</xforms:trigger>
-												</xforms:group>
-											</div>
-										</div>
-									</div>
+									<xforms:var name="numFound" select="number(instance('control-instance')/validation/total-count)"/>									
 									<!-- pagination -->
 									<div class="row">
 										<div class="col-md-6"> Displaying records <strong><xforms:output value="$min"/></strong> to <strong><xforms:output
@@ -1241,10 +1344,9 @@ OPTIONAL {?c skos:scopeNote ?note .
 												<xforms:var name="id" select="@id"/>
 												<xforms:var name="hash" select="digest($id, 'MD5', 'hex')"/>
 												<h4>
-													<xforms:output ref="@id"/>
 													<small class="expand {$hash}-button">
 														<xforms:trigger appearance="minimal">
-															<xforms:label><span class="glyphicon glyphicon-info-sign"></span></xforms:label>
+															<xforms:label><span class="glyphicon glyphicon-triangle-bottom"></span></xforms:label>
 															<xforms:action ev:event="DOMActivate">
 																<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
 																<xforms:var name="metadataPrefix"
@@ -1256,6 +1358,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 															</xforms:action>
 														</xforms:trigger>
 													</small>
+													<xforms:output ref="@id"/>													
 												</h4>
 												<dl class="dl-horizontal">
 													<dt>Title</dt>
@@ -1272,9 +1375,9 @@ OPTIONAL {?c skos:scopeNote ?note .
 												<div class="{$hash}_container ajax_container hidden"></div>
 												<hr />
 											</xforms:repeat>
-											<div>
+											<div class="text-right">
 												<xforms:trigger>
-													<xforms:label><span class="glyphicon glyphicon-import"></span> Import</xforms:label>
+													<xforms:label>CONTRIBUTE</xforms:label>
 													<xforms:dispatch target="initiate-import" name="fr-show" ev:event="DOMActivate"/>
 												</xforms:trigger>
 											</div>
@@ -1284,15 +1387,32 @@ OPTIONAL {?c skos:scopeNote ?note .
 							</xforms:group>
 						</xforms:case>
 						<xforms:case id="import-complete">
-							<p>The ingestion process has been completed.</p>
+							<h2>Thank you for contributing this set</h2>
+							<h3>
+								<xforms:output ref="instance('oai-set')//oai:set[oai:setSpec = instance('control-instance')/oai-set-code]/oai:setName"/>
+							</h3>
+							<div class="col-md-3 pull-right">
+								<xforms:trigger>
+									<xforms:label>VIEW MY SETS</xforms:label>
+									<xforms:load ev:event="DOMActivate" resource="../admin/" show="replace"/>
+								</xforms:trigger>
+							</div>
+							<hr/>
+							<p>If you chose to send your set to DPLA, you can expect it to appear in DPLA after the next harvest.</p>
+							<p>If you chose to send your set to Alliance Primo, you can expect it to appear in Primo tomorrow; publication is in sync with the nightly update from Alma.</p>
 						</xforms:case>
 					</xforms:switch>
 					<div class="hidden">
 						<xforms:output ref="instance('control-instance')/id" id="id"/>
 						<xforms:output ref="instance('control-instance')/oai-service" id="oai-service"/>
+						<xforms:output ref="instance('set')/genre" id="genre"/>
+						<xforms:output ref="instance('set')/format" id="format"/>
+						<xforms:output ref="instance('set')/language" id="language"/>
 						<xforms:output ref="instance('set')/repository" id="repository"/>
 						<xforms:output ref="instance('set')/rights" id="rights"/>
+						<xforms:output ref="instance('set')/rightsText" id="rightsText"/>
 						<xforms:output ref="instance('set')/target" id="target"/>
+						<xforms:output ref="instance('set')/type" id="type"/>
 					</div>
 					<!-- dialog asking to initiate the import -->
 					<fr:alert-dialog id="initiate-import">
@@ -1319,7 +1439,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 							</xforms:action>
 						</fr:positive-choice>
 					</fr:alert-dialog>
-					<fr:xforms-inspector/>
+					<!--<fr:xforms-inspector/>-->
 				</div>
 			</div>
 		</div>

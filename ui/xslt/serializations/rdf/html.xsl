@@ -184,10 +184,15 @@
 				</div>
 				<div class="col-md-6">
 					<xsl:if test="string($reference)">
-						<img src="{$reference}" alt="Reference image URL not dereferenceable" title="Thumbnail" style="max-width:100%"/>
+						<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about=$reference]" mode="display-image">
+							<xsl:with-param name="size">reference</xsl:with-param>
+						</xsl:apply-templates>
+						
 					</xsl:if>
 					<xsl:if test="string($thumbnail)">
-						<img src="{$thumbnail}" alt="Thumbnail image URL not dereferenceable" title="Reference" style="max-width:100%"/>
+						<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about=$thumbnail]" mode="display-image">
+							<xsl:with-param name="size">thumbnail</xsl:with-param>
+						</xsl:apply-templates>						
 					</xsl:if>
 				</div>
 			</xsl:when>
@@ -203,7 +208,9 @@
 						</div>
 						<div class="col-md-6">
 							<xsl:if test="string($reference)">
-								<img src="{$reference}" alt="Reference image URL not dereferenceable" style="max-width:100%"/>
+								<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about=$reference]" mode="display-image">
+									<xsl:with-param name="size">reference</xsl:with-param>
+								</xsl:apply-templates>
 							</xsl:if>
 						</div>
 						<div class="col-md-6">
@@ -219,12 +226,21 @@
 							</dl>
 						</div>
 						<div class="col-md-6">
-							<img src="{$reference}" alt="image" style="max-width:100%"/>
+							<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about=$reference]" mode="display-image">
+								<xsl:with-param name="size">reference</xsl:with-param>
+							</xsl:apply-templates>
 						</div>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:otherwise>
 		</xsl:choose>
+	</xsl:template>
+	
+	<xsl:template match="edm:WebResource" mode="display-image">
+		<xsl:param name="size"/>
+		<xsl:if test="contains(dcterms:format, 'image/') and not(dcterms:format = 'image/tif')">
+			<img src="{@rdf:about}" alt="{$size} image URL not dereferenceable" title="{$size}" style="max-width:100%"/>
+		</xsl:if>		
 	</xsl:template>
 
 	<xsl:template match="*">

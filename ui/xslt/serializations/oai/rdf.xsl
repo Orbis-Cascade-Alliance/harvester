@@ -201,26 +201,19 @@ rdfs:label ?label
 		<!-- parse content type -->
 		<xsl:variable name="content-type">
 			<xsl:if test="dc:format[contains(., '/')][1]">
-				<xsl:analyze-string select="dc:format[contains(., '/')][1]" regex="([^\s]+/[^\s]+)">
+				<xsl:analyze-string select="normalize-space(dc:format[contains(., '/')][1])" regex="(^[a-z]+/[^\s]+$)">
 					<xsl:matching-substring>
-						<xsl:value-of select="regex-group(1)"/>
+						<xsl:choose>
+							<xsl:when test="regex-group(1) = 'image/jpg'">
+								<xsl:text>image/jpeg</xsl:text>
+							</xsl:when> 
+							<xsl:otherwise>
+								<xsl:value-of select="regex-group(1)"/>
+							</xsl:otherwise>
+						</xsl:choose>						
 					</xsl:matching-substring>
 				</xsl:analyze-string>
 			</xsl:if>
-		</xsl:variable>
-
-		<!-- parse rights statement from dc:rights -->
-		<xsl:variable name="rights">
-			<xsl:choose>
-				<xsl:when test="string($rightsStatement)">
-					<xsl:value-of select="concat('http://rightsstatements.org/vocab/', $rightsStatement, '/1.0/')"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:if test="dc:rights[starts-with(normalize-space(.), 'http://rightsstatements.org')]">
-						<xsl:value-of select="dc:rights[starts-with(normalize-space(.), 'http://rightsstatements.org')]"/>
-					</xsl:if>
-				</xsl:otherwise>
-			</xsl:choose>
 		</xsl:variable>
 
 		<dpla:SourceResource rdf:about="{$cho_uri}">
@@ -229,7 +222,7 @@ rdfs:label ?label
 			</dcterms:title>
 
 			<!-- apply generic DC templates -->
-			<xsl:apply-templates select="dc:date[1]| dc:creator | dc:contributor | dc:rights | dc:subject | dc:format | dc:extent | dc:temporal"/>
+			<xsl:apply-templates select="dc:date[1] | dc:creator | dc:contributor | dc:rights | dc:subject | dc:format | dc:extent | dc:temporal"/>
 
 			<!-- conditionals for parameters passed from remediation page -->
 			<xsl:if test="string($genre)">
@@ -239,7 +232,7 @@ rdfs:label ?label
 				<dcterms:type rdf:resource="{concat('http://purl.org/dc/dcmitype/', $type)}"/>
 			</xsl:if>
 			<xsl:apply-templates select="dc:type"/>
-			
+
 			<xsl:choose>
 				<xsl:when test="string($language)">
 					<dcterms:language>
@@ -251,6 +244,16 @@ rdfs:label ?label
 				</xsl:otherwise>
 			</xsl:choose>
 
+			<xsl:if test="string($rightsStatement)">
+				<dcterms:rights rdf:resource="{concat('http://rightsstatements.org/vocab/', $rightsStatement, '/1.0/')}"/>
+			</xsl:if>
+
+			<xsl:if test="string(normalize-space($rightsText))">
+				<dcterms:rights>
+					<xsl:value-of select="normalize-space($rightsText)"/>
+				</dcterms:rights>
+			</xsl:if>
+
 			<!-- process spatial fields -->
 			<xsl:if test="*[contains(local-name(), '.lat')] and *[contains(local-name(), '.long')]">
 				<xsl:call-template name="place">
@@ -261,10 +264,7 @@ rdfs:label ?label
 
 			<xsl:apply-templates select="*[local-name() = 'spatial'] | *[local-name() = 'coverage']"/>
 
-			<xsl:if test="string($rightsStatement)">
-				<dcterms:rights rdf:resource="{concat('http://rightsstatements.org/vocab/', $rightsStatement, '/1.0/')}"/>
-			</xsl:if>
-
+			<!-- process descriptions that are not image URLs -->
 			<xsl:if test="dc:description[not(matches(., '.jpe?g$'))]">
 				<dcterms:description>
 					<xsl:for-each select="dc:description[not(matches(., '.jpe?g$'))]">
@@ -286,7 +286,6 @@ rdfs:label ?label
 		<xsl:call-template name="resources">
 			<xsl:with-param name="cho_uri" select="$cho_uri"/>
 			<xsl:with-param name="content-type" select="$content-type"/>
-			<xsl:with-param name="rights" select="$rights"/>
 		</xsl:call-template>
 
 		<!-- ore:Aggregation -->
@@ -296,10 +295,6 @@ rdfs:label ?label
 			<edm:aggregatedCHO rdf:resource="{$cho_uri}"/>
 			<edm:isShownAt rdf:resource="{$cho_uri}"/>
 			<edm:dataProvider rdf:resource="{$production_server}contact#{$repository}"/>
-			<edm:provider rdf:resource="{$production_server}"/>
-			<xsl:if test="string($rights)">
-				<edm:rights rdf:resource="{$rights}"/>
-			</xsl:if>
 			<xsl:call-template name="views">
 				<xsl:with-param name="cho_uri" select="$cho_uri"/>
 			</xsl:call-template>
@@ -425,9 +420,11 @@ rdfs:label ?label
 				</dcterms:rights>
 			</xsl:when>
 			<xsl:otherwise>
-				<dcterms:rights>
-					<xsl:value-of select="harvester:cleanText(normalize-space(.), 'rights')"/>
-				</dcterms:rights>
+				<xsl:if test="not(string(normalize-space($rightsText)))">
+					<dcterms:rights>
+						<xsl:value-of select="harvester:cleanText(normalize-space(.), 'rights')"/>
+					</dcterms:rights>
+				</xsl:if>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -565,14 +562,14 @@ rdfs:label ?label
 						<!-- only display types when they aren't provided by the remediation -->
 						<xsl:if test="not(string($type))">
 							<dcterms:type rdf:resource="{$typeURI}"/>
-						</xsl:if>						
+						</xsl:if>
 					</xsl:when>
 					<xsl:otherwise>
 						<!-- only display genres when they aren't provided by the remediation -->
 						<xsl:if test="not(string($genre))">
 							<edm:hasType>
 								<xsl:variable name="norm" select="normalize-space(.)"/>
-								
+
 								<xsl:choose>
 									<xsl:when test="$genres//res:result[res:binding[@name = 'label']/res:literal = $norm]">
 										<xsl:attribute name="rdf:resource"
@@ -583,13 +580,13 @@ rdfs:label ?label
 									</xsl:otherwise>
 								</xsl:choose>
 							</edm:hasType>
-						</xsl:if>						
+						</xsl:if>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>
-	
+
 
 	<!-- ******
 		GENERIC DC:* HANDLING
@@ -621,12 +618,24 @@ rdfs:label ?label
 					</xsl:when>
 					<!-- ignore format for now -->
 					<xsl:when test="$property = 'format'">
-						<!-- suppress content types -->
-						<!--<xsl:if test="not(contains(., '/'))">
-							<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
-								<xsl:value-of select="$val"/>
-							</xsl:element>
-						</xsl:if>-->
+						<!-- ignore mime types in the CHO -->
+						<xsl:if test="not(matches(., '^[a-z]+/[^\s]+$'))">
+							<!-- convert to extent -->
+							<xsl:choose>
+								<xsl:when test="matches(., '\d+\s?[x|X]\s?\d+')">
+									<!-- pattern for dimensions -->
+									<dcterms:extent>
+										<xsl:value-of select="."/>
+									</dcterms:extent>
+								</xsl:when>
+								<xsl:when test="contains(., 'second') or contains(., 'minute')">
+									<!-- audio/video -->
+									<dcterms:extent>
+										<xsl:value-of select="."/>
+									</dcterms:extent>
+								</xsl:when>
+							</xsl:choose>
+						</xsl:if>
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
@@ -660,46 +669,46 @@ rdfs:label ?label
 	<xsl:template name="resources">
 		<xsl:param name="cho_uri"/>
 		<xsl:param name="content-type"/>
-		<xsl:param name="rights"/>
-
 
 		<!-- process by default DAMS -->
 		<xsl:choose>
 			<xsl:when test="$dams = 'contentdm-default'">
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}">
-					<xsl:if test="string-length($content-type) &gt; 0">
-						<dcterms:format>
-							<xsl:value-of select="$content-type"/>
-						</dcterms:format>
-					</xsl:if>					
+					<dcterms:format>image/jpeg</dcterms:format>
 				</edm:WebResource>
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}">
-					<xsl:if test="string-length($content-type) &gt; 0">
-						<dcterms:format>
-							<xsl:value-of select="$content-type"/>
-						</dcterms:format>
-					</xsl:if>					
+					<xsl:choose>
+						<xsl:when test="string($format)">
+							<dcterms:format>
+								<xsl:value-of select="$format"/>
+							</dcterms:format>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:if test="string-length($content-type) &gt; 0">
+								<dcterms:format>
+									<xsl:value-of select="$content-type"/>
+								</dcterms:format>
+							</xsl:if>
+						</xsl:otherwise>
+					</xsl:choose>
 				</edm:WebResource>
 			</xsl:when>
 			<xsl:when test="$dams = 'oregondigital'">
-				<xsl:variable name="filename" select="concat(substring-after(tokenize($cho_uri, '/')[last()], ':'), '.jpg')"/>
+				<xsl:variable name="filename" select="substring-after(tokenize($cho_uri, '/')[last()], ':')"/>
 
-				<edm:WebResource rdf:about="http://oregondigital.org/thumbnails/oregondigital-{$filename}">
-					<xsl:if test="string-length($content-type) &gt; 0">
-						<dcterms:format>
-							<xsl:value-of select="$content-type"/>
-						</dcterms:format>
-					</xsl:if>					
+				<edm:WebResource rdf:about="http://oregondigital.org/thumbnails/oregondigital-{$filename}.jpg">
+					<dcterms:format>image/jpeg</dcterms:format>
+				</edm:WebResource>
+				<edm:WebResource rdf:about="http://oregondigital.org/downloads/oregondigital:{$filename}">
+					<xsl:if test="$content-type = 'image/tiff'">
+						<dcterms:format>image/jpeg</dcterms:format>
+					</xsl:if>
 				</edm:WebResource>
 			</xsl:when>
 			<xsl:when test="$dams = 'digital-commons'">
 				<xsl:if test="dc:description[matches(., '.jpg$')]">
 					<edm:WebResource rdf:about="{dc:description[matches(., '.jpg$')]}">
-						<xsl:if test="string-length($content-type) &gt; 0">
-							<dcterms:format>
-								<xsl:value-of select="$content-type"/>
-							</dcterms:format>
-						</xsl:if>						
+						<dcterms:format>image/jpeg</dcterms:format>
 					</edm:WebResource>
 				</xsl:if>
 			</xsl:when>
@@ -713,7 +722,7 @@ rdfs:label ?label
 							<dcterms:format>
 								<xsl:value-of select="$content-type"/>
 							</dcterms:format>
-						</xsl:if>						
+						</xsl:if>
 					</edm:WebResource>
 				</xsl:if>
 			</xsl:when>
@@ -727,7 +736,7 @@ rdfs:label ?label
 									<dcterms:format>
 										<xsl:value-of select="$content-type"/>
 									</dcterms:format>
-								</xsl:if>								
+								</xsl:if>
 							</edm:WebResource>
 						</xsl:if>
 					</xsl:when>
@@ -738,14 +747,14 @@ rdfs:label ?label
 								<dcterms:format>
 									<xsl:value-of select="$content-type"/>
 								</dcterms:format>
-							</xsl:if>							
+							</xsl:if>
 						</edm:WebResource>
 						<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}">
 							<xsl:if test="string-length($content-type) &gt; 0">
 								<dcterms:format>
 									<xsl:value-of select="$content-type"/>
 								</dcterms:format>
-							</xsl:if>							
+							</xsl:if>
 						</edm:WebResource>
 					</xsl:when>
 				</xsl:choose>
@@ -776,9 +785,10 @@ rdfs:label ?label
 				</xsl:if>
 			</xsl:when>
 			<xsl:when test="$dams = 'oregondigital'">
-				<xsl:variable name="filename" select="concat(substring-after(tokenize($cho_uri, '/')[last()], ':'), '.jpg')"/>
+				<xsl:variable name="filename" select="substring-after(tokenize($cho_uri, '/')[last()], ':')"/>
 
-				<edm:preview rdf:resource="http://oregondigital.org/thumbnails/oregondigital-{$filename}"/>
+				<edm:preview rdf:resource="http://oregondigital.org/thumbnails/oregondigital-{$filename}.jpg"/>
+				<edm:object rdf:resource="http://oregondigital.org/downloads/oregondigital:{$filename}"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:choose>
