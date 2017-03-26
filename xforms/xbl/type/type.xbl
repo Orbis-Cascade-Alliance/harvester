@@ -47,7 +47,7 @@
 						
 						<xforms:group ref=".[not(string($binding/@uri))]">
 							<div>
-								<radiogroup>
+								<!--<radiogroup>
 									<xforms:select1 ref="instance('interface-type')" appearance="full">
 										<xforms:label>Vocabulary</xforms:label>
 										<xforms:item>
@@ -71,7 +71,7 @@
 											</xforms:action>
 										</xforms:action>
 									</xforms:select1>
-								</radiogroup>
+								</radiogroup>-->
 								<xforms:switch>
 									<xforms:case id="aat-search">
 										<div>

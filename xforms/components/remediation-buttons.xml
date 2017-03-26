@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+    <!-- if there are no validation results yet, then initiate vocabulary harvest and/or OAI-PMH extraction -->
+    <xforms:group ref=".[count(instance('validation')/record) = 0]">
+        <!-- If one category is to be normalized, then submit the validation workflow, and then change to the next relevant normalization interface -->
+        <xforms:group ref=".[instance('control-instance')/normalization/*[. = true()]]">
+            <xforms:trigger>
+                <xforms:label>CONTINUE</xforms:label>
+                <xforms:action ev:event="DOMActivate">
+                    <!-- submit SPARQL queries in order to get relevant vocabulary lookups -->
+                    <xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/query"/>
+                    <xforms:action if="instance('control-instance')/normalization/types = true()">
+                        <xforms:setvalue ref="instance('control-instance')/action">type</xforms:setvalue>
+                        <xforms:setvalue ref="instance('sparqlQuery')"
+                            value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', instance('set')/repository), 'TYPE', 'skos:Concept')"/>
+                        <xforms:send submission="submit-sparqlQuery"/>
+                    </xforms:action>
+                    <xforms:action if="instance('control-instance')/normalization/places = true()">
+                        <xforms:setvalue ref="instance('control-instance')/action">place</xforms:setvalue>
+                        <xforms:setvalue ref="instance('sparqlQuery')"
+                            value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', instance('set')/repository), 'TYPE', 'edm:Place')"/>
+                        <xforms:send submission="submit-sparqlQuery"/>
+                    </xforms:action>
+                    <xforms:action if="instance('control-instance')/normalization/agents = true()">
+                        <xforms:setvalue ref="instance('control-instance')/action">agent</xforms:setvalue>
+                        <xforms:setvalue ref="instance('sparqlQuery')"
+                            value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', instance('set')/repository), 'TYPE', 'edm:Agent')"/>
+                        <xforms:send submission="submit-sparqlQuery"/>
+                    </xforms:action>
+                    <!-- reset action -->
+                    <xforms:setvalue ref="instance('control-instance')/action"/>
+                    <!-- get the OAI-PMH feed -->
+                    <xforms:setvalue ref="instance('control-instance')/oai-service" value="normalize-space(instance('set')/set)"/>
+                    <xforms:send submission="get-oai-pmh"/>
+                    
+                    <!-- toggle interface -->
+                    <xforms:setvalue ref="instance('control-instance')/normalization/@current-interface"
+                        value="instance('control-instance')/normalization/*[. = true()][1]/name()"/>
+                    <xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
+                    
+                    <!-- update navbar -->
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/editing/@current" value="false()"/>
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/editing/@return" value="true()"/>
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/enriching/@current" value="true()"/>
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/enriching/@return" value="true()"/>
+                </xforms:action>
+            </xforms:trigger>
+        </xforms:group>
+        
+        <!-- or just diplay the validation results -->
+        <xforms:group ref=".[not(instance('control-instance')/normalization/*[. = true()])]">
+            <xforms:trigger>
+                <xforms:label>CONTINUE</xforms:label>
+                <xforms:action ev:event="DOMActivate">
+                    <!-- get the OAI-PMH feed -->
+                    <xforms:setvalue ref="instance('control-instance')/oai-service" value="normalize-space(instance('set')/set)"/>
+                    <xforms:send submission="get-oai-pmh"/>
+                    <xforms:toggle case="validation-results"/>
+                    
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/editing/@current" value="false()"/>
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/editing/@return" value="true()"/>
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/preview/@current" value="true()"/>
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/preview/@return" value="true()"/>
+                </xforms:action>
+            </xforms:trigger>
+        </xforms:group>
+    </xforms:group>
+    <!-- if there are validation results, this means the user has gone back to make a change -->
+    <xforms:group ref=".[count(instance('validation')/record) &gt; 0]">
+        <xforms:trigger>
+            <xforms:label>CONTINUE</xforms:label>
+            <xforms:action ev:event="DOMActivate">
+                <!-- determine correct interface -->
+                <xforms:action if=".[instance('control-instance')/normalization/*[. = true()]]">
+                    <xforms:setvalue ref="instance('control-instance')/normalization/@current-interface"
+                        value="instance('control-instance')/normalization/*[. = true()][1]/name()"/>
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/editing/@current" value="false()"/>
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/editing/@return" value="true()"/>
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/enriching/@current" value="true()"/>
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/enriching/@return" value="true()"/>
+                    <xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>												
+                </xforms:action>
+                <xforms:action if=".[not(instance('control-instance')/normalization/*[. = true()])]">												
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/editing/@current" value="false()"/>
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/editing/@return" value="true()"/>
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/preview/@current" value="true()"/>
+                    <xforms:setvalue ref="instance('control-instance')/interfaces/preview/@return" value="true()"/>
+                    <xforms:toggle case="validation-results"/>
+                </xforms:action>
+            </xforms:action>
+        </xforms:trigger>
+    </xforms:group>
+</div>

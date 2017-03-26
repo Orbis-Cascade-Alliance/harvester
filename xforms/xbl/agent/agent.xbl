@@ -52,17 +52,17 @@
 
 						<xforms:group ref=".[not(string($binding/@uri))]">
 							<div>
-								<radiogroup>
+								<!--<radiogroup>
 									<xforms:select1 ref="instance('interface-type')" appearance="full">
 										<xforms:label>Vocabulary</xforms:label>
 										<xforms:item>
 											<xforms:label>VIAF</xforms:label>
 											<xforms:value>viaf</xforms:value>
 										</xforms:item>
-										<!--<xforms:item>
+										<!-\-<xforms:item>
 											<xforms:label>SNAC</xforms:label>
 											<xforms:value>snac</xforms:value>
-										</xforms:item>-->
+										</xforms:item>-\->
 										<xforms:item>
 											<xforms:label>Ignore</xforms:label>
 											<xforms:value>ignore</xforms:value>
@@ -70,14 +70,14 @@
 
 										<xforms:action ev:event="xforms-value-changed">
 											<xforms:action if=". = 'viaf'">
-												<!-- remove temporary values, applicable when switching back to persnames from local -->
+												<!-\- remove temporary values, applicable when switching back to persnames from local -\->
 												<xforms:delete context="instance('rss')/*"/>
 												<xforms:setvalue ref="instance('control-instance')/uri"/>
 												<xforms:setvalue ref="instance('control-instance')/definition"/>
 												<xforms:toggle case="viaf-search"/>
 											</xforms:action>
 											<xforms:action if=". = 'snac'">
-												<!-- remove temporary values, applicable when switching back to persnames from local -->
+												<!-\- remove temporary values, applicable when switching back to persnames from local -\->
 												<xforms:delete context="instance('snac-response')/*"/>
 												<xforms:setvalue ref="instance('control-instance')/uri"/>
 												<xforms:setvalue ref="instance('control-instance')/definition"/>
@@ -94,7 +94,7 @@
 											</xforms:action>
 										</xforms:action>
 									</xforms:select1>
-								</radiogroup>
+								</radiogroup>-->
 								<xforms:switch>
 									<xforms:case id="viaf-search">
 										<div>

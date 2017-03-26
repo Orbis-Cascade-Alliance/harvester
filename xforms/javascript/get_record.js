@@ -19,38 +19,32 @@ function expand() {
     
     
     var container = id + '_container';
-    //call getrecord web service/AJAX if the div is blank
-    if (ORBEON.jQuery('.' + container).html().indexOf('<div') < 0) {
+    
+     //always call GetRecord when triangle is expanded
+     if (ORBEON.jQuery('.' + container).hasClass('hidden')) {
         ORBEON.jQuery.get('../getrecord', {
-            sets: service,
-            repository: repository,
-            genre: genre,
-            format: format,
-            language: language,
-            rights: rights,
-            rightsText: rightsText,
-            target: target,
-            type: type,
-            output: 'ajax'
-        },
-        function (data) {
+        sets: service,
+        repository: repository,
+        genre: genre,
+        format: format,
+        language: language,
+        rights: rights,
+        rightsText: rightsText,
+        target: target,
+        type: type,
+        output: 'ajax'
+        }, function (data) {
             ORBEON.jQuery('.' + container).html(data);
             ORBEON.jQuery('.' + container).removeClass('hidden');
             ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').removeClass('glyphicon-triangle-bottom');
             ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').addClass('glyphicon-triangle-top');
-        }).fail(function (){
-            alert("Error requesting page " + service);
+        }).fail(function () {
+            alert("Error getting individual record from OAI-PMH service. These records will still harvest from the ListRecords service, but the GetRecord service is broken. Please contact the systems administrator for your repository.");
         });
     } else {
-        if (ORBEON.jQuery('.' + container).hasClass('hidden')) {
-            ORBEON.jQuery('.' + container).removeClass('hidden');
-            ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').removeClass('glyphicon-triangle-bottom');
-            ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').addClass('glyphicon-triangle-top');
-        } else {
-            ORBEON.jQuery('.' + container).addClass('hidden');
-            ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').removeClass('glyphicon-triangle-top');
-            ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').addClass('glyphicon-triangle-bottom');
-        }
+        ORBEON.jQuery('.' + container).addClass('hidden');
+        ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').removeClass('glyphicon-triangle-top');
+        ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').addClass('glyphicon-triangle-bottom');
     }
 }
 

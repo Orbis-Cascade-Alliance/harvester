@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+    <!-- display button for import if there are no entities to be normalized -->
+    <xforms:group
+        ref=".[not(instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()])]">
+        <xforms:trigger>
+            <xforms:label>CONTINUE</xforms:label>
+            <xforms:action ev:event="DOMActivate">
+                <xforms:setvalue ref="instance('control-instance')/interfaces/enriching/@current" value="false()"/>
+                <xforms:setvalue ref="instance('control-instance')/interfaces/enriching/@return" value="true()"/>
+                <xforms:setvalue ref="instance('control-instance')/interfaces/preview/@current" value="true()"/>
+                <xforms:setvalue ref="instance('control-instance')/interfaces/preview/@return" value="true()"/>
+                <xforms:toggle case="validation-results" ev:event="DOMActivate"/>
+            </xforms:action>
+        </xforms:trigger>
+    </xforms:group>
+    
+    <!-- display the next relevant normalization interface, if applicable -->
+    <xforms:group
+        ref=".[instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]]">
+        <xforms:trigger>
+            <xforms:label>CONTINUE</xforms:label>
+            <xforms:action ev:event="DOMActivate">
+                <xforms:var name="next"
+                    select="instance('control-instance')/normalization/*[name()=$interface]/following-sibling::*[. = true()]/name()"/>
+                <xforms:setvalue ref="instance('control-instance')/normalization/@current-interface" value="$next"/>
+                <xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
+            </xforms:action>
+        </xforms:trigger>
+    </xforms:group>
+</div>
