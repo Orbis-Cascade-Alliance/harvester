@@ -742,11 +742,20 @@ rdfs:label ?label
 							<dcterms:format>image/jpeg</dcterms:format>
 						</edm:WebResource>
 						<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}">
-							<xsl:if test="string-length($content-type) &gt; 0">
-								<dcterms:format>
-									<xsl:value-of select="$content-type"/>
-								</dcterms:format>
-							</xsl:if>
+							<xsl:choose>
+								<xsl:when test="string($format)">
+									<dcterms:format>
+										<xsl:value-of select="$format"/>
+									</dcterms:format>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:if test="string-length($content-type) &gt; 0">
+										<dcterms:format>
+											<xsl:value-of select="$content-type"/>
+										</dcterms:format>
+									</xsl:if>
+								</xsl:otherwise>
+							</xsl:choose>
 						</edm:WebResource>
 					</xsl:when>
 				</xsl:choose>

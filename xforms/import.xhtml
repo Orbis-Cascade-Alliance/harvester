@@ -435,7 +435,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<!-- parse and insert entities into relevant lists, if applicable -->
 								<!-- types/genres: normalize to AAT -->
 								<xforms:action if="instance('control-instance')/normalization/types = true()">
-									<xforms:var name="types" select="tokenize($binding/dc:type, ';')"/>
+									<xforms:var name="all-elements" select="string-join($binding/dc:type, ';')"/>
+									<xforms:var name="types" select="tokenize($all-elements, ';')"/>
 
 									<xforms:action xxforms:iterate="$types">
 										<xforms:var name="val"
@@ -796,10 +797,6 @@ OPTIONAL {?c skos:scopeNote ?note .
 			
 			<div class="row">
 				<div class="col-md-12">
-					
-					
-					
-					
 					<xforms:switch>
 						<xforms:case id="import-form">
 							<div class="row">
