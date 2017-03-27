@@ -2,8 +2,8 @@
 	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
 	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"
 	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-	xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:res="http://www.w3.org/2005/sparql-results#"
-	xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester">
+	xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:res="http://www.w3.org/2005/sparql-results#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
+	xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester">
 	<head>
 		<title>OAI-PMH Harvester: Batch Import</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
@@ -13,7 +13,7 @@
 		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico" />
 		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png" />
 		<script type="text/javascript" src="/apps/harvester/xforms/javascript/get_record.js"></script>
-		<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Gentium+Book+Basic:400,700" />
+		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Gentium+Book+Basic:400,700" />
 		<link rel="stylesheet" href="/apps/harvester/xforms/css/style.css" />
 
 		<xforms:model>
@@ -50,11 +50,11 @@
 						<places>false</places>
 					</normalization>
 					<interfaces>
-						<setup current="true" return="false"/>
-						<editing current="false" return="false"/>
-						<enriching current="false" return="false"/>
-						<preview current="false" return="false"/>
-						<contribute current="false" return="false"/>
+						<setup current="true" return="false"></setup>
+						<editing current="false" return="false"></editing>
+						<enriching current="false" return="false"></enriching>
+						<preview current="false" return="false"></preview>
+						<contribute current="false" return="false"></contribute>
 					</interfaces>
 					<validation>
 						<error-count>0</error-count>
@@ -65,7 +65,7 @@
 					<vocabs>
 						<scheme></scheme>
 						<type></type>
-					</vocabs>					
+					</vocabs>
 				</controls>
 			</xforms:instance>
 
@@ -182,7 +182,7 @@
 				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"
 					xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:ore="http://www.openarchives.org/ore/terms/"
 					xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:dpla="http://dp.la/terms/"
-					xmlns:foaf="http://xmlns.com/foaf/0.1/"/>
+					xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:skos="http://www.w3.org/2004/02/skos/core#"/>
 			</xforms:instance>
 
 			<xforms:instance id="set-rdf" xxforms:exclude-result-prefixes="#all">
@@ -300,6 +300,19 @@ OPTIONAL {?c skos:scopeNote ?note .
 				<agents repository="" xmlns=""></agents>
 			</xforms:instance>
 
+			<!-- RDF templates -->
+			<xforms:instance id="concept-template" xxforms:exclude-result-prefixes="#all">
+				<skos:Concept rdf:about="">
+					<skos:prefLabel xml:lang="en"/>
+				</skos:Concept>
+			</xforms:instance>
+
+			<xforms:instance id="agent-template" xxforms:exclude-result-prefixes="#all">
+				<edm:Agent rdf:about="">
+					<skos:prefLabel xml:lang="en"/>
+				</edm:Agent>
+			</xforms:instance>
+
 			<!-- lists of existing vocabularies -->
 			<xforms:instance id="type-vocabs" xxforms:exclude-result-prefixes="#all">
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
@@ -383,6 +396,24 @@ OPTIONAL {?c skos:scopeNote ?note .
 				</xforms:bind>
 			</xforms:bind>
 
+			<xforms:bind nodeset="instance('type-list')">
+				<xforms:bind nodeset="type">
+					<xforms:bind nodeset="@new" type="xs:boolean"/>
+				</xforms:bind>
+			</xforms:bind>
+
+			<xforms:bind nodeset="instance('agent-list')">
+				<xforms:bind nodeset="agent">
+					<xforms:bind nodeset="@new" type="xs:boolean"/>
+				</xforms:bind>
+			</xforms:bind>
+
+			<xforms:bind nodeset="instance('place-list')">
+				<xforms:bind nodeset="place">
+					<xforms:bind nodeset="@new" type="xs:boolean"/>
+				</xforms:bind>
+			</xforms:bind>
+
 			<!--<setup current="true()" return="false()"></setup>
 			<editing current="false()" return="true()"></editing>
 			<enriching current="false()" return="true()"/>
@@ -448,10 +479,18 @@ OPTIONAL {?c skos:scopeNote ?note .
 
 											<!-- insert only distinct values and if they aren't valid DCMI Types -->
 											<xforms:action if="not(instance('type-list')/type = $val) and not(index-of($dcmi-types, lower-case($val)))">
-												<xforms:var name="uri"
-													select="if (instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]) then instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri else ''"/>
-												<xforms:insert context="instance('type-list')" nodeset="./child::node()[last()]"
-													origin="xforms:element('type', (xforms:attribute('uri', $uri), $val))"/>
+												<xforms:action if="instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]">
+													<xforms:var name="uri"
+														select="instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri"/>
+													<xforms:insert context="instance('type-list')" nodeset="./child::node()[last()]"
+														origin="xforms:element('type', (xforms:attribute('uri', $uri), xforms:attribute('new', false()), xforms:attribute('prefLabel', ''), $val))"
+														if="not(instance('type-list')/agent = $val)"/>
+												</xforms:action>
+												<xforms:action if="not(instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val])">
+													<xforms:insert context="instance('type-list')" nodeset="./child::node()[last()]"
+														origin="xforms:element('type', (xforms:attribute('uri', ''), xforms:attribute('new', true()), xforms:attribute('prefLabel', ''), $val))"
+														if="not(instance('type-list')/agent = $val)"/>
+												</xforms:action>
 											</xforms:action>
 										</xforms:action>
 									</xforms:action>
@@ -468,13 +507,19 @@ OPTIONAL {?c skos:scopeNote ?note .
 
 										<xforms:action if="string-length($val) &gt; 0">
 											<!-- ignore unknowns -->
-											<xforms:action if="not(lower-case($val) = 'unknown')">
-												<xforms:var name="uri"
-													select="if (instance('agent-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]) then instance('agent-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri else ''"/>
-
-												<xforms:insert context="instance('agent-list')" nodeset="./child::node()[last()]"
-													origin="xforms:element('agent', (xforms:attribute('uri', $uri), $val))"
-													if="not(instance('agent-list')/agent = $val)"/>
+											<xforms:action if="not(contains(lower-case($val), 'unknown'))">
+												<xforms:action if="instance('agent-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]">
+													<xforms:var name="uri"
+														select="instance('agent-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri"/>
+													<xforms:insert context="instance('agent-list')" nodeset="./child::node()[last()]"
+														origin="xforms:element('agent', (xforms:attribute('uri', $uri), xforms:attribute('new', false()), xforms:attribute('prefLabel', ''), $val))"
+														if="not(instance('agent-list')/agent = $val)"/>
+												</xforms:action>
+												<xforms:action if="not(instance('agent-vocabs')//res:result[res:binding[@name='label']/res:literal = $val])">
+													<xforms:insert context="instance('agent-list')" nodeset="./child::node()[last()]"
+														origin="xforms:element('agent', (xforms:attribute('uri', ''), xforms:attribute('new', true()), xforms:attribute('prefLabel', ''), $val))"
+														if="not(instance('agent-list')/agent = $val)"/>
+												</xforms:action>
 											</xforms:action>
 										</xforms:action>
 									</xforms:action>
@@ -493,12 +538,18 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<xforms:action if="string-length($val) &gt; 0">
 											<!-- ignore individual lat or long elements and elements conforming to "lat,long" formatting -->
 											<xforms:action if="not($val castable as xs:decimal) and not(matches($val, '-?\d+\.\d+,\s?-?\d+\.\d+'))">
-												<xforms:var name="uri"
-													select="if (instance('place-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]) then instance('place-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri else ''"/>
-												<xforms:insert context="instance('place-list')" nodeset="./child::node()[last()]"
-													origin="xforms:element('place', (xforms:attribute('uri', $uri), $val))"
-													if="not(instance('place-list')/place = $val)"/>
-
+												<xforms:action if="instance('place-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]">
+													<xforms:var name="uri"
+														select="instance('place-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri"/>
+													<xforms:insert context="instance('place-list')" nodeset="./child::node()[last()]"
+														origin="xforms:element('place', (xforms:attribute('uri', $uri), xforms:attribute('new', false()), xforms:attribute('prefLabel', ''), $val))"
+														if="not(instance('place-list')/agent = $val)"/>
+												</xforms:action>
+												<xforms:action if="not(instance('place-vocabs')//res:result[res:binding[@name='label']/res:literal = $val])">
+													<xforms:insert context="instance('place-list')" nodeset="./child::node()[last()]"
+														origin="xforms:element('place', (xforms:attribute('uri', ''), xforms:attribute('new', true()), xforms:attribute('prefLabel', ''), $val))"
+														if="not(instance('place-list')/agent = $val)"/>
+												</xforms:action>
 											</xforms:action>
 										</xforms:action>
 									</xforms:action>
@@ -709,92 +760,92 @@ OPTIONAL {?c skos:scopeNote ?note .
 					</xforms:group>
 				</div>
 			</div>
-				
+
 			<!-- navigation -->
 			<div class="row">
 				<div class="col-md-12">
 					<xforms:group ref="instance('control-instance')/interfaces">
-					<ul class="navigation list-inline" style="margin:20px 0">
-						
-						<li>
-							<xforms:group ref=".[setup/@current=true() or setup/@return = true()]">
-								<xforms:trigger appearance="minimal">
-									<xforms:label>Setup Options</xforms:label>									
-								</xforms:trigger>												
-							</xforms:group>
-							<xforms:group ref=".[setup/@current=false() and setup/@return = false()]">
-								<span>Setup Options</span>
-							</xforms:group>
-						</li>
-						<li>
-							<xforms:group ref=".[editing/@current=true() or editing/@return = true()]">
-								<xforms:trigger appearance="minimal">
-									<xforms:label>Editing</xforms:label>
-									<xforms:action ev:event="DOMActivate">
-										<xforms:toggle case="remediation" if=".[editing/@current=false()]"/>
-										<xforms:action xxforms:iterate="instance('control-instance')/interfaces/*">
-											<xforms:setvalue ref="@current" value="false()"/>											
+						<ul class="navigation list-inline" style="margin:20px 0">
+
+							<li>
+								<xforms:group ref=".[setup/@current=true() or setup/@return = true()]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>Setup Options</xforms:label>
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[setup/@current=false() and setup/@return = false()]">
+									<span>Setup Options</span>
+								</xforms:group>
+							</li>
+							<li>
+								<xforms:group ref=".[editing/@current=true() or editing/@return = true()]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>Editing</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:toggle case="remediation" if=".[editing/@current=false()]"/>
+											<xforms:action xxforms:iterate="instance('control-instance')/interfaces/*">
+												<xforms:setvalue ref="@current" value="false()"/>
+											</xforms:action>
+											<xforms:setvalue ref="instance('control-instance')/interfaces/editing/@current" value="true()"/>
 										</xforms:action>
-										<xforms:setvalue ref="instance('control-instance')/interfaces/editing/@current" value="true()"/>
-									</xforms:action>
-								</xforms:trigger>												
-							</xforms:group>
-							<xforms:group ref=".[editing/@current=false() and editing/@return = false()]">
-								<span>Editing</span>
-							</xforms:group>
-						</li>
-						<li>
-							<xforms:group ref=".[enriching/@current=true() or enriching/@return = true()]">
-								<xforms:trigger appearance="minimal">
-									<xforms:label>Enriching</xforms:label>
-									<xforms:action ev:event="DOMActivate">
-										<!-- toggle interface -->
-										<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface"
-											value="instance('control-instance')/normalization/*[. = true()][1]/name()"/>
-										<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
-										<xforms:action xxforms:iterate="instance('control-instance')/interfaces/*">
-											<xforms:setvalue ref="@current" value="false()"/>											
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[editing/@current=false() and editing/@return = false()]">
+									<span>Editing</span>
+								</xforms:group>
+							</li>
+							<li>
+								<xforms:group ref=".[enriching/@current=true() or enriching/@return = true()]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>Enriching</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<!-- toggle interface -->
+											<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface"
+												value="instance('control-instance')/normalization/*[. = true()][1]/name()"/>
+											<xforms:toggle case="{instance('control-instance')/normalization/@current-interface}-normalization"/>
+											<xforms:action xxforms:iterate="instance('control-instance')/interfaces/*">
+												<xforms:setvalue ref="@current" value="false()"/>
+											</xforms:action>
+											<xforms:setvalue ref="instance('control-instance')/interfaces/enriching/@current" value="true()"/>
 										</xforms:action>
-										<xforms:setvalue ref="instance('control-instance')/interfaces/enriching/@current" value="true()"/>
-									</xforms:action>
-								</xforms:trigger>												
-							</xforms:group>
-							<xforms:group ref=".[enriching/@current=false() and enriching/@return = false()]">
-								<span>Enriching</span>
-							</xforms:group>
-						</li>
-						<li>
-							<xforms:group ref=".[preview/@current=true() or preview/@return = true()]">
-								<xforms:trigger appearance="minimal">
-									<xforms:label>Preview Set</xforms:label>
-									<xforms:action ev:event="DOMActivate">
-										<xforms:toggle case="validation-results" if=".[preview/@current=false()]"/>
-										<xforms:action xxforms:iterate="instance('control-instance')/interfaces/*">
-											<xforms:setvalue ref="@current" value="false()"/>											
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[enriching/@current=false() and enriching/@return = false()]">
+									<span>Enriching</span>
+								</xforms:group>
+							</li>
+							<li>
+								<xforms:group ref=".[preview/@current=true() or preview/@return = true()]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>Preview Set</xforms:label>
+										<xforms:action ev:event="DOMActivate">
+											<xforms:toggle case="validation-results" if=".[preview/@current=false()]"/>
+											<xforms:action xxforms:iterate="instance('control-instance')/interfaces/*">
+												<xforms:setvalue ref="@current" value="false()"/>
+											</xforms:action>
+											<xforms:setvalue ref="instance('control-instance')/interfaces/preview/@current" value="true()"/>
 										</xforms:action>
-										<xforms:setvalue ref="instance('control-instance')/interfaces/preview/@current" value="true()"/>
-									</xforms:action>
-								</xforms:trigger>												
-							</xforms:group>
-							<xforms:group ref=".[preview/@current=false() and preview/@return = false()]">
-								<span>Preview Set</span>
-							</xforms:group>
-						</li>
-						<li>
-							<xforms:group ref=".[contribute/@current=true() or contribute/@return = true()]">
-								<xforms:trigger appearance="minimal">
-									<xforms:label>Contribute Set</xforms:label>									
-								</xforms:trigger>												
-							</xforms:group>
-							<xforms:group ref=".[contribute/@current=false() and contribute/@return = false()]">
-								<span>Contribute Set</span>
-							</xforms:group>
-						</li>
-					</ul>
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[preview/@current=false() and preview/@return = false()]">
+									<span>Preview Set</span>
+								</xforms:group>
+							</li>
+							<li>
+								<xforms:group ref=".[contribute/@current=true() or contribute/@return = true()]">
+									<xforms:trigger appearance="minimal">
+										<xforms:label>Contribute Set</xforms:label>
+									</xforms:trigger>
+								</xforms:group>
+								<xforms:group ref=".[contribute/@current=false() and contribute/@return = false()]">
+									<span>Contribute Set</span>
+								</xforms:group>
+							</li>
+						</ul>
 					</xforms:group>
-				</div>					
+				</div>
 			</div>
-			
+
 			<div class="row">
 				<div class="col-md-12">
 					<xforms:switch>
@@ -814,11 +865,11 @@ OPTIONAL {?c skos:scopeNote ?note .
 											<xforms:setvalue ref="instance('control-instance')/oai-service"
 												value="concat(substring-before(instance('set')/set, '?'), '?verb=ListSets')"/>
 											<xforms:send submission="get-oai-set"/>
-											
+
 											<!-- update navbar -->
 											<xforms:setvalue ref="instance('control-instance')/interfaces/setup/@current" value="false()"/>
 											<xforms:setvalue ref="instance('control-instance')/interfaces/editing/@current" value="true()"/>
-											
+
 											<xforms:toggle case="remediation"/>
 										</xforms:action>
 									</xforms:trigger>
@@ -868,8 +919,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<div class="subsection">
 											<h4>Destination(s) <small><xforms:trigger appearance="minimal"><xforms:label><span
 																class="glyphicon glyphicon-info-sign"></span></xforms:label>
-												<xxforms:show ev:event="DOMActivate" dialog="destination-info-dialog"/>
-														</xforms:trigger></small>
+														<xxforms:show ev:event="DOMActivate" dialog="destination-info-dialog"/>
+													</xforms:trigger></small>
 											</h4>
 											<p>You can contribute this set to one or both of the systems below. Select your preference:</p>
 											<div>
@@ -953,11 +1004,11 @@ OPTIONAL {?c skos:scopeNote ?note .
 											<xforms:setvalue ref="instance('control-instance')/oai-service"
 												value="concat(substring-before(instance('set')/set, '?'), '?verb=ListSets')"/>
 											<xforms:send submission="get-oai-set"/>
-											
+
 											<!-- update navbar -->
 											<xforms:setvalue ref="instance('control-instance')/interfaces/setup/@current" value="false()"/>
 											<xforms:setvalue ref="instance('control-instance')/interfaces/editing/@current" value="true()"/>
-											
+
 											<xforms:toggle case="remediation"/>
 										</xforms:action>
 									</xforms:trigger>
@@ -976,7 +1027,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<div class="col-md-6 text-right">
 									<xi:include href="components/remediation-buttons.xml"/>
 								</div>
-							</div>							
+							</div>
 							<hr />
 							<xforms:group ref="instance('control-instance')/remediation">
 								<div>
@@ -1539,7 +1590,21 @@ OPTIONAL {?c skos:scopeNote ?note .
 					<!-- call the getRDF web service to transform OAI-PMH into RDF. It will make use to any terms normalized and inserted into Google Sheets -->
 					<xforms:action ev:event="xforms-submit-done">
 						<xforms:send submission="get-rdf"/>
+						<!-- generate RDF for concepts -->
+						<xforms:delete nodeset="instance('rdf')/*"/>
+						<xforms:action xxforms:iterate="instance('type-list')/type[@new = true() and string(@uri)]">
+							<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]" origin="instance('concept-template')"/>
+							<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="context()/@uri"/>
+							<xforms:setvalue ref="instance('rdf')/*[last()]/skos:prefLabel" value="context()/@prefLabel"/>
+						</xforms:action>
+						<xforms:action xxforms:iterate="instance('agent-list')/type[@new = true() and string(@uri)]">
+							<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]" origin="instance('agent-template')"/>
+							<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="context()/@uri"/>
+							<xforms:setvalue ref="instance('rdf')/*[last()]/skos:prefLabel" value="context()/@prefLabel"/>
+						</xforms:action> 
+						<xforms:send submission="post-rdf"/>
 						<xforms:toggle case="import-complete"/>
+						<!-- set bread crumb navigation -->
 						<xforms:action xxforms:iterate="instance('control-instance')/interfaces/*">
 							<xforms:setvalue ref="@current" value="false()"/>
 							<xforms:setvalue ref="@return" value="false()"/>
@@ -1549,14 +1614,13 @@ OPTIONAL {?c skos:scopeNote ?note .
 				</xforms:action>
 			</fr:positive-choice>
 		</fr:alert-dialog>
-		
 		<xxforms:dialog id="destination-info-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 			<xforms:label>Destination Information</xforms:label>
 			<div>
-				<p><strong>Primo</strong>: Digital objects that are described with Dublin Core in an unrestricted system and that
-					you would like to pipe into Alliance Primo.</p>
-				<p><strong>DPLA</strong>: Digital objects that are described with Dublin Core in an unrestricted system and that
-					are part of the United States’ cultural and/or scientific heritage.</p>
+				<p><strong>Primo</strong>: Digital objects that are described with Dublin Core in an unrestricted system and that you would like to pipe into
+					Alliance Primo.</p>
+				<p><strong>DPLA</strong>: Digital objects that are described with Dublin Core in an unrestricted system and that are part of the United States’
+					cultural and/or scientific heritage.</p>
 				<p><strong>DPLA and Primo</strong>: Digital objects that meet criteria for both Primo and DPLA.</p>
 			</div>
 		</xxforms:dialog>

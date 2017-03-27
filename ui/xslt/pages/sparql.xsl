@@ -40,6 +40,7 @@ PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
 PREFIX vcard:	<http://www.w3.org/2006/vcard/ns#>
 PREFIX arch:	<http://purl.org/archival/vocab/arch#>
 PREFIX nwda:	<https://github.com/Orbis-Cascade-Alliance/nwda-editor#>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
 
 SELECT * WHERE {
   ?s ?p ?o

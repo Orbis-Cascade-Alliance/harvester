@@ -75,6 +75,7 @@ PREFIX doap:	<http://usefulinc.com/ns/doap#>
 DESCRIBE * WHERE {
   ?cho a dpla:SourceResource;
 		dcterms:isPartOf ?collection
+		OPTIONAL {?cho edm:hasType ?type}
        { SELECT * WHERE {
          ?agg a ore:Aggregation ;
                 edm:isShownAt ?cho ;

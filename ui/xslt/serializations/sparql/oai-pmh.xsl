@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:digest="org.apache.commons.codec.digest.DigestUtils"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:res="http://www.w3.org/2005/sparql-results#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
-	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:prov="http://www.w3.org/ns/prov#"
-	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#" xmlns:ore="http://www.openarchives.org/ore/terms/"
-	xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:doap="http://usefulinc.com/ns/doap#"
-	exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda dpla ore digest prov geo dcmitype" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.openarchives.org/OAI/2.0/"
+	xmlns:digest="org.apache.commons.codec.digest.DigestUtils" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:res="http://www.w3.org/2005/sparql-results#"
+	xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#" xmlns:prov="http://www.w3.org/ns/prov#"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#"
+	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+	exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda dpla ore digest prov geo dcmitype skos" version="2.0">
 
 	<xsl:variable name="url" select="//config/url"/>
 	<xsl:variable name="publisher" select="//config/publisher"/>
@@ -60,7 +62,8 @@
 
 	<!-- construct OAI-PMH response -->
 	<xsl:template match="/">
-		<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
 			http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
 			<responseDate>
@@ -122,7 +125,8 @@
 							<setName>Primo Harvest</setName>
 							<setDescription>
 								<oai_dc:dc>
-									<dc:description>All cultural heritage objects in <xsl:value-of select="$publisher"/> designated for harvesting into Primo</dc:description>
+									<dc:description>All cultural heritage objects in <xsl:value-of select="$publisher"/> designated for harvesting into
+										Primo</dc:description>
 									<dc:creator>
 										<xsl:value-of select="$publisher"/>
 									</dc:creator>
@@ -168,9 +172,9 @@
 												</xsl:apply-templates>
 
 												<!-- suppress resumption token from test set -->
-												<xsl:if test="not($set='primo-test')">
+												<xsl:if test="not($set = 'primo-test')">
 													<xsl:call-template name="resumptionToken"/>
-												</xsl:if>												
+												</xsl:if>
 											</xsl:element>
 										</xsl:otherwise>
 									</xsl:choose>
@@ -238,15 +242,25 @@
 				<xsl:for-each select="doap:audience[. = 'primo']">
 					<setSpec>
 						<xsl:value-of select="."/>
-					</setSpec>					
+					</setSpec>
 				</xsl:for-each>
 			</header>
 
 			<xsl:if test="$verb = 'GetRecord' or $verb = 'ListRecords'">
 				<metadata>
 					<xsl:apply-templates select="descendant::dpla:SourceResource">
-						<xsl:with-param name="depiction" select="if (edm:object/@rdf:resource) then edm:object/@rdf:resource else edm:object/edm:WebResource/@rdf:about"/>
-						<xsl:with-param name="thumbnail" select="if (edm:preview/@rdf:resource) then edm:preview/@rdf:resource else edm:preview/edm:WebResource/@rdf:about"/>
+						<xsl:with-param name="depiction"
+							select="
+								if (edm:object/@rdf:resource) then
+									edm:object/@rdf:resource
+								else
+									edm:object/edm:WebResource/@rdf:about"/>
+						<xsl:with-param name="thumbnail"
+							select="
+								if (edm:preview/@rdf:resource) then
+									edm:preview/@rdf:resource
+								else
+									edm:preview/edm:WebResource/@rdf:about"/>
 						<xsl:with-param name="dataProvider" select="edm:dataProvider/@rdf:resource"/>
 					</xsl:apply-templates>
 				</metadata>
@@ -265,13 +279,13 @@
 				<xsl:choose>
 					<xsl:when test="contains($dataProvider, 'archiveswest')">
 						<xsl:variable name="code" select="substring-after($dataProvider, '#')"/>
-							
-						<xsl:value-of select="//config/codes/repository[@marc=$code]/@exlibris"/>
+
+						<xsl:value-of select="//config/codes/repository[@marc = $code]/@exlibris"/>
 					</xsl:when>
 					<xsl:when test="contains($dataProvider, 'harvester')">
 						<!-- placeholder for harvester agency URIs -->
 					</xsl:when>
-				</xsl:choose>				
+				</xsl:choose>
 			</dc:publisher>
 
 			<dc:identifier>
@@ -297,8 +311,8 @@
 			<xsl:value-of select="tokenize(@rdf:resource, '/')[last()]"/>
 		</dc:type>
 	</xsl:template>
-	
-	<xsl:template match="dcterms:creator|dcterms:contributor">
+
+	<xsl:template match="dcterms:creator | dcterms:contributor">
 		<xsl:variable name="element" select="local-name()"/>
 		<xsl:element name="dc:{$element}" namespace="http://purl.org/dc/elements/1.1/">
 			<xsl:choose>
@@ -310,15 +324,15 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:element>
-		
-		
+
+
 		<!-- strip dates for a text-only value -->
 		<xsl:if test="string-length(text()) &gt; 0">
 			<xsl:analyze-string select="text()" regex="(.*),\s\d{{4}}">
 				<xsl:matching-substring>
 					<xsl:element name="dc:{$element}.undated" namespace="http://purl.org/dc/elements/1.1/">
 						<xsl:value-of select="regex-group(1)"/>
-					</xsl:element>					
+					</xsl:element>
 				</xsl:matching-substring>
 			</xsl:analyze-string>
 		</xsl:if>
@@ -327,8 +341,19 @@
 	<xsl:template match="edm:hasType">
 		<dc:genre>
 			<xsl:choose>
+				<xsl:when test="child::skos:Concept">
+					<xsl:value-of select="child::skos:Concept/skos:prefLabel"/>
+				</xsl:when>
 				<xsl:when test="@rdf:resource">
-					<xsl:value-of select="@rdf:resource"/>
+					<xsl:variable name="uri" select="@rdf:resource"/>
+					<xsl:choose>
+						<xsl:when test="//skos:Concept[@rdf:about = $uri]">
+							<xsl:value-of select="//skos:Concept[@rdf:about = $uri]/skos:prefLabel"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="@rdf:resource"/>
+						</xsl:otherwise>
+					</xsl:choose>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:value-of select="."/>

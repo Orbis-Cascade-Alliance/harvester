@@ -140,6 +140,8 @@
 												<xforms:action ev:event="DOMActivate">
 													<!-- set @uri, which switches to other interface -->
 													<xforms:setvalue ref="$binding/@uri" value="instance('control-instance')/uri"/>		
+													<xforms:setvalue ref="$binding/@new" value="true()"/>
+													<xforms:setvalue ref="$binding/@prefLabel" value="instance('rss')//item[link = instance('control-instance')/uri]/title"/>
 													
 													<!-- TODO: SPARQL/Update to insert Term-URI pair -->
 													<!-- create a unique id for the URI to avoid blank nodes -->

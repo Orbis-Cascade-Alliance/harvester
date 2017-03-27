@@ -2,13 +2,18 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:arch="http://purl.org/archival/vocab/arch#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
 	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
-	xmlns:prov="http://www.w3.org/ns/prov#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:dcmitype="http://purl.org/dc/dcmitype/"
-	xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/"
-	xmlns:foaf="http://xmlns.com/foaf/0.1/" exclude-result-prefixes="#all" version="2.0">
+	xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+	xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#"
+	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" exclude-result-prefixes="#all"
+	version="2.0">
 	<xsl:include href="../../templates.xsl"/>
 	<xsl:variable name="display_path">../</xsl:variable>
-	<xsl:variable name="mode" select="if (//rdf:RDF/*/namespace-uri() = 'http://purl.org/archival/vocab/arch#') then 'agency' else 'default'"/>
-	
+	<xsl:variable name="mode" select="
+			if (//rdf:RDF/*/namespace-uri() = 'http://purl.org/archival/vocab/arch#') then
+				'agency'
+			else
+				'default'"/>
+
 	<!-- request params -->
 	<xsl:param name="output" select="doc('input:request')/request/parameters/parameter[name = 'output']/value"/>
 
@@ -25,6 +30,7 @@
 			<namespace prefix="prov" uri="http://www.w3.org/ns/prov#"/>
 			<namespace prefix="rdf" uri="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
 			<namespace prefix="xsd" uri="http://www.w3.org/2001/XMLSchema#"/>
+			<namespace prefix="skos" uri="http://www.w3.org/2004/02/skos/core#"/>
 		</namespaces>
 	</xsl:variable>
 
@@ -47,13 +53,14 @@
 								<xsl:otherwise>
 									<xsl:value-of
 										select="
-										if (count(//dcterms:title) &gt; 1) then
-										'Test'
-										else
-										//dcterms:title"/>
+											if (count(//dcterms:title) &gt; 1) then
+												'Test'
+											else
+												//dcterms:title"
+									/>
 								</xsl:otherwise>
 							</xsl:choose>
-							</title>
+						</title>
 						<meta name="viewport" content="width=device-width, initial-scale=1"/>
 						<!-- bootstrap -->
 						<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"/>
@@ -74,7 +81,7 @@
 								<xsl:call-template name="body"/>
 							</xsl:otherwise>
 						</xsl:choose>
-						
+
 						<xsl:call-template name="footer"/>
 					</body>
 				</html>
@@ -88,7 +95,7 @@
 			<xsl:apply-templates select="descendant::ore:Aggregation"/>
 		</div>
 	</xsl:template>
-	
+
 	<xsl:template name="agent-body">
 		<div class="container-fluid content">
 			<div class="row">
@@ -115,7 +122,7 @@
 					<!-- self -->
 					<xsl:apply-templates select="self::node()" mode="render"/>
 
-					<!-- images -->					
+					<!-- images -->
 					<xsl:apply-templates
 						select="parent::node()/edm:WebResource[@rdf:about = $thumbnail] | parent::node()/edm:WebResource[@rdf:about = $reference]" mode="render"
 					/>
@@ -129,8 +136,18 @@
 					</xsl:variable>
 
 					<xsl:apply-templates select="descendant::dpla:SourceResource">
-						<xsl:with-param name="reference" select="if (edm:object/@rdf:resource) then edm:object/@rdf:resource else edm:object/edm:WebResource/@rdf:about"/>
-						<xsl:with-param name="thumbnail" select="if (edm:preview/@rdf:resource) then edm:preview/@rdf:resource else edm:preview/edm:WebResource/@rdf:about"/>
+						<xsl:with-param name="reference"
+							select="
+								if (edm:object/@rdf:resource) then
+									edm:object/@rdf:resource
+								else
+									edm:object/edm:WebResource/@rdf:about"/>
+						<xsl:with-param name="thumbnail"
+							select="
+								if (edm:preview/@rdf:resource) then
+									edm:preview/@rdf:resource
+								else
+									edm:preview/edm:WebResource/@rdf:about"/>
 						<xsl:with-param name="hasCoords" select="$hasCoords"/>
 					</xsl:apply-templates>
 
@@ -200,7 +217,7 @@
 					<xsl:value-of select="@rdf:about"/>
 				</a>
 			</h4>
-		</div>		
+		</div>
 		<xsl:choose>
 			<xsl:when test="string($output)">
 				<div class="col-md-6">
@@ -211,21 +228,21 @@
 					</dl>
 				</div>
 				<div class="col-md-6">
-					<xsl:if test="string($reference)">						
-						<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about=$reference]" mode="display-image">
+					<xsl:if test="string($reference)">
+						<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about = $reference]" mode="display-image">
 							<xsl:with-param name="size">reference</xsl:with-param>
 						</xsl:apply-templates>
-						
+
 					</xsl:if>
 					<xsl:if test="string($thumbnail)">
-						<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about=$thumbnail]" mode="display-image">
+						<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about = $thumbnail]" mode="display-image">
 							<xsl:with-param name="size">thumbnail</xsl:with-param>
-						</xsl:apply-templates>						
+						</xsl:apply-templates>
 					</xsl:if>
 				</div>
 			</xsl:when>
-			<xsl:otherwise>			
-				
+			<xsl:otherwise>
+
 				<xsl:choose>
 					<xsl:when test="$hasCoords = true()">
 						<div class="col-md-12">
@@ -235,9 +252,9 @@
 								</xsl:apply-templates>
 							</dl>
 						</div>
-						<div class="col-md-6">			
-							<xsl:if test="string($reference)">								
-								<xsl:apply-templates select="descendant::edm:WebResource[@rdf:about=$reference]" mode="display-image">
+						<div class="col-md-6">
+							<xsl:if test="string($reference)">
+								<xsl:apply-templates select="descendant::edm:WebResource[@rdf:about = $reference]" mode="display-image">
 									<xsl:with-param name="size">reference</xsl:with-param>
 								</xsl:apply-templates>
 							</xsl:if>
@@ -254,11 +271,11 @@
 								</xsl:apply-templates>
 							</dl>
 						</div>
-						<div class="col-md-6">							
+						<div class="col-md-6">
 							<xsl:apply-templates select="descendant::edm:WebResource" mode="display-image">
 								<xsl:with-param name="size">thumbnail</xsl:with-param>
 							</xsl:apply-templates>
-							<xsl:apply-templates select="descendant::edm:WebResource[@rdf:about=$reference]" mode="display-image">
+							<xsl:apply-templates select="descendant::edm:WebResource[@rdf:about = $reference]" mode="display-image">
 								<xsl:with-param name="size">reference</xsl:with-param>
 							</xsl:apply-templates>
 						</div>
@@ -267,12 +284,12 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	
+
 	<xsl:template match="edm:WebResource" mode="display-image">
 		<xsl:param name="size"/>
 		<xsl:if test="contains(dcterms:format, 'image/') and not(dcterms:format = 'image/tiff')">
 			<img src="{@rdf:about}" alt="{$size} image URL not dereferenceable" title="{$size}" style="max-width:100%"/>
-		</xsl:if>		
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="*">
