@@ -36,7 +36,7 @@
 					<p>Placeholder for project description.</p>
 					<h2>Partners</h2>
 					<p>
-						<a href="{/content/config/repository_rdf}"><span class="glyphicon glyphicon-download-alt"/>Download Orbis Cascade repository RDF/XML</a>
+						<a href="repositories.rdf"><span class="glyphicon glyphicon-download-alt"/>Download Orbis Cascade repository RDF/XML</a>
 					</p>
 					<table class="table table-striped">
 						<thead>

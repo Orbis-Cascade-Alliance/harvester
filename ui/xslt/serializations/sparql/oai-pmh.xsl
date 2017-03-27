@@ -245,8 +245,8 @@
 			<xsl:if test="$verb = 'GetRecord' or $verb = 'ListRecords'">
 				<metadata>
 					<xsl:apply-templates select="descendant::dpla:SourceResource">
-						<xsl:with-param name="depiction" select="edm:object/@rdf:resource"/>
-						<xsl:with-param name="thumbnail" select="edm:preview/@rdf:resource"/>
+						<xsl:with-param name="depiction" select="if (edm:object/@rdf:resource) then edm:object/@rdf:resource else edm:object/edm:WebResource/@rdf:about"/>
+						<xsl:with-param name="thumbnail" select="if (edm:preview/@rdf:resource) then edm:preview/@rdf:resource else edm:preview/edm:WebResource/@rdf:about"/>
 						<xsl:with-param name="dataProvider" select="edm:dataProvider/@rdf:resource"/>
 					</xsl:apply-templates>
 				</metadata>

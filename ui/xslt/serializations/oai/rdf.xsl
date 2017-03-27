@@ -43,7 +43,16 @@
 	<xsl:param name="url" select="/content/config/url"/>
 	<xsl:param name="production_server" select="/content/config/production_server"/>
 	<xsl:param name="sparql_endpoint" select="/content/config/vocab_sparql/query"/>
-	<xsl:variable name="repo_uri" select="concat($production_server, 'contact#', $repository)"/>
+	<xsl:variable name="repo_uri">
+		<xsl:choose>
+			<xsl:when test="/content/config/codes/repository[@marc=$repository]/@harvester-only='true'">
+				<xsl:value-of select="concat('http://harvester.orbiscascade.org/agency/', $repository)"/>
+			</xsl:when>
+			<xsl:otherwise>				
+				<xsl:value-of select="concat($production_server, 'contact#', $repository)"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
 
 	<!-- break down information about the OAI-PMH service -->
 	<xsl:variable name="oai_service" select="/content/oai:OAI-PMH/oai:request"/>
@@ -294,7 +303,7 @@ rdfs:label ?label
 
 			<edm:aggregatedCHO rdf:resource="{$cho_uri}"/>
 			<edm:isShownAt rdf:resource="{$cho_uri}"/>
-			<edm:dataProvider rdf:resource="{$production_server}contact#{$repository}"/>
+			<edm:dataProvider rdf:resource="{$repo_uri}"/>
 			<xsl:call-template name="views">
 				<xsl:with-param name="cho_uri" select="$cho_uri"/>
 			</xsl:call-template>

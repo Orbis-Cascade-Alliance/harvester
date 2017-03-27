@@ -45,7 +45,8 @@ PREFIX nwda:	<https://github.com/Orbis-Cascade-Alliance/nwda-editor#>
 PREFIX prov:	<http://www.w3.org/ns/prov#>
 DESCRIBE * WHERE {
   {<URI> edm:aggregatedCHO ?cho }
-  UNION {?s a ore:Aggregation FILTER (?s = <URI>)}
+  UNION {?s a ore:Aggregation ; edm:object ?obj ; edm:preview ?prev
+  FILTER (?s = <URI>) }
 }]]>
 				</xsl:variable>
 				

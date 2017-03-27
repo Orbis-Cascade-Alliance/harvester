@@ -108,7 +108,7 @@ SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
 			</xforms:instance>
 
 			<!-- ************************* SUBMISSIONS ************************** -->
-			<xforms:submission id="get-repository-rdf" serialization="none" method="get" action="{instance('config')/repository_rdf}" replace="instance"
+			<xforms:submission id="get-repository-rdf" serialization="none" method="get" action="/harvester/repositories.rdf" replace="instance"
 				instance="rdf">
 				<xforms:header>
 					<xforms:name>User-Agent</xforms:name>

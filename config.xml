@@ -6,6 +6,7 @@
 	<description>These are the cultural heritage objects aggregated by the Orbis Cascade Alliance.</description>
 	<publisher>Orbis Cascade Alliance</publisher>
 	<repository_rdf>http://archiveswest.orbiscascade.org:8080/orbeon/nwda/repositories.rdf</repository_rdf>
+	<repository_path>/usr/local/projects/repository_records</repository_path>
 	<sparql>
 		<query>http://localhost:3030/nwda/query</query>
 		<store>http://localhost:3030/nwda/data</store>
@@ -21,66 +22,65 @@
 	<dpla_limit>10000</dpla_limit>
 	<oai-pmh_limit>100</oai-pmh_limit>
 	<codes>
-		<repository marc="idbb" exlibris=""/>
-		<repository marc="orbec" exlibris="COCC"/>
-		<repository marc="waeic" exlibris="CWU"/>
-		<repository marc="orsac" exlibris="CHEMEK"/>
-		<repository marc="orocc" exlibris=""/>
-		<repository marc="wavc" exlibris="CC"/>
-		<repository marc="orpcc" exlibris="CONC"/>
-		<repository marc="orsitcc" exlibris=""/>
-		<repository marc="orlge" exlibris="EOU"/>
-		<repository marc="wachene" exlibris="EWU"/>
-		<repository marc="orngf" exlibris="GFOX"/>
-		<repository marc="orel" exlibris="LANECC"/>
-		<repository marc="orpl" exlibris="LCC"/>
-		<repository marc="ormcl" exlibris="LINF"/>
-		<repository marc="ormac" exlibris="MRY"/>
-		<repository marc="orgrc" exlibris="MHCC"/>
-		<repository marc="mthi" exlibris=""/>
-		<repository marc="mtbc" exlibris=""/>
-		<repository marc="wasmhi" exlibris=""/>
-		<repository marc="orphs" exlibris="OHSU"/>
-		<repository marc="orhi" exlibris=""/>
-		<repository marc="orkt" exlibris="OIT"/>
-		<repository marc="orcs" exlibris="OSU"/>
-		<repository marc="wapip" exlibris=""/>
-		<repository marc="orfp" exlibris="PU"/>
-		<repository marc="orppc" exlibris="PCC"/>
-		<repository marc="orps" exlibris="PSU"/>
-		<repository marc="orpr" exlibris="REED"/>
-		<repository marc="walsm" exlibris="STMU"/>
-		<repository marc="utwvslc" exlibris=""/>
-		<repository marc="wasmar" exlibris=""/>
-		<repository marc="waspc" exlibris="SPU"/>
-		<repository marc="wasu" exlibris="SEAU"/>
-		<repository marc="orashs" exlibris="SOU"/>
-		<repository marc="wat" exlibris=""/>
-		<repository marc="waoe" exlibris="EVSC"/>
-		<repository marc="idu" exlibris="UID"/>
-		<repository marc="mtu" exlibris=""/>
-		<repository marc="oru" exlibris="UO"/>
-		<repository marc="oreuurm" exlibris="UO"/>
-		<repository marc="oru" exlibris="UO"/>
-		<repository marc="orpu" exlibris="UPORT"/>
-		<repository marc="watu" exlibris="UPUGS"/>
-		<repository marc="uu" exlibris=""/>
-		<repository marc="uuml" exlibris=""/>
-		<repository marc="wau-ar" exlibris="UW"/>
-		<repository marc="waseumc" exlibris="UW"/>
-		<repository marc="wau" exlibris="UW"/>
-		<repository marc="ula" exlibris=""/>
-		<repository marc="wawc" exlibris="WALLA"/>
-		<repository marc="orpwp" exlibris="WPC"/>
-		<repository marc="waps" exlibris="WSU"/>
-		<repository marc="ormonw" exlibris="WOU"/>
-		<repository marc="wabewwuh" exlibris="WWU"/>
-		<repository marc="wabewwua" exlibris="WWU"/>
-		<repository marc="wabewwus" exlibris="WWU"/>
-		<repository marc="wabewh" exlibris="WWU"/>
-		<repository marc="waww" exlibris="WHITC"/>
-		<repository marc="waspw" exlibris="WW"/>
-		<repository marc="orsaw" exlibris="WU"/>
+		<repository marc="idbb" harvester-only="false" exlibris=""/>
+		<repository marc="orbec" harvester-only="false" exlibris="COCC"/>
+		<repository marc="waeic" harvester-only="false" exlibris="CWU"/>
+		<repository marc="orsac" harvester-only="true" exlibris="CHEMEK"/>
+		<repository marc="orocc" harvester-only="true" exlibris=""/>
+		<repository marc="wavc" harvester-only="true" exlibris="CC"/>
+		<repository marc="orpcc" harvester-only="false" exlibris="CONC"/>
+		<repository marc="orsitcc" harvester-only="true" exlibris=""/>
+		<repository marc="orlge" harvester-only="true" exlibris="EOU"/>
+		<repository marc="wachene" harvester-only="false" exlibris="EWU"/>
+		<repository marc="orngf" harvester-only="false" exlibris="GFOX"/>
+		<repository marc="orel" harvester-only="false" exlibris="LANECC"/>
+		<repository marc="orpl" harvester-only="false" exlibris="LCC"/>
+		<repository marc="ormcl" harvester-only="true" exlibris="LINF"/>
+		<repository marc="ormac" harvester-only="true" exlibris="MRY"/>
+		<repository marc="orgrc" harvester-only="true" exlibris="MHCC"/>
+		<repository marc="mthi" harvester-only="false" exlibris=""/>
+		<repository marc="mtbc" harvester-only="false" exlibris=""/>
+		<repository marc="wasmhi" harvester-only="false" exlibris=""/>
+		<repository marc="orphs" harvester-only="false" exlibris="OHSU"/>
+		<repository marc="orhi" harvester-only="false" exlibris=""/>
+		<repository marc="orkt" harvester-only="false" exlibris="OIT"/>
+		<repository marc="orcs" harvester-only="false" exlibris="OSU"/>
+		<repository marc="wapip" harvester-only="true" exlibris=""/>
+		<repository marc="orfp" harvester-only="false" exlibris="PU"/>
+		<repository marc="orppc" harvester-only="true" exlibris="PCC"/>
+		<repository marc="orps" harvester-only="false" exlibris="PSU"/>
+		<repository marc="orpr" harvester-only="true" exlibris="REED"/>
+		<repository marc="walsm" harvester-only="true" exlibris="STMU"/>
+		<repository marc="utwvslc" harvester-only="false" exlibris=""/>
+		<repository marc="wasmar" harvester-only="false" exlibris=""/>
+		<repository marc="waspc" harvester-only="false" exlibris="SPU"/>
+		<repository marc="wasu" harvester-only="false" exlibris="SEAU"/>
+		<repository marc="orashs" harvester-only="true" exlibris="SOU"/>
+		<repository marc="wat" harvester-only="false" exlibris=""/>
+		<repository marc="waoe" harvester-only="false" exlibris="EVSC"/>
+		<repository marc="idu" harvester-only="false" exlibris="UID"/>
+		<repository marc="mtu" harvester-only="false" exlibris=""/>
+		<repository marc="oru" harvester-only="false" exlibris="UO"/>
+		<repository marc="oreuurm" harvester-only="false" exlibris="UO"/>
+		<repository marc="orpu" harvester-only="true" exlibris="UPORT"/>
+		<repository marc="watu" harvester-only="false" exlibris="UPUGS"/>
+		<repository marc="uu" harvester-only="true" exlibris=""/>
+		<repository marc="uuml" harvester-only="false" exlibris=""/>
+		<repository marc="wau-ar" harvester-only="true" exlibris="UW"/>
+		<repository marc="waseumc" harvester-only="false" exlibris="UW"/>
+		<repository marc="wau" harvester-only="true" exlibris="UW"/>
+		<repository marc="ula" harvester-only="false" exlibris=""/>
+		<repository marc="wawc" harvester-only="true" exlibris="WALLA"/>
+		<repository marc="orpwp" harvester-only="true" exlibris="WPC"/>
+		<repository marc="waps" harvester-only="false" exlibris="WSU"/>
+		<repository marc="ormonw" harvester-only="false" exlibris="WOU"/>
+		<repository marc="wabewwuh" harvester-only="false" exlibris="WWU"/>
+		<repository marc="wabewwua" harvester-only="true" exlibris="WWU"/>
+		<repository marc="wabewwus" harvester-only="true" exlibris="WWU"/>
+		<repository marc="wabewh" harvester-only="true" exlibris="WWU"/>
+		<repository marc="waww" harvester-only="false" exlibris="WHITC"/>
+		<repository marc="waspw" harvester-only="false" exlibris="WW"/>
+		<repository marc="orsaw" harvester-only="false" exlibris="WU"/>
 	</codes>
 	<dams>
 		<contentdm-default>
