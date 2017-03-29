@@ -45,7 +45,7 @@
 				<html lang="en">
 					<head>
 						<title>
-							<xsl:text>Archives West Harvester: </xsl:text>
+							<xsl:text>Orbis Cascade Harvester: </xsl:text>
 							<xsl:choose>
 								<xsl:when test="$mode = 'agency'">
 									<xsl:value-of select="//foaf:name"/>
