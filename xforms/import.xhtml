@@ -474,14 +474,15 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<xforms:action if="instance('control-instance')/normalization/types = true()">
 									<xforms:var name="all-elements" select="string-join($binding/dc:type, ';')"/>
 									<xforms:var name="types" select="tokenize($all-elements, ';')"/>
-									<xforms:var name="dcmi-types"
-										select="('collection','dataset','event','image','interactiveresource','movingimage','physicalobject','service','software','sound','stillimage','text')"/>
 									
 									<xforms:action xxforms:iterate="$types">
 										<xforms:var name="val"
 											select="if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1) else normalize-space(.)"/>
 										
 										<xforms:action if="string-length($val) &gt; 0">
+											<xforms:var name="dcmi-types"
+												select="('collection','dataset','event','image','interactiveresource','movingimage','physicalobject','service','software','sound','stillimage','text')"/>
+											
 											<!-- insert only distinct values and if they aren't valid DCMI Types -->
 											<xforms:action if="not(instance('type-list')/type = $val) and not(index-of($dcmi-types, lower-case($val)))">
 												<xforms:action if="instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]">
@@ -497,11 +498,6 @@ OPTIONAL {?c skos:scopeNote ?note .
 														if="not(instance('type-list')/agent = $val)"/>
 												</xforms:action>
 											</xforms:action>
-											
-											<!-- insert DCMI Type into validation results -->
-											<!--<xforms:action if="index-of($dcmi-types, lower-case($val))">
-												<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('dcmitype', $val)"/>
-											</xforms:action>-->
 										</xforms:action>
 									</xforms:action>
 								</xforms:action>
