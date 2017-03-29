@@ -458,17 +458,11 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('uri', $cho_uri)"/>
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('title', data($binding/dc:title))"
 									if="$binding/dc:title"/>
-								<!--<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('date', string-join($binding/dc:date, ';'))"
-									if="$binding/dc:date"/>
-								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('rights', string-join($binding/dc:rights, ';'))"
-									if="$binding/dc:rights"/>-->
 								
 								<!-- insert errors for invalid or missing fields -->
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No title')"
 									if="not($binding/dc:title)"/>
-								<!--<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No date elements')"
-									if="not($binding/dc:date)"/>-->
-
+								
 								<!-- parse and insert entities into relevant lists, if applicable -->
 								<!-- types/genres: normalize to AAT -->
 								<xforms:action if="instance('control-instance')/normalization/types = true()">
@@ -501,34 +495,16 @@ OPTIONAL {?c skos:scopeNote ?note .
 										</xforms:action>
 									</xforms:action>
 								</xforms:action>
-								<!-- extract DCMI Types -->
-								<!--<xforms:action if="not(instance('control-instance')/normalization/types = true())">
-									<xforms:var name="all-elements" select="string-join($binding/dc:type, ';')"/>
-									<xforms:var name="types" select="tokenize($all-elements, ';')"/>
-									<xforms:var name="dcmi-types"
-										select="('collection','dataset','event','image','interactiveresource','movingimage','physicalobject','service','software','sound','stillimage','text')"/>
-									
-									<xforms:action xxforms:iterate="$types">
-										<xforms:var name="val"
-											select="if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1) else normalize-space(.)"/>
-										
-										<xforms:action if="string-length($val) &gt; 0">
-											<xforms:action if="index-of($dcmi-types, lower-case($val))">
-												<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('dcmitype', $val)"/>
-											</xforms:action>
-										</xforms:action>
-									</xforms:action>
-								</xforms:action>-->
-
+								
 								<!-- agents -->
 								<xforms:action if="instance('control-instance')/normalization/agents = true()">
 									<xforms:var name="all-elements" select="string-join($binding/dc:creator|$binding/dc:contributor, ';')"/>
-
+									
 									<xforms:var name="agents" select="tokenize($all-elements, ';')"/>
-
+									
 									<xforms:action xxforms:iterate="$agents">
 										<xforms:var name="val" select="normalize-space(.)"/>
-
+										
 										<xforms:action if="string-length($val) &gt; 0">
 											<!-- ignore unknowns -->
 											<xforms:action if="not(contains(lower-case($val), 'unknown'))">
@@ -548,17 +524,17 @@ OPTIONAL {?c skos:scopeNote ?note .
 										</xforms:action>
 									</xforms:action>
 								</xforms:action>
-
+								
 								<!-- coverage and spatial, but ignoring coordinates -->
 								<xforms:action if="instance('control-instance')/normalization/places = true()">
 									<xforms:var name="all-elements" select="string-join($binding/*:coverage|$binding/*:spatial, ';')"/>
-
+									
 									<xforms:var name="places" select="tokenize($all-elements, ';')"/>
-
+									
 									<xforms:action xxforms:iterate="$places">
 										<xforms:var name="val"
 											select="if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1) else normalize-space(.)"/>
-
+										
 										<xforms:action if="string-length($val) &gt; 0">
 											<!-- ignore individual lat or long elements and elements conforming to "lat,long" formatting -->
 											<xforms:action if="not($val castable as xs:decimal) and not(matches($val, '-?\d+\.\d+,\s?-?\d+\.\d+'))">
