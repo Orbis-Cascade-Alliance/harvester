@@ -458,31 +458,30 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('uri', $cho_uri)"/>
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('title', data($binding/dc:title))"
 									if="$binding/dc:title"/>
-								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('date', string-join($binding/dc:date, ';'))"
+								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('date', string-join(data($binding/dc:date), ';'))"
 									if="$binding/dc:date"/>
-								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('rights', string-join($binding/dc:rights, ';'))"
+								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('rights', string-join(data($binding/dc:rights), ';'))"
 									if="$binding/dc:rights"/>
 								
 								<!-- insert errors for invalid or missing fields -->
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No title')"
 									if="not($binding/dc:title)"/>
-								<!--<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No date elements')"
-									if="not($binding/dc:date)"/>-->
+								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No date elements')"
+									if="not($binding/dc:date)"/>
 
 								<!-- parse and insert entities into relevant lists, if applicable -->
 								<!-- types/genres: normalize to AAT -->
 								<xforms:action if="instance('control-instance')/normalization/types = true()">
 									<xforms:var name="all-elements" select="string-join($binding/dc:type, ';')"/>
 									<xforms:var name="types" select="tokenize($all-elements, ';')"/>
+									<xforms:var name="dcmi-types"
+										select="('collection','dataset','event','image','interactiveresource','movingimage','physicalobject','service','software','sound','stillimage','text')"/>
 									
 									<xforms:action xxforms:iterate="$types">
 										<xforms:var name="val"
 											select="if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1) else normalize-space(.)"/>
 										
 										<xforms:action if="string-length($val) &gt; 0">
-											<xforms:var name="dcmi-types"
-												select="('collection','dataset','event','image','interactiveresource','movingimage','physicalobject','service','software','sound','stillimage','text')"/>
-											
 											<!-- insert only distinct values and if they aren't valid DCMI Types -->
 											<xforms:action if="not(instance('type-list')/type = $val) and not(index-of($dcmi-types, lower-case($val)))">
 												<xforms:action if="instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]">
@@ -510,15 +509,14 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<xforms:action if="not(instance('control-instance')/normalization/types = true())">
 									<xforms:var name="all-elements" select="string-join($binding/dc:type, ';')"/>
 									<xforms:var name="types" select="tokenize($all-elements, ';')"/>
+									<xforms:var name="dcmi-types"
+										select="('collection','dataset','event','image','interactiveresource','movingimage','physicalobject','service','software','sound','stillimage','text')"/>
 									
 									<xforms:action xxforms:iterate="$types">
 										<xforms:var name="val"
 											select="if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1) else normalize-space(.)"/>
 										
 										<xforms:action if="string-length($val) &gt; 0">
-											<xforms:var name="dcmi-types"
-												select="('collection','dataset','event','image','interactiveresource','movingimage','physicalobject','service','software','sound','stillimage','text')"/>
-											
 											<xforms:action if="index-of($dcmi-types, lower-case($val))">
 												<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('dcmitype', $val)"/>
 											</xforms:action>
