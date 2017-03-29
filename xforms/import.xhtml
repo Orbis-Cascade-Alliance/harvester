@@ -466,8 +466,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<!-- insert errors for invalid or missing fields -->
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No title')"
 									if="not($binding/dc:title)"/>
-								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No date elements')"
-									if="not($binding/dc:date)"/>
+								<!--<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No date elements')"
+									if="not($binding/dc:date)"/>-->
 
 								<!-- parse and insert entities into relevant lists, if applicable -->
 								<!-- types/genres: normalize to AAT -->
