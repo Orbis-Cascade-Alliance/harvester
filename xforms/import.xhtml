@@ -458,10 +458,10 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('uri', $cho_uri)"/>
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('title', data($binding/dc:title))"
 									if="$binding/dc:title"/>
-								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('date', string-join(data($binding/dc:date), ';'))"
+								<!--<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('date', string-join($binding/dc:date, ';'))"
 									if="$binding/dc:date"/>
-								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('rights', string-join(data($binding/dc:rights), ';'))"
-									if="$binding/dc:rights"/>
+								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('rights', string-join($binding/dc:rights, ';'))"
+									if="$binding/dc:rights"/>-->
 								
 								<!-- insert errors for invalid or missing fields -->
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No title')"
@@ -1687,7 +1687,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 						<xforms:output ref="instance('set')/type" id="type"/>
 					</div>
 
-					<!--<fr:xforms-inspector/>-->
+<!--					<fr:xforms-inspector/>-->
 				</div>
 			</div>
 		</div>
