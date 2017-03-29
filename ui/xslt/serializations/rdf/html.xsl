@@ -227,7 +227,7 @@
 						</xsl:apply-templates>
 					</dl>
 				</div>
-				<div class="col-md-6">
+				<div class="col-md-6 text-right">
 					<xsl:if test="string($reference)">
 						<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about = $reference]" mode="display-image">
 							<xsl:with-param name="size">reference</xsl:with-param>

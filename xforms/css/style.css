@@ -105,9 +105,17 @@ body{
     background-color: #f8f8f8;
     height:40px;
     border-bottom: 1px solid #e7e7e7;
+    border-top: 1px solid #e7e7e7;
     text-transform:uppercase;
     letter-spacing:1px;
     
+}
+.banner {
+	height:120px;
+}
+.banner h1 {
+	bottom:0;
+	position:absolute;
 }
 /*.orbeon .navbar .nav > li > span > a{
     color: #777;

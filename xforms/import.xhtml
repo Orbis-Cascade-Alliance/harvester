@@ -458,26 +458,37 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('uri', $cho_uri)"/>
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('title', data($binding/dc:title))"
 									if="$binding/dc:title"/>
-
+								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('date', string-join($binding/dc:date, ';'))"
+									if="$binding/dc:date"/>
+								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('rights', string-join($binding/dc:rights, ';'))"
+									if="$binding/dc:rights"/>
+								
 								<!-- insert errors for invalid or missing fields -->
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No title')"
 									if="not($binding/dc:title)"/>
+								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No date elements')"
+									if="not($binding/dc:date)"/>
 
 								<!-- parse and insert entities into relevant lists, if applicable -->
-								<!-- types/genres: normalize to AAT -->
-								<xforms:action if="instance('control-instance')/normalization/types = true()">
-									<xforms:var name="all-elements" select="string-join($binding/dc:type, ';')"/>
-									<xforms:var name="types" select="tokenize($all-elements, ';')"/>
+								
+								<xforms:var name="all-types" select="string-join($binding/dc:type, ';')"/>
+								<xforms:var name="types" select="tokenize($all-types, ';')"/>
+								<xforms:var name="dcmi-types"
+									select="('collection','dataset','event','image','interactiveresource','movingimage','physicalobject','service','software','sound','stillimage','text')"/>
+								
+								<xforms:action xxforms:iterate="$types">
+									<xforms:var name="val"
+										select="if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1) else normalize-space(.)"/>
 
-									<xforms:action xxforms:iterate="$types">
-										<xforms:var name="val"
-											select="if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1) else normalize-space(.)"/>
+									<xforms:action if="string-length($val) &gt; 0">
+										<!-- insert DCMI types into validation response -->
+										<xforms:action if="index-of($dcmi-types, lower-case($val))">
+											<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('dcmitype', $val)"/>
+										</xforms:action>
 
-										<xforms:action if="string-length($val) &gt; 0">
-											<xforms:var name="dcmi-types"
-												select="('collection','dataset','event','image','interactiveresource','movingimage','physicalobject','service','software','sound','stillimage','text')"/>
-
-											<!-- insert only distinct values and if they aren't valid DCMI Types -->
+										<!-- types/genres: normalize to AAT -->
+										<xforms:action if="instance('control-instance')/normalization/types = true()">
+										<!-- insert only distinct values and if they aren't valid DCMI Types -->
 											<xforms:action if="not(instance('type-list')/type = $val) and not(index-of($dcmi-types, lower-case($val)))">
 												<xforms:action if="instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]">
 													<xforms:var name="uri"
@@ -763,24 +774,33 @@ OPTIONAL {?c skos:scopeNote ?note .
 
 			<!-- navigation -->
 			<div class="row">
+				<div class="col-md-6 banner">
+					<img src="/apps/harvester/ui/images/header.jpg" style="max-height:100%" alt="header-image"/>
+				</div>
+				<div class="col-md-6 banner">
+					<h1>HARVESTER</h1>
+				</div>
 				<div class="col-md-12">
 					<xforms:group ref="instance('control-instance')/interfaces">
-						<ul class="navigation list-inline" style="margin:20px 0">
+						<ul class="navigation list-inline" style="margin:10px 0; padding-top:10px">
 
 							<li>
 								<xforms:group ref=".[setup/@current=true() or setup/@return = true()]">
 									<xforms:trigger appearance="minimal">
-										<xforms:label>Setup Options</xforms:label>
+										<xforms:label>Setup Options <span class="glyphicon glyphicon-chevron-right"/></xforms:label>
 									</xforms:trigger>
 								</xforms:group>
 								<xforms:group ref=".[setup/@current=false() and setup/@return = false()]">
-									<span>Setup Options</span>
+									<xforms:trigger appearance="minimal">
+										<xforms:label>Start Over <span class="glyphicon glyphicon-repeat"/></xforms:label>
+										<xforms:dispatch target="start-over-dialog" name="fr-show" ev:event="DOMActivate"/>
+									</xforms:trigger>
 								</xforms:group>
 							</li>
 							<li>
 								<xforms:group ref=".[editing/@current=true() or editing/@return = true()]">
 									<xforms:trigger appearance="minimal">
-										<xforms:label>Editing</xforms:label>
+										<xforms:label>Editing <span class="glyphicon glyphicon-chevron-right"/></xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:toggle case="remediation" if=".[editing/@current=false()]"/>
 											<xforms:action xxforms:iterate="instance('control-instance')/interfaces/*">
@@ -791,13 +811,13 @@ OPTIONAL {?c skos:scopeNote ?note .
 									</xforms:trigger>
 								</xforms:group>
 								<xforms:group ref=".[editing/@current=false() and editing/@return = false()]">
-									<span>Editing</span>
+									<span>Editing <span class="glyphicon glyphicon-chevron-right"/></span>
 								</xforms:group>
 							</li>
 							<li>
 								<xforms:group ref=".[enriching/@current=true() or enriching/@return = true()]">
 									<xforms:trigger appearance="minimal">
-										<xforms:label>Enriching</xforms:label>
+										<xforms:label>Enriching <span class="glyphicon glyphicon-chevron-right"/></xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<!-- toggle interface -->
 											<xforms:setvalue ref="instance('control-instance')/normalization/@current-interface"
@@ -811,13 +831,13 @@ OPTIONAL {?c skos:scopeNote ?note .
 									</xforms:trigger>
 								</xforms:group>
 								<xforms:group ref=".[enriching/@current=false() and enriching/@return = false()]">
-									<span>Enriching</span>
+									<span>Enriching <span class="glyphicon glyphicon-chevron-right"/></span>
 								</xforms:group>
 							</li>
 							<li>
 								<xforms:group ref=".[preview/@current=true() or preview/@return = true()]">
 									<xforms:trigger appearance="minimal">
-										<xforms:label>Preview Set</xforms:label>
+										<xforms:label>Preview Set <span class="glyphicon glyphicon-chevron-right"/></xforms:label>
 										<xforms:action ev:event="DOMActivate">
 											<xforms:toggle case="validation-results" if=".[preview/@current=false()]"/>
 											<xforms:action xxforms:iterate="instance('control-instance')/interfaces/*">
@@ -828,17 +848,17 @@ OPTIONAL {?c skos:scopeNote ?note .
 									</xforms:trigger>
 								</xforms:group>
 								<xforms:group ref=".[preview/@current=false() and preview/@return = false()]">
-									<span>Preview Set</span>
+									<span>Preview Set <span class="glyphicon glyphicon-chevron-right"/></span>
 								</xforms:group>
 							</li>
 							<li>
 								<xforms:group ref=".[contribute/@current=true() or contribute/@return = true()]">
 									<xforms:trigger appearance="minimal">
-										<xforms:label>Contribute Set</xforms:label>
+										<xforms:label>Contribute Set <span class="glyphicon glyphicon-chevron-right"/></xforms:label>
 									</xforms:trigger>
 								</xforms:group>
 								<xforms:group ref=".[contribute/@current=false() and contribute/@return = false()]">
-									<span>Contribute Set</span>
+									<span>Contribute Set <span class="glyphicon glyphicon-chevron-right"/></span>
 								</xforms:group>
 							</li>
 						</ul>
@@ -1207,7 +1227,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<div>
 											<xforms:select1 ref="instance('set')/rights">
 												<xforms:label>Rights Statement</xforms:label>
-												<xforms:hint>Optional standardized rights statement</xforms:hint>
+												<xforms:hint>Required standardized rights statement</xforms:hint>
 												<xforms:item>
 													<xforms:label>Select below...</xforms:label>
 													<xforms:value/>
@@ -1221,7 +1241,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<div>
 											<xforms:textarea ref="instance('set')/rightsText">
 												<xforms:label>Rights Statement</xforms:label>
-												<xforms:hint>Textual rights statement</xforms:hint>
+												<xforms:hint>Free-text rights statement</xforms:hint>
 											</xforms:textarea>
 										</div>
 									</xforms:group>
@@ -1399,25 +1419,74 @@ OPTIONAL {?c skos:scopeNote ?note .
 											</div>-->
 
 											<xforms:repeat nodeset="record[error][position() &lt;= 20]">
+												<xforms:var name="id" select="@id"/>
+												<xforms:var name="hash" select="digest($id, 'MD5', 'hex')"/>
 												<h4>
-													<xforms:output ref="title"/>
-													<small>
+													<small class="expand {$hash}-button">
 														<xforms:trigger appearance="minimal">
-															<xforms:label><span class="glyphicon glyphicon-new-window"></span></xforms:label>
-															<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
+															<xforms:label><span class="glyphicon glyphicon-triangle-bottom"></span></xforms:label>
+															<xforms:action ev:event="DOMActivate">
+																<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
+																<xforms:var name="metadataPrefix"
+																	select="substring-after($params[contains(., 'metadataPrefix')][1], '=')"/>
+																<xforms:setvalue ref="instance('control-instance')/id" value="$hash"/>
+																<xforms:setvalue ref="instance('control-instance')/oai-service"
+																	value="concat(substring-before(instance('set')/set, '?'), '?verb=GetRecord&amp;metadataPrefix=', $metadataPrefix, '&amp;identifier=', $id)"/>
+																<xxforms:script>expand();</xxforms:script>
+															</xforms:action>
 														</xforms:trigger>
 													</small>
+													<xforms:output ref="title"/>
 												</h4>
 												<div>
 													<xforms:output ref="@id">
-														<xforms:label>Idenfifier</xforms:label>
+														<xforms:label>Identifier</xforms:label>
 													</xforms:output>
+													<xforms:trigger appearance="minimal">
+														<xforms:label><span class="glyphicon glyphicon-new-window"></span></xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
+															<xforms:var name="metadataPrefix"
+																select="substring-after($params[contains(., 'metadataPrefix')][1], '=')"/>
+															<xforms:load
+																resource="{concat(substring-before(instance('set')/set, '?'), '?verb=GetRecord&amp;metadataPrefix=', $metadataPrefix, '&amp;identifier=', $id)}"
+																show="new"/>
+														</xforms:action>
+													</xforms:trigger>
 												</div>
 												<div>
 													<xforms:output ref="uri">
 														<xforms:label>URI</xforms:label>
 													</xforms:output>
+													<xforms:trigger appearance="minimal">
+														<xforms:label><xforms:output ref="uri"/>
+															<span class="glyphicon glyphicon-new-window"></span></xforms:label>
+														<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
+													</xforms:trigger>
 												</div>
+												<xforms:repeat nodeset="error">
+													<div>
+														<xforms:output ref=".">
+															<xforms:label>Error</xforms:label>
+														</xforms:output>
+													</div>
+												</xforms:repeat>
+												<div>
+													<xforms:output value="string-join(dcmitype, ', ')">
+														<xforms:label>DCMI Type</xforms:label>
+													</xforms:output>
+												</div>
+												<div>
+													<xforms:output ref="date">
+														<xforms:label>Date(s)</xforms:label>
+													</xforms:output>
+												</div>
+												<div>
+													<xforms:output ref="rights">
+														<xforms:label>Rights</xforms:label>
+													</xforms:output>
+												</div>
+												<div class="{$hash}_container ajax_container hidden"></div>
 												<hr />
 											</xforms:repeat>
 										</div>
@@ -1496,31 +1565,47 @@ OPTIONAL {?c skos:scopeNote ?note .
 													</small>
 													<xforms:output ref="title"/>
 												</h4>
-												<dl class="dl-horizontal">
-													<dt>Identifier</dt>
-													<dd>
-														<xforms:trigger appearance="minimal">
-															<xforms:label><xforms:output ref="@id"/>
-																<span class="glyphicon glyphicon-new-window"></span></xforms:label>
-															<xforms:action ev:event="DOMActivate">
-																<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
-																<xforms:var name="metadataPrefix"
-																	select="substring-after($params[contains(., 'metadataPrefix')][1], '=')"/>
-																<xforms:load
-																	resource="{concat(substring-before(instance('set')/set, '?'), '?verb=GetRecord&amp;metadataPrefix=', $metadataPrefix, '&amp;identifier=', $id)}"
-																	show="new"/>
-															</xforms:action>
-														</xforms:trigger>
-													</dd>
-													<dt>URI</dt>
-													<dd>
-														<xforms:trigger appearance="minimal">
-															<xforms:label><xforms:output ref="uri"/>
-																<span class="glyphicon glyphicon-new-window"></span></xforms:label>
-															<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
-														</xforms:trigger>
-													</dd>
-												</dl>
+												<div>
+													<xforms:output ref="@id">
+														<xforms:label>Identifier</xforms:label>
+													</xforms:output>
+													<xforms:trigger appearance="minimal">
+														<xforms:label><span class="glyphicon glyphicon-new-window"></span></xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
+															<xforms:var name="metadataPrefix"
+																select="substring-after($params[contains(., 'metadataPrefix')][1], '=')"/>
+															<xforms:load
+																resource="{concat(substring-before(instance('set')/set, '?'), '?verb=GetRecord&amp;metadataPrefix=', $metadataPrefix, '&amp;identifier=', $id)}"
+																show="new"/>
+														</xforms:action>
+													</xforms:trigger>
+												</div>
+												<div>
+													<xforms:output ref="uri">
+														<xforms:label>URI</xforms:label>
+													</xforms:output>
+													<xforms:trigger appearance="minimal">
+														<xforms:label><xforms:output ref="uri"/>
+															<span class="glyphicon glyphicon-new-window"></span></xforms:label>
+														<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
+													</xforms:trigger>
+												</div>
+												<div>
+													<xforms:output value="string-join(dcmitype, ', ')">
+														<xforms:label>DCMI Type</xforms:label>
+													</xforms:output>
+												</div>
+												<div>
+													<xforms:output ref="date">
+														<xforms:label>Date(s)</xforms:label>
+													</xforms:output>
+												</div>
+												<div>
+													<xforms:output ref="rights">
+														<xforms:label>Rights</xforms:label>
+													</xforms:output>
+												</div>
 												<div class="{$hash}_container ajax_container hidden"></div>
 												<hr />
 											</xforms:repeat>
@@ -1550,6 +1635,13 @@ OPTIONAL {?c skos:scopeNote ?note .
 							<p>If you chose to send your set to DPLA, you can expect it to appear in DPLA after the next harvest.</p>
 							<p>If you chose to send your set to Alliance Primo, you can expect it to appear in Primo tomorrow; publication is in sync with the
 								nightly update from Alma.</p>
+							
+							<div>
+								<xforms:trigger appearance="minimal">
+									<xforms:label>Import another set <span class="glyphicon glyphicon-repeat"/></xforms:label>
+									<xforms:load resource="../admin/import" show="replace" ev:event="DOMActivate"/>
+								</xforms:trigger>
+							</div>
 						</xforms:case>
 					</xforms:switch>
 
@@ -1614,6 +1706,22 @@ OPTIONAL {?c skos:scopeNote ?note .
 				</xforms:action>
 			</fr:positive-choice>
 		</fr:alert-dialog>
+		
+		<!-- dialog to start over -->
+		<fr:alert-dialog id="start-over-dialog">
+			<fr:label>Start Over</fr:label>
+			<fr:message>Are you sure you want to start over? Your selections made in this set will be lost.</fr:message>
+			<fr:negative-choice>
+				<fr:label>No</fr:label>
+			</fr:negative-choice>
+			<fr:positive-choice>
+				<fr:label>Yes</fr:label>
+				<xforms:action ev:event="DOMActivate">
+					<xforms:load resource="../admin/import" show="replace"/>
+				</xforms:action>
+			</fr:positive-choice>
+		</fr:alert-dialog>
+		
 		<xxforms:dialog id="destination-info-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 			<xforms:label>Destination Information</xforms:label>
 			<div>
