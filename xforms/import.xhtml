@@ -499,14 +499,14 @@ OPTIONAL {?c skos:scopeNote ?note .
 											</xforms:action>
 											
 											<!-- insert DCMI Type into validation results -->
-											<xforms:action if="index-of($dcmi-types, lower-case($val))">
+											<!--<xforms:action if="index-of($dcmi-types, lower-case($val))">
 												<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('dcmitype', $val)"/>
-											</xforms:action>
+											</xforms:action>-->
 										</xforms:action>
 									</xforms:action>
 								</xforms:action>
 								<!-- extract DCMI Types -->
-								<xforms:action if="not(instance('control-instance')/normalization/types = true())">
+								<!--<xforms:action if="not(instance('control-instance')/normalization/types = true())">
 									<xforms:var name="all-elements" select="string-join($binding/dc:type, ';')"/>
 									<xforms:var name="types" select="tokenize($all-elements, ';')"/>
 									<xforms:var name="dcmi-types"
@@ -522,7 +522,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 											</xforms:action>
 										</xforms:action>
 									</xforms:action>
-								</xforms:action>
+								</xforms:action>-->
 
 								<!-- agents -->
 								<xforms:action if="instance('control-instance')/normalization/agents = true()">
