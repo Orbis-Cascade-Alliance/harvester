@@ -92,7 +92,7 @@ rdfs:label ?label
 
 	<xsl:variable name="places" as="node()*">
 		<places>
-			<xsl:copy-of select="document(concat($sparql_endpoint, '?query=', encode-for-uri($place-query), '&amp;output=xml'))//res:result"/>
+			<!--<xsl:copy-of select="document(concat($sparql_endpoint, '?query=', encode-for-uri($place-query), '&amp;output=xml'))//res:result"/>-->
 		</places>
 	</xsl:variable>
 
@@ -170,7 +170,7 @@ rdfs:label ?label
 	</xsl:template>
 
 	<xsl:template match="oai:metadata/*">
-		<xsl:variable name="URLs" select="dc:identifier[matches(normalize-space(.), 'https?://')]"/>
+		<xsl:variable name="URLs" select="dc:identifier[matches(normalize-space(.), '^https?://')]"/>
 		<xsl:variable name="metadata" as="element()*">
 			<xsl:copy-of select="self::node()"/>
 		</xsl:variable>
@@ -182,7 +182,7 @@ rdfs:label ?label
 			<!-- conditional for isolating appropriate CHO URI -->
 			<xsl:choose>
 				<!-- ignore kaga -->
-				<xsl:when test="matches($cho_uri, 'https?://kaga')"/>
+				<xsl:when test="matches($cho_uri, '^https?://kaga')"/>
 				<!-- ignore jpg files -->
 				<xsl:when test="matches($cho_uri, '\.(jpe?g|tif|pdf)$')"/>
 				<xsl:otherwise>
@@ -511,7 +511,10 @@ rdfs:label ?label
 					<xsl:variable name="label" select="harvester:cleanText(normalize-space(.), $element)"/>
 
 					<dcterms:spatial>
-						<xsl:choose>
+						<xsl:value-of select="$label"/>
+						
+						<!-- commented out Geonames normalization -->
+						<!--<xsl:choose>
 							<xsl:when test="$places//res:result[res:binding[@name = 'label']/res:literal = $label]">
 								<xsl:attribute name="rdf:resource"
 									select="$places//res:result[res:binding[@name = 'label']/res:literal = $label]/res:binding[@name = 'uri']/res:uri"/>
@@ -519,7 +522,7 @@ rdfs:label ?label
 							<xsl:otherwise>
 								<xsl:value-of select="$label"/>
 							</xsl:otherwise>
-						</xsl:choose>
+						</xsl:choose>-->
 					</dcterms:spatial>
 				</xsl:for-each>
 			</xsl:otherwise>
