@@ -283,7 +283,9 @@
 						<xsl:value-of select="//config/codes/repository[@marc = $code]/@exlibris"/>
 					</xsl:when>
 					<xsl:when test="contains($dataProvider, 'harvester')">
-						<!-- placeholder for harvester agency URIs -->
+						<xsl:variable name="code" select="tokenize($dataProvider, '/')[last()]"/>
+						
+						<xsl:value-of select="//config/codes/repository[@marc = $code]/@exlibris"/>
 					</xsl:when>
 				</xsl:choose>
 			</dc:publisher>
