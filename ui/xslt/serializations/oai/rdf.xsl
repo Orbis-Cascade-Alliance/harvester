@@ -226,9 +226,7 @@ rdfs:label ?label
 		</xsl:variable>
 
 		<dpla:SourceResource rdf:about="{$cho_uri}">
-			<dcterms:title>
-				<xsl:value-of select="dc:title"/>
-			</dcterms:title>
+			<xsl:apply-templates select="dc:title[1]"/>
 
 			<!-- apply generic DC templates -->
 			<xsl:apply-templates select="dc:date[1] | dc:creator | dc:contributor | dc:rights | dc:subject | dc:format | dc:extent | dc:temporal"/>
@@ -329,6 +327,13 @@ rdfs:label ?label
 	<!-- ******
 		SPECIFIC DUBLIC CORE ELEMENT TEMPLATES MUST COME BEFORE THE GENERIC DC:* TEMPLATE
 		 ******-->
+	<!-- title -->
+	<xsl:template match="dc:title">
+		<dcterms:title>
+			<xsl:value-of select="harvester:cleanText(normalize-space(.), local-name())"/>
+		</dcterms:title>
+	</xsl:template>
+	
 	<!-- RDF date/date range parsing -->
 	<xsl:template match="dc:date">
 		<xsl:choose>
@@ -845,7 +850,7 @@ rdfs:label ?label
 		<xsl:variable name="html-stripped" select="replace(replace($val, '&lt;[^&gt;]+&gt;', ' '), '\\s+', ' ')"/>
 
 		<xsl:choose>
-			<xsl:when test="$element = 'subject' or $element = 'creator' or $element = 'contributor' or $element = 'spatial' or $element = 'coverage'">
+			<xsl:when test="$element = 'subject' or $element = 'creator' or $element = 'contributor' or $element = 'spatial' or $element = 'coverage' or $element='title'">
 				<!-- do not strip trailing period from these elements -->
 				<xsl:value-of select="$html-stripped"/>
 			</xsl:when>
