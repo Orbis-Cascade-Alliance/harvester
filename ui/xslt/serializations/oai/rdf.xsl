@@ -247,7 +247,25 @@ rdfs:label ?label
 					</dcterms:language>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:apply-templates select="dc:language"/>
+					<!-- concat all languages in order to de-duplicate them -->
+					<xsl:variable name="all-languages" select="tokenize(string-join(dc:language, ';'), ';')"/>
+					
+					
+					<xsl:variable name="languages" as="element()*">
+						<languages>
+							<xsl:for-each select="$all-languages">
+								<language>
+									<xsl:call-template name="parse-language"/>
+								</language>
+							</xsl:for-each>
+						</languages>
+					</xsl:variable>
+					
+					<xsl:for-each select="distinct-values($languages/language)">
+						<dcterms:language>
+							<xsl:value-of select="."/>
+						</dcterms:language>
+					</xsl:for-each>
 				</xsl:otherwise>
 			</xsl:choose>
 
@@ -441,42 +459,6 @@ rdfs:label ?label
 				</xsl:if>
 			</xsl:otherwise>
 		</xsl:choose>
-	</xsl:template>
-
-	<!-- evaluate languages, ensure they are valid to xs:lanugate -->
-	<xsl:template match="dc:language">
-		<xsl:for-each select="tokenize(., ';')">
-			<xsl:if test="string-length(normalize-space(.)) &gt; 0">
-				<xsl:variable name="val" select="lower-case(normalize-space(.))"/>
-
-				<xsl:choose>
-					<!-- if 3 characters, assume it is the correct code -->
-					<xsl:when test="string-length($val) = 3">
-						<xsl:if test="$languages//language[code = $val]">
-							<dcterms:language>
-								<xsl:value-of select="$val"/>
-							</dcterms:language>
-						</xsl:if>
-
-					</xsl:when>
-					<!-- when it is too characters, look up the 3 letter code -->
-					<xsl:when test="string-length($val) = 2">
-						<xsl:if test="$languages//language[twoLetter = $val]">
-							<dcterms:language>
-								<xsl:value-of select="$languages//language[twoLetter = $val]/code"/>
-							</dcterms:language>
-						</xsl:if>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:if test="$languages//language[lower-case(name) = $val]">
-							<dcterms:language>
-								<xsl:value-of select="$languages//language[lower-case(name) = $val][1]/code"/>
-							</dcterms:language>
-						</xsl:if>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:if>
-		</xsl:for-each>
 	</xsl:template>
 
 	<xsl:template match="*[local-name() = 'coverage'] | *[local-name() = 'spatial']">
@@ -841,6 +823,35 @@ rdfs:label ?label
 			</xsl:call-template>
 		</xsl:if>
 	</xsl:template>
+	
+	<!-- TEMPLATES -->
+	<!-- evaluate languages, ensure they are valid to xs:lanugate -->
+	<xsl:template name="parse-language">
+		<xsl:if test="string-length(normalize-space(.)) &gt; 0">
+			<xsl:variable name="val" select="lower-case(harvester:cleanText(normalize-space(.),'language'))"/>
+			
+			<xsl:choose>
+				<!-- if 3 characters, assume it is the correct code -->
+				<xsl:when test="string-length($val) = 3">
+					<xsl:if test="$languages//language[code = $val]">
+						<xsl:value-of select="$val"/>
+					</xsl:if>
+					
+				</xsl:when>
+				<!-- when it is too characters, look up the 3 letter code -->
+				<xsl:when test="string-length($val) = 2">
+					<xsl:if test="$languages//language[twoLetter = $val]">
+						<xsl:value-of select="$languages//language[twoLetter = $val]/code"/>
+					</xsl:if>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:if test="$languages//language[lower-case(name) = $val]">
+						<xsl:value-of select="$languages//language[lower-case(name) = $val][1]/code"/>
+					</xsl:if>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>
+	</xsl:template>
 
 	<!-- FUNCTIONS -->
 	<xsl:function name="harvester:cleanText">
@@ -850,7 +861,7 @@ rdfs:label ?label
 		<xsl:variable name="html-stripped" select="replace(replace($val, '&lt;[^&gt;]+&gt;', ' '), '\\s+', ' ')"/>
 
 		<xsl:choose>
-			<xsl:when test="$element = 'subject' or $element = 'creator' or $element = 'contributor' or $element = 'spatial' or $element = 'coverage' or $element='title'">
+			<xsl:when test="$element = 'subject' or $element = 'creator' or $element = 'contributor' or $element = 'spatial' or $element = 'coverage' or $element='title' or $element='rights' or $element='description' or $element='language'">
 				<!-- do not strip trailing period from these elements -->
 				<xsl:value-of select="$html-stripped"/>
 			</xsl:when>

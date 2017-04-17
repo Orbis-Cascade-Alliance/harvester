@@ -314,7 +314,7 @@ INSERT DATA
 
 						<!-- submissions -->
 						<xforms:submission id="query-viaf" serialization="none" method="get"
-							action="http://viaf.org/viaf/search?query={instance('control-instance')/heading}+%22{instance('search-query')}%22&amp;maximumRecords=100&amp;httpAccept=application/rss%2bxml"
+							action="http://viaf.org/viaf/search?query={instance('control-instance')/heading}+%22{instance('search-query')}%22&amp;sortKeys=holdingscount&amp;maximumRecords=100&amp;httpAccept=application/rss%2bxml"
 							instance="rss" replace="instance">
 							<xforms:header>
 								<xforms:name>User-Agent</xforms:name>

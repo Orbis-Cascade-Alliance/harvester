@@ -45,8 +45,8 @@
 						<format>false</format>
 					</remediation>
 					<normalization current-interface="">
-						<types>true</types>
-						<agents>true</agents>
+						<types>false</types>
+						<agents>false</agents>
 						<places>false</places>
 					</normalization>
 					<interfaces>
@@ -456,7 +456,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 							<xforms:action if="string($cho_uri)">
 								<!-- insert some basic metadata for human-readable validation -->
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('uri', $cho_uri)"/>
-								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('title', data($binding/dc:title))"
+								<xforms:var name="title" select="replace(replace(data($binding/dc:title[1]), '&lt;[^&gt;]+&gt;', ' '), '\\s+', ' ')"/>
+								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('title', $title)"
 									if="$binding/dc:title"/>
 								
 								<!-- insert errors for invalid or missing fields -->
@@ -472,8 +473,9 @@ OPTIONAL {?c skos:scopeNote ?note .
 									<xforms:var name="types" select="tokenize($all-elements, ';')"/>
 									
 									<xforms:action xxforms:iterate="$types">
-										<xforms:var name="val"
+										<xforms:var name="period-stripped-val"
 											select="if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1) else normalize-space(.)"/>
+										<xforms:var name="val" select="replace(replace($period-stripped-val, '&lt;[^&gt;]+&gt;', ' '), '\\s+', ' ')"/>
 										
 										<xforms:action if="string-length($val) &gt; 0">
 											<xforms:var name="dcmi-types"
@@ -505,7 +507,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 									<xforms:var name="agents" select="tokenize($all-elements, ';')"/>
 									
 									<xforms:action xxforms:iterate="$agents">
-										<xforms:var name="val" select="normalize-space(.)"/>
+										<xforms:var name="val" select="replace(replace(normalize-space(.), '&lt;[^&gt;]+&gt;', ' '), '\\s+', ' ')"/>
 										
 										<xforms:action if="string-length($val) &gt; 0">
 											<!-- ignore unknowns -->
@@ -534,8 +536,9 @@ OPTIONAL {?c skos:scopeNote ?note .
 									<xforms:var name="places" select="tokenize($all-elements, ';')"/>
 									
 									<xforms:action xxforms:iterate="$places">
-										<xforms:var name="val"
+										<xforms:var name="period-stripped-val"
 											select="if (substring(normalize-space(.), string-length(normalize-space(.)), 1) = '.') then substring(normalize-space(.), 1, string-length(normalize-space(.)) - 1) else normalize-space(.)"/>
+										<xforms:var name="val" select="replace(replace($period-stripped-val, '&lt;[^&gt;]+&gt;', ' '), '\\s+', ' ')"/>
 										
 										<xforms:action if="string-length($val) &gt; 0">
 											<!-- ignore individual lat or long elements and elements conforming to "lat,long" formatting -->
@@ -1511,8 +1514,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 														<span class="glyphicon glyphicon-backward"></span>
 													</xforms:label>
 													<xforms:action ev:event="DOMActivate">
+														<xforms:setvalue ref="instance('control-instance')/validation/max-pos" value="$min - 1"/>
 														<xforms:setvalue ref="instance('control-instance')/validation/min-pos" value="$min - 50"/>
-														<xforms:setvalue ref="instance('control-instance')/validation/max-pos" value="$max - 50"/>
 														<xxforms:script>clear();</xxforms:script>
 													</xforms:action>
 												</xforms:trigger>
@@ -1668,7 +1671,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 		<!-- dialog asking to initiate the import -->
 		<fr:alert-dialog id="initiate-import">
 			<fr:label>Import Data</fr:label>
-			<fr:message>Proceed with importation of the OAI-PMH set? This may take some time, depending on the number of records to be harvested.</fr:message>
+			<fr:message>Proceed with contribution of the OAI-PMH set? This may take some time, depending on the number of records to be harvested.</fr:message>
 			<fr:negative-choice>
 				<fr:label>No</fr:label>
 			</fr:negative-choice>
