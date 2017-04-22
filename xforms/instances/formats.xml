@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<formats>
+   <format>application/msword</format>
+   <format>application/pdf</format>
+   <format>application/vnd.ms-excel</format>
+   <format>application/vnd.ms-powerpoint</format>
+   <format>audio/aiff</format>
+   <format>audio/flac</format>
+   <format>audio/mp4</format>
+   <format>audio/mpeg</format>
+   <format>audio/wav</format>
+   <format>audio/wma</format>
+   <format>audio/x-realaudio</format>
+   <format>image/gif</format>
+   <format>image/jp2</format>
+   <format>image/jpeg</format>
+   <format>image/png</format>
+   <format>image/tiff</format>
+   <format>image/vnd.adobe.photoshop</format>
+   <format>image/vnd.djvu</format>
+   <format>text/css</format>
+   <format>text/csv</format>
+   <format>text/plain</format>
+   <format>text/html</format>
+   <format>text/rtf</format>
+   <format>text/xml</format>
+   <format>video/avi</format>
+   <format>video/mjp2</format>
+   <format>video/mp4</format>
+   <format>video/mpeg</format>
+   <format>video/quicktime</format>
+   <format>video/wmv</format>
+   <format>video/x-flv</format>
+   <format>video/x-realvideo</format>
+</formats>

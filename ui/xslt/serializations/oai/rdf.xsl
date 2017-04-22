@@ -36,6 +36,7 @@
 	<xsl:param name="rightsText" select="doc('input:request')/request/parameters/parameter[name = 'rightsText']/value"/>
 	<xsl:param name="type" select="doc('input:request')/request/parameters/parameter[name = 'type']/value"/>
 	<xsl:param name="format" select="doc('input:request')/request/parameters/parameter[name = 'format']/value"/>
+	<xsl:param name="license" select="doc('input:request')/request/parameters/parameter[name = 'license']/value"/>
 	<xsl:param name="genre" select="doc('input:request')/request/parameters/parameter[name = 'genre']/value"/>
 	<xsl:param name="language" select="doc('input:request')/request/parameters/parameter[name = 'language']/value"/>
 
@@ -100,6 +101,13 @@ rdfs:label ?label
 		<languages>
 			<xsl:copy-of select="document('oxf:/apps/harvester/xforms/instances/languages.xml')//language"/>
 		</languages>
+	</xsl:variable>
+	
+	<!-- mime-types -->
+	<xsl:variable name="formats" as="element()*">
+		<formats>
+			<xsl:copy-of select="document('oxf:/apps/harvester/xforms/instances/formats.xml')//format"/>
+		</formats>
 	</xsl:variable>
 
 	<xsl:variable name="dams" select="/content/config/dams//repository[. = $repository][contains($set, @pattern)]/parent::node()/name()"/>
@@ -226,7 +234,7 @@ rdfs:label ?label
 		</xsl:variable>
 
 		<dpla:SourceResource rdf:about="{$cho_uri}">
-			<xsl:apply-templates select="dc:title[1]"/>
+			<xsl:apply-templates select="dc:title"/>
 
 			<!-- apply generic DC templates -->
 			<xsl:apply-templates select="dc:date[1] | dc:creator | dc:contributor | dc:rights | dc:subject | dc:format | dc:extent | dc:temporal"/>
@@ -347,9 +355,18 @@ rdfs:label ?label
 		 ******-->
 	<!-- title -->
 	<xsl:template match="dc:title">
-		<dcterms:title>
-			<xsl:value-of select="harvester:cleanText(normalize-space(.), local-name())"/>
-		</dcterms:title>
+		<xsl:choose>
+			<xsl:when test="position()=1">
+				<dcterms:title>
+					<xsl:value-of select="harvester:cleanText(normalize-space(.), local-name())"/>
+				</dcterms:title>
+			</xsl:when>
+			<xsl:otherwise>
+				<dcterms:alternative>
+					<xsl:value-of select="harvester:cleanText(normalize-space(.), local-name())"/>
+				</dcterms:alternative>
+			</xsl:otherwise>
+		</xsl:choose>		
 	</xsl:template>
 	
 	<!-- RDF date/date range parsing -->

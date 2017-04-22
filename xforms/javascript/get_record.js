@@ -36,15 +36,15 @@ function expand() {
         }, function (data) {
             ORBEON.jQuery('.' + container).html(data);
             ORBEON.jQuery('.' + container).removeClass('hidden');
-            ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').removeClass('glyphicon-triangle-bottom');
-            ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').addClass('glyphicon-triangle-top');
+            ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').removeClass('glyphicon-triangle-right');
+            ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').addClass('glyphicon-triangle-bottom');
         }).fail(function () {
             alert("Error getting individual record from OAI-PMH service. These records will still harvest from the ListRecords service, but the GetRecord service is broken. Please contact the systems administrator for your repository.");
         });
     } else {
         ORBEON.jQuery('.' + container).addClass('hidden');
-        ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').removeClass('glyphicon-triangle-top');
-        ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').addClass('glyphicon-triangle-bottom');
+        ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').removeClass('glyphicon-triangle-bottom');
+        ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').addClass('glyphicon-triangle-right');
     }
 }
 

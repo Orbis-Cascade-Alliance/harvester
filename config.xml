@@ -136,6 +136,7 @@
 		</oregondigital>
 		<other>			
 			<repository note="some other contentdm">orsaw</repository>
+			<repository>orpr</repository>
 		</other>
 	</dams>
 </config>
