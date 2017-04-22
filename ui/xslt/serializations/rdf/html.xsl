@@ -119,8 +119,10 @@
 						<xsl:with-param name="hasCoords" select="false()" as="xs:boolean"/>
 					</xsl:apply-templates>
 
-					<!-- self -->
-					<xsl:apply-templates select="self::node()" mode="render"/>
+					<!-- self: ignore in ajax -->
+					<xsl:if test="not(string($output))">
+						<xsl:apply-templates select="self::node()" mode="render"/>
+					</xsl:if>
 
 					<!-- images -->
 					<xsl:apply-templates
@@ -171,17 +173,15 @@
 		<xsl:variable name="uri" select="@rdf:about"/>
 
 		<div class="col-md-12">
-			<h2>
-				<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
-				<a href="{$propertyUri}" title="{$propertyUri}">
-					<xsl:value-of select="name()"/>
-				</a>
-			</h2>
-			<h4>
+			<h3>
 				<a href="{@rdf:about}">
+					<xsl:if test="string($output)">
+						<xsl:attribute name="target">_blank</xsl:attribute>
+					</xsl:if>
 					<xsl:value-of select="@rdf:about"/>
 				</a>
-			</h4>
+			</h3>
+
 			<dl class="dl-horizontal">
 				<xsl:apply-templates>
 					<xsl:sort select="local-name()"/>
@@ -199,24 +199,20 @@
 		<xsl:param name="reference"/>
 		<xsl:param name="hasCoords" as="xs:boolean"/>
 		<div class="col-md-12">
-			<h1>
-				<xsl:choose>
-					<xsl:when test="string($output)">
-						<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
-						<a href="{$propertyUri}" title="{$propertyUri}">
-							<xsl:value-of select="name()"/>
-						</a>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="dcterms:title"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</h1>
-			<h4>
+			<xsl:if test="not(string($output))">
+				<h2>
+					<xsl:value-of select="dcterms:title"/>
+				</h2>
+			</xsl:if>
+			
+			<h3>
 				<a href="{@rdf:about}">
+					<xsl:if test="string($output)">
+						<xsl:attribute name="target">_blank</xsl:attribute>
+					</xsl:if>
 					<xsl:value-of select="@rdf:about"/>
 				</a>
-			</h4>
+			</h3>			
 		</div>
 		<xsl:choose>
 			<xsl:when test="string($output)">
