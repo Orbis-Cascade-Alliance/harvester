@@ -17,6 +17,7 @@ function expand() {
     var target = ORBEON.xforms.Document.getValue('target');
     var type = ORBEON.xforms.Document.getValue('type');
     
+    //if the target is primo, then set the model as 'primo'
     
     var container = id + '_container';
     
@@ -32,6 +33,7 @@ function expand() {
         rightsText: rightsText,
         target: target,
         type: type,
+        model: target,
         output: 'ajax'
         }, function (data) {
             ORBEON.jQuery('.' + container).html(data);

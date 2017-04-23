@@ -79,6 +79,15 @@
 								</select>
 							</div>
 						</div>
+						<div class="form-group">
+							<label for="model" class="col-sm-2 control-label">Model</label>
+							<div class="col-sm-10">
+								<select id="model" name="model" class="form-control" style="width:10em">
+									<option value="rdf" selected="selected">DPLA MAP</option>
+									<option value="primo">Primo</option>
+								</select>
+							</div>
+						</div>
 						<input type="hidden" name="target" value="both"/>
 						<input type="hidden" name="mode" value="test"/>
 						<input type="submit" value="Submit"/>
