@@ -1682,7 +1682,12 @@ OPTIONAL {?c skos:scopeNote ?note .
 							<p>If you chose to send your set to DPLA, you can expect it to appear in DPLA after the next harvest.</p>
 							<p>If you chose to send your set to Alliance Primo, you can expect it to appear in Primo tomorrow; publication is in sync with the
 								nightly update from Alma.</p>
-
+							<div>
+								<xforms:trigger appearance="minimal">
+									<xforms:label>View this set as RDF <span class="glyphicon glyphicon-open"></span></xforms:label>
+									<xforms:load resource="{instance('config')/url}results?set={encode-for-uri(instance('set')/set)}" show="replace" ev:event="DOMActivate"/>
+								</xforms:trigger>
+							</div>
 							<div>
 								<xforms:trigger appearance="minimal">
 									<xforms:label>Import another set <span class="glyphicon glyphicon-repeat"></span></xforms:label>
@@ -1706,10 +1711,47 @@ OPTIONAL {?c skos:scopeNote ?note .
 						<xforms:output ref="instance('set')/type" id="type"/>
 					</div>
 
-					<fr:xforms-inspector/>
+					<!--<fr:xforms-inspector/>-->
 				</div>
 			</div>
 		</div>
+		
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<footer>
+						<div class="footer-left-col"> © 2017 Orbis Cascade Alliance <br/> 2288 Oakmont Way Eugene, OR 97401 </div>
+						<div class="footer-right-col"> (541) 246-2470 <br/>
+							<a href="mailto:info@orbiscascade.org">info@orbiscascade.org</a>
+						</div>
+						
+						<nav>
+							<ul>
+								<li>
+									<a href="/programs">Programs</a>
+								</li>
+								<li>
+									<a href="/teams">Teams</a>
+								</li>
+								<li>
+									<a href="/docs">Documentation</a>
+								</li>
+								<li>
+									<a href="/shared-ils">Shared ILS</a>
+								</li>
+								<li>
+									<a href="/about">About</a>
+								</li>
+								<li>
+									<a href="/contact">Contact</a>
+								</li>
+							</ul>
+						</nav>
+					</footer>
+				</div>
+			</div>
+		</div>
+		
 		<!-- dialog asking to initiate the import -->
 		<fr:alert-dialog id="initiate-import">
 			<fr:label>Import Data</fr:label>

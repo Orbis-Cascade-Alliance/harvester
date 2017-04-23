@@ -44,11 +44,41 @@
 	</xsl:template>
 
 	<xsl:template name="footer">
-		<div id="footer">
-			<div class="container-fluid">
-				<p class="text-muted">footer</p>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<footer>
+						<div class="footer-left-col"> © 2017 Orbis Cascade Alliance <br/> 2288 Oakmont Way Eugene, OR 97401 </div>
+						<div class="footer-right-col"> (541) 246-2470 <br/>
+							<a href="mailto:info@orbiscascade.org">info@orbiscascade.org</a>
+						</div>
+						
+						<nav>
+							<ul>
+								<li>
+									<a href="/programs">Programs</a>
+								</li>
+								<li>
+									<a href="/teams">Teams</a>
+								</li>
+								<li>
+									<a href="/docs">Documentation</a>
+								</li>
+								<li>
+									<a href="/shared-ils">Shared ILS</a>
+								</li>
+								<li>
+									<a href="/about">About</a>
+								</li>
+								<li>
+									<a href="/contact">Contact</a>
+								</li>
+							</ul>
+						</nav>
+					</footer>
+				</div>
 			</div>
-		</div>
+		</div>		
 	</xsl:template>
 
 </xsl:stylesheet>

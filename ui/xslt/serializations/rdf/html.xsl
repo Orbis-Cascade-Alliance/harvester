@@ -4,18 +4,35 @@
 	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
 	xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
 	xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:nwda="https://github.com/Orbis-Cascade-Alliance/nwda-editor#"
-	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" exclude-result-prefixes="#all"
-	version="2.0">
+	xmlns:res="http://www.w3.org/2005/sparql-results#" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:dpla="http://dp.la/terms/"
+	xmlns:foaf="http://xmlns.com/foaf/0.1/" exclude-result-prefixes="#all" version="2.0">
 	<xsl:include href="../../templates.xsl"/>
-	<xsl:variable name="display_path">../</xsl:variable>
-	<xsl:variable name="mode" select="
-			if (//rdf:RDF/*/namespace-uri() = 'http://purl.org/archival/vocab/arch#') then
-				'agency'
-			else
-				'default'"/>
 
 	<!-- request params -->
+	<xsl:param name="pipeline" select="tokenize(doc('input:request')/request/request-uri, '/')[last()]"/>
 	<xsl:param name="output" select="doc('input:request')/request/parameters/parameter[name = 'output']/value"/>
+	<xsl:param name="pageParam" select="doc('input:request')/request/parameters/parameter[name = 'page']/value"/>
+	<xsl:param name="page" as="xs:integer">
+		<xsl:choose>
+			<xsl:when test="$pageParam castable as xs:integer">
+				<xsl:value-of select="$pageParam"/>
+			</xsl:when>
+			<xsl:otherwise>1</xsl:otherwise>
+		</xsl:choose>
+	</xsl:param>
+	<xsl:param name="set" select="doc('input:request')/request/parameters/parameter[name = 'set']/value"/>
+
+	<xsl:variable name="display_path">
+		<xsl:choose>
+			<xsl:when test="$pipeline = 'results'"/>
+			<xsl:otherwise>../</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+	<xsl:variable name="mode" select="
+		if (//rdf:RDF/*/namespace-uri() = 'http://purl.org/archival/vocab/arch#') then
+		'agency'
+		else
+		'default'"/>
 
 	<xsl:variable name="namespaces" as="item()*">
 		<namespaces>
@@ -54,7 +71,7 @@
 									<xsl:value-of
 										select="
 											if (count(//dcterms:title) &gt; 1) then
-												'Test'
+												'Query Results'
 											else
 												//dcterms:title"
 									/>
@@ -91,8 +108,14 @@
 
 	<xsl:template name="body">
 		<div class="container-fluid content">
+			<!-- apply-templates on numFound, if available -->
+			<xsl:apply-templates select="//res:binding[@name = 'numFound']"/>
+
 			<xsl:apply-templates select="descendant::dcmitype:Collection" mode="render"/>
 			<xsl:apply-templates select="descendant::ore:Aggregation"/>
+			
+			<!-- apply-templates on numFound, if available -->
+			<xsl:apply-templates select="//res:binding[@name = 'numFound']"/>
 		</div>
 	</xsl:template>
 
@@ -118,11 +141,6 @@
 						<xsl:with-param name="thumbnail" select="$thumbnail"/>
 						<xsl:with-param name="hasCoords" select="false()" as="xs:boolean"/>
 					</xsl:apply-templates>
-
-					<!-- self: ignore in ajax -->
-					<xsl:if test="not(string($output))">
-						<xsl:apply-templates select="self::node()" mode="render"/>
-					</xsl:if>
 
 					<!-- images -->
 					<xsl:apply-templates
@@ -204,7 +222,7 @@
 					<xsl:value-of select="dcterms:title"/>
 				</h2>
 			</xsl:if>
-			
+
 			<h3>
 				<a href="{@rdf:about}">
 					<xsl:if test="string($output)">
@@ -212,7 +230,7 @@
 					</xsl:if>
 					<xsl:value-of select="@rdf:about"/>
 				</a>
-			</h3>			
+			</h3>
 		</div>
 		<xsl:choose>
 			<xsl:when test="string($output)">
@@ -268,10 +286,10 @@
 							</dl>
 						</div>
 						<div class="col-md-6">
-							<xsl:apply-templates select="descendant::edm:WebResource" mode="display-image">
+							<xsl:apply-templates select="//edm:WebResource[@rdf:about = $thumbnail]" mode="display-image">
 								<xsl:with-param name="size">thumbnail</xsl:with-param>
 							</xsl:apply-templates>
-							<xsl:apply-templates select="descendant::edm:WebResource[@rdf:about = $reference]" mode="display-image">
+							<xsl:apply-templates select="//edm:WebResource[@rdf:about = $reference]" mode="display-image">
 								<xsl:with-param name="size">reference</xsl:with-param>
 							</xsl:apply-templates>
 						</div>
@@ -283,9 +301,20 @@
 
 	<xsl:template match="edm:WebResource" mode="display-image">
 		<xsl:param name="size"/>
-		<xsl:if test="contains(dcterms:format, 'image/') and not(dcterms:format = 'image/tiff')">
-			<img src="{@rdf:about}" alt="{$size} image URL not dereferenceable" title="{$size}" style="max-width:100%"/>
-		</xsl:if>
+
+		<div>
+			<h4>
+				<xsl:value-of select="concat(upper-case(substring($size, 1, 1)), substring($size, 2))"/>
+			</h4>
+			<xsl:choose>
+				<xsl:when test="contains(dcterms:format, 'image/') and not(dcterms:format = 'image/tiff') and not(dcterms:format = 'image/jp2')">
+					<img src="{@rdf:about}" alt="{$size} file URL is not displayable in the browser" title="{@rdf:about}" style="max-width:100%"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<a href="{@rdf:about}"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</div>
 	</xsl:template>
 
 	<xsl:template match="*">
@@ -324,6 +353,72 @@
 		</div>
 	</xsl:template>
 
+	<!-- pagination -->
+	<xsl:template match="res:binding[@name = 'numFound']">
+		<xsl:variable name="limit" select="100"/>
+		<xsl:variable name="numFound" select="res:literal" as="xs:integer"/>
+		
+		<div class="row paging">
+			<div class="col-md-6">
+				<xsl:text>Displaying records </xsl:text>
+				<strong>
+					<xsl:value-of select="(($page - 1) * 100) + 1"/>
+				</strong>
+				<xsl:text> to </xsl:text>
+				<strong>
+					<xsl:value-of select="
+						if ($numFound &gt; $page * 100) then
+						$page * 100
+						else
+						$numFound"/>
+				</strong>
+				<xsl:text> of </xsl:text>
+				<strong>
+					<xsl:value-of select="$numFound"/>
+				</strong>
+				<xsl:text> total results.</xsl:text>
+			</div>
+			<div class="col-md-6">
+				<div class="btn-toolbar" role="toolbar">
+					<div class="btn-group pull-right">
+						<!-- back -->
+						<xsl:choose>
+							<xsl:when test="not($page) or $page = 1">
+								<a class="btn btn-default disabled" title="Previous">
+									<span class="glyphicon glyphicon-backward"/>
+								</a>
+							</xsl:when>
+							<xsl:when test="$page &gt; 1">
+								<a class="btn btn-default" title="Previous" href="results?set={encode-for-uri($set)}&amp;page={$page - 1}">
+									<span class="glyphicon glyphicon-backward"/>
+								</a>
+							</xsl:when>
+						</xsl:choose>
+						<button class="btn btn-default">
+							<span>
+								<xsl:value-of select="$page"/>
+							</span>
+						</button>
+						<!-- forward -->
+						<xsl:choose>
+							<xsl:when test="($numFound &gt; $page * 100)">
+								<a class="btn btn-default" title="Next" href="results?set={encode-for-uri($set)}&amp;page={$page + 1}">
+									<span class="glyphicon glyphicon-forward"/>
+								</a>
+							</xsl:when>
+							<xsl:otherwise>
+								<a class="btn btn-default disabled" title="Next">
+									<span class="glyphicon glyphicon-forward"/>
+								</a>
+							</xsl:otherwise>
+						</xsl:choose>
+					</div>
+				</div>
+			</div>
+		</div>
+	</xsl:template>
+
+	<!-- functions -->
 	<xsl:function name="nwda:linkProperty">
 		<xsl:param name="property"/>
 		<xsl:variable name="prefix" select="substring-before($property, ':')"/>

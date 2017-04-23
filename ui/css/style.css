@@ -1,5 +1,41 @@
 /*
   ****************************************
+  ORBIS CASCADE SPECIFIC STYLING
+  ****************************************
+ */
+footer {
+    background-color: #9d9d9d;
+    color: #fff;
+    font-size: 14px;
+    line-height: 110%;
+    margin: 0 auto 30px;
+    padding: 18px 37px;
+}
+footer .footer-left-col {
+    float: left;
+    width: 255px;
+}
+footer .footer-right-col {
+    float: left;
+    width: 210px;
+}
+footer nav {
+    padding-top: 9px;
+}
+footer nav ul {
+    margin-bottom: 9px;
+}
+footer nav ul li {
+    display: inline;
+    list-style: outside none none;
+}
+footer nav ul li a {
+    color: #fff;
+    padding: 0 7px;
+    text-transform: uppercase;
+}
+/*
+  ****************************************
   GLOBAL
   ****************************************
  */
@@ -79,6 +115,7 @@ body {
  #map {
      height:400px;
  }
+ 
 /*
   ***************************************
   SPARQL
