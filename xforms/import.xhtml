@@ -1685,7 +1685,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 							<div>
 								<xforms:trigger appearance="minimal">
 									<xforms:label>View this set as RDF <span class="glyphicon glyphicon-open"></span></xforms:label>
-									<xforms:load resource="{instance('config')/url}results?set={encode-for-uri(instance('set')/set)}" show="replace" ev:event="DOMActivate"/>
+									<xforms:load resource="{instance('config')/url}results?set={encode-for-uri(instance('set')/set)}" show="new" ev:event="DOMActivate"/>
 								</xforms:trigger>
 							</div>
 							<div>

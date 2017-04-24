@@ -1,7 +1,7 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
-	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
-	xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:res="http://www.w3.org/2005/sparql-results#">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:res="http://www.w3.org/2005/sparql-results#">
 	<head>
 		<title>Orbis Cascade Harvester: Admin</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
@@ -30,7 +30,8 @@
 					<title></title>
 					<uri></uri>
 					<count></count>
-					<publisher></publisher>
+					<publisher_uri></publisher_uri>
+					<publisher_name></publisher_name>
 				</set>
 			</xforms:instance>
 
@@ -42,7 +43,7 @@
 			</xforms:instance>
 
 			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
-				<xi:include href="../config.xml"></xi:include>
+				<xi:include href="../config.xml"/>
 			</xforms:instance>
 
 			<xforms:instance id="dump" xxforms:exclude-result-prefixes="#all">
@@ -50,11 +51,11 @@
 			</xforms:instance>
 
 			<xforms:instance id="feed" xxforms:exclude-result-prefixes="#all">
-				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"></OAI-PMH>
+				<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"/>
 			</xforms:instance>
 
 			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
-				<rdf:RDF></rdf:RDF>
+				<rdf:RDF/>
 			</xforms:instance>
 
 			<!-- sparql update -->
@@ -90,12 +91,13 @@ PREFIX arch:	<http://purl.org/archival/vocab/arch#>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
 
-SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
+SELECT ?set ?title ?pub ?name (count(?cho) as ?count) WHERE {
 ?set a dcmitype:Collection ;
   dcterms:title ?title ;
   dcterms:publisher %PUB% .
+  %PUB% foaf:name ?name .
 ?cho dcterms:isPartOf ?set
-} GROUP BY ?set ?title ?pub ORDER BY ?pub ?title]]>
+} GROUP BY ?set ?title ?pub ?name ORDER BY ?name ?title ?title]]>
 				</query>
 			</xforms:instance>
 
@@ -117,18 +119,19 @@ SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
 				<xforms:action ev:event="xforms-submit-done">
 					<!-- first purge triples if the RDF has been successfully loaded -->
 					<!-- submit SPARQL/Update to purge arch:Archive triples -->
-					<xforms:setvalue ref="instance('sparqlQuery')" value="instance('sparql-update-templates')/query[@id='purge-repositories']"></xforms:setvalue>
-					<xforms:send submission="delete-graph"></xforms:send>
+					<xforms:setvalue ref="instance('sparqlQuery')" value="instance('sparql-update-templates')/query[@id='purge-repositories']"/>
+					<xforms:send submission="delete-graph"/>
 
 					<xforms:action ev:event="xforms-submit-done">
 						<!-- post RDF and then refresh the repository list -->
-						<xforms:send submission="post-rdf"></xforms:send>
+						<xforms:send submission="post-rdf"/>
 					</xforms:action>
 
 				</xforms:action>
 			</xforms:submission>
 
-			<xforms:submission id="post-rdf" action="{instance('config')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post" mediatype="application/rdf+xml">
+			<xforms:submission id="post-rdf" action="{instance('config')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post"
+				mediatype="application/rdf+xml">
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Successfully posted to endpoint.</xforms:setvalue>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Post to endpoint failed.</xforms:message>
 			</xforms:submission>
@@ -139,8 +142,8 @@ SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
 				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
 			</xforms:submission>
 
-			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlQuery')" serialization="text/plain" replace="none" method="post"
-				mediatype="application/sparql-update">
+			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlQuery')" serialization="text/plain"
+				replace="none" method="post" mediatype="application/sparql-update">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
 				</xforms:action>
@@ -151,18 +154,19 @@ SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
 			<xforms:action ev:event="xforms-model-construct-done">
 				<!-- get authentication roles -->
 				<xforms:insert context="instance('control-instance')" nodeset="status" position="after"
-					origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"></xforms:insert>
+					origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"/>
 
 				<xforms:var name="pub"
-					select="if (xxforms:is-user-in-role('harvester-admin')) then '?pub' else concat('&lt;', instance('config')/production_server, 'contact#', instance('control-instance')/request-security/role, '&gt;')"></xforms:var>
-				<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', $pub)"></xforms:setvalue>
-				<xforms:send submission="submit-sparqlQuery"></xforms:send>
+					select="if (xxforms:is-user-in-role('harvester-admin')) then '?pub' else concat('&lt;', instance('config')/production_server, 'contact#', instance('control-instance')/request-security/role, '&gt;')"/>
+				<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', $pub)"/>
+				<xforms:send submission="submit-sparqlQuery"/>
 				<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
-					<xforms:insert context="instance('set-list')" nodeset="./child::node()[last()]" origin="instance('set-template')"></xforms:insert>
-					<xforms:setvalue ref="instance('set-list')/set[last()]/uri" value="context()/res:binding[@name='set']/res:uri"></xforms:setvalue>
-					<xforms:setvalue ref="instance('set-list')/set[last()]/title" value="context()/res:binding[@name='title']/res:literal"></xforms:setvalue>
-					<xforms:setvalue ref="instance('set-list')/set[last()]/publisher" value="context()/res:binding[@name='pub']/res:uri"></xforms:setvalue>
-					<xforms:setvalue ref="instance('set-list')/set[last()]/count" value="context()/res:binding[@name='count']/res:literal"></xforms:setvalue>
+					<xforms:insert context="instance('set-list')" nodeset="./child::node()[last()]" origin="instance('set-template')"/>
+					<xforms:setvalue ref="instance('set-list')/set[last()]/uri" value="context()/res:binding[@name='set']/res:uri"/>
+					<xforms:setvalue ref="instance('set-list')/set[last()]/title" value="context()/res:binding[@name='title']/res:literal"/>
+					<xforms:setvalue ref="instance('set-list')/set[last()]/publisher_uri" value="context()/res:binding[@name='pub']/res:uri"/>
+					<xforms:setvalue ref="instance('set-list')/set[last()]/publisher_name" value="context()/res:binding[@name='name']/res:literal"/>
+					<xforms:setvalue ref="instance('set-list')/set[last()]/count" value="context()/res:binding[@name='count']/res:literal"/>
 				</xforms:action>
 			</xforms:action>
 		</xforms:model>
@@ -176,7 +180,7 @@ SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
 							<p>
 								<span class="glyphicon glyphicon-info-sign"></span>
 								<strong>Status:</strong>
-								<xforms:output ref="instance('control-instance')/status"></xforms:output>
+								<xforms:output ref="instance('control-instance')/status"/>
 							</p>
 						</div>
 					</div>
@@ -184,7 +188,7 @@ SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
 			</xforms:group>
 			<div class="row">
 				<div class="col-md-6 banner">
-					<img src="/apps/harvester/ui/images/header.jpg" style="max-height:100%;" alt="header-image"/>
+					<img src="/apps/harvester/ui/images/header.jpg" style="max-height:100%;" alt="header-image" />
 				</div>
 				<div class="col-md-6 banner">
 					<h1>HARVESTER</h1>
@@ -192,7 +196,7 @@ SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
 			</div>
 			<div class="row">
 				<div class="col-md-12">
-					<hr/>
+					<hr />
 				</div>
 			</div>
 			<div class="row">
@@ -210,11 +214,11 @@ SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
 								</thead>
 								<tbody>
 									<xforms:repeat nodeset="set">
-										<xforms:var name="uri" select="uri"></xforms:var>
+										<xforms:var name="uri" select="uri"/>
 										<tr>
 											<td>
 												<h4>
-													<xforms:output ref="title"></xforms:output>
+													<xforms:output ref="title"/>
 													<!--<xforms:trigger appearance="minimal">
 														<xforms:label value="title"/>
 														<xforms:action ev:event="DOMActivate">
@@ -227,28 +231,47 @@ SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
 														<dt>URI</dt>
 														<dd>
 															<xforms:trigger appearance="minimal">
-																<xforms:label><xforms:output ref="uri"></xforms:output><span class="glyphicon glyphicon-new-window"
+																<xforms:label><xforms:output ref="uri"/><span class="glyphicon glyphicon-new-window"
 																	></span></xforms:label>
-																<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"></xforms:load>
+																<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
+															</xforms:trigger>
+														</dd>
+														<dt>View</dt>
+														<dd>
+															<xforms:trigger appearance="minimal">
+																<xforms:label>View this set as RDF <span class="glyphicon glyphicon-new-window"
+																	></span></xforms:label>
+																<xforms:load resource="{instance('config')/url}results?set={encode-for-uri(uri)}" show="new"
+																	ev:event="DOMActivate"/>
 															</xforms:trigger>
 														</dd>
 														<dt>Publisher</dt>
 														<dd>
-															<xforms:output ref="publisher"></xforms:output>
+															<xforms:group ref=".[string-length(publisher_uri) &gt; 0]">
+																<xforms:trigger appearance="minimal">
+																	<xforms:label>
+																		<xforms:output ref="publisher_name"/>
+																		<span class="glyphicon glyphicon-new-window"></span></xforms:label>
+																	<xforms:load resource="{publisher_uri}" show="new" ev:event="DOMActivate"/>
+																</xforms:trigger>
+															</xforms:group>
+															<xforms:group ref=".[string-length(publisher_uri) = 0]">
+																<xforms:output ref="publisher_name"/>
+															</xforms:group>
 														</dd>
 													</dl>
 												</div>
 											</td>
 											<td>
-												<xforms:output value="format-number(count, '###,###')"></xforms:output>
+												<xforms:output value="format-number(count, '###,###')"/>
 											</td>
 											<td>
 												<xforms:trigger appearance="minimal">
 													<xforms:label><span class="glyphicon glyphicon-remove"></span></xforms:label>
 													<xforms:hint>Delete Set</xforms:hint>
 													<xforms:action ev:event="DOMActivate">
-														<xforms:setvalue ref="instance('control-instance')/set-url" value="$uri"></xforms:setvalue>
-														<xforms:dispatch target="delete-set-dialog" name="fr-show"></xforms:dispatch>
+														<xforms:setvalue ref="instance('control-instance')/set-url" value="$uri"/>
+														<xforms:dispatch target="delete-set-dialog" name="fr-show"/>
 													</xforms:action>
 												</xforms:trigger>
 											</td>
@@ -272,7 +295,7 @@ SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
 									<xforms:label><span class="glyphicon glyphicon-refresh"></span>Refresh Repository Metadata</xforms:label>
 									<xforms:action ev:event="DOMActivate">
 										<!-- then get repository RDF from NWDA and repost to SPARQL endpoint -->
-										<xforms:send submission="get-repository-rdf"></xforms:send>
+										<xforms:send submission="get-repository-rdf"/>
 									</xforms:action>
 								</xforms:trigger>
 							</li>
@@ -292,11 +315,11 @@ SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
 			<div class="row">
 				<div class="col-md-12">
 					<footer>
-						<div class="footer-left-col"> © 2017 Orbis Cascade Alliance <br/> 2288 Oakmont Way Eugene, OR 97401 </div>
-						<div class="footer-right-col"> (541) 246-2470 <br/>
+						<div class="footer-left-col"> © 2017 Orbis Cascade Alliance <br /> 2288 Oakmont Way Eugene, OR 97401 </div>
+						<div class="footer-right-col"> (541) 246-2470 <br />
 							<a href="mailto:info@orbiscascade.org">info@orbiscascade.org</a>
 						</div>
-						
+
 						<nav>
 							<ul>
 								<li>
@@ -323,7 +346,6 @@ SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
 				</div>
 			</div>
 		</div>
-		
 		<fr:alert-dialog id="delete-set-dialog">
 			<fr:label>Delete Set</fr:label>
 			<fr:message>Do you wish to purge all Cultural Heritage Objects associated with this set?</fr:message>
@@ -335,22 +357,23 @@ SELECT ?set ?title ?pub (count(?cho) as ?count) WHERE {
 				<xforms:action ev:event="DOMActivate">
 					<!-- iterate through repositories with a count greater than 0 -->
 					<xforms:setvalue ref="instance('sparqlQuery')"
-						value="replace(instance('sparql-update-templates')/query[@id='delete-set'], 'SET', instance('control-instance')/set-url)"></xforms:setvalue>
-					<xforms:send submission="delete-graph"></xforms:send>
+						value="replace(instance('sparql-update-templates')/query[@id='delete-set'], 'SET', instance('control-instance')/set-url)"/>
+					<xforms:send submission="delete-graph"/>
 					<xforms:action ev:event="xforms-submit-done">
 						<xforms:setvalue ref="instance('control-instance')/status">Set successfully deleted set from triplestore.</xforms:setvalue>
 						<!-- refresh the set list -->
-						<xforms:delete nodeset="instance('set-list')/*"></xforms:delete>
+						<xforms:delete nodeset="instance('set-list')/*"/>
 						<xforms:var name="pub"
-							select="if (xxforms:is-user-in-role('harvester-admin')) then '?pub' else concat('&lt;', instance('config')/production_server, 'contact#', instance('control-instance')/request-security/role, '&gt;')"></xforms:var>
-						<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', $pub)"></xforms:setvalue>
-						<xforms:send submission="submit-sparqlQuery"></xforms:send>
+							select="if (xxforms:is-user-in-role('harvester-admin')) then '?pub' else concat('&lt;', instance('config')/production_server, 'contact#', instance('control-instance')/request-security/role, '&gt;')"/>
+						<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', $pub)"/>
+						<xforms:send submission="submit-sparqlQuery"/>
 						<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
-							<xforms:insert context="instance('set-list')" nodeset="./child::node()[last()]" origin="instance('set-template')"></xforms:insert>
-							<xforms:setvalue ref="instance('set-list')/set[last()]/uri" value="context()/res:binding[@name='set']/res:uri"></xforms:setvalue>
-							<xforms:setvalue ref="instance('set-list')/set[last()]/title" value="context()/res:binding[@name='title']/res:literal"></xforms:setvalue>
-							<xforms:setvalue ref="instance('set-list')/set[last()]/publisher" value="context()/res:binding[@name='pub']/res:uri"></xforms:setvalue>
-							<xforms:setvalue ref="instance('set-list')/set[last()]/count" value="context()/res:binding[@name='count']/res:literal"></xforms:setvalue>
+							<xforms:insert context="instance('set-list')" nodeset="./child::node()[last()]" origin="instance('set-template')"/>
+							<xforms:setvalue ref="instance('set-list')/set[last()]/uri" value="context()/res:binding[@name='set']/res:uri"/>
+							<xforms:setvalue ref="instance('set-list')/set[last()]/title" value="context()/res:binding[@name='title']/res:literal"/>
+							<xforms:setvalue ref="instance('set-list')/set[last()]/publisher_uri" value="context()/res:binding[@name='pub']/res:uri"/>
+							<xforms:setvalue ref="instance('set-list')/set[last()]/publisher_name" value="context()/res:binding[@name='name']/res:literal"/>
+							<xforms:setvalue ref="instance('set-list')/set[last()]/count" value="context()/res:binding[@name='count']/res:literal"/>
 						</xforms:action>
 					</xforms:action>
 				</xforms:action>
