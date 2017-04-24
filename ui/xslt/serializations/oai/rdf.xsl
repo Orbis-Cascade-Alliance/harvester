@@ -215,6 +215,7 @@ rdfs:label ?label
 				</xsl:analyze-string>
 			</xsl:if>
 		</xsl:variable>
+		
 		<!-- parse content type -->
 		<xsl:variable name="content-type">
 			<xsl:if test="dc:format[contains(., '/')][1]">
@@ -699,29 +700,43 @@ rdfs:label ?label
 								<xsl:value-of select="$format"/>
 							</dcterms:format>
 						</xsl:when>
-						<xsl:otherwise>
-							<xsl:if test="string-length($content-type) &gt; 0">
-								<dcterms:format>
-									<xsl:value-of select="$content-type"/>
-								</dcterms:format>
-							</xsl:if>
-						</xsl:otherwise>
+						<xsl:when test="string-length($content-type) &gt; 0">
+							<dcterms:format>
+								<xsl:value-of select="$content-type"/>
+							</dcterms:format>
+						</xsl:when>
 					</xsl:choose>
 				</edm:WebResource>
 			</xsl:when>
 			<xsl:when test="$dams = 'oregondigital'">
 				<xsl:variable name="filename" select="substring-after(tokenize($cho_uri, '/')[last()], ':')"/>
-
 				<edm:WebResource rdf:about="http://oregondigital.org/thumbnails/oregondigital-{$filename}.jpg">
 					<dcterms:format>image/jpeg</dcterms:format>
 				</edm:WebResource>
 				<edm:WebResource rdf:about="http://oregondigital.org/downloads/oregondigital:{$filename}">
-					<xsl:if test="$content-type = 'image/tiff'">
-						<dcterms:format>image/jpeg</dcterms:format>
-					</xsl:if>
+					<xsl:choose>
+						<xsl:when test="string($format)">
+							<dcterms:format>
+								<xsl:value-of select="$format"/>
+							</dcterms:format>
+						</xsl:when>
+						<xsl:when test="string-length($content-type) &gt; 0">
+							<xsl:choose>
+								<xsl:when test="$content-type = 'image/tiff'">
+									<dcterms:format>image/jpeg</dcterms:format>
+								</xsl:when>
+								<xsl:otherwise>
+									<dcterms:format>
+										<xsl:value-of select="$content-type"/>
+									</dcterms:format>
+								</xsl:otherwise>
+							</xsl:choose>								
+						</xsl:when>
+					</xsl:choose>					
 				</edm:WebResource>
 			</xsl:when>
 			<xsl:when test="$dams = 'digital-commons'">
+				<!-- there are only thumbnails in digital commons, not reference images -->
 				<xsl:if test="dc:description[matches(., '.jpg$')]">
 					<edm:WebResource rdf:about="{dc:description[matches(., '.jpg$')]}">
 						<dcterms:format>image/jpeg</dcterms:format>
@@ -734,11 +749,18 @@ rdfs:label ?label
 			<xsl:when test="$dams = 'omeka'">
 				<xsl:if test="dc:identifier[contains(., 'files/original')]">
 					<edm:WebResource rdf:about="{dc:identifier[contains(., 'files/original')]}">
-						<xsl:if test="string-length($content-type) &gt; 0">
-							<dcterms:format>
-								<xsl:value-of select="$content-type"/>
-							</dcterms:format>
-						</xsl:if>
+						<xsl:choose>
+							<xsl:when test="string($format)">
+								<dcterms:format>
+									<xsl:value-of select="$format"/>
+								</dcterms:format>
+							</xsl:when>
+							<xsl:when test="string-length($content-type) &gt; 0">
+								<dcterms:format>
+									<xsl:value-of select="$content-type"/>
+								</dcterms:format>
+							</xsl:when>
+						</xsl:choose>
 					</edm:WebResource>
 				</xsl:if>
 			</xsl:when>
@@ -764,13 +786,11 @@ rdfs:label ?label
 										<xsl:value-of select="$format"/>
 									</dcterms:format>
 								</xsl:when>
-								<xsl:otherwise>
-									<xsl:if test="string-length($content-type) &gt; 0">
-										<dcterms:format>
-											<xsl:value-of select="$content-type"/>
-										</dcterms:format>
-									</xsl:if>
-								</xsl:otherwise>
+								<xsl:when test="string-length($content-type) &gt; 0">
+									<dcterms:format>
+										<xsl:value-of select="$content-type"/>
+									</dcterms:format>
+								</xsl:when>
 							</xsl:choose>
 						</edm:WebResource>
 					</xsl:when>
