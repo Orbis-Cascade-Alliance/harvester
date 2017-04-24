@@ -206,7 +206,7 @@
 
 	<!-- generate resumptionToken from the $limit defined in the config and the $offset, an integer value for SPARQL that stands as a resumptionToken -->
 	<xsl:template name="resumptionToken">
-		<xsl:if test="$offset &lt; ($count + $limit)">
+		<xsl:if test="($offset+$limit) &lt; $count">
 			<xsl:variable name="next" select="$offset + $limit"/>
 			<resumptionToken completeListSize="{$count}" cursor="{$offset}">
 				<xsl:value-of select="concat($set, ':oai_dc:', $next)"/>
