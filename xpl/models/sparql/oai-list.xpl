@@ -71,19 +71,17 @@ PREFIX arch:	<http://purl.org/archival/vocab/arch#>
 PREFIX nwda:	<https://github.com/Orbis-Cascade-Alliance/nwda-editor#>
 PREFIX prov:	<http://www.w3.org/ns/prov#>
 PREFIX doap:	<http://usefulinc.com/ns/doap#>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
 
 DESCRIBE * WHERE {
-  ?cho a dpla:SourceResource;
-		dcterms:isPartOf ?collection
-		OPTIONAL {?cho edm:hasType ?type}
-		OPTIONAL {?cho dcterms:creator ?creator}
-		OPTIONAL {?cho dcterms:contributor ?contributor}
-       { SELECT * WHERE {
-         ?agg a ore:Aggregation ;
+  ?agg a ore:Aggregation ;
                 edm:isShownAt ?cho ;
                 prov:generatedAtTime ?mod;
-                doap:audience "primo" %FILTER%}         
-       }
+                doap:audience "primo" %FILTER% .
+  ?cho dcterms:isPartOf ?collection
+       OPTIONAL {?cho dcterms:creator ?creator . ?creator a edm:Agent}
+       OPTIONAL {?cho dcterms:contributor ?contributor . ?contributor a edm:Agent}
+       OPTIONAL {?cho edm:hasType ?type . ?type a skos:Concept}
 } ORDER BY DESC(?mod) OFFSET %OFFSET% LIMIT %LIMIT% ]]>
 				</xsl:variable>
 	
