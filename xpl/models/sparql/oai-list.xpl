@@ -76,6 +76,8 @@ DESCRIBE * WHERE {
   ?cho a dpla:SourceResource;
 		dcterms:isPartOf ?collection
 		OPTIONAL {?cho edm:hasType ?type}
+		OPTIONAL {?cho dcterms:creator ?creator}
+		OPTIONAL {?cho dcterms:contributor ?contributor}
        { SELECT * WHERE {
          ?agg a ore:Aggregation ;
                 edm:isShownAt ?cho ;

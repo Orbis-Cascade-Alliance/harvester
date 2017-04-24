@@ -13,28 +13,28 @@
 		<xsl:param name="dataProvider"/>
 		<xsl:param name="thumbnail"/>
 		<xsl:param name="depiction"/>
-		
+
 		<oai_dc:dc>
 			<xsl:apply-templates select="*"/>
 			<dc:publisher>
 				<xsl:choose>
 					<xsl:when test="contains($dataProvider, 'archiveswest')">
 						<xsl:variable name="code" select="substring-after($dataProvider, '#')"/>
-						
+
 						<xsl:value-of select="//config/codes/repository[@marc = $code]/@exlibris"/>
 					</xsl:when>
 					<xsl:when test="contains($dataProvider, 'harvester')">
 						<xsl:variable name="code" select="tokenize($dataProvider, '/')[last()]"/>
-						
+
 						<xsl:value-of select="//config/codes/repository[@marc = $code]/@exlibris"/>
 					</xsl:when>
 				</xsl:choose>
 			</dc:publisher>
-			
+
 			<dc:identifier>
 				<xsl:value-of select="@rdf:about"/>
 			</dc:identifier>
-			
+
 			<xsl:if test="string($thumbnail)">
 				<dc:relation.hasVersion>
 					<xsl:value-of select="$thumbnail"/>
@@ -47,40 +47,89 @@
 			</xsl:if>
 		</oai_dc:dc>
 	</xsl:template>
-	
+
 	<!-- types -->
 	<xsl:template match="dcterms:type">
 		<dc:type>
 			<xsl:value-of select="tokenize(@rdf:resource, '/')[last()]"/>
 		</dc:type>
 	</xsl:template>
-	
+
 	<xsl:template match="dcterms:creator | dcterms:contributor">
 		<xsl:variable name="element" select="local-name()"/>
-		<xsl:element name="dc:{$element}" namespace="http://purl.org/dc/elements/1.1/">
-			<xsl:choose>
-				<xsl:when test="@rdf:resource">
-					<xsl:value-of select="@rdf:resource"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="."/>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:element>
-		
-		
-		<!-- strip dates for a text-only value -->
-		<xsl:if test="string-length(text()) &gt; 0">
-			<xsl:analyze-string select="text()" regex="(.*),\s\d{{4}}">
-				<xsl:matching-substring>
-					<xsl:element name="dc:{$element}.undated" namespace="http://purl.org/dc/elements/1.1/">
-						<xsl:value-of select="regex-group(1)"/>
-					</xsl:element>
-				</xsl:matching-substring>
-			</xsl:analyze-string>
-		</xsl:if>
+
+		<xsl:choose>
+			<xsl:when test="child::edm:Agent">
+				<xsl:variable name="label" select="child::edm:Agent/skos:prefLabel"/>
+				
+				<xsl:element name="dc:{$element}" namespace="http://purl.org/dc/elements/1.1/">
+					<xsl:value-of select="$label"/>
+				</xsl:element>
+				
+				<!-- strip dates from preferred label, if applicable -->
+				<xsl:if test="string-length($label) &gt; 0">
+					<xsl:call-template name="undated-name">
+						<xsl:with-param name="label" select="$label"/>
+						<xsl:with-param name="element" select="$element"/>
+					</xsl:call-template>
+				</xsl:if>
+			</xsl:when>
+			<xsl:when test="@rdf:resource">
+				<xsl:variable name="uri" select="@rdf:resource"/>
+				<xsl:choose>
+					<xsl:when test="//edm:Agent[@rdf:about = $uri]">
+						<xsl:variable name="label" select="//edm:Agent[@rdf:about = $uri]/skos:prefLabel"/>
+						
+						<xsl:element name="dc:{$element}" namespace="http://purl.org/dc/elements/1.1/">
+							<xsl:value-of select="$label"/>
+						</xsl:element>
+						
+						<!-- strip dates from preferred label, if applicable -->
+						<xsl:if test="string-length($label) &gt; 0">
+							<xsl:call-template name="undated-name">
+								<xsl:with-param name="label" select="$label"/>
+								<xsl:with-param name="element" select="$element"/>
+							</xsl:call-template>
+						</xsl:if>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:element name="dc:{$element}" namespace="http://purl.org/dc/elements/1.1/">
+							<xsl:value-of select="@rdf:resource"/>
+						</xsl:element>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:variable name="label" select="."/>
+				
+				<xsl:element name="dc:{$element}" namespace="http://purl.org/dc/elements/1.1/">
+					<xsl:value-of select="$label"/>
+				</xsl:element>
+				
+				<!-- strip dates from preferred label, if applicable -->
+				<xsl:if test="string-length($label) &gt; 0">
+					<xsl:call-template name="undated-name">
+						<xsl:with-param name="label" select="$label"/>
+						<xsl:with-param name="element" select="$element"/>
+					</xsl:call-template>
+				</xsl:if>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	
+	<xsl:template name="undated-name">
+		<xsl:param name="label"/>
+		<xsl:param name="element"/>
+		
+		<xsl:analyze-string select="$label" regex="(.*),\s\d{{4}}">
+			<xsl:matching-substring>
+				<xsl:element name="dc:{$element}.undated" namespace="http://purl.org/dc/elements/1.1/">
+					<xsl:value-of select="regex-group(1)"/>
+				</xsl:element>
+			</xsl:matching-substring>
+		</xsl:analyze-string>
+	</xsl:template>
+
 	<xsl:template match="edm:hasType">
 		<dc:genre>
 			<xsl:choose>
@@ -104,7 +153,7 @@
 			</xsl:choose>
 		</dc:genre>
 	</xsl:template>
-	
+
 	<!-- parse dates -->
 	<xsl:template match="dcterms:date">
 		<xsl:choose>
@@ -133,7 +182,7 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	
+
 	<xsl:template match="edm:TimeSpan">
 		<dc:date>
 			<xsl:value-of select="concat(replace(edm:begin, '-', ''), '/', replace(edm:end, '-', ''))"/>
@@ -145,24 +194,24 @@
 			<xsl:value-of select="nwda:denormalizeDate(edm:end, 'to')"/>
 		</dc:date.end>
 	</xsl:template>
-	
+
 	<!-- put edm:Place coordinates back together -->
 	<xsl:template match="dcterms:spatial[edm:Place]">
 		<dc:coverage.spatial.latlong>
 			<xsl:apply-templates select="edm:Place"/>
 		</dc:coverage.spatial.latlong>
 	</xsl:template>
-	
+
 	<xsl:template match="edm:Place">
 		<xsl:value-of select="concat(geo:lat, ',', geo:long)"/>
 	</xsl:template>
-	
+
 	<xsl:template match="dcterms:rights[@rdf:resource]">
 		<dc:rights.standardized>
 			<xsl:value-of select="@rdf:resource"/>
 		</dc:rights.standardized>
 	</xsl:template>
-	
+
 	<xsl:template match="dcterms:isPartOf">
 		<dc:isPartOf>
 			<xsl:choose>
@@ -175,7 +224,7 @@
 						<xsl:otherwise>
 							<xsl:value-of select="$uri"/>
 						</xsl:otherwise>
-					</xsl:choose>					
+					</xsl:choose>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:value-of select="descendant::dcterms:title"/>
@@ -183,7 +232,7 @@
 			</xsl:choose>
 		</dc:isPartOf>
 	</xsl:template>
-	
+
 	<xsl:template match="*">
 		<xsl:element name="dc:{local-name()}" namespace="http://purl.org/dc/elements/1.1/">
 			<xsl:choose>
@@ -196,12 +245,12 @@
 			</xsl:choose>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!-- ************ FUNCTIONS *************-->
 	<xsl:function name="nwda:denormalizeDate">
 		<xsl:param name="date"/>
 		<xsl:param name="pos"/>
-		
+
 		<xsl:choose>
 			<xsl:when test="$date castable as xs:date">
 				<xsl:value-of select="replace($date, '-', '')"/>
@@ -238,7 +287,7 @@
 			</xsl:when>
 		</xsl:choose>
 	</xsl:function>
-	
+
 	<xsl:template name="last-day-of-month">
 		<xsl:param name="date"/>
 		<xsl:param name="y" select="xs:integer(substring($date, 1, 4))"/>

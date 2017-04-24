@@ -1778,7 +1778,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 							<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="context()/@uri"/>
 							<xforms:setvalue ref="instance('rdf')/*[last()]/skos:prefLabel" value="context()/@prefLabel"/>
 						</xforms:action>
-						<xforms:action xxforms:iterate="instance('agent-list')/type[@new = true() and string(@uri)]">
+						<xforms:action xxforms:iterate="instance('agent-list')/agent[@new = true() and string(@uri)]">
 							<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]" origin="instance('agent-template')"/>
 							<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="context()/@uri"/>
 							<xforms:setvalue ref="instance('rdf')/*[last()]/skos:prefLabel" value="context()/@prefLabel"/>
