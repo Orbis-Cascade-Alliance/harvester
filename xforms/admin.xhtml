@@ -311,41 +311,9 @@ SELECT ?set ?title ?pub ?name (count(?cho) as ?count) WHERE {
 				</div>
 			</div>
 		</div>
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<footer>
-						<div class="footer-left-col"> © 2017 Orbis Cascade Alliance <br /> 2288 Oakmont Way Eugene, OR 97401 </div>
-						<div class="footer-right-col"> (541) 246-2470 <br />
-							<a href="mailto:info@orbiscascade.org">info@orbiscascade.org</a>
-						</div>
-
-						<nav>
-							<ul>
-								<li>
-									<a href="/programs">Programs</a>
-								</li>
-								<li>
-									<a href="/teams">Teams</a>
-								</li>
-								<li>
-									<a href="/docs">Documentation</a>
-								</li>
-								<li>
-									<a href="/shared-ils">Shared ILS</a>
-								</li>
-								<li>
-									<a href="/about">About</a>
-								</li>
-								<li>
-									<a href="/contact">Contact</a>
-								</li>
-							</ul>
-						</nav>
-					</footer>
-				</div>
-			</div>
-		</div>
+		
+		<xi:include href="components/footer.xml"/>
+		
 		<fr:alert-dialog id="delete-set-dialog">
 			<fr:label>Delete Set</fr:label>
 			<fr:message>Do you wish to purge all Cultural Heritage Objects associated with this set?</fr:message>

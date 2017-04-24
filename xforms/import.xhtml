@@ -63,7 +63,7 @@
 						<total-count></total-count>
 						<min-pos>1</min-pos>
 						<max-pos>50</max-pos>
-						<format-set>false</format-set>
+						<!--<format-set>false</format-set>-->
 						<rights-set>false</rights-set>
 						<type-set>false</type-set>
 					</validation>
@@ -344,9 +344,9 @@ OPTIONAL {?c skos:scopeNote ?note .
 				<xforms:bind nodeset="validation">
 					<xforms:bind nodeset="min-pos" type="xs:integer"/>
 					<xforms:bind nodeset="max-pos" type="xs:integer"/>
-					<xforms:bind nodeset="error-count" calculate="count(instance('validation')/record[error[@set=false()]])" type="xs:integer"/>
+					<xforms:bind nodeset="error-count" calculate="count(instance('validation')/record[error[@set=false() or not(@set)]])" type="xs:integer"/>
 					<xforms:bind nodeset="total-count" calculate="count(instance('validation')/record)" type="xs:integer"/>
-					<xforms:bind nodeset="format-set" calculate="instance('control-instance')/remediation/format=true() and string-length(instance('set')/format) &gt; 0" type="xs:boolean"/>
+					<!--<xforms:bind nodeset="format-set" calculate="instance('control-instance')/remediation/format=true() and string-length(instance('set')/format) &gt; 0" type="xs:boolean"/>-->
 					<xforms:bind nodeset="rights-set" calculate="instance('control-instance')/remediation/rights=true() and string-length(instance('set')/rights) &gt; 0" type="xs:boolean"/>
 					<xforms:bind nodeset="type-set" calculate="instance('control-instance')/remediation/type=true() and string-length(instance('set')/type) &gt; 0" type="xs:boolean"/>
 				</xforms:bind>
@@ -376,7 +376,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 			
 			<xforms:bind nodeset="instance('validation')">
 				<xforms:bind nodeset="record">
-					<xforms:bind nodeset="error[@type='format']/@set" calculate="instance('control-instance')/validation/format-set" type="xs:boolean"/>
+					<!--<xforms:bind nodeset="error[@type='format']/@set" calculate="instance('control-instance')/validation/format-set" type="xs:boolean"/>-->
 					<xforms:bind nodeset="error[@type='rights']/@set" calculate="instance('control-instance')/validation/rights-set" type="xs:boolean"/>
 					<xforms:bind nodeset="error[@type='type']/@set" calculate="instance('control-instance')/validation/type-set" type="xs:boolean"/>
 				</xforms:bind>
@@ -440,6 +440,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('uri', data($cho_uri))"/>
 								<xforms:var name="title" select="replace(replace(data($binding/dc:title[1]), '&lt;[^&gt;]+&gt;', ' '), '\\s+', ' ')"/>
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('title', $title)" if="$binding/dc:title"/>
+								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('date', data($binding/dc:date[1]))" if="$binding/dc:date"/>
 
 								<!-- insert errors for invalid or missing fields -->
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No title')"
@@ -456,13 +457,13 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<xforms:action xxforms:iterate="$formats">
 									<xforms:var name="val" select="normalize-space(.)"/>
 									<xforms:action if="instance('formats')/format[text() = $val]">
-										<xforms:setvalue ref="instance('control-instance')/record_has_mimetype" value="true()"/>
+										<!--<xforms:setvalue ref="instance('control-instance')/record_has_mimetype" value="true()"/>-->
 										<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('format', $val)"/>
 									</xforms:action>
 								</xforms:action>
-								<xforms:insert context="instance('validation')/record[last()]"
+								<!--<xforms:insert context="instance('validation')/record[last()]"
 									origin="xforms:element('error', (xforms:attribute('set', instance('control-instance')/validation/format-set), xforms:attribute('type', 'format'), 'No valid format (MIME type) detected.'))"
-									if="instance('control-instance')/record_has_mimetype = false()"/>
+									if="instance('control-instance')/record_has_mimetype = false()"/>-->
 
 								<!-- look for DCMI types -->
 								<xforms:var name="all-types" select="string-join($binding/dc:type, ';')"/>
@@ -1429,7 +1430,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 											</div>-->
 
 											<xforms:repeat nodeset="record[error][position() &lt;= 20]">
-												<div class="bg-danger error-record">
+												<div>
 													<xforms:var name="id" select="@id"/>
 													<xforms:var name="hash" select="digest($id, 'MD5', 'hex')"/>
 													<h4>
@@ -1478,14 +1479,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 															</xforms:label>
 															<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
 														</xforms:trigger>
-													</div>
-													<xforms:repeat nodeset="error[@set=false()]">
-														<div>
-															<xforms:output ref=".">
-																<xforms:label>Error</xforms:label>
-															</xforms:output>
-														</div>
-													</xforms:repeat>
+													</div>													
 													<xforms:repeat nodeset="dcmitype">
 														<div>
 															<xforms:output ref=".">
@@ -1515,7 +1509,15 @@ OPTIONAL {?c skos:scopeNote ?note .
 															</xforms:output>
 														</div>
 													</xforms:group>
+													<xforms:repeat nodeset="error[@set=false() or not(@set)]">
+														<div class="bg-danger error-record">
+															<xforms:output ref=".">
+																<xforms:label>Error</xforms:label>
+															</xforms:output>
+														</div>
+													</xforms:repeat>
 													<div class="{$hash}_container ajax_container hidden"></div>
+													<hr/>
 												</div>
 											</xforms:repeat>
 										</div>
@@ -1716,41 +1718,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 			</div>
 		</div>
 		
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<footer>
-						<div class="footer-left-col"> © 2017 Orbis Cascade Alliance <br/> 2288 Oakmont Way Eugene, OR 97401 </div>
-						<div class="footer-right-col"> (541) 246-2470 <br/>
-							<a href="mailto:info@orbiscascade.org">info@orbiscascade.org</a>
-						</div>
-						
-						<nav>
-							<ul>
-								<li>
-									<a href="/programs">Programs</a>
-								</li>
-								<li>
-									<a href="/teams">Teams</a>
-								</li>
-								<li>
-									<a href="/docs">Documentation</a>
-								</li>
-								<li>
-									<a href="/shared-ils">Shared ILS</a>
-								</li>
-								<li>
-									<a href="/about">About</a>
-								</li>
-								<li>
-									<a href="/contact">Contact</a>
-								</li>
-							</ul>
-						</nav>
-					</footer>
-				</div>
-			</div>
-		</div>
+		<xi:include href="components/footer.xml"/>
 		
 		<!-- dialog asking to initiate the import -->
 		<fr:alert-dialog id="initiate-import">

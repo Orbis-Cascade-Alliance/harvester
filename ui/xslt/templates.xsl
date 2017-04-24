@@ -56,22 +56,22 @@
 						<nav>
 							<ul>
 								<li>
-									<a href="/programs">Programs</a>
+									<a href="https://www.orbiscascade.org/programs">Programs</a>
 								</li>
 								<li>
-									<a href="/teams">Teams</a>
+									<a href="https://www.orbiscascade.org/teams">Teams</a>
 								</li>
 								<li>
-									<a href="/docs">Documentation</a>
+									<a href="https://www.orbiscascade.org/docs">Documentation</a>
 								</li>
 								<li>
-									<a href="/shared-ils">Shared ILS</a>
+									<a href="https://www.orbiscascade.org/shared-ils">Shared ILS</a>
 								</li>
 								<li>
-									<a href="/about">About</a>
+									<a href="https://www.orbiscascade.org/about">About</a>
 								</li>
 								<li>
-									<a href="/contact">Contact</a>
+									<a href="https://www.orbiscascade.org/contact">Contact</a>
 								</li>
 							</ul>
 						</nav>
