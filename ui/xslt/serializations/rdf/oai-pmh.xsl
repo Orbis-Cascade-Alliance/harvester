@@ -21,7 +21,9 @@
 	</xsl:template>
 	
 	<xsl:template match="ore:Aggregation">
-		<xsl:apply-templates select="//dpla:SourceResource">
+		<xsl:variable name="uri" select="edm:isShownAt/@rdf:resource"/>
+		
+		<xsl:apply-templates select="//dpla:SourceResource[@rdf:about=$uri]">
 			<xsl:with-param name="depiction"
 				select="
 				if (edm:object/@rdf:resource) then

@@ -68,7 +68,7 @@
 					<xsl:apply-templates/>
 				</dl>
 			</div>
-		</div>		
+		</div>
 	</xsl:template>
 
 	<xsl:template match="*">
@@ -76,7 +76,16 @@
 			<xsl:value-of select="name()"/>
 		</dt>
 		<dd>
-			<xsl:apply-templates/>
+			<xsl:choose>
+				<xsl:when test="matches(., '^https?://')">
+					<a href=".">
+						<xsl:apply-templates/>
+					</a>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates/>
+				</xsl:otherwise>
+			</xsl:choose>			
 		</dd>
 	</xsl:template>
 

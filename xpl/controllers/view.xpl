@@ -17,10 +17,23 @@
 		<p:input name="data" href="#request"/>
 		<p:input name="config">
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-				<xsl:output indent="yes"/>
-				<xsl:template match="/">
+				<xsl:variable name="pipeline" select="tokenize(/request/request-url, '/')[last()]"/>
+				<xsl:template match="/">					
 					<output>
-						<xsl:value-of select="/request/parameters/parameter[name='output']/value"/>
+						<!-- display html as the default output for the /results pipeline -->
+						<xsl:choose>
+							<xsl:when test="$pipeline = 'results'">
+								<xsl:choose>
+									<xsl:when test="/request/parameters/parameter[name='output']/value">
+										<xsl:value-of select="/request/parameters/parameter[name='output']/value"/>
+									</xsl:when>
+									<xsl:otherwise>html</xsl:otherwise>
+								</xsl:choose>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="/request/parameters/parameter[name='output']/value"/>
+							</xsl:otherwise>
+						</xsl:choose>
 					</output>
 				</xsl:template>
 			</xsl:stylesheet>
@@ -33,7 +46,6 @@
 		<p:input name="data" href="#request"/>
 		<p:input name="config">
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-				<xsl:output indent="yes"/>
 				<xsl:template match="/">
 					<model>
 						<xsl:value-of select="/request/parameters/parameter[name='model']/value"/>

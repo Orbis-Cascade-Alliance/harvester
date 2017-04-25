@@ -1,7 +1,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
 	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"
-	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:res="http://www.w3.org/2005/sparql-results#">
+	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+	xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:res="http://www.w3.org/2005/sparql-results#">
 	<head>
 		<title>Orbis Cascade Harvester: Admin</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
@@ -22,17 +24,9 @@
 			</xforms:instance>
 
 			<xforms:instance id="set-list" xxforms:exclude-result-prefixes="#all">
-				<sets xmlns=""></sets>
-			</xforms:instance>
-
-			<xforms:instance id="set-template" xxforms:exclude-result-prefixes="#all">
-				<set xmlns="">
-					<title></title>
-					<uri></uri>
-					<count></count>
-					<publisher_uri></publisher_uri>
-					<publisher_name></publisher_name>
-				</set>
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/"
+					xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:foaf="http://purl.org/dc/terms/"
+					xmlns:doap="http://usefulinc.com/ns/doap#"/>
 			</xforms:instance>
 
 			<xforms:instance id="controls">
@@ -90,14 +84,31 @@ PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX arch:	<http://purl.org/archival/vocab/arch#>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
+PREFIX doap:	<http://usefulinc.com/ns/doap#>
+PREFIX ore:	<http://www.openarchives.org/ore/terms/>
 
-SELECT ?set ?title ?pub ?name (count(?cho) as ?count) WHERE {
+CONSTRUCT {
+?set rdf:type dcmitype:Collection ; 
+  dcterms:publisher ?publisher; 
+  dcterms:title ?title ; 
+  dcterms:publisher %PUB% ;
+  doap:audience ?target ;
+  foaf:name ?name ;
+  dcterms:extent ?count
+} WHERE {
 ?set a dcmitype:Collection ;
   dcterms:title ?title ;
   dcterms:publisher %PUB% .
-  %PUB% foaf:name ?name .
-?cho dcterms:isPartOf ?set
-} GROUP BY ?set ?title ?pub ?name ORDER BY ?name ?title ?title]]>
+  %PUB% foaf:name ?name 
+ 	{ 
+      SELECT ?set ?target ( count(?cho) as ?count ) { 
+   		?cho dcterms:isPartOf ?set .
+		 ?agg a ore:Aggregation ;
+			edm:isShownAt ?cho ;
+			doap:audience ?target
+ 		} GROUP BY ?set ?target
+	}
+} ORDER BY ?name ?title ?title]]>
 				</query>
 			</xforms:instance>
 
@@ -160,14 +171,7 @@ SELECT ?set ?title ?pub ?name (count(?cho) as ?count) WHERE {
 					select="if (xxforms:is-user-in-role('harvester-admin')) then '?pub' else concat('&lt;', instance('config')/production_server, 'contact#', instance('control-instance')/request-security/role, '&gt;')"/>
 				<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', $pub)"/>
 				<xforms:send submission="submit-sparqlQuery"/>
-				<xforms:action ev:event="xforms-submit-done" xxforms:iterate="instance('sparqlResponse')//res:result">
-					<xforms:insert context="instance('set-list')" nodeset="./child::node()[last()]" origin="instance('set-template')"/>
-					<xforms:setvalue ref="instance('set-list')/set[last()]/uri" value="context()/res:binding[@name='set']/res:uri"/>
-					<xforms:setvalue ref="instance('set-list')/set[last()]/title" value="context()/res:binding[@name='title']/res:literal"/>
-					<xforms:setvalue ref="instance('set-list')/set[last()]/publisher_uri" value="context()/res:binding[@name='pub']/res:uri"/>
-					<xforms:setvalue ref="instance('set-list')/set[last()]/publisher_name" value="context()/res:binding[@name='name']/res:literal"/>
-					<xforms:setvalue ref="instance('set-list')/set[last()]/count" value="context()/res:binding[@name='count']/res:literal"/>
-				</xforms:action>
+				<xforms:insert context="instance('set-list')" origin="instance('sparqlResponse')/*"/>
 			</xforms:action>
 		</xforms:model>
 	</head>
@@ -202,7 +206,7 @@ SELECT ?set ?title ?pub ?name (count(?cho) as ?count) WHERE {
 			<div class="row">
 				<div class="col-md-9">
 					<xforms:group ref="instance('set-list')">
-						<xforms:group ref=".[count(set) &gt; 0]">
+						<xforms:group ref=".[count(dcmitype:Collection) &gt; 0]">
 							<h2>Sets</h2>
 							<table class="table">
 								<thead>
@@ -213,57 +217,66 @@ SELECT ?set ?title ?pub ?name (count(?cho) as ?count) WHERE {
 									</tr>
 								</thead>
 								<tbody>
-									<xforms:repeat nodeset="set">
-										<xforms:var name="uri" select="uri"/>
+									<xforms:repeat nodeset="dcmitype:Collection">
+										<xforms:var name="uri" select="@rdf:about"/>
 										<tr>
 											<td>
 												<h4>
-													<xforms:output ref="title"/>
-													<!--<xforms:trigger appearance="minimal">
-														<xforms:label value="title"/>
-														<xforms:action ev:event="DOMActivate">
-															<xforms:load show="new" resource="{$uri}"/>
-														</xforms:action>
-													</xforms:trigger>-->
+													<xforms:output ref="dcterms:title"/>
 												</h4>
 												<div>
 													<dl class="dl-horizontal">
 														<dt>URI</dt>
 														<dd>
 															<xforms:trigger appearance="minimal">
-																<xforms:label><xforms:output ref="uri"/><span class="glyphicon glyphicon-new-window"
+																<xforms:label><xforms:output ref="$uri"/><span class="glyphicon glyphicon-new-window"
 																	></span></xforms:label>
-																<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
+																<xforms:load ev:event="DOMActivate" resource="{$uri}" show="new"/>
 															</xforms:trigger>
 														</dd>
 														<dt>View</dt>
 														<dd>
-															<xforms:trigger appearance="minimal">
-																<xforms:label>View this set as RDF <span class="glyphicon glyphicon-new-window"
-																	></span></xforms:label>
-																<xforms:load resource="{instance('config')/url}results?set={encode-for-uri(uri)}" show="new"
-																	ev:event="DOMActivate"/>
-															</xforms:trigger>
+															<xforms:group ref=".[doap:audience='dpla']">
+																<xforms:trigger appearance="minimal">
+																	<xforms:label>View records for DPLA <span class="glyphicon glyphicon-new-window"
+																		></span></xforms:label>
+																	<xforms:load resource="{instance('config')/url}results?set={encode-for-uri($uri)}"
+																		show="new" ev:event="DOMActivate"/>
+																</xforms:trigger>
+															</xforms:group>
+															<xforms:group ref=".[doap:audience='dpla' and doap:audience='primo']">
+																<span>, </span>
+															</xforms:group>
+															<xforms:group ref=".[doap:audience='primo']">
+																<xforms:trigger appearance="minimal">
+																	<xforms:label>View records for Primo <span class="glyphicon glyphicon-new-window"
+																		></span></xforms:label>
+																	<xforms:load
+																		resource="{instance('config')/url}results?set={encode-for-uri($uri)}&amp;model=primo"
+																		show="new" ev:event="DOMActivate"/>
+																</xforms:trigger>
+															</xforms:group>
 														</dd>
 														<dt>Publisher</dt>
 														<dd>
-															<xforms:group ref=".[string-length(publisher_uri) &gt; 0]">
+															<xforms:group ref=".[string-length(dcterms:publisher/@rdf:resource) &gt; 0]">
 																<xforms:trigger appearance="minimal">
 																	<xforms:label>
-																		<xforms:output ref="publisher_name"/>
+																		<xforms:output ref="foaf:name"/>
 																		<span class="glyphicon glyphicon-new-window"></span></xforms:label>
-																	<xforms:load resource="{publisher_uri}" show="new" ev:event="DOMActivate"/>
+																	<xforms:load resource="{dcterms:publisher/@rdf:resource}" show="new" ev:event="DOMActivate"
+																	/>
 																</xforms:trigger>
 															</xforms:group>
-															<xforms:group ref=".[string-length(publisher_uri) = 0]">
-																<xforms:output ref="publisher_name"/>
+															<xforms:group ref=".[string-length(dcterms:publisher/@rdf:resource) = 0]">
+																<xforms:output ref="foaf:name"/>
 															</xforms:group>
 														</dd>
 													</dl>
 												</div>
 											</td>
 											<td>
-												<xforms:output value="format-number(count, '###,###')"/>
+												<xforms:output value="format-number(dcterms:extent, '###,###')"/>
 											</td>
 											<td>
 												<xforms:trigger appearance="minimal">
@@ -280,11 +293,11 @@ SELECT ?set ?title ?pub ?name (count(?cho) as ?count) WHERE {
 								</tbody>
 							</table>
 						</xforms:group>
-						<xforms:group ref=".[count(set) = 0]">
+						<xforms:group ref=".[count(dcmitype:Collection) = 0]">
 							<p>No sets found in SPARQL endpoint.</p>
 						</xforms:group>
 					</xforms:group>
-					<!--<fr:xforms-inspector></fr:xforms-inspector>-->
+					<!--<fr:xforms-inspector/>-->
 				</div>
 				<div class="col-md-3">
 					<h2>Actions</h2>
@@ -311,9 +324,7 @@ SELECT ?set ?title ?pub ?name (count(?cho) as ?count) WHERE {
 				</div>
 			</div>
 		</div>
-		
 		<xi:include href="components/footer.xml"/>
-		
 		<fr:alert-dialog id="delete-set-dialog">
 			<fr:label>Delete Set</fr:label>
 			<fr:message>Do you wish to purge all Cultural Heritage Objects associated with this set?</fr:message>

@@ -129,7 +129,7 @@
 											</p>
 										</xforms:group>
 										<xforms:group ref=".[xs:integer(instance('viaf-response')/srw:numberOfRecords) &gt; 0]">
-											<xforms:select1 ref="instance('control-instance')/uri" appearance="compact">
+											<xforms:select1 ref="instance('control-instance')/uri" appearance="compact" length="20">
 												<xforms:label>Name</xforms:label>
 												<xforms:itemset nodeset="instance('viaf-response')//srw:record">
 													<xforms:label ref="descendant::viaf:data[viaf:sources/viaf:s='LC']/viaf:text"/>
