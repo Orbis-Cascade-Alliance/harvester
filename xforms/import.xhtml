@@ -24,7 +24,8 @@
 					<id></id>
 					<current></current>
 					<action></action>
-					<dams/>
+					<dams></dams>
+					<validation-record-view>dpla</validation-record-view>
 					<validate-trigger>false</validate-trigger>
 					<remediation-page-trigger>false</remediation-page-trigger>
 					<validation-page-trigger>false</validation-page-trigger>
@@ -606,11 +607,11 @@ OPTIONAL {?c skos:scopeNote ?note .
 
 
 						<!-- for a multipage feed, check for the existence of a resumptionToken for iteration -->
-						<!--<xforms:action if="instance('feed')//oai:resumptionToken">
-							<xforms:setvalue ref="instance('control-instance')/set"
-								value="concat(instance('feed')//descendant::oai:request, '?verb=ListRecords&amp;resumptionToken=', instance('feed')//descendant::oai:resumptionToken)"/>
-							<xforms:send submission="get-set"/>
-						</xforms:action>-->
+						<xforms:action if="instance('oai-response')//oai:resumptionToken">
+							<xforms:setvalue ref="instance('control-instance')/oai-service"
+								value="concat(instance('oai-response')//descendant::oai:request, '?verb=ListRecords&amp;resumptionToken=', instance('oai-response')//descendant::oai:resumptionToken)"/>
+							<!--<xforms:send submission="get-oai-pmh"/>-->
+						</xforms:action>
 					</xforms:action>
 				</xforms:action>
 			</xforms:submission>
@@ -951,6 +952,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 														<xforms:label>Primo only</xforms:label>
 														<xforms:value>primo</xforms:value>
 													</xforms:item>
+													<xforms:setvalue ev:event="xforms-value-changed" ref="instance('control-instance')/validation-record-view"
+														value="if (instance('set')/target = 'primo') then 'primo' else 'dpla'"/>
 												</xforms:select1>
 											</div>
 										</div>
@@ -1142,8 +1145,9 @@ OPTIONAL {?c skos:scopeNote ?note .
 									</xforms:group>
 									<hr />
 								</div>
-								
-								<xforms:group ref=".[not(instance('control-instance')/dams = 'dspace') and not(instance('control-instance')/dams = 'digital-commons')]">
+
+								<xforms:group
+									ref=".[not(instance('control-instance')/dams = 'dspace') and not(instance('control-instance')/dams = 'digital-commons')]">
 									<div>
 										<h4>Format</h4>
 										<xforms:select1 ref="format" appearance="full">
@@ -1175,7 +1179,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<hr />
 									</div>
 								</xforms:group>
-								
+
 								<div>
 									<h4>Language</h4>
 									<xforms:select1 ref="language" appearance="full">
@@ -1423,6 +1427,21 @@ OPTIONAL {?c skos:scopeNote ?note .
 							</xforms:group>
 
 							<hr />
+							<xforms:group ref=".[instance('set')/target='both']">
+								<xforms:select1 ref="instance('control-instance')/validation-record-view">
+									<xforms:item>
+										<xforms:label>DPLA View</xforms:label>
+										<xforms:value>dpla</xforms:value>
+									</xforms:item>
+									<xforms:item>
+										<xforms:label>Primo View</xforms:label>
+										<xforms:value>primo</xforms:value>
+									</xforms:item>
+									<xforms:action ev:event="xforms-value-changed">
+										<xxforms:script>clear();</xxforms:script>
+									</xforms:action>
+								</xforms:select1>
+							</xforms:group>
 							<xforms:group ref="instance('validation')">
 								<!-- display limited error response if there are errors, with a link to download full results as CSV -->
 								<xforms:group ref=".[instance('control-instance')/validation/error-count &gt; 0]">
@@ -1434,7 +1453,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 												<strong>Alert:</strong>
 												<strong><xforms:output ref="instance('control-instance')/validation/error-count"/></strong> records of
 														<strong><xforms:output ref="instance('control-instance')/validation/total-count"/></strong> total have
-												reported errors. Up to 20 are displayed below. Please download CSV for full report.</div>
+												reported errors. Up to 20 are displayed below.<!-- Please download CSV for full report.--></div>
 
 											<!--<div>												
 												<xforms:output ref="instance('csv-download')" appearance="xxforms:download">
@@ -1451,7 +1470,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 													<h4>
 														<small class="expand {$hash}-button">
 															<xforms:trigger appearance="minimal">
-																<xforms:label><span class="glyphicon glyphicon-triangle-right"></span></xforms:label>
+																<xforms:label><span class="glyphicon glyphicon-triangle-right toggle-glyph"></span></xforms:label>
 																<xforms:action ev:event="DOMActivate">
 																	<xforms:var name="params"
 																		select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
@@ -1597,7 +1616,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 												<h4>
 													<small class="expand {$hash}-button">
 														<xforms:trigger appearance="minimal">
-															<xforms:label><span class="glyphicon glyphicon-triangle-right"></span></xforms:label>
+															<xforms:label><span class="glyphicon glyphicon-triangle-right toggle-glyph"></span></xforms:label>
 															<xforms:action ev:event="DOMActivate">
 																<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
 																<xforms:var name="metadataPrefix"
@@ -1730,6 +1749,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 					<div class="hidden">
 						<xforms:output ref="instance('control-instance')/id" id="id"/>
 						<xforms:output ref="instance('control-instance')/oai-service" id="oai-service"/>
+						<xforms:output ref="instance('control-instance')/validation-record-view" id="validation-record-view"/>
 						<xforms:output ref="instance('set')/genre" id="genre"/>
 						<xforms:output ref="instance('set')/format" id="format"/>
 						<xforms:output ref="instance('set')/language" id="language"/>
@@ -1740,7 +1760,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 						<xforms:output ref="instance('set')/type" id="type"/>
 					</div>
 
-					<!--<fr:xforms-inspector/>-->
+					<fr:xforms-inspector/>
 				</div>
 			</div>
 		</div>

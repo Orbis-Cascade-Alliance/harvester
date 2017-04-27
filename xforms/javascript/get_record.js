@@ -16,26 +16,26 @@ function expand() {
     var rightsText = ORBEON.xforms.Document.getValue('rightsText');
     var target = ORBEON.xforms.Document.getValue('target');
     var type = ORBEON.xforms.Document.getValue('type');
-    
-    //if the target is primo, then set the model as 'primo'
+    var model = ORBEON.xforms.Document.getValue('validation-record-view');
     
     var container = id + '_container';
     
-     //always call GetRecord when triangle is expanded
-     if (ORBEON.jQuery('.' + container).hasClass('hidden')) {
+    //always call GetRecord when triangle is expanded
+    if (ORBEON.jQuery('.' + container).hasClass('hidden')) {
         ORBEON.jQuery.get('../getrecord', {
-        sets: service,
-        repository: repository,
-        genre: genre,
-        format: format,
-        language: language,
-        rights: rights,
-        rightsText: rightsText,
-        target: target,
-        type: type,
-        model: target,
-        output: 'ajax'
-        }, function (data) {
+            sets: service,
+            repository: repository,
+            genre: genre,
+            format: format,
+            language: language,
+            rights: rights,
+            rightsText: rightsText,
+            target: target,
+            type: type,
+            model: model,
+            output: 'ajax'
+        },
+        function (data) {
             ORBEON.jQuery('.' + container).html(data);
             ORBEON.jQuery('.' + container).removeClass('hidden');
             ORBEON.jQuery('.' + id + '-button').children('span').children('a').children('span').removeClass('glyphicon-triangle-right');
@@ -54,4 +54,7 @@ function expand() {
 function clear() {
     ORBEON.jQuery('.ajax_container').html('');
     ORBEON.jQuery('.ajax_container').addClass('hidden');
+    //reset glyph
+    /*ORBEON.jQuery.removeClass('glyphicon-triangle-bottom');
+    ORBEON.jQuery.addClass('glyphicon-triangle-right');*/
 }
