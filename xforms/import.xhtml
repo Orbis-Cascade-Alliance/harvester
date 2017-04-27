@@ -24,6 +24,7 @@
 					<id></id>
 					<current></current>
 					<action></action>
+					<dams/>
 					<validate-trigger>false</validate-trigger>
 					<remediation-page-trigger>false</remediation-page-trigger>
 					<validation-page-trigger>false</validation-page-trigger>
@@ -885,24 +886,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 									<h2>Set URL and destination(s)</h2>
 								</div>
 								<div class="col-md-6 text-right">
-									<xforms:trigger bind="remediation-page-trigger">
-										<xforms:label>CONTINUE</xforms:label>
-										<xforms:action ev:event="DOMActivate">
-											<!-- get set -->
-											<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
-											<xforms:setvalue ref="instance('control-instance')/oai-set-code"
-												value="substring-after($params[starts-with(., 'set=')][1], '=')"/>
-											<xforms:setvalue ref="instance('control-instance')/oai-service"
-												value="concat(substring-before(instance('set')/set, '?'), '?verb=ListSets')"/>
-											<xforms:send submission="get-oai-set"/>
-
-											<!-- update navbar -->
-											<xforms:setvalue ref="instance('control-instance')/interfaces/setup/@current" value="false()"/>
-											<xforms:setvalue ref="instance('control-instance')/interfaces/editing/@current" value="true()"/>
-
-											<xforms:toggle case="remediation"/>
-										</xforms:action>
-									</xforms:trigger>
+									<xi:include href="components/continue-to-remediation.xml"/>
 								</div>
 							</div>
 							<div class="row">
@@ -1039,24 +1023,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 							</div>
 							<div class="row">
 								<div class="col-md-12 text-right subsection">
-									<xforms:trigger bind="remediation-page-trigger">
-										<xforms:label>CONTINUE</xforms:label>
-										<xforms:action ev:event="DOMActivate">
-											<!-- get set -->
-											<xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
-											<xforms:setvalue ref="instance('control-instance')/oai-set-code"
-												value="substring-after($params[starts-with(., 'set=')][1], '=')"/>
-											<xforms:setvalue ref="instance('control-instance')/oai-service"
-												value="concat(substring-before(instance('set')/set, '?'), '?verb=ListSets')"/>
-											<xforms:send submission="get-oai-set"/>
-
-											<!-- update navbar -->
-											<xforms:setvalue ref="instance('control-instance')/interfaces/setup/@current" value="false()"/>
-											<xforms:setvalue ref="instance('control-instance')/interfaces/editing/@current" value="true()"/>
-
-											<xforms:toggle case="remediation"/>
-										</xforms:action>
-									</xforms:trigger>
+									<xi:include href="components/continue-to-remediation.xml"/>
 								</div>
 							</div>
 						</xforms:case>
@@ -1175,36 +1142,40 @@ OPTIONAL {?c skos:scopeNote ?note .
 									</xforms:group>
 									<hr />
 								</div>
-								<div>
-									<h4>Format</h4>
-									<xforms:select1 ref="format" appearance="full">
-										<xforms:item>
-											<xforms:label>I do not want to apply the same format to every record in this set</xforms:label>
-											<xforms:value value="false()"/>
-										</xforms:item>
-										<xforms:item>
-											<xforms:label>I want to apply the same format to all records in this set. I would like to apply:</xforms:label>
-											<xforms:value value="true()"/>
-										</xforms:item>
-										<xforms:setvalue ref="instance('set')/format" ev:event="xforms-value-changed"/>
-									</xforms:select1>
-									<xforms:group ref=".[format = true()]">
-										<div>
-											<xforms:select1 ref="instance('set')/format">
-												<xforms:hint>The MIME type of the resource.</xforms:hint>
-												<xforms:item>
-													<xforms:label>Select below...</xforms:label>
-													<xforms:value/>
-												</xforms:item>
-												<xforms:itemset nodeset="instance('formats')//format">
-													<xforms:label ref="."/>
-													<xforms:value ref="."/>
-												</xforms:itemset>
-											</xforms:select1>
-										</div>
-									</xforms:group>
-									<hr />
-								</div>
+								
+								<xforms:group ref=".[not(instance('control-instance')/dams = 'dspace') and not(instance('control-instance')/dams = 'digital-commons')]">
+									<div>
+										<h4>Format</h4>
+										<xforms:select1 ref="format" appearance="full">
+											<xforms:item>
+												<xforms:label>I do not want to apply the same format to every record in this set</xforms:label>
+												<xforms:value value="false()"/>
+											</xforms:item>
+											<xforms:item>
+												<xforms:label>I want to apply the same format to all records in this set. I would like to apply:</xforms:label>
+												<xforms:value value="true()"/>
+											</xforms:item>
+											<xforms:setvalue ref="instance('set')/format" ev:event="xforms-value-changed"/>
+										</xforms:select1>
+										<xforms:group ref=".[format = true()]">
+											<div>
+												<xforms:select1 ref="instance('set')/format">
+													<xforms:hint>The MIME type of the resource.</xforms:hint>
+													<xforms:item>
+														<xforms:label>Select below...</xforms:label>
+														<xforms:value/>
+													</xforms:item>
+													<xforms:itemset nodeset="instance('formats')//format">
+														<xforms:label ref="."/>
+														<xforms:value ref="."/>
+													</xforms:itemset>
+												</xforms:select1>
+											</div>
+										</xforms:group>
+										<hr />
+									</div>
+								</xforms:group>
+								
 								<div>
 									<h4>Language</h4>
 									<xforms:select1 ref="language" appearance="full">
@@ -1769,7 +1740,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 						<xforms:output ref="instance('set')/type" id="type"/>
 					</div>
 
-					<!--<fr:xforms-inspector/>-->
+					<fr:xforms-inspector/>
 				</div>
 			</div>
 		</div>
