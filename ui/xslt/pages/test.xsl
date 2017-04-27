@@ -55,18 +55,25 @@
 							<div class="col-sm-10">
 								<select id="rights" name="rights" class="form-control" style="width:10em">
 									<option value="">Select Rights Statement (Optional)</option>
-									<option value="InC">In Copyright</option>
-									<option value="InC-OW-EU">In Copyright - EU orphan work</option>
-									<option value="InC-EDU">In Copyright - Educational use permitted</option>
-									<option value="InC-NC">In Copyright - Non-commercial use permitted</option>
-									<option value="InC-RUU">In Copyright - Rights-holder(s) unlocatable or unidentifiable</option>
-									<option value="NoC-CR">No Copyright - Contractual restrictions</option>
-									<option value="NoC-NC">No Copyright - Non-commercial use only</option>
-									<option value="NoC-OKLR">No Copyright - Other known legal restrictions</option>
-									<option value="NoC-US">No Copyright - United States</option>
-									<option value="CNE">Copyright not evaluated</option>
-									<option value="UND">Copyright undetermined</option>
-									<option value="NKC">No known copyright</option>
+									<option value="RS_InC">In Copyright</option>
+									<option value="RS_InC-OW-EU">In Copyright - EU orphan work</option>
+									<option value="RS_InC-EDU">In Copyright - Educational use permitted</option>
+									<option value="RS_InC-NC">In Copyright - Non-commercial use permitted</option>
+									<option value="RS_InC-RUU">In Copyright - Rights-holder(s) unlocatable or unidentifiable</option>
+									<option value="RS_NoC-CR">No Copyright - Contractual restrictions</option>
+									<option value="RS_NoC-NC">No Copyright - Non-commercial use only</option>
+									<option value="RS_NoC-OKLR">No Copyright - Other known legal restrictions</option>
+									<option value="RS_NoC-US">No Copyright - United States</option>
+									<option value="RS_CNE">Copyright not evaluated</option>
+									<option value="RS_UND">Copyright undetermined</option>
+									<option value="RS_NKC">No known copyright</option>
+									<option value="CC_by">CC: Attribution</option>
+									<option value="CC_by-sa">CC: Attribution-ShareAlike</option>
+									<option value="CC_by-nd">CC: Attribution-No Derivs</option>
+									<option value="CC_by-nc">CC: Attribution-NonCommercial</option>
+									<option value="CC_by-nc-sa">CC: Attribution-NonCommercial-ShareAlike</option>
+									<option value="CC_by-nc-nd">CC: Attribution-NonCommercial-NoDerivs</option>
+									<option value="CC_pdm">CC: Public Domain</option>
 								</select>
 							</div>
 						</div>

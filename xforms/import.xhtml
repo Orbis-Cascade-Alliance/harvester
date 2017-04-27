@@ -96,18 +96,25 @@
 			<!-- instances for controlled lists -->
 			<xforms:instance id="rights-statements">
 				<rights xmlns="">
-					<statement value="InC">In Copyright</statement>
-					<statement value="InC-OW-EU">In Copyright - EU orphan work</statement>
-					<statement value="InC-EDU">In Copyright - Educational use permitted</statement>
-					<statement value="InC-NC">In Copyright - Non-commercial use permitted</statement>
-					<statement value="InC-RUU">In Copyright - Rights-holder(s) unlocatable or unidentifiable</statement>
-					<statement value="NoC-CR">No Copyright - Contractual restrictions</statement>
-					<statement value="NoC-NC">No Copyright - Non-commercial use only</statement>
-					<statement value="NoC-OKLR">No Copyright - Other known legal restrictions</statement>
-					<statement value="NoC-US">No Copyright - United States</statement>
-					<statement value="CNE">Copyright not evaluated</statement>
-					<statement value="UND">Copyright undetermined</statement>
-					<statement value="NKC">No known copyright</statement>
+					<statement value="RS_InC">RS: In Copyright</statement>
+					<statement value="RS_InC-OW-EU">RS: In Copyright - EU orphan work</statement>
+					<statement value="RS_InC-EDU">RS: In Copyright - Educational use permitted</statement>
+					<statement value="RS_InC-NC">RS: In Copyright - Non-commercial use permitted</statement>
+					<statement value="RS_InC-RUU">RS: In Copyright - Rights-holder(s) unlocatable or unidentifiable</statement>
+					<statement value="RS_NoC-CR">RS: No Copyright - Contractual restrictions</statement>
+					<statement value="RS_NoC-NC">RS: No Copyright - Non-commercial use only</statement>
+					<statement value="RS_NoC-OKLR">RS: No Copyright - Other known legal restrictions</statement>
+					<statement value="RS_NoC-US">RS: No Copyright - United States</statement>
+					<statement value="RS_CNE">RS: Copyright not evaluated</statement>
+					<statement value="RS_UND">RS: Copyright undetermined</statement>
+					<statement value="RS_NKC">RS: No known copyright</statement>
+					<statement value="CC_by">CC: Attribution</statement>
+					<statement value="CC_by-sa">CC: Attribution-ShareAlike</statement>
+					<statement value="CC_by-nd">CC: Attribution-No Derivs</statement>
+					<statement value="CC_by-nc">CC: Attribution-NonCommercial</statement>
+					<statement value="CC_by-nc-sa">CC: Attribution-NonCommercial-ShareAlike</statement>
+					<statement value="CC_by-nc-nd">CC: Attribution-NonCommercial-NoDerivs</statement>
+					<statement value="CC_pdm">CC: Public Domain</statement>
 				</rights>
 			</xforms:instance>
 
@@ -1017,7 +1024,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 												metadata for the set specified in “Set URL” (above) for the purpose of sharing with the Digital Public Library
 												of America (DPLA), under the terms of the agreement established between the DPLA and the Alliance. By doing so,
 												I understand that the digital collections metadata -- but not the digital collections themselves -- will be made
-												available under a <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">Creative Commons Zero (CC0) Dedication</a>.</p>
+												available under a <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank">Creative Commons
+													Zero (CC0) Dedication</a>.</p>
 
 											<p>In addition to contributed metadata as authorized by institutions, image previews will also be available in the
 												DPLA. Digital content associated with the metadata will not be moved or duplicated; rights for this content will
@@ -1249,7 +1257,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<div>
 											<xforms:select1 ref="instance('set')/rights">
 												<xforms:label>Standardized Rights Statement</xforms:label>
-												<xforms:hint>Required (if not already present in the set) standardized rights statement from RightsStatement.org or CreativeCommons.org</xforms:hint>
+												<xforms:hint>Required (if not already present in the set) standardized rights statement from RightsStatement.org
+													or CreativeCommons.org</xforms:hint>
 												<xforms:item>
 													<xforms:label>Select below...</xforms:label>
 													<xforms:value/>
@@ -1263,7 +1272,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<div>
 											<xforms:textarea ref="instance('set')/rightsText">
 												<xforms:label>Free-text Rights Statement</xforms:label>
-												<xforms:hint>Required (if not already present in the set) free-text rights statement, that augments and enhances the standardized rights statement</xforms:hint>
+												<xforms:hint>Required (if not already present in the set) free-text rights statement, that augments and enhances
+													the standardized rights statement</xforms:hint>
 											</xforms:textarea>
 										</div>
 									</xforms:group>
@@ -1315,9 +1325,23 @@ OPTIONAL {?c skos:scopeNote ?note .
 									</h3>
 									<div class="row">
 										<div class="col-md-6">
-											<p>You can choose to search VIAF to associate a creator or contributor label to a URI. If no clear match is found in
-												VIAF, then the textual label from your set will be preserved in the DPLA or Primo output. To dismiss matches
-												that were made previously, click the 'x' to the right of the URI.</p>
+											<p>Your creators/contributors are listed below.</p>
+											<p>If your creator/contributor values are listed with blue links, they automatically matched Library of Congress
+												preferred labels in VIAF. Click a blue link to view the matched VIAF record. To dismiss a match, click the "x"
+												icon to the right of the blue link. </p>
+											<p>If your creator/contributor values are listed with a VIAF search box, they do not match Library of Congress
+												preferred labels in VIAF and cannot be enriched as is. To find a match and enrich a value: </p>
+											<ul>
+												<li>Select whether the value is a "Personal" or "Corporate" name.</li>
+												<li>Type a variation of your creator/contributor value in the "Search VIAF" box and click the "Search VIAF"
+													button. If potential matches are found, they will display as a list of names below the search box.</li>
+												<li>Click a name from the list, and it will appear below the "Name" box.</li>
+												<li>Click the blue icon, after the name, to review the name's VIAF authority record.</li>
+												<li>If this is the VIAF record you want, click the "Select" button to match your creator/contributor value with
+													the VIAF record. A blue VIAF URI will replace the VIAF search box when your value has been matched.</li>
+											</ul>
+											<p>If no match is found in VIAF, then the original creator/contributor value from your set will be preserved in the
+												DPLA and/or Primo output.</p>
 										</div>
 										<div class="col-md-6 text-right">
 											<xi:include href="components/enrichment-buttons.xml"/>

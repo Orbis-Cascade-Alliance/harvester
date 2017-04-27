@@ -225,6 +225,9 @@ rdfs:label ?label
 							<xsl:when test="regex-group(1) = 'image/jpg'">
 								<xsl:text>image/jpeg</xsl:text>
 							</xsl:when> 
+							<xsl:when test="regex-group(1) = 'image/tif'">
+								<xsl:text>image/tiff</xsl:text>
+							</xsl:when>
 							<xsl:otherwise>
 								<xsl:value-of select="regex-group(1)"/>
 							</xsl:otherwise>
@@ -232,6 +235,25 @@ rdfs:label ?label
 					</xsl:matching-substring>
 				</xsl:analyze-string>
 			</xsl:if>
+		</xsl:variable>
+		
+		<xsl:variable name="rights_uri">
+			<xsl:choose>
+				<xsl:when test="$rightsStatement">
+					<xsl:value-of select="harvester:parseRightsStatement($rightsStatement)"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:variable name="all-rights" select="tokenize(string-join(dc:rights, ';'), ';')"/>
+					<xsl:choose>
+						<xsl:when test="$all-rights[matches(normalize-space(.), '^https?://rightsstatements.org/.*/$')]">
+							<xsl:value-of select="$all-rights[matches(normalize-space(.), '^https?://rightsstatements.org/.*/$')][1]"/>
+						</xsl:when>
+						<xsl:when test="$all-rights[matches(normalize-space(.), '^https?://creativecommons.org/.*/$')]">
+							<xsl:value-of select="$all-rights[matches(normalize-space(.), '^https?://creativecommons.org/.*/$')][1]"/>
+						</xsl:when>
+					</xsl:choose>					
+				</xsl:otherwise>				
+			</xsl:choose>
 		</xsl:variable>
 
 		<dpla:SourceResource rdf:about="{$cho_uri}">
@@ -278,14 +300,14 @@ rdfs:label ?label
 				</xsl:otherwise>
 			</xsl:choose>
 
-			<xsl:if test="string($rightsStatement)">
-				<dcterms:rights rdf:resource="{concat('http://rightsstatements.org/vocab/', $rightsStatement, '/1.0/')}"/>
+			<xsl:if test="string($rights_uri)">
+				<dc:rights rdf:resource="{$rights_uri}"/>
 			</xsl:if>
 
 			<xsl:if test="string(normalize-space($rightsText))">
-				<dcterms:rights>
+				<dc:rights>
 					<xsl:value-of select="normalize-space($rightsText)"/>
-				</dcterms:rights>
+				</dc:rights>
 			</xsl:if>
 
 			<!-- process spatial fields -->
@@ -320,6 +342,7 @@ rdfs:label ?label
 		<xsl:call-template name="resources">
 			<xsl:with-param name="cho_uri" select="$cho_uri"/>
 			<xsl:with-param name="content-type" select="$content-type"/>
+			<xsl:with-param name="rights_uri" select="$rights_uri"/>
 		</xsl:call-template>
 
 		<!-- ore:Aggregation -->
@@ -329,6 +352,7 @@ rdfs:label ?label
 			<edm:aggregatedCHO rdf:resource="{$cho_uri}"/>
 			<edm:isShownAt rdf:resource="{$cho_uri}"/>
 			<edm:dataProvider rdf:resource="{$repo_uri}"/>
+			<edm:rights rdf:resource="{$rights_uri}"/>
 			<xsl:call-template name="views">
 				<xsl:with-param name="cho_uri" select="$cho_uri"/>
 			</xsl:call-template>
@@ -465,15 +489,15 @@ rdfs:label ?label
 	<xsl:template match="dc:rights">
 		<xsl:choose>
 			<xsl:when test="matches(., '^https?://') and not(contains(., ' ')) and not(string($rightsStatement))">
-				<dcterms:rights>
+				<dc:rights>
 					<xsl:attribute name="rdf:resource" select="normalize-space(.)"/>
-				</dcterms:rights>
+				</dc:rights>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:if test="not(string(normalize-space($rightsText)))">
-					<dcterms:rights>
+					<dc:rights>
 						<xsl:value-of select="harvester:cleanText(normalize-space(.), 'rights')"/>
-					</dcterms:rights>
+					</dc:rights>
 				</xsl:if>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -686,14 +710,17 @@ rdfs:label ?label
 	<xsl:template name="resources">
 		<xsl:param name="cho_uri"/>
 		<xsl:param name="content-type"/>
+		<xsl:param name="rights_uri"/>
 
 		<!-- process by default DAMS -->
 		<xsl:choose>
 			<xsl:when test="$dams = 'contentdm-default'">
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}">
+					<edm:rights rdf:resource="{$rights_uri}"/>
 					<dcterms:format>image/jpeg</dcterms:format>
 				</edm:WebResource>
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}">
+					<edm:rights rdf:resource="{$rights_uri}"/>
 					<xsl:choose>
 						<xsl:when test="string($format)">
 							<dcterms:format>
@@ -711,9 +738,11 @@ rdfs:label ?label
 			<xsl:when test="$dams = 'oregondigital'">
 				<xsl:variable name="filename" select="substring-after(tokenize($cho_uri, '/')[last()], ':')"/>
 				<edm:WebResource rdf:about="http://oregondigital.org/thumbnails/oregondigital-{$filename}.jpg">
+					<edm:rights rdf:resource="{$rights_uri}"/>
 					<dcterms:format>image/jpeg</dcterms:format>
 				</edm:WebResource>
 				<edm:WebResource rdf:about="http://oregondigital.org/downloads/oregondigital:{$filename}">
+					<edm:rights rdf:resource="{$rights_uri}"/>
 					<xsl:choose>
 						<xsl:when test="string($format)">
 							<dcterms:format>
@@ -739,6 +768,7 @@ rdfs:label ?label
 				<!-- there are only thumbnails in digital commons, not reference images -->
 				<xsl:if test="dc:description[matches(., '.jpg$')]">
 					<edm:WebResource rdf:about="{dc:description[matches(., '.jpg$')]}">
+						<edm:rights rdf:resource="{$rights_uri}"/>
 						<dcterms:format>image/jpeg</dcterms:format>
 					</edm:WebResource>
 				</xsl:if>
@@ -749,6 +779,7 @@ rdfs:label ?label
 			<xsl:when test="$dams = 'omeka'">
 				<xsl:if test="dc:identifier[contains(., 'files/original')]">
 					<edm:WebResource rdf:about="{dc:identifier[contains(., 'files/original')]}">
+						<edm:rights rdf:resource="{$rights_uri}"/>
 						<xsl:choose>
 							<xsl:when test="string($format)">
 								<dcterms:format>
@@ -770,6 +801,7 @@ rdfs:label ?label
 					<xsl:when test="$repository = 'orphs'">
 						<xsl:if test="dc:identifier[matches(., '.jpg$')]">
 							<edm:WebResource rdf:about="{dc:identifier[matches(., '.jpg$')]}">
+								<edm:rights rdf:resource="{$rights_uri}"/>
 								<dcterms:format>image/jpeg</dcterms:format>
 							</edm:WebResource>
 						</xsl:if>
@@ -777,9 +809,11 @@ rdfs:label ?label
 					<!-- Willamette - contentDM but with different CHO URI style -->
 					<xsl:when test="$repository = 'orsaw'">
 						<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getthumbnail/collection/$1/id/$2')}">
+							<edm:rights rdf:resource="{$rights_uri}"/>
 							<dcterms:format>image/jpeg</dcterms:format>
 						</edm:WebResource>
 						<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}">
+							<edm:rights rdf:resource="{$rights_uri}"/>
 							<xsl:choose>
 								<xsl:when test="string($format)">
 									<dcterms:format>
@@ -955,6 +989,26 @@ rdfs:label ?label
 			<xsl:otherwise>
 				<xsl:value-of select="$val"/>
 			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:function>
+	
+	<xsl:function name="harvester:parseRightsStatement">
+		<xsl:param name="id"/>
+		
+		<xsl:choose>
+			<xsl:when test="substring($id, 1, 3) = 'RS_'">
+				<xsl:value-of select="concat('http://rightsstatements.org/vocab/', substring-after($id, '_'), '/1.0/')"/>
+			</xsl:when>
+			<xsl:when test="substring($id, 1, 3) = 'CC_'">
+				<xsl:choose>
+					<xsl:when test="substring-after($id, '_') = 'pdm'">
+						<xsl:text>https://creativecommons.org/share-your-work/public-domain/pdm/</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="concat('https://creativecommons.org/licenses/', substring-after($id, '_'), '/4.0/')"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:when>
 		</xsl:choose>
 	</xsl:function>
 
