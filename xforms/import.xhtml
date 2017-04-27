@@ -597,22 +597,21 @@ OPTIONAL {?c skos:scopeNote ?note .
 									origin="xforms:element('error', concat('ID ', $id, ' - More than one URI detected in dc:identifier'))"/>
 							</xforms:action>
 						</xforms:action>
-
-						<xforms:action if="instance('control-instance')/validation/error-count &gt; 0">
-							<xforms:insert nodeset="instance('csv')"
-								origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/errors-to-csv.xpl', 'data', instance('validation'), 'data')"/>
-							<xforms:setvalue ref="instance('csv-download')"
-								value="saxon:string-to-base64Binary(saxon:serialize(instance('csv'), 'text'), 'UTF-8')"/>
-						</xforms:action>
-
-
+						
 						<!-- for a multipage feed, check for the existence of a resumptionToken for iteration -->
 						<xforms:action if="instance('oai-response')//oai:resumptionToken">
 							<xforms:setvalue ref="instance('control-instance')/oai-service"
 								value="concat(instance('oai-response')//descendant::oai:request, '?verb=ListRecords&amp;resumptionToken=', instance('oai-response')//descendant::oai:resumptionToken)"/>
-							<!--<xforms:send submission="get-oai-pmh"/>-->
+							<xforms:send submission="get-oai-pmh"/>
 						</xforms:action>
 					</xforms:action>
+					
+					<!--<xforms:action if="instance('control-instance')/validation/error-count &gt; 0">
+						<xforms:insert nodeset="instance('csv')"
+							origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/errors-to-csv.xpl', 'data', instance('validation'), 'data')"/>
+						<xforms:setvalue ref="instance('csv-download')"
+							value="saxon:string-to-base64Binary(saxon:serialize(instance('csv'), 'text'), 'UTF-8')"/>
+					</xforms:action>-->
 				</xforms:action>
 			</xforms:submission>
 
@@ -1463,7 +1462,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 												</xforms:output>
 											</div>-->
 
-											<xforms:repeat nodeset="record[error][position() &lt;= 20]">
+											<xforms:repeat nodeset="record[error[@set=false() or not(@set)]][position() &lt;= 20]">
 												<div>
 													<xforms:var name="id" select="@id"/>
 													<xforms:var name="hash" select="digest($id, 'MD5', 'hex')"/>
@@ -1760,7 +1759,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 						<xforms:output ref="instance('set')/type" id="type"/>
 					</div>
 
-					<fr:xforms-inspector/>
+					<!--<fr:xforms-inspector/>-->
 				</div>
 			</div>
 		</div>
