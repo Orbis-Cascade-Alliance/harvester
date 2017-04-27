@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xforms:trigger bind="remediation-page-trigger" xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events">
+    <xforms:label>CONTINUE</xforms:label>
+    <xforms:action ev:event="DOMActivate">
+        <!-- get set -->
+        <xforms:var name="params" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
+        <xforms:setvalue ref="instance('control-instance')/oai-set-code"
+            value="substring-after($params[starts-with(., 'set=')][1], '=')"/>
+        <xforms:setvalue ref="instance('control-instance')/oai-service"
+            value="concat(substring-before(instance('set')/set, '?'), '?verb=ListSets')"/>
+        <xforms:send submission="get-oai-set"/>
+        
+        <!-- set the dams for remediation controls -->
+        <xforms:action if="instance('config')/dams//repository[. = instance('set')/repository][contains(instance('set')/set, @pattern)]">
+            <xforms:setvalue ref="instance('control-instance')/dams" value="instance('config')/dams//repository[. = instance('set')/repository][contains( instance('set')/set, @pattern)]/parent::node()/name()"/>
+        </xforms:action>
+        <xforms:action if="instance('config')/dams//repository[. = instance('set')/repository][not(@pattern)]">
+            <xforms:setvalue ref="instance('control-instance')/dams" value="instance('config')/dams//repository[. = instance('set')/repository]/parent::node()/name()"/>
+        </xforms:action>
+        <xforms:setvalue ref="instance('control-instance')/dams" value="instance('config')/dams//repository[. = instance('set')/repository][contains( instance('set')/set, @pattern)]/parent::node()/name()"/>
+        
+        <!-- update navbar -->
+        <xforms:setvalue ref="instance('control-instance')/interfaces/setup/@current" value="false()"/>
+        <xforms:setvalue ref="instance('control-instance')/interfaces/editing/@current" value="true()"/>
+        
+        <xforms:toggle case="remediation"/>
+    </xforms:action>
+</xforms:trigger>
