@@ -316,6 +316,80 @@
 			</xsl:choose>
 		</div>
 	</xsl:template>
+	
+	<xsl:template match="dcterms:creator|dcterms:contributor">
+		<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
+		
+		<dt>
+			<a href="{$propertyUri}" title="{$propertyUri}">
+				<xsl:value-of select="name()"/>
+			</a>
+		</dt>
+		<dd>
+			<xsl:choose>
+				<xsl:when test="child::edm:Agent">
+					<a href="{child::edm:Agent/@rdf:about}">
+						<xsl:value-of select="child::edm:Agent/skos:prefLabel"/>
+					</a>				
+				</xsl:when>
+				<xsl:when test="@rdf:resource">
+					<xsl:variable name="uri" select="@rdf:resource"/>
+					<xsl:choose>
+						<xsl:when test="//edm:Agent[@rdf:about = $uri]">
+							<a href="{$uri}">
+								<xsl:value-of select="//edm:Agent[@rdf:about = $uri]/skos:prefLabel"/>
+							</a>						
+						</xsl:when>
+						<xsl:otherwise>
+							<a href="{@rdf:resource}">
+								<xsl:value-of select="@rdf:resource"/>
+							</a>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="."/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</dd>		
+	</xsl:template>
+	
+	<xsl:template match="edm:hasType">
+		<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
+		
+		<dt>
+			<a href="{$propertyUri}" title="{$propertyUri}">
+				<xsl:value-of select="name()"/>
+			</a>
+		</dt>
+		<dd>
+			<xsl:choose>
+				<xsl:when test="child::skos:Concept">
+					<a href="{child::skos:Concept/@rdf:about}">
+						<xsl:value-of select="child::skos:Concept/skos:prefLabel"/>
+					</a>				
+				</xsl:when>
+				<xsl:when test="@rdf:resource">
+					<xsl:variable name="uri" select="@rdf:resource"/>
+					<xsl:choose>
+						<xsl:when test="//skos:Concept[@rdf:about = $uri]">
+							<a href="{$uri}">
+								<xsl:value-of select="//skos:Concept[@rdf:about = $uri]/skos:prefLabel"/>
+							</a>						
+						</xsl:when>
+						<xsl:otherwise>
+							<a href="{@rdf:resource}">
+								<xsl:value-of select="@rdf:resource"/>
+							</a>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="."/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</dd>		
+	</xsl:template>
 
 	<xsl:template match="*">
 		<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
@@ -352,6 +426,8 @@
 			</dl>
 		</div>
 	</xsl:template>
+	
+	
 
 	<!-- pagination -->
 	<xsl:template match="res:binding[@name = 'numFound']">
