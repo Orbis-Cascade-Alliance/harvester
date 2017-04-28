@@ -179,4 +179,9 @@
 			</p:processor>
 		</p:otherwise>
 	</p:choose>
+	
+	<!--<p:processor name="oxf:identity">
+		<p:input name="data" href="#data"/>
+		<p:output name="data" ref="data"/>
+	</p:processor>-->
 </p:pipeline>

@@ -109,13 +109,13 @@
 	<xsl:template name="body">
 		<div class="container-fluid content">
 			<!-- apply-templates on numFound, if available -->
-			<xsl:apply-templates select="//res:binding[@name = 'numFound']"/>
+			<!--<xsl:apply-templates select="//res:binding[@name = 'numFound']"/>-->
 
 			<xsl:apply-templates select="descendant::dcmitype:Collection" mode="render"/>
 			<xsl:apply-templates select="descendant::ore:Aggregation"/>
 			
 			<!-- apply-templates on numFound, if available -->
-			<xsl:apply-templates select="//res:binding[@name = 'numFound']"/>
+			<!--<xsl:apply-templates select="//res:binding[@name = 'numFound']"/>-->
 		</div>
 	</xsl:template>
 

@@ -559,11 +559,12 @@ rdfs:label ?label
 				<xsl:for-each select="$pieces">
 					<xsl:variable name="label" select="harvester:cleanText(normalize-space(.), $element)"/>
 
-					<dcterms:spatial>
-						<xsl:value-of select="$label"/>
-
-						<!-- commented out Geonames normalization -->
-						<!--<xsl:choose>
+					<xsl:if test="string-length($label) &gt; 0">
+						<dcterms:spatial>
+							<xsl:value-of select="$label"/>
+							
+							<!-- commented out Geonames normalization -->
+							<!--<xsl:choose>
 							<xsl:when test="$places//res:result[res:binding[@name = 'label']/res:literal = $label]">
 								<xsl:attribute name="rdf:resource"
 									select="$places//res:result[res:binding[@name = 'label']/res:literal = $label]/res:binding[@name = 'uri']/res:uri"/>
@@ -572,7 +573,9 @@ rdfs:label ?label
 								<xsl:value-of select="$label"/>
 							</xsl:otherwise>
 						</xsl:choose>-->
-					</dcterms:spatial>
+						</dcterms:spatial>
+					</xsl:if>
+					
 				</xsl:for-each>
 			</xsl:otherwise>
 		</xsl:choose>

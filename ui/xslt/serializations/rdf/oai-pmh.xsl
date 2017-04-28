@@ -10,45 +10,76 @@
 	exclude-result-prefixes="xs res rdf arch edm dcterms vcard nwda dpla ore digest prov geo dcmitype skos" version="2.0">
 	<xsl:include href="../sparql/oai-pmh-templates.xsl"/>
 
-	<xsl:variable name="url" select="//config/url"/>
-	<xsl:variable name="publisher" select="//config/publisher"/>
-	<xsl:variable name="publisher_email" select="//config/publisher_email"/>
-	<xsl:variable name="publisher_code" select="//config/publisher_code"/>
-	<xsl:variable name="repositoryIdentifier" select="substring-before(substring-after($url, 'http://'), '/')"/>
-
 	<xsl:template match="/">
-		<xsl:apply-templates select="descendant::ore:Aggregation"/>
+		<root>
+			<xsl:apply-templates select="descendant::ore:Aggregation"/>
+		</root>
 	</xsl:template>
-	
+
 	<xsl:template match="ore:Aggregation">
-		<xsl:variable name="uri" select="edm:isShownAt/@rdf:resource"/>
-		
-		<xsl:apply-templates select="//dpla:SourceResource[@rdf:about=$uri]">
-			<xsl:with-param name="depiction"
-				select="
-				if (edm:object/@rdf:resource) then
-				edm:object/@rdf:resource
-				else
-				edm:object/edm:WebResource/@rdf:about"/>
-			<xsl:with-param name="thumbnail"
-				select="
-				if (edm:preview/@rdf:resource) then
-				edm:preview/@rdf:resource
-				else
-				edm:preview/edm:WebResource/@rdf:about"/>
-			<xsl:with-param name="dataProvider" select="edm:dataProvider/@rdf:resource"/>
-			<xsl:with-param name="format">
-				<xsl:variable name="object_uri" select="edm:object/@rdf:resource"/>
+		<xsl:choose>
+			<xsl:when test="descendant::dpla:SourceResource">
+				<xsl:apply-templates select="descendant::dpla:SourceResource">
+					<xsl:with-param name="depiction"
+						select="
+						if (edm:object/@rdf:resource) then
+						edm:object/@rdf:resource
+						else
+						edm:object/edm:WebResource/@rdf:about"/>
+					<xsl:with-param name="thumbnail"
+						select="
+						if (edm:preview/@rdf:resource) then
+						edm:preview/@rdf:resource
+						else
+						edm:preview/edm:WebResource/@rdf:about"/>
+					<xsl:with-param name="dataProvider" select="edm:dataProvider/@rdf:resource"/>
+					<xsl:with-param name="format">
+						<xsl:variable name="object_uri" select="edm:object/@rdf:resource"/>
+						
+						<xsl:choose>
+							<xsl:when test="string($object_uri)">
+								<xsl:value-of select="//edm:WebResource[@rdf:about = $object_uri]/dcterms:format"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="edm:object/edm:WebResource/dcterms:format"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:with-param>
+				</xsl:apply-templates>
+			</xsl:when>
+			<xsl:when test="edm:isShownAt/@rdf:resource or edm:aggregatedCHO/@rdf:resource">
+				<xsl:variable name="uri" select="if (edm:isShownAt/@rdf:resource) then edm:isShownAt/@rdf:resource else edm:aggregatedCHO/@rdf:resource"/>
 				
-				<xsl:choose>
-					<xsl:when test="string($object_uri)">
-						<xsl:value-of select="//edm:WebResource[@rdf:about=$object_uri]/dcterms:format"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="edm:object/edm:WebResource/dcterms:format"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:with-param>			
-		</xsl:apply-templates>
+				<xsl:apply-templates select="//dpla:SourceResource[@rdf:about = $uri]">
+					<xsl:with-param name="depiction"
+						select="
+						if (edm:object/@rdf:resource) then
+						edm:object/@rdf:resource
+						else
+						edm:object/edm:WebResource/@rdf:about"/>
+					<xsl:with-param name="thumbnail"
+						select="
+						if (edm:preview/@rdf:resource) then
+						edm:preview/@rdf:resource
+						else
+						edm:preview/edm:WebResource/@rdf:about"/>
+					<xsl:with-param name="dataProvider" select="edm:dataProvider/@rdf:resource"/>
+					<xsl:with-param name="format">
+						<xsl:variable name="object_uri" select="edm:object/@rdf:resource"/>
+						
+						<xsl:choose>
+							<xsl:when test="string($object_uri)">
+								<xsl:value-of select="//edm:WebResource[@rdf:about = $object_uri]/dcterms:format"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="edm:object/edm:WebResource/dcterms:format"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:with-param>
+				</xsl:apply-templates>
+			</xsl:when>
+		</xsl:choose>
+
+		
 	</xsl:template>
 </xsl:stylesheet>

@@ -38,7 +38,13 @@
 					<head>
 						<title>
 							<xsl:text>Orbis Cascade Harvester: </xsl:text>
-							<xsl:value-of select="//dc:title"/>
+							<xsl:value-of
+								select="
+								if (count(//dc:title) &gt; 1) then
+								'Query Results'
+								else
+								//dc:title"
+							/>
 						</title>
 						<meta name="viewport" content="width=device-width, initial-scale=1"/>
 						<!-- bootstrap -->

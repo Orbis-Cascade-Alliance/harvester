@@ -139,11 +139,12 @@ DESCRIBE * WHERE {
 	<p:processor name="oxf:url-generator">
 		<p:input name="config" href="#url-generator-config"/>
 		<p:output name="data" id="sparql-results"/>
-	</p:processor>
-	
-	<p:processor name="oxf:identity">		
-		<p:input name="data" href="aggregate('content', #numFound, #sparql-results)"/>
 		<p:output name="data" ref="data"/>
 	</p:processor>
+	
+	<!--<p:processor name="oxf:identity">		
+		<p:input name="data" href="aggregate('content', #numFound, #sparql-results)"/>
+		<p:output name="data" ref="data"/>
+	</p:processor>-->
 
 </p:config>
