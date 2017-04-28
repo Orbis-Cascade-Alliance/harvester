@@ -13,9 +13,11 @@
 		<xsl:param name="dataProvider"/>
 		<xsl:param name="thumbnail"/>
 		<xsl:param name="depiction"/>
+		<xsl:param name="format"/>
 
 		<oai_dc:dc>
 			<xsl:apply-templates select="*"/>
+
 			<dc:publisher>
 				<xsl:choose>
 					<xsl:when test="contains($dataProvider, 'archiveswest')">
@@ -34,7 +36,11 @@
 			<dc:identifier>
 				<xsl:value-of select="@rdf:about"/>
 			</dc:identifier>
-
+			<xsl:if test="string($format)">
+				<dc:format>
+					<xsl:value-of select="$format"/>
+				</dc:format>
+			</xsl:if>
 			<xsl:if test="string($thumbnail)">
 				<dc:relation.hasVersion>
 					<xsl:value-of select="$thumbnail"/>
@@ -61,11 +67,11 @@
 		<xsl:choose>
 			<xsl:when test="child::edm:Agent">
 				<xsl:variable name="label" select="child::edm:Agent/skos:prefLabel"/>
-				
+
 				<xsl:element name="dc:{$element}" namespace="http://purl.org/dc/elements/1.1/">
 					<xsl:value-of select="$label"/>
 				</xsl:element>
-				
+
 				<!-- strip dates from preferred label, if applicable -->
 				<xsl:if test="string-length($label) &gt; 0">
 					<xsl:call-template name="undated-name">
@@ -79,11 +85,11 @@
 				<xsl:choose>
 					<xsl:when test="//edm:Agent[@rdf:about = $uri]">
 						<xsl:variable name="label" select="//edm:Agent[@rdf:about = $uri]/skos:prefLabel"/>
-						
+
 						<xsl:element name="dc:{$element}" namespace="http://purl.org/dc/elements/1.1/">
 							<xsl:value-of select="$label"/>
 						</xsl:element>
-						
+
 						<!-- strip dates from preferred label, if applicable -->
 						<xsl:if test="string-length($label) &gt; 0">
 							<xsl:call-template name="undated-name">
@@ -101,11 +107,11 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:variable name="label" select="."/>
-				
+
 				<xsl:element name="dc:{$element}" namespace="http://purl.org/dc/elements/1.1/">
 					<xsl:value-of select="$label"/>
 				</xsl:element>
-				
+
 				<!-- strip dates from preferred label, if applicable -->
 				<xsl:if test="string-length($label) &gt; 0">
 					<xsl:call-template name="undated-name">
@@ -116,11 +122,11 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	
+
 	<xsl:template name="undated-name">
 		<xsl:param name="label"/>
 		<xsl:param name="element"/>
-		
+
 		<xsl:analyze-string select="$label" regex="(.*),\s\d{{4}}">
 			<xsl:matching-substring>
 				<xsl:element name="dc:{$element}.undated" namespace="http://purl.org/dc/elements/1.1/">
@@ -206,7 +212,7 @@
 		<xsl:value-of select="concat(geo:lat, ',', geo:long)"/>
 	</xsl:template>
 
-	<xsl:template match="dcterms:rights[@rdf:resource]">
+	<xsl:template match="dc:rights[@rdf:resource]">
 		<dc:rights.standardized>
 			<xsl:value-of select="@rdf:resource"/>
 		</dc:rights.standardized>

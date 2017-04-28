@@ -263,6 +263,7 @@
 								else
 									edm:preview/edm:WebResource/@rdf:about"/>
 						<xsl:with-param name="dataProvider" select="edm:dataProvider/@rdf:resource"/>
+						<xsl:with-param name="format" select="dcterms:format"/>
 					</xsl:apply-templates>
 				</metadata>
 			</xsl:if>
