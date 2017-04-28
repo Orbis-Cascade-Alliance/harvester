@@ -1732,7 +1732,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<div>
 									<xforms:trigger appearance="minimal">
 										<xforms:label>View this set for Primo <span class="glyphicon glyphicon-new-window"></span></xforms:label>
-										<xforms:load resource="{instance('config')/url}results?set={encode-for-uri(instance('set')/set)}amp;model=primo"
+										<xforms:load resource="{instance('config')/url}results?set={encode-for-uri(instance('set')/set)}&amp;model=primo"
 											show="new" ev:event="DOMActivate"/>
 									</xforms:trigger>
 								</div>
