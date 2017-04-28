@@ -475,7 +475,9 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('format', $val)"/>
 									</xforms:action>
 								</xforms:action>
-								<!--<xforms:insert context="instance('validation')/record[last()]"
+								
+								<!-- dcterms:format not required
+									<xforms:insert context="instance('validation')/record[last()]"
 									origin="xforms:element('error', (xforms:attribute('set', instance('control-instance')/validation/format-set), xforms:attribute('type', 'format'), 'No valid format (MIME type) detected.'))"
 									if="instance('control-instance')/record_has_mimetype = false()"/>-->
 
@@ -504,7 +506,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<xforms:action if="string-length($val) &gt; 0">
 											<!-- insert only distinct values and if they aren't valid DCMI Types -->
 											<xforms:action
-												if="not(instance('type-list')/type = $val) and not(instance('dcmi-types')/type[lower-case(@value) = $val])">
+												if="not(instance('type-list')/type = $val) and not(instance('dcmi-types')/type[lower-case(@value) = lower-case($val)])">
 												<xforms:action if="instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]">
 													<xforms:var name="uri"
 														select="instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri"/>

@@ -355,8 +355,8 @@ rdfs:label ?label
 			<edm:aggregatedCHO rdf:resource="{$cho_uri}"/>
 			<edm:isShownAt rdf:resource="{$cho_uri}"/>
 			<edm:dataProvider rdf:resource="{$repo_uri}"/>
-			<xsl:if test="$rights_uri">
-				<xsl:if test="$rights_uri">
+			<xsl:if test="string($rights_uri)">
+				<xsl:if test="string($rights_uri)">
 					<edm:rights rdf:resource="{$rights_uri}"/>
 				</xsl:if>
 			</xsl:if>
@@ -736,13 +736,13 @@ rdfs:label ?label
 		<xsl:choose>
 			<xsl:when test="$dams = 'contentdm-default'">
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}">
-					<xsl:if test="$rights_uri">
+					<xsl:if test="string($rights_uri)">
 						<edm:rights rdf:resource="{$rights_uri}"/>
 					</xsl:if>
 					<dcterms:format>image/jpeg</dcterms:format>
 				</edm:WebResource>
 				<edm:WebResource rdf:about="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}">
-					<xsl:if test="$rights_uri">
+					<xsl:if test="string($rights_uri)">
 						<edm:rights rdf:resource="{$rights_uri}"/>
 					</xsl:if>
 					<xsl:choose>
@@ -762,13 +762,13 @@ rdfs:label ?label
 			<xsl:when test="$dams = 'oregondigital'">
 				<xsl:variable name="filename" select="substring-after(tokenize($cho_uri, '/')[last()], ':')"/>
 				<edm:WebResource rdf:about="http://oregondigital.org/thumbnails/oregondigital-{$filename}.jpg">
-					<xsl:if test="$rights_uri">
+					<xsl:if test="string($rights_uri)">
 						<edm:rights rdf:resource="{$rights_uri}"/>
 					</xsl:if>
 					<dcterms:format>image/jpeg</dcterms:format>
 				</edm:WebResource>
 				<edm:WebResource rdf:about="http://oregondigital.org/downloads/oregondigital:{$filename}">
-					<xsl:if test="$rights_uri">
+					<xsl:if test="string($rights_uri)">
 						<edm:rights rdf:resource="{$rights_uri}"/>
 					</xsl:if>
 					<xsl:choose>
@@ -796,7 +796,7 @@ rdfs:label ?label
 				<!-- there are only thumbnails in digital commons, not reference images -->
 				<xsl:if test="dc:description[matches(., '.jpg$')]">
 					<edm:WebResource rdf:about="{dc:description[matches(., '.jpg$')]}">
-						<xsl:if test="$rights_uri">
+						<xsl:if test="string($rights_uri)">
 							<edm:rights rdf:resource="{$rights_uri}"/>
 						</xsl:if>
 						<dcterms:format>image/jpeg</dcterms:format>
@@ -809,7 +809,7 @@ rdfs:label ?label
 			<xsl:when test="$dams = 'omeka'">
 				<xsl:if test="dc:identifier[contains(., 'files/original')]">
 					<edm:WebResource rdf:about="{dc:identifier[contains(., 'files/original')]}">
-						<xsl:if test="$rights_uri">
+						<xsl:if test="string($rights_uri)">
 							<edm:rights rdf:resource="{$rights_uri}"/>
 						</xsl:if>
 						<xsl:choose>
@@ -833,7 +833,7 @@ rdfs:label ?label
 					<xsl:when test="$repository = 'orphs'">
 						<xsl:if test="dc:identifier[matches(., '.jpg$')]">
 							<edm:WebResource rdf:about="{dc:identifier[matches(., '.jpg$')]}">
-								<xsl:if test="$rights_uri">
+								<xsl:if test="string($rights_uri)">
 									<edm:rights rdf:resource="{$rights_uri}"/>
 								</xsl:if>
 								<dcterms:format>image/jpeg</dcterms:format>
@@ -843,13 +843,13 @@ rdfs:label ?label
 					<!-- Willamette - contentDM but with different CHO URI style -->
 					<xsl:when test="$repository = 'orsaw'">
 						<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getthumbnail/collection/$1/id/$2')}">
-							<xsl:if test="$rights_uri">
+							<xsl:if test="string($rights_uri)">
 								<edm:rights rdf:resource="{$rights_uri}"/>
 							</xsl:if>
 							<dcterms:format>image/jpeg</dcterms:format>
 						</edm:WebResource>
 						<edm:WebResource rdf:about="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}">
-							<xsl:if test="$rights_uri">
+							<xsl:if test="string($rights_uri)">
 								<edm:rights rdf:resource="{$rights_uri}"/>
 							</xsl:if>
 							<xsl:choose>

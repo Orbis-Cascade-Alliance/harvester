@@ -326,19 +326,12 @@
 			</a>
 		</dt>
 		<dd>
-			<xsl:choose>
-				<xsl:when test="child::edm:Agent">
-					<a href="{child::edm:Agent/@rdf:about}">
-						<xsl:value-of select="child::edm:Agent/skos:prefLabel"/>
-					</a>				
-				</xsl:when>
+			<xsl:choose>				
 				<xsl:when test="@rdf:resource">
 					<xsl:variable name="uri" select="@rdf:resource"/>
 					<xsl:choose>
 						<xsl:when test="//edm:Agent[@rdf:about = $uri]">
-							<a href="{$uri}">
-								<xsl:value-of select="//edm:Agent[@rdf:about = $uri]/skos:prefLabel"/>
-							</a>						
+							<xsl:apply-templates select="//edm:Agent[@rdf:about = $uri]"/>						
 						</xsl:when>
 						<xsl:otherwise>
 							<a href="{@rdf:resource}">
@@ -348,7 +341,7 @@
 					</xsl:choose>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:value-of select="."/>
+					<xsl:apply-templates/>
 				</xsl:otherwise>
 			</xsl:choose>
 		</dd>		
@@ -363,19 +356,12 @@
 			</a>
 		</dt>
 		<dd>
-			<xsl:choose>
-				<xsl:when test="child::skos:Concept">
-					<a href="{child::skos:Concept/@rdf:about}">
-						<xsl:value-of select="child::skos:Concept/skos:prefLabel"/>
-					</a>				
-				</xsl:when>
+			<xsl:choose>				
 				<xsl:when test="@rdf:resource">
 					<xsl:variable name="uri" select="@rdf:resource"/>
 					<xsl:choose>
 						<xsl:when test="//skos:Concept[@rdf:about = $uri]">
-							<a href="{$uri}">
-								<xsl:value-of select="//skos:Concept[@rdf:about = $uri]/skos:prefLabel"/>
-							</a>						
+							<xsl:apply-templates select="//skos:Concept[@rdf:about = $uri]"/>						
 						</xsl:when>
 						<xsl:otherwise>
 							<a href="{@rdf:resource}">
@@ -385,15 +371,35 @@
 					</xsl:choose>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:value-of select="."/>
+					<xsl:apply-templates/>
 				</xsl:otherwise>
 			</xsl:choose>
 		</dd>		
 	</xsl:template>
+	
+	<xsl:template match="skos:Concept[@rdf:about]|edm:Agent[@rdf:about]|edm:Place[@rdf:about]">
+		<a href="{@rdf:about}">
+			<xsl:value-of select="skos:prefLabel"/>
+		</a>
+	</xsl:template>
 
+	<xsl:template match="edm:TimeSpan | edm:Place[not(@about)]">
+		<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
+		<div>
+			<h4>
+				<a href="{$propertyUri}" title="{$propertyUri}">
+					<xsl:value-of select="name()"/>
+				</a>
+			</h4>
+			<dl class="dl-horizontal">
+				<xsl:apply-templates/>
+			</dl>
+		</div>
+	</xsl:template>
+	
 	<xsl:template match="*">
 		<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
-
+		
 		<dt>
 			<a href="{$propertyUri}" title="{$propertyUri}">
 				<xsl:value-of select="name()"/>
@@ -412,22 +418,6 @@
 			</xsl:choose>
 		</dd>
 	</xsl:template>
-
-	<xsl:template match="edm:TimeSpan | edm:Place">
-		<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
-		<div>
-			<h4>
-				<a href="{$propertyUri}" title="{$propertyUri}">
-					<xsl:value-of select="name()"/>
-				</a>
-			</h4>
-			<dl class="dl-horizontal">
-				<xsl:apply-templates/>
-			</dl>
-		</div>
-	</xsl:template>
-	
-	
 
 	<!-- pagination -->
 	<xsl:template match="res:binding[@name = 'numFound']">

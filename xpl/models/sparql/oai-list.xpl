@@ -78,6 +78,8 @@ DESCRIBE * WHERE {
                 edm:isShownAt ?cho ;
                 prov:generatedAtTime ?mod;
                 doap:audience "primo" %FILTER% .
+                OPTIONAL {?agg edm:object ?reference}
+                OPTIONAL {?agg edm:preview ?thumbnail}
   ?cho dcterms:isPartOf ?collection
        OPTIONAL {?cho dcterms:creator ?creator . ?creator a edm:Agent}
        OPTIONAL {?cho dcterms:contributor ?contributor . ?contributor a edm:Agent}

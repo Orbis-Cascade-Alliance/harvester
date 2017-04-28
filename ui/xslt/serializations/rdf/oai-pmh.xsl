@@ -37,6 +37,18 @@
 				else
 				edm:preview/edm:WebResource/@rdf:about"/>
 			<xsl:with-param name="dataProvider" select="edm:dataProvider/@rdf:resource"/>
+			<xsl:with-param name="format">
+				<xsl:variable name="object_uri" select="edm:object/@rdf:resource"/>
+				
+				<xsl:choose>
+					<xsl:when test="string($object_uri)">
+						<xsl:value-of select="//edm:WebResource[@rdf:about=$object_uri]/dcterms:format"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="edm:object/edm:WebResource/dcterms:format"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:with-param>			
 		</xsl:apply-templates>
 	</xsl:template>
 </xsl:stylesheet>
