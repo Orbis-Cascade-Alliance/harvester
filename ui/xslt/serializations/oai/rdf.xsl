@@ -499,28 +499,26 @@ rdfs:label ?label
 	<xsl:template match="dc:rights">
 		<xsl:param name="rights_uri"/>
 
-		<xsl:for-each select="tokenize(., ';')">
-			<xsl:variable name="val" select="normalize-space(.)"/>
-
-			<xsl:choose>
-				<xsl:when test="matches($val, '^https?://') and not(contains($val, ' '))">
-					<!-- insert a rights URI at this level if a standardized statement has not 
+		<xsl:variable name="val" select="harvester:cleanText(normalize-space(.), 'rights')"/>
+		
+		<xsl:choose>
+			<xsl:when test="matches($val, '^https?://') and not(contains($val, ' '))">
+				<!-- insert a rights URI at this level if a standardized statement has not 
 						been extracted from dc:rights as an RS or CC URI or $rightsStatement passed in from URL parameter -->
-					<xsl:if test="not(string($rights_uri))">
-						<dc:rights>
-							<xsl:attribute name="rdf:resource" select="$val"/>
-						</dc:rights>
-					</xsl:if>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:if test="not(string(normalize-space($rightsText)))">
-						<dc:rights>
-							<xsl:value-of select="harvester:cleanText($val, 'rights')"/>
-						</dc:rights>
-					</xsl:if>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:for-each>
+				<xsl:if test="not(string($rights_uri))">
+					<dc:rights>
+						<xsl:attribute name="rdf:resource" select="$val"/>
+					</dc:rights>
+				</xsl:if>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:if test="not(string(normalize-space($rightsText))) and string-length($val) &gt; 0">
+					<dc:rights>
+						<xsl:value-of select="$val"/>
+					</dc:rights>
+				</xsl:if>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template match="*[local-name() = 'coverage'] | *[local-name() = 'spatial']">
