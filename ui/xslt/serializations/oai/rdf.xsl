@@ -828,7 +828,7 @@ rdfs:label ?label
 							</xsl:when>
 						</xsl:choose>
 					</edm:WebResource>
-					<edm:WebResource rdf:about="{replace(replace($image_url, '/original/', '/thumbnails/'), '.tif', 'jpg')}">
+					<edm:WebResource rdf:about="{replace(replace($image_url, '/original/', '/thumbnails/'), '.tif', '.jpg')}">
 						<xsl:if test="string($rights_uri)">
 							<edm:rights rdf:resource="{$rights_uri}"/>
 						</xsl:if>
@@ -900,7 +900,7 @@ rdfs:label ?label
 			<xsl:when test="$dams = 'omeka'">
 				<xsl:if test="dc:identifier[contains(., 'files/original')]">
 					<xsl:variable name="image_url" select="dc:identifier[contains(., 'files/original')][1]"/>
-					<edm:preview rdf:resource="{replace(replace($image_url, '/original/', '/thumbnails/'), '.tif', 'jpg')}"/>
+					<edm:preview rdf:resource="{replace(replace($image_url, '/original/', '/thumbnails/'), '.tif', '.jpg')}"/>
 					<edm:object rdf:resource="{$image_url}"/>
 				</xsl:if>
 			</xsl:when>
