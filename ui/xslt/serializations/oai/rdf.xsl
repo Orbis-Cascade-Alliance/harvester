@@ -809,7 +809,9 @@ rdfs:label ?label
 			</xsl:when>
 			<xsl:when test="$dams = 'omeka'">
 				<xsl:if test="dc:identifier[contains(., 'files/original')]">
-					<edm:WebResource rdf:about="{dc:identifier[contains(., 'files/original')]}">
+					<xsl:variable name="image_url" select="dc:identifier[contains(., 'files/original')][1]"/>
+					
+					<edm:WebResource rdf:about="{$image_url}">
 						<xsl:if test="string($rights_uri)">
 							<edm:rights rdf:resource="{$rights_uri}"/>
 						</xsl:if>
@@ -825,6 +827,12 @@ rdfs:label ?label
 								</dcterms:format>
 							</xsl:when>
 						</xsl:choose>
+					</edm:WebResource>
+					<edm:WebResource rdf:about="{replace($image_url, '/original/', '/thumbnails/')}">
+						<xsl:if test="string($rights_uri)">
+							<edm:rights rdf:resource="{$rights_uri}"/>
+						</xsl:if>
+						<dcterms:format>image/jpeg</dcterms:format>
 					</edm:WebResource>
 				</xsl:if>
 			</xsl:when>
@@ -891,7 +899,9 @@ rdfs:label ?label
 			</xsl:when>
 			<xsl:when test="$dams = 'omeka'">
 				<xsl:if test="dc:identifier[contains(., 'files/original')]">
-					<edm:object rdf:resource="{dc:identifier[contains(., 'files/original')]}"/>
+					<xsl:variable name="image_url" select="dc:identifier[contains(., 'files/original')][1]"/>
+					<edm:preview rdf:resource="{replace($image_url, '/original/', '/thumbnails/')}"/>
+					<edm:object rdf:resource="{$image_url}"/>
 				</xsl:if>
 			</xsl:when>
 			<xsl:when test="$dams = 'oregondigital'">
