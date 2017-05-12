@@ -57,7 +57,7 @@ DESCRIBE ?s WHERE {
   {?s a arch:Archive}
   UNION {?s a dpla:SourceResource}
   UNION {?s a ore:Aggregation}
-  UNION {?s a edm:View}
+  UNION {?s a edm:WebResource}
 } LIMIT %LIMIT% OFFSET %OFFSET%]]></xsl:variable>
 				
 				<xsl:variable name="service" select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%OFFSET%', string($offset)), '%LIMIT%', string($limit))), '&amp;output=', $output)"/>
