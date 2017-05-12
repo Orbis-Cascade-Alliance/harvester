@@ -104,7 +104,7 @@ CONSTRUCT {
       SELECT ?set ?target ( count(?cho) as ?count ) { 
    		?cho dcterms:isPartOf ?set .
 		 ?agg a ore:Aggregation ;
-			edm:isShownAt ?cho ;
+			edm:aggregatedCHO ?cho ;
 			doap:audience ?target
  		} GROUP BY ?set ?target
 	}

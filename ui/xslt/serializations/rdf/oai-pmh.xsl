@@ -47,8 +47,8 @@
 					</xsl:with-param>
 				</xsl:apply-templates>
 			</xsl:when>
-			<xsl:when test="edm:isShownAt/@rdf:resource or edm:aggregatedCHO/@rdf:resource">
-				<xsl:variable name="uri" select="if (edm:isShownAt/@rdf:resource) then edm:isShownAt/@rdf:resource else edm:aggregatedCHO/@rdf:resource"/>
+			<xsl:when test="edm:aggregatedCHO/@rdf:resource">
+				<xsl:variable name="uri" select="edm:aggregatedCHO/@rdf:resource"/>
 				
 				<xsl:apply-templates select="//dpla:SourceResource[@rdf:about = $uri]">
 					<xsl:with-param name="depiction"

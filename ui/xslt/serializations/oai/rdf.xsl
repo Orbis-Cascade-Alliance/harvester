@@ -353,7 +353,6 @@ rdfs:label ?label
 			<xsl:attribute name="rdf:about" select="concat($url, 'record/', digest:md5Hex(normalize-space($cho_uri)))"/>
 
 			<edm:aggregatedCHO rdf:resource="{$cho_uri}"/>
-			<edm:isShownAt rdf:resource="{$cho_uri}"/>
 			<edm:dataProvider rdf:resource="{$repo_uri}"/>
 			<xsl:if test="string($rights_uri)">
 				<xsl:if test="string($rights_uri)">
@@ -888,6 +887,7 @@ rdfs:label ?label
 			<xsl:when test="$dams = 'contentdm-default'">
 				<edm:preview rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getthumbnail')}"/>
 				<edm:object rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}"/>
+				<edm:isShownAt rdf:resource="{replace($cho_uri, 'cdm/ref', 'utils/getstream')}"/>
 			</xsl:when>
 			<xsl:when test="$dams = 'digital-commons'">
 				<xsl:if test="dc:description[matches(., '.jpg$')]">
@@ -902,6 +902,7 @@ rdfs:label ?label
 					<xsl:variable name="image_url" select="dc:identifier[contains(., 'files/original')][1]"/>
 					<edm:preview rdf:resource="{replace(replace($image_url, '/original/', '/thumbnails/'), '.tif', '.jpg')}"/>
 					<edm:object rdf:resource="{$image_url}"/>
+					<edm:isShownAt rdf:resource="{$image_url}"/>
 				</xsl:if>
 			</xsl:when>
 			<xsl:when test="$dams = 'oregondigital'">
@@ -909,6 +910,7 @@ rdfs:label ?label
 
 				<edm:preview rdf:resource="http://oregondigital.org/thumbnails/oregondigital-{$filename}.jpg"/>
 				<edm:object rdf:resource="http://oregondigital.org/downloads/oregondigital:{$filename}"/>
+				<edm:isShownAt rdf:resource="http://oregondigital.org/downloads/oregondigital:{$filename}"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:choose>
@@ -922,6 +924,7 @@ rdfs:label ?label
 						<!-- get thumbnail -->
 						<edm:preview rdf:resource="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getthumbnail/collection/$1/id/$2')}"/>
 						<edm:object rdf:resource="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}"/>
+						<edm:isShownAt rdf:resource="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}"/>
 					</xsl:when>
 				</xsl:choose>
 			</xsl:otherwise>

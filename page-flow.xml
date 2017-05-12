@@ -65,15 +65,5 @@
 		It will generate transform OAI sets into RDF. It will purge existing triples associated with CHOs with SPARQL/Update and post data into the endpoint. -->
 	<page path="/harvester/admin/ingest" view="xpl/controllers/ingest.xpl"/>
 	
-	<!-- ****************
-	* DATA DUMP GENERATION*
-	***************** -->
-	
-	<!-- pass the repository request parameter to the pipeline to load the RDF/XML and execute the transformation and serialization (into a file) of RDF/XML, TTL, or JSON-LD 
-	The XForms Submissions are GET, but have no output (seralization='none'). The process is much more efficient handled in the XPL workflow than through XForms controls in the web interface -->
-	<!--<page path="/harvester/admin/generateXML" model="xpl/controllers/generate-rdfxml.xpl"/>
-	<page path="/harvester/admin/generateTTL" model="xpl/controllers/generate-ttl.xpl"/>
-	<page path="/harvester/admin/generateJSON" model="xpl/controllers/generate-json.xpl"/>-->
-	
 	<epilogue url="oxf:/config/epilogue.xpl"/>
 </config>

@@ -23,7 +23,7 @@ PREFIX prov:	<http://www.w3.org/ns/prov#>
 SELECT * WHERE {
   ?aggregation a ore:Aggregation ;
        prov:generatedAtTime ?mod ;
-       edm:isShownAt ?uri
+       edm:aggregatedCHO ?uri
 } ORDER BY ASC(?mod) LIMIT 1]]>
 				</xsl:variable>
 

@@ -70,17 +70,17 @@
 </edm:WebResource>
 <ore:Aggregation>
 	<edm:aggregatedCHO rdf:resource="http://digital.boisestate.edu/cdm/ref/collection/roach/id/79"/>
-	<edm:isShownAt rdf:resource="http://digital.boisestate.edu/cdm/ref/collection/roach/id/79"/>
 	<edm:dataProvider rdf:resource="http://archiveswest.orbiscascade.org/contact#idbb"/>
 	<edm:provider rdf:resource="http://archiveswest.orbiscascade.org/"/>
 	<edm:preview rdf:resource="http://digital.boisestate.edu/utils/getthumbnail/collection/roach/id/79"/>
 	<edm:object rdf:resource="http://digital.boisestate.edu/utils/getstream/collection/roach/id/79"/>
+	<edm:isShownAt rdf:resource="http://digital.boisestate.edu/utils/getstream/collection/roach/id/79"/>
 	<dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2014-12-30T22:14:20.112-05:00</dcterms:modified>
 </ore:Aggregation>]]></pre>
 						</div>
 					</div>
 					<p>The CHO metadata is stored in the dpla:sourceResource object. Each image URL is designated with the edm:WebSource class, and the ore:Aggregation (which will be given a URI upon
-						ingestion into DPLA) points to the CHO URI with edm:aggregatedCHO and edm:isShownAt. The edm:dataProvider is the URI of the repository in the NWDA system. This URI must match
+						ingestion into DPLA) points to the CHO URI with edm:aggregatedCHO. The edm:dataProvider is the URI of the repository in the NWDA system. This URI must match
 						that in the NWDA repository metadata RDF. The edm:preview contains a link to the thumbnail, and the edm:object is a large-scale image URL. The dcterms:modified is the date of
 						ingestion. It is used by the Harvester's front end Atom feed.</p>
 					<p>There are two important things to note about the dpla:SourceResource:</p>

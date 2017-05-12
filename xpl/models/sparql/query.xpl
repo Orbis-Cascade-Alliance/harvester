@@ -108,7 +108,7 @@ PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
 
 DESCRIBE * WHERE {
   ?agg a ore:Aggregation ;
-                edm:isShownAt ?cho ;
+                edm:aggregatedCHO ?cho ;
                 prov:generatedAtTime ?mod.
                 OPTIONAL {?agg edm:object ?reference}
                 OPTIONAL {?agg edm:preview ?thumbnail}
