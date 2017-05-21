@@ -20,6 +20,7 @@
 				<controls xmlns="">
 					<status></status>
 					<set-url></set-url>
+					<repository/>
 				</controls>
 			</xforms:instance>
 
@@ -120,6 +121,15 @@ CONSTRUCT {
 				<sparql></sparql>
 			</xforms:instance>
 
+			<!-- ************************* BINDINGS ************************** -->
+			<xforms:bind nodeset="instance('config')">
+				<xforms:bind nodeset="codes">
+					<xforms:bind nodeset="repository">
+						<xforms:bind nodeset="@harvester-only" type="xs:boolean"/>
+					</xforms:bind>
+				</xforms:bind>
+			</xforms:bind>
+
 			<!-- ************************* SUBMISSIONS ************************** -->
 			<xforms:submission id="get-repository-rdf" serialization="none" method="get" action="/harvester/repositories.rdf" replace="instance" instance="rdf">
 				<xforms:header>
@@ -166,7 +176,7 @@ CONSTRUCT {
 				<!-- get authentication roles -->
 				<xforms:insert context="instance('control-instance')" nodeset="status" position="after"
 					origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"/>
-
+				<xforms:setvalue ref="instance('control-instance')/repository" value="instance('control-instance')/request-security/role" if="not(xxforms:is-user-in-role('harvester-admin'))"/>
 				<xforms:var name="pub"
 					select="if (xxforms:is-user-in-role('harvester-admin')) then '?pub' else concat('&lt;', instance('config')/production_server, 'contact#', instance('control-instance')/request-security/role, '&gt;')"/>
 				<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', $pub)"/>
@@ -320,6 +330,11 @@ CONSTRUCT {
 						<li>
 							<a href="import"><span class="glyphicon glyphicon-import"></span>Import OAI-PMH</a>
 						</li>
+						<xforms:group ref=".[xxforms:is-user-in-role('harvester-admin') or instance('config')/codes/repository[@marc = instance('control-instance')/repository]/@harvester-only=true()]">
+							<li>
+								<a href="edit"><span class="glyphicon glyphicon-import"></span>Edit Repository Metadata</a>
+							</li>
+						</xforms:group>
 					</ul>
 				</div>
 			</div>

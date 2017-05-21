@@ -1,0 +1,111 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+	<head>
+		<title>Orbis Cascade Harvester: Edit Repository Metadata</title>
+		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
+		<link rel="stylesheet" href="/fr/style/form-runner-bootstrap-override.css" type="text/css" />
+		<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+		<script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico" />
+		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png" />
+		<link rel="stylesheet" href="/apps/harvester/xforms/css/style.css" />
+
+		<xforms:model>
+			<xforms:instance id="control-instance" xxforms:exclude-result-prefixes="#all">
+				<controls xmlns="">
+					<status></status>
+					<repository/>
+				</controls>
+			</xforms:instance>
+
+			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
+				<rdf:RDF/>
+			</xforms:instance>
+
+			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
+				<xi:include href="../config.xml"/>
+			</xforms:instance>
+
+			<!-- sparql update -->
+			<xforms:instance id="sparqlUpdate-templates">
+				<queries xmlns="">
+					<query id="delete-repository">
+						<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX arch:	<http://purl.org/archival/vocab/arch#>
+DELETE {?s ?p ?o} WHERE { ?s rdf:type arch:Archive . ?s ?p ?o }]]>
+					</query>
+				</queries>
+			</xforms:instance>
+
+			<xforms:instance id="sparqlQuery">
+				<query></query>
+			</xforms:instance>
+			
+			<xforms:instance id="sparqlUpdate">
+				<query></query>
+			</xforms:instance>
+			
+			<xforms:instance id="sparqlResponse" xxforms:exclude-result-prefixes="#all">
+				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
+			</xforms:instance>
+
+			<!-- ************************* SUBMISSIONS ************************** -->
+			
+
+			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
+			<xforms:action if="xxforms:is-user-in-role('harvester-admin') = false()">
+				<xforms:insert context="instance('control-instance')" nodeset="status" position="after"
+					origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"/>
+				<xforms:setvalue ref="instance('control-instance')/repository" value="instance('control-instance')/request-security/role"/>
+			</xforms:action>
+		</xforms:model>
+	</head>
+
+
+	<body>
+		<div class="container-fluid">			
+			<div class="row">
+				<div class="col-md-12">
+					<p><a href="../admin/"><span class="glyphicon glyphicon-arrow-left"></span>Return to Admin</a></p>
+					<xforms:group ref=".[string-length(instance('control-instance')/status) &gt; 0]">
+						<div class="bg-info alert">
+							<p>
+								<span class="glyphicon glyphicon-info-sign"></span>
+								<strong>Status:</strong>
+								<xforms:output ref="instance('control-instance')/status"/>
+							</p>
+						</div>
+					</xforms:group>
+					<h1>Orbis Cascade Harvester: Edit Repository Metadata</h1>
+					
+					<xforms:group ref=".[xxforms:is-user-in-role('harvester-admin')]">
+						<div class="subsection">
+							<h4>Repository Code</h4>
+							<div>
+								<xforms:select1 ref="instance('control-instance')/repository">
+									<xforms:alert>Required</xforms:alert>
+									<xforms:item>
+										<xforms:label>Select...</xforms:label>
+										<xforms:value/>
+									</xforms:item>
+									<xforms:itemset
+										nodeset="xxforms:sort(distinct-values(instance('config')//repository), ., 'text', 'ascending')">
+										<xforms:label ref="."/>
+										<xforms:value ref="."/>
+									</xforms:itemset>
+									<!-- load the repository RDF from disk on value changed -->
+									<xforms:action ev:event="xforms-value-changed">
+										
+									</xforms:action>
+								</xforms:select1>
+							</div>
+						</div>
+					</xforms:group>
+					
+					<fr:xforms-inspector></fr:xforms-inspector>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

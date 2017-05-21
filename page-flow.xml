@@ -45,6 +45,7 @@
 	<page path="/harvester/admin/" view="xforms/admin.xhtml"/>
 	<page path="/harvester/admin/import" view="xforms/import.xhtml"/>
 	<page path="/harvester/admin/vocabularies" view="xforms/vocabularies.xhtml"/>
+	<page path="/harvester/admin/edit" view="xforms/edit.xhtml"/>
 	
 	<!-- ****************
 	* INGEST APIs (Under ADMIN)*
