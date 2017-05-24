@@ -151,6 +151,8 @@ UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>}
 	
 		<p:processor name="oxf:identity">
 		<p:input name="data" href="aggregate('content', #null1, #null2)"/>
-		<p:output name="data" ref="data"/>
+		<p:output name="data">
+			<response>success</response>
+		</p:output>
 	</p:processor>
 </p:pipeline>

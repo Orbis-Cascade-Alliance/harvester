@@ -66,7 +66,7 @@
 		<repository marc="watu" harvester-only="false" exlibris="UPUGS"/>
 		<repository marc="uu" harvester-only="true" exlibris=""/>
 		<repository marc="uuml" harvester-only="false" exlibris=""/>
-		<repository marc="wau-ar" harvester-only="true" exlibris="UW"/>
+		<repository marc="wauar" harvester-only="true" exlibris="UW"/>
 		<repository marc="waseumc" harvester-only="false" exlibris="UW"/>
 		<repository marc="wau" harvester-only="true" exlibris="UW"/>
 		<repository marc="ula" harvester-only="false" exlibris=""/>
