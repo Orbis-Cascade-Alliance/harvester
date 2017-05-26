@@ -111,12 +111,14 @@ DELETE {?s ?p ?o} WHERE {
 			</xforms:action>
 
 			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
-			<xforms:action if="not(xxforms:is-user-in-role('harvester-admin'))">
-				<xforms:insert context="instance('control-instance')" nodeset="status" position="after"
-					origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"/>
-				<xforms:setvalue ref="instance('control-instance')/repository" value="instance('control-instance')/request-security/role"/>
-				<xforms:send submission="load-rdf"/>
-			</xforms:action>
+			<xforms:action ev:event="xforms-model-construct-done">
+				<xforms:action if="not(xxforms:is-user-in-role('harvester-admin'))">
+					<xforms:insert context="instance('control-instance')" nodeset="status" position="after"
+						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"/>
+					<xforms:setvalue ref="instance('control-instance')/repository" value="instance('control-instance')/request-security/role"/>
+					<xforms:send submission="load-rdf"/>
+				</xforms:action>
+			</xforms:action>			
 		</xforms:model>
 	</head>
 
