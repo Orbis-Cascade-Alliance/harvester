@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
-	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:foaf="http://xmlns.com/foaf/0.1/">
 	<head>
 		<title>Orbis Cascade Harvester: Edit Repository Metadata</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
@@ -9,13 +9,15 @@
 		<script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<link rel="shortcut icon" href="/ops/images/orbeon-icon-16.ico" />
 		<link rel="icon" href="/ops/images/orbeon-icon-16.png" type="image/png" />
-		<link rel="stylesheet" href="/apps/harvester/xforms/css/style.css" />
+		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Gentium+Book+Basic:400,700" />
+		<link rel="stylesheet" type="text/css" href="/apps/harvester/xforms/css/style.css" />
 
 		<xforms:model>
 			<xforms:instance id="control-instance" xxforms:exclude-result-prefixes="#all">
 				<controls xmlns="">
 					<status></status>
 					<repository/>
+					<save-trigger/>
 				</controls>
 			</xforms:instance>
 
@@ -26,8 +28,18 @@
 			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
 				<xi:include href="../config.xml"/>
 			</xforms:instance>
+			
+			<!-- XPL configs for read/write to disk -->
+			<xforms:instance id="save-config">
+				<config xmlns="">
+					<url></url>
+					<content-type>text/plain</content-type>
+					<make-directories>false</make-directories>
+					<append>false</append>
+				</config>
+			</xforms:instance>
 
-			<!-- sparql update -->
+			<!-- SPARQL instances -->
 			<xforms:instance id="sparqlUpdate-templates">
 				<queries xmlns="">
 					<query id="delete-repository">
@@ -50,8 +62,27 @@ DELETE {?s ?p ?o} WHERE { ?s rdf:type arch:Archive . ?s ?p ?o }]]>
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
 			</xforms:instance>
 
+			<!-- ************************* BINDINGS ************************** -->
+			<xforms:bind nodeset="instance('rdf')">
+				<xforms:bind nodeset="foaf:name" required="true()"/>
+				<xforms:bind nodeset="foaf:homepage/@rdf:resource" required="true()" constraint="matches(., '^https?://')"/>
+			</xforms:bind>
+			
+			<xforms:bind nodeset="instance('control-instance')">
+				<xforms:bind id="save-trigger" nodeset="save-trigger" type="xs:boolean" readonly=". != true()"></xforms:bind>
+			</xforms:bind>
+
 			<!-- ************************* SUBMISSIONS ************************** -->
 			
+			
+			<!-- **************** DYNAMIC VALIDATION CONTROLS ********************** -->
+			<xforms:action ev:event="xxforms-invalid" ev:observer="rdf">
+				<xforms:setvalue ref="instance('control-instance')/save-trigger" value="false()"></xforms:setvalue>
+			</xforms:action>
+			
+			<xforms:action ev:event="xxforms-valid" ev:observer="rdf">
+				<xforms:setvalue ref="instance('control-instance')/save-trigger" value="true()"></xforms:setvalue>
+			</xforms:action>
 
 			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
 			<xforms:action if="xxforms:is-user-in-role('harvester-admin') = false()">
@@ -63,8 +94,8 @@ DELETE {?s ?p ?o} WHERE { ?s rdf:type arch:Archive . ?s ?p ?o }]]>
 	</head>
 
 
-	<body>
-		<div class="container-fluid">			
+	<body style="font-family:'Gentium Book Basic'">
+		<div class="container">			
 			<div class="row">
 				<div class="col-md-12">
 					<p><a href="../admin/"><span class="glyphicon glyphicon-arrow-left"></span>Return to Admin</a></p>
@@ -107,5 +138,7 @@ DELETE {?s ?p ?o} WHERE { ?s rdf:type arch:Archive . ?s ?p ?o }]]>
 				</div>
 			</div>
 		</div>
+		<!-- footer -->
+		<xi:include href="components/footer.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 	</body>
 </html>

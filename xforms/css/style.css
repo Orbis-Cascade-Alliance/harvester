@@ -16,8 +16,12 @@
 }
 .orbeon .xforms-input input[type = text],
 .orbeon .xforms-textarea textarea,
-.orbeon .xforms-select1 select{
-    width: 30em;;
+.orbeon .xforms-select1-appearance-minimal select{
+    width: 30em;
+    margin-bottom: 2px;
+}
+.orbeon .xforms-select1-appearance-compact select {
+    width: 50em;
     margin-bottom: 2px;
 }
 .orbeon .checkbox input{
@@ -181,7 +185,10 @@ footer nav ul li {
     display: inline;
     list-style: outside none none;
 }
-footer nav ul li a {
+.orbeon footer a {
+    color: #6730a6;
+}
+.orbeon footer nav ul li a {
     color: #fff;
     padding: 0 7px;
     text-transform: uppercase;

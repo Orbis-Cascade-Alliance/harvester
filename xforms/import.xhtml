@@ -1219,7 +1219,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 											<xforms:value value="false()"/>
 										</xforms:item>
 										<xforms:item>
-											<xforms:label>I want to apply the same rights statement to all records in this set. I would like to
+											<xforms:label>I want to apply the same rights statement(s) to all records in this set to be compliant with the Dublin Core Best Practices. I would like to
 												apply:</xforms:label>
 											<xforms:value value="true()"/>
 										</xforms:item>
@@ -1233,8 +1233,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<div>
 											<xforms:select1 ref="instance('set')/rights">
 												<xforms:label>Standardized Rights Statement</xforms:label>
-												<xforms:hint>Required (if not already present in the set) standardized rights statement from RightsStatement.org
-													or CreativeCommons.org</xforms:hint>
+												<xforms:hint>Required (if not already present in the set) standardized rights statement from rightsstatement.org or Creative Commons license</xforms:hint>
 												<xforms:item>
 													<xforms:label>Select below...</xforms:label>
 													<xforms:value/>
@@ -1248,8 +1247,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<div>
 											<xforms:textarea ref="instance('set')/rightsText">
 												<xforms:label>Free-text Rights Statement</xforms:label>
-												<xforms:hint>Required (if not already present in the set) free-text rights statement, that augments and enhances
-													the standardized rights statement</xforms:hint>
+												<xforms:hint>Required (if not already present in the set) free-text rights statement that augments and enhances the standardized rights statement</xforms:hint>
 											</xforms:textarea>
 										</div>
 									</xforms:group>
