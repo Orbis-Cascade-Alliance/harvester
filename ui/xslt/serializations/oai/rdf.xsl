@@ -362,18 +362,34 @@ rdfs:label ?label
 			<xsl:call-template name="views">
 				<xsl:with-param name="cho_uri" select="$cho_uri"/>
 			</xsl:call-template>
+			
+			<!-- parse target, comma separated values. If no values, then make available in all systems -->
+			
+			<xsl:variable name="audience" select="tokenize(normalize-space($target), ',')"/>
+				
 			<xsl:choose>
-				<xsl:when test="$target = 'dpla'">
+				<xsl:when test="count($audience) = 0">
 					<doap:audience>dpla</doap:audience>
-				</xsl:when>
-				<xsl:when test="$target = 'primo'">
 					<doap:audience>primo</doap:audience>
+					<doap:audience>aw</doap:audience>
 				</xsl:when>
 				<xsl:otherwise>
-					<doap:audience>dpla</doap:audience>
-					<doap:audience>primo</doap:audience>
+					<xsl:for-each select="$audience">
+						<xsl:choose>
+							<xsl:when test=". = 'dpla'">
+								<doap:audience>dpla</doap:audience>
+							</xsl:when>
+							<xsl:when test=". = 'primo'">
+								<doap:audience>primo</doap:audience>
+							</xsl:when>
+							<xsl:when test=". = 'aw'">
+								<doap:audience>aw</doap:audience>
+							</xsl:when>
+						</xsl:choose>
+					</xsl:for-each>
 				</xsl:otherwise>
 			</xsl:choose>
+			
 			<prov:wasDerivedFrom rdf:resource="{$set}"/>
 			<prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
 				<xsl:value-of select="current-dateTime()"/>

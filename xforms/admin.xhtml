@@ -244,27 +244,38 @@ CONSTRUCT {
 																<xforms:load ev:event="DOMActivate" resource="{$uri}" show="new"/>
 															</xforms:trigger>
 														</dd>
-														<dt>View</dt>
+														<xforms:group ref=".[doap:audience='dpla' or doap:audience='primo']">
+															<dt>View</dt>
+															<dd>
+																<xforms:group ref=".[doap:audience='dpla']">
+																	<xforms:trigger appearance="minimal">
+																		<xforms:label>DPLA View<span class="glyphicon glyphicon-new-window"
+																			></span></xforms:label>
+																		<xforms:load resource="{instance('config')/url}results?set={encode-for-uri($uri)}"
+																			show="new" ev:event="DOMActivate"/>
+																	</xforms:trigger>
+																</xforms:group>
+																<xforms:group ref=".[doap:audience='dpla' and doap:audience='primo']">
+																	<span>, </span>
+																</xforms:group>
+																<xforms:group ref=".[doap:audience='primo']">
+																	<xforms:trigger appearance="minimal">
+																		<xforms:label>Primo View<span class="glyphicon glyphicon-new-window"
+																			></span></xforms:label>
+																		<xforms:load
+																			resource="{instance('config')/url}results?set={encode-for-uri($uri)}&amp;model=primo"
+																			show="new" ev:event="DOMActivate"/>
+																	</xforms:trigger>
+																</xforms:group>
+															</dd>
+														</xforms:group>
+														<dt>Archives West</dt>
 														<dd>
-															<xforms:group ref=".[doap:audience='dpla']">
-																<xforms:trigger appearance="minimal">
-																	<xforms:label>View records for DPLA <span class="glyphicon glyphicon-new-window"
-																		></span></xforms:label>
-																	<xforms:load resource="{instance('config')/url}results?set={encode-for-uri($uri)}"
-																		show="new" ev:event="DOMActivate"/>
-																</xforms:trigger>
+															<xforms:group ref=".[doap:audience='aw']">
+																<span>Yes</span>
 															</xforms:group>
-															<xforms:group ref=".[doap:audience='dpla' and doap:audience='primo']">
-																<span>, </span>
-															</xforms:group>
-															<xforms:group ref=".[doap:audience='primo']">
-																<xforms:trigger appearance="minimal">
-																	<xforms:label>View records for Primo <span class="glyphicon glyphicon-new-window"
-																		></span></xforms:label>
-																	<xforms:load
-																		resource="{instance('config')/url}results?set={encode-for-uri($uri)}&amp;model=primo"
-																		show="new" ev:event="DOMActivate"/>
-																</xforms:trigger>
+															<xforms:group ref=".[not(doap:audience='aw')]">
+																<span>No</span>
 															</xforms:group>
 														</dd>
 														<dt>Publisher</dt>

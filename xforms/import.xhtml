@@ -41,6 +41,11 @@
 					<uri></uri>
 					<search-results></search-results>
 					<definition></definition>
+					<targets>
+						<target audience="aw">false</target>
+						<target audience="dpla">false</target>
+						<target audience="primo">false</target>
+					</targets>
 					<remediation>
 						<rights>false</rights>
 						<type>false</type>
@@ -334,6 +339,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 			<xforms:bind nodeset="instance('set')">
 				<xforms:bind nodeset="set" required="true()" type="xs:anyURI" constraint="matches(., 'https?://')"/>
 				<xforms:bind nodeset="repository" required="true()" readonly="instance('control-instance')/admin = false()"/>
+				<xforms:bind nodeset="target" required="true()" calculate="string-join(instance('control-instance')/targets/target[. = true()]/@audience, ',')"/>
 				<xforms:bind nodeset="terms_of_service" type="xs:boolean" constraint=". = true()"/>
 			</xforms:bind>
 
@@ -342,10 +348,14 @@ OPTIONAL {?c skos:scopeNote ?note .
 				<xforms:bind nodeset="initial-page" type="xs:boolean"/>
 				<xforms:bind nodeset="record_has_mimetype" type="xs:boolean"/>
 				<xforms:bind nodeset="record_has_type" type="xs:boolean"/>
+				<xforms:bind nodeset="validation-record-view" calculate="if (../targets/target[@audience='primo'] = true() and ../targets/target[@audience='dpla'] = false()) then 'primo' else 'dpla'"/>
 				<xforms:bind id="validate-trigger" nodeset="validate-trigger" type="xs:boolean" readonly=". != true()"/>
 				<xforms:bind id="remediation-page-trigger" nodeset="remediation-page-trigger" type="xs:boolean" readonly=". != true()"/>
 				<xforms:bind id="validation-page-trigger" nodeset="validation-page-trigger" type="xs:boolean" readonly=". != true()"/>
 				<xforms:bind id="enrichment-page-trigger" nodeset="enrichment-page-trigger" type="xs:boolean" readonly=". != true()"/>
+				<xforms:bind nodeset="targets">
+					<xforms:bind nodeset="target" type="xs:boolean"/>
+				</xforms:bind>
 				<xforms:bind nodeset="normalization">
 					<xforms:bind nodeset="*" type="xs:boolean"/>
 				</xforms:bind>
@@ -459,11 +469,15 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<!-- insert errors for invalid or missing fields -->
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No title')"
 									if="not($binding/dc:title)"/>
-								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No date')"
-									if="not($binding/dc:date)"/>
-								<xforms:insert context="instance('validation')/record[last()]"
-									origin="xforms:element('error', (xforms:attribute('set', instance('control-instance')/validation/rights-set), xforms:attribute('type', 'rights'), 'No rights statement'))"
-									if="not($binding/dc:rights)"/>
+								
+								<!-- these validation scenarios should only been applied if the target is not merely 'aw' -->
+								<xforms:action if="not(instance('set')/target = 'aw')">
+									<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No date')"
+										if="not($binding/dc:date)"/>
+									<xforms:insert context="instance('validation')/record[last()]"
+										origin="xforms:element('error', (xforms:attribute('set', instance('control-instance')/validation/rights-set), xforms:attribute('type', 'rights'), 'No rights statement'))"
+										if="not($binding/dc:rights)"/>
+								</xforms:action>
 
 								<!-- test potential mime-types versus controlled list -->
 								<xforms:var name="all-formats" select="string-join($binding/dc:format, ';')"/>
@@ -491,9 +505,14 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('dcmitype', $val)"/>
 									</xforms:action>
 								</xforms:action>
-								<xforms:insert context="instance('validation')/record[last()]"
-									origin="xforms:element('error', (xforms:attribute('set', instance('control-instance')/validation/type-set), xforms:attribute('type', 'type'), 'No DCMI Type detected.'))"
-									if="instance('control-instance')/record_has_type = false()"/>
+								
+								<!-- only validate DCMI Type when the target is not exclusively Archives West -->
+								<xforms:action if="not(instance('set')/target = 'aw')">
+									<xforms:insert context="instance('validation')/record[last()]"
+										origin="xforms:element('error', (xforms:attribute('set', instance('control-instance')/validation/type-set), xforms:attribute('type', 'type'), 'No DCMI Type detected.'))"
+										if="instance('control-instance')/record_has_type = false()"/>
+								</xforms:action>
+								
 
 								<!-- parse and insert entities into relevant lists, if applicable -->
 								<!-- types/genres: normalize to AAT -->
@@ -938,9 +957,27 @@ OPTIONAL {?c skos:scopeNote ?note .
 														<xxforms:show ev:event="DOMActivate" dialog="destination-info-dialog"/>
 													</xforms:trigger></small>
 											</h4>
-											<p>You can contribute this set to one or both of the systems below. Select your preference:</p>
+											<p>You can contribute this set to one or more of the systems below. Select your preference:</p>
 											<div>
-												<xforms:select1 ref="target">
+												<xforms:group ref="instance('control-instance')/targets">
+													<div>
+														<xforms:input ref="target[@audience='aw']">
+															<xforms:label>Archives West</xforms:label>
+														</xforms:input>
+													</div>
+													<div>
+														<xforms:input ref="target[@audience='dpla']">
+															<xforms:label>DPLA</xforms:label>
+														</xforms:input>
+													</div>
+													<div>
+														<xforms:input ref="target[@audience='primo']">
+															<xforms:label>Primo</xforms:label>
+														</xforms:input>
+													</div>
+												</xforms:group>
+												
+												<!--<xforms:select1 ref="target">
 													<xforms:item>
 														<xforms:label>DPLA and Primo</xforms:label>
 														<xforms:value>both</xforms:value>
@@ -955,7 +992,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 													</xforms:item>
 													<xforms:setvalue ev:event="xforms-value-changed" ref="instance('control-instance')/validation-record-view"
 														value="if (instance('set')/target = 'primo') then 'primo' else 'dpla'"/>
-												</xforms:select1>
+												</xforms:select1>-->
 											</div>
 										</div>
 										<div class="subsection">
@@ -1431,7 +1468,8 @@ We desire that our information be broadly available for educational and other pu
 							</xforms:group>
 
 							<hr />
-							<xforms:group ref=".[instance('set')/target='both']">
+							<!-- only show the record view drop down menu if primo and dpla are both possible targets -->
+							<xforms:group ref=".[instance('control-instance')/targets/target[@audience='primo'] = true() and instance('control-instance')/targets/target[@audience='dpla'] = true()]">
 								<xforms:select1 ref="instance('control-instance')/validation-record-view">
 									<xforms:item>
 										<xforms:label>View records for DPLA</xforms:label>
@@ -1763,7 +1801,7 @@ We desire that our information be broadly available for educational and other pu
 						<xforms:output ref="instance('set')/type" id="type"/>
 					</div>
 
-					<!--<fr:xforms-inspector/>-->
+<!--					<fr:xforms-inspector/>-->
 				</div>
 			</div>
 		</div>
