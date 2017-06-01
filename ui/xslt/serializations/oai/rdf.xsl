@@ -14,15 +14,14 @@
                         image URLs.
 -->
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
-	xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dpla="http://dp.la/terms/"
-	xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/"
-	xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:atom="http://www.w3.org/2005/Atom"
-	xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:doap="http://usefulinc.com/ns/doap#"
-	xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester"
-	xmlns:digest="org.apache.commons.codec.digest.DigestUtils" xmlns:res="http://www.w3.org/2005/sparql-results#"
-	exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest res" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dpla="http://dp.la/terms/" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:edm="http://www.europeana.eu/schemas/edm/"
+	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/"
+	xmlns:prov="http://www.w3.org/ns/prov#" xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"
+	xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester" xmlns:digest="org.apache.commons.codec.digest.DigestUtils"
+	xmlns:res="http://www.w3.org/2005/sparql-results#" exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest res" version="2.0">
 	<xsl:output indent="yes" encoding="UTF-8"/>
 
 	<!-- request parameters -->
@@ -115,9 +114,8 @@ rdfs:label ?label
 	<xsl:template match="/">
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
 			xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
-			xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#"
-			xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
-			xmlns:doap="http://usefulinc.com/ns/doap#">
+			xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:dcmitype="http://purl.org/dc/dcmitype/"
+			xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:doap="http://usefulinc.com/ns/doap#">
 
 			<!-- generate triples for describing the set, but not for GetRecord -->
 			<xsl:if test="not(contains($set, 'GetRecord'))">
@@ -137,6 +135,28 @@ rdfs:label ?label
 					<dcterms:publisher rdf:resource="{$repo_uri}"/>
 				</dcmitype:Collection>
 			</xsl:if>
+
+			<!-- if the genre is passed in, construct the RDF -->
+			<!--<xsl:if test="starts-with($genre, 'http://vocab.getty.edu/aat/')">
+				<xsl:variable name="sparqlQuery"><![CDATA[PREFIX gvp: <http://vocab.getty.edu/ontology#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX aat: <http://vocab.getty.edu/aat/>
+SELECT ?label WHERE {
+<URI> gvp:prefLabelGVP/xl:literalForm ?label FILTER langMatches(lang(?label), "en") }]]></xsl:variable>
+
+				<xsl:variable name="service" select="concat('http://vocab.getty.edu/sparql.xml?query=', encode-for-uri(replace($sparqlQuery, 'URI', $genre)))"/>
+
+				<skos:Concept rdf:about="{normalize-space($genre)}">
+					<skos:prefLabel xml:lang="en">
+						<xsl:value-of select="$service"/>
+						<xsl:copy-of
+							select="document($service)/*"
+						/>
+					</skos:prefLabel>
+				</skos:Concept>
+
+
+			</xsl:if>-->
 
 			<!-- either process only those objects with a matching $ark when the process is instantiated by the finding aid upload, or process all objects for bulk uploading -->
 			<xsl:choose>
@@ -362,11 +382,11 @@ rdfs:label ?label
 			<xsl:call-template name="views">
 				<xsl:with-param name="cho_uri" select="$cho_uri"/>
 			</xsl:call-template>
-			
+
 			<!-- parse target, comma separated values. If no values, then make available in all systems -->
-			
+
 			<xsl:variable name="audience" select="tokenize(normalize-space($target), ',')"/>
-				
+
 			<xsl:choose>
 				<xsl:when test="count($audience) = 0">
 					<doap:audience>dpla</doap:audience>
@@ -389,7 +409,7 @@ rdfs:label ?label
 					</xsl:for-each>
 				</xsl:otherwise>
 			</xsl:choose>
-			
+
 			<prov:wasDerivedFrom rdf:resource="{$set}"/>
 			<prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
 				<xsl:value-of select="current-dateTime()"/>
@@ -515,7 +535,7 @@ rdfs:label ?label
 		<xsl:param name="rights_uri"/>
 
 		<xsl:variable name="val" select="harvester:cleanText(normalize-space(.), 'rights')"/>
-		
+
 		<xsl:choose>
 			<xsl:when test="matches($val, '^https?://') and not(contains($val, ' '))">
 				<!-- insert a rights URI at this level if a standardized statement has not 
@@ -559,8 +579,7 @@ rdfs:label ?label
 						<xsl:when test="$dams = 'digital-commons'">
 							<xsl:call-template name="place">
 								<xsl:with-param name="lat" select="$val"/>
-								<xsl:with-param name="long"
-									select="following-sibling::*[local-name() = $element][normalize-space(text()) castable as xs:decimal][1]"/>
+								<xsl:with-param name="long" select="following-sibling::*[local-name() = $element][normalize-space(text()) castable as xs:decimal][1]"/>
 							</xsl:call-template>
 						</xsl:when>
 					</xsl:choose>
@@ -575,7 +594,7 @@ rdfs:label ?label
 					<xsl:if test="string-length($label) &gt; 0">
 						<dcterms:spatial>
 							<xsl:value-of select="$label"/>
-							
+
 							<!-- commented out Geonames normalization -->
 							<!--<xsl:choose>
 							<xsl:when test="$places//res:result[res:binding[@name = 'label']/res:literal = $label]">
@@ -588,7 +607,7 @@ rdfs:label ?label
 						</xsl:choose>-->
 						</dcterms:spatial>
 					</xsl:if>
-					
+
 				</xsl:for-each>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -825,7 +844,7 @@ rdfs:label ?label
 			<xsl:when test="$dams = 'omeka'">
 				<xsl:if test="dc:identifier[contains(., 'files/original')]">
 					<xsl:variable name="image_url" select="dc:identifier[contains(., 'files/original')][1]"/>
-					
+
 					<edm:WebResource rdf:about="{$image_url}">
 						<xsl:if test="string($rights_uri)">
 							<edm:rights rdf:resource="{$rights_uri}"/>
