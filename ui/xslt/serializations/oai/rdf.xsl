@@ -425,24 +425,35 @@ rdfs:label ?label
 				<xsl:variable name="val" select="normalize-space(tokenize(., ';')[1])"/>
 
 				<xsl:if test="string-length($val) &gt; 0">
-					<dcterms:date>
-						<xsl:if test="string(harvester:date_dataType($val))">
-							<xsl:attribute name="rdf:datatype">
-								<xsl:value-of select="harvester:date_dataType($val)"/>
-							</xsl:attribute>
-						</xsl:if>
-						<xsl:value-of select="harvester:parseDateTime($val)"/>
-					</dcterms:date>
+					<xsl:call-template name="parse-date">
+						<xsl:with-param name="date" select="$val"/>
+					</xsl:call-template>
 				</xsl:if>
 			</xsl:when>
-			<xsl:when test="contains(., '/')">
-				<xsl:variable name="date-tokens" select="tokenize(., '/')"/>
-
+			<xsl:otherwise>
+				<xsl:variable name="val" select="normalize-space(.)"/>				
+				
+				<xsl:if test="string-length($val) &gt; 0">
+					<xsl:call-template name="parse-date">
+						<xsl:with-param name="date" select="$val"/>
+					</xsl:call-template>
+				</xsl:if>
+			</xsl:otherwise>			
+		</xsl:choose>
+	</xsl:template>
+	
+	<xsl:template name="parse-date">
+		<xsl:param name="date"/>
+		
+		<xsl:choose>
+			<xsl:when test="contains($date, '/')">
+				<xsl:variable name="date-tokens" select="tokenize($date, '/')"/>
+				
 				<!-- only process if there is a definite date range -->
 				<xsl:if test="count($date-tokens) = 2">
 					<xsl:variable name="begin" select="normalize-space($date-tokens[1])"/>
 					<xsl:variable name="end" select="normalize-space($date-tokens[2])"/>
-
+					
 					<!-- only include the date range if both the begin and end dates are castable as xs date types -->
 					<xsl:if
 						test="($begin castable as xs:date or $begin castable as xs:gYearMonth or $begin castable as xs:gYear) and ($end castable as xs:date or $end castable as xs:gYearMonth or $end castable as xs:gYear)">
@@ -465,14 +476,14 @@ rdfs:label ?label
 					</xsl:if>
 				</xsl:if>
 			</xsl:when>
-			<xsl:when test="matches(., '\d{4}\s?-\s?\d{4}')">
-				<xsl:variable name="date-tokens" select="tokenize(., '-')"/>
-
+			<xsl:when test="matches($date, '\d{4}\s?-\s?\d{4}')">
+				<xsl:variable name="date-tokens" select="tokenize($date, '-')"/>
+				
 				<!-- only process if there is a definite date range -->
 				<xsl:if test="count($date-tokens) = 2">
 					<xsl:variable name="begin" select="normalize-space($date-tokens[1])"/>
 					<xsl:variable name="end" select="normalize-space($date-tokens[2])"/>
-
+					
 					<!-- only include the date range if both the begin and end dates are castable as xs date types -->
 					<xsl:if
 						test="($begin castable as xs:date or $begin castable as xs:gYearMonth or $begin castable as xs:gYear) and ($end castable as xs:date or $end castable as xs:gYearMonth or $end castable as xs:gYear)">
@@ -497,12 +508,12 @@ rdfs:label ?label
 			</xsl:when>
 			<xsl:otherwise>
 				<dcterms:date>
-					<xsl:if test="string(harvester:date_dataType(.))">
+					<xsl:if test="string(harvester:date_dataType($date))">
 						<xsl:attribute name="rdf:datatype">
-							<xsl:value-of select="harvester:date_dataType(.)"/>
+							<xsl:value-of select="harvester:date_dataType($date)"/>
 						</xsl:attribute>
 					</xsl:if>
-					<xsl:value-of select="harvester:parseDateTime(.)"/>
+					<xsl:value-of select="harvester:parseDateTime($date)"/>
 				</dcterms:date>
 			</xsl:otherwise>
 		</xsl:choose>
