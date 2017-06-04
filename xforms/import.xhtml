@@ -348,7 +348,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 				<xforms:bind nodeset="initial-page" type="xs:boolean"/>
 				<xforms:bind nodeset="record_has_mimetype" type="xs:boolean"/>
 				<xforms:bind nodeset="record_has_type" type="xs:boolean"/>
-				<xforms:bind nodeset="validation-record-view" calculate="if (../targets/target[@audience='primo'] = true() and ../targets/target[@audience='dpla'] = false()) then 'primo' else 'dpla'"/>
+				<!--<xforms:bind nodeset="validation-record-view"/>-->
 				<xforms:bind id="validate-trigger" nodeset="validate-trigger" type="xs:boolean" readonly=". != true()"/>
 				<xforms:bind id="remediation-page-trigger" nodeset="remediation-page-trigger" type="xs:boolean" readonly=". != true()"/>
 				<xforms:bind id="validation-page-trigger" nodeset="validation-page-trigger" type="xs:boolean" readonly=". != true()"/>
@@ -963,16 +963,22 @@ OPTIONAL {?c skos:scopeNote ?note .
 													<div>
 														<xforms:input ref="target[@audience='aw']">
 															<xforms:label>Archives West</xforms:label>
+															<xforms:setvalue ev:event="xforms-value-changed" ref="instance('control-instance')/validation-record-view"
+																value="if (contains(instance('set')/target, 'primo')) then 'primo' else 'dpla'"/>
 														</xforms:input>
 													</div>
 													<div>
 														<xforms:input ref="target[@audience='dpla']">
 															<xforms:label>DPLA</xforms:label>
+															<xforms:setvalue ev:event="xforms-value-changed" ref="instance('control-instance')/validation-record-view"
+																value="if (contains(instance('set')/target, 'primo')) then 'primo' else 'dpla'"/>
 														</xforms:input>
 													</div>
 													<div>
 														<xforms:input ref="target[@audience='primo']">
 															<xforms:label>Primo</xforms:label>
+															<xforms:setvalue ev:event="xforms-value-changed" ref="instance('control-instance')/validation-record-view"
+																value="if (contains(instance('set')/target, 'primo')) then 'primo' else 'dpla'"/>
 														</xforms:input>
 													</div>
 												</xforms:group>
@@ -1801,7 +1807,7 @@ We desire that our information be broadly available for educational and other pu
 						<xforms:output ref="instance('set')/type" id="type"/>
 					</div>
 
-<!--					<fr:xforms-inspector/>-->
+					<fr:xforms-inspector/>
 				</div>
 			</div>
 		</div>
@@ -1825,8 +1831,16 @@ We desire that our information be broadly available for educational and other pu
 					<!-- call the getRDF web service to transform OAI-PMH into RDF. It will make use to any terms normalized and inserted into Google Sheets -->
 					<xforms:action ev:event="xforms-submit-done">
 						<xforms:send submission="get-rdf"/>
-						<!-- generate RDF for concepts -->
 						<xforms:delete nodeset="instance('rdf')/*"/>
+						<!-- generate RDF for a genre from remediation page -->
+						<xforms:action if="string(instance('set')/genre)">
+							<xforms:var name="genre" select="instance('set')/genre"/>
+							
+							<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]" origin="instance('concept-template')"/>
+							<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="$genre"/>
+							<xforms:setvalue ref="instance('rdf')/*[last()]/skos:prefLabel" value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri=$genre]/res:binding[@name='label']/res:literal"/>
+						</xforms:action>						
+						<!-- generate RDF for genres and creators/contributors on the enrichment page -->
 						<xforms:action xxforms:iterate="instance('type-list')/type[@new = true() and string(@uri)]">
 							<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]" origin="instance('concept-template')"/>
 							<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="context()/@uri"/>

@@ -138,28 +138,6 @@ rdfs:label ?label
 				</dcmitype:Collection>
 			</xsl:if>
 
-			<!-- if the genre is passed in, construct the RDF -->
-			<!--<xsl:if test="starts-with($genre, 'http://vocab.getty.edu/aat/')">
-				<xsl:variable name="sparqlQuery"><![CDATA[PREFIX gvp: <http://vocab.getty.edu/ontology#>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX aat: <http://vocab.getty.edu/aat/>
-SELECT ?label WHERE {
-<URI> gvp:prefLabelGVP/xl:literalForm ?label FILTER langMatches(lang(?label), "en") }]]></xsl:variable>
-
-				<xsl:variable name="service" select="concat('http://vocab.getty.edu/sparql.xml?query=', encode-for-uri(replace($sparqlQuery, 'URI', $genre)))"/>
-
-				<skos:Concept rdf:about="{normalize-space($genre)}">
-					<skos:prefLabel xml:lang="en">
-						<xsl:value-of select="$service"/>
-						<xsl:copy-of
-							select="document($service)/*"
-						/>
-					</skos:prefLabel>
-				</skos:Concept>
-
-
-			</xsl:if>-->
-
 			<!-- either process only those objects with a matching $ark when the process is instantiated by the finding aid upload, or process all objects for bulk uploading -->
 			<xsl:choose>
 				<xsl:when test="$mode = 'test'">
@@ -1052,7 +1030,6 @@ SELECT ?label WHERE {
 			<!-- replace dateTime with the xs:date when not January 1: otherwise this is only a year -->
 			<xsl:when test="$val castable as xs:dateTime">
 				<xsl:variable name="date" select="substring($val, 1, 10)"/>
-
 				<xsl:choose>
 					<xsl:when test="substring($date, 6) = '01-01' and $dams = 'digital-commons'">http://www.w3.org/2001/XMLSchema#gYear</xsl:when>
 					<xsl:otherwise>http://www.w3.org/2001/XMLSchema#date</xsl:otherwise>
