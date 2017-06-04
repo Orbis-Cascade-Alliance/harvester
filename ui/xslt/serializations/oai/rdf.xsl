@@ -705,23 +705,23 @@ rdfs:label ?label
 					<!-- ignore format for now -->
 					<xsl:when test="$property = 'format'">
 						<!-- ignore mime types in the CHO -->
-						<xsl:if test="not(matches(., '^[a-z]+/[^\s]+$'))">
-							<!-- convert to extent -->
+						<!--<xsl:if test="not(matches(., '^[a-z]+/[^\s]+$'))">
+							<!-\- convert to extent -\->
 							<xsl:choose>
 								<xsl:when test="matches(., '\d+\s?[x|X]\s?\d+')">
-									<!-- pattern for dimensions -->
+									<!-\- pattern for dimensions -\->
 									<dcterms:extent>
 										<xsl:value-of select="."/>
 									</dcterms:extent>
 								</xsl:when>
 								<xsl:when test="contains(., 'second') or contains(., 'minute')">
-									<!-- audio/video -->
+									<!-\- audio/video -\->
 									<dcterms:extent>
 										<xsl:value-of select="."/>
 									</dcterms:extent>
 								</xsl:when>
 							</xsl:choose>
-						</xsl:if>
+						</xsl:if>-->
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
