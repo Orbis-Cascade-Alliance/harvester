@@ -14,14 +14,15 @@
                         image URLs.
 -->
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dpla="http://dp.la/terms/" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
-	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:edm="http://www.europeana.eu/schemas/edm/"
-	xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/"
-	xmlns:prov="http://www.w3.org/ns/prov#" xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended"
-	xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester" xmlns:digest="org.apache.commons.codec.digest.DigestUtils"
-	xmlns:res="http://www.w3.org/2005/sparql-results#" exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest res" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dpla="http://dp.la/terms/"
+	xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:doap="http://usefulinc.com/ns/doap#"
+	xmlns:gsx="http://schemas.google.com/spreadsheets/2006/extended" xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester"
+	xmlns:digest="org.apache.commons.codec.digest.DigestUtils" xmlns:res="http://www.w3.org/2005/sparql-results#"
+	exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest res" version="2.0">
 	<xsl:output indent="yes" encoding="UTF-8"/>
 
 	<!-- request parameters -->
@@ -114,8 +115,9 @@ rdfs:label ?label
 	<xsl:template match="/">
 		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"
 			xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:edm="http://www.europeana.eu/schemas/edm/"
-			xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:dcmitype="http://purl.org/dc/dcmitype/"
-			xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:doap="http://usefulinc.com/ns/doap#">
+			xmlns:dpla="http://dp.la/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:prov="http://www.w3.org/ns/prov#"
+			xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+			xmlns:doap="http://usefulinc.com/ns/doap#">
 
 			<!-- generate triples for describing the set, but not for GetRecord -->
 			<xsl:if test="not(contains($set, 'GetRecord'))">
@@ -308,9 +310,7 @@ SELECT ?label WHERE {
 					<xsl:variable name="languages" as="element()*">
 						<languages>
 							<xsl:for-each select="$all-languages">
-								<language>
-									<xsl:call-template name="parse-language"/>
-								</language>
+								<xsl:call-template name="parse-language"/>
 							</xsl:for-each>
 						</languages>
 					</xsl:variable>
@@ -579,7 +579,8 @@ SELECT ?label WHERE {
 						<xsl:when test="$dams = 'digital-commons'">
 							<xsl:call-template name="place">
 								<xsl:with-param name="lat" select="$val"/>
-								<xsl:with-param name="long" select="following-sibling::*[local-name() = $element][normalize-space(text()) castable as xs:decimal][1]"/>
+								<xsl:with-param name="long"
+									select="following-sibling::*[local-name() = $element][normalize-space(text()) castable as xs:decimal][1]"/>
 							</xsl:call-template>
 						</xsl:when>
 					</xsl:choose>
@@ -992,19 +993,24 @@ SELECT ?label WHERE {
 				<!-- if 3 characters, assume it is the correct code -->
 				<xsl:when test="string-length($val) = 3">
 					<xsl:if test="$languages//language[code = $val]">
-						<xsl:value-of select="$val"/>
+						<language>
+							<xsl:value-of select="$val"/>
+						</language>
 					</xsl:if>
-
 				</xsl:when>
 				<!-- when it is too characters, look up the 3 letter code -->
 				<xsl:when test="string-length($val) = 2">
 					<xsl:if test="$languages//language[twoLetter = $val]">
-						<xsl:value-of select="$languages//language[twoLetter = $val]/code"/>
+						<language>
+							<xsl:value-of select="$languages//language[twoLetter = $val]/code"/>
+						</language>
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:if test="$languages//language[lower-case(name) = $val]">
-						<xsl:value-of select="$languages//language[lower-case(name) = $val][1]/code"/>
+						<language>
+							<xsl:value-of select="$languages//language[lower-case(name) = $val][1]/code"/>
+						</language>
 					</xsl:if>
 				</xsl:otherwise>
 			</xsl:choose>
