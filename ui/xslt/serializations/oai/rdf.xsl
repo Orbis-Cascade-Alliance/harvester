@@ -361,30 +361,19 @@ rdfs:label ?label
 				<xsl:with-param name="cho_uri" select="$cho_uri"/>
 			</xsl:call-template>
 
-			<!-- parse target, comma separated values. If no values, then make available in all systems -->
-
-			<xsl:variable name="audience" select="tokenize(normalize-space($target), ',')"/>
-
 			<xsl:choose>
-				<xsl:when test="count($audience) = 0">
+				<xsl:when test="$target = 'dpla'">
 					<doap:audience>dpla</doap:audience>
+				</xsl:when>
+				<xsl:when test="$target = 'primo'">
 					<doap:audience>primo</doap:audience>
+				</xsl:when>
+				<xsl:when test="$target = 'aw'">
 					<doap:audience>aw</doap:audience>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:for-each select="$audience">
-						<xsl:choose>
-							<xsl:when test=". = 'dpla'">
-								<doap:audience>dpla</doap:audience>
-							</xsl:when>
-							<xsl:when test=". = 'primo'">
-								<doap:audience>primo</doap:audience>
-							</xsl:when>
-							<xsl:when test=". = 'aw'">
-								<doap:audience>aw</doap:audience>
-							</xsl:when>
-						</xsl:choose>
-					</xsl:for-each>
+					<doap:audience>dpla</doap:audience>
+					<doap:audience>primo</doap:audience>
 				</xsl:otherwise>
 			</xsl:choose>
 

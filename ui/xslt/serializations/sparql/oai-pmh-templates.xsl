@@ -170,7 +170,7 @@
 				<xsl:choose>
 					<xsl:when test="@rdf:datatype">
 						<dc:date>
-							<xsl:value-of select="replace(., '-', '')"/>
+							<xsl:value-of select="."/>
 						</dc:date>
 						<dc:date.start>
 							<xsl:value-of select="nwda:denormalizeDate(., 'from')"/>

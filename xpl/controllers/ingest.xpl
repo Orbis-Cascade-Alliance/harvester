@@ -81,13 +81,13 @@ PREFIX prov:	<http://www.w3.org/ns/prov#>
 DELETE {?s ?p ?o} WHERE { 
 {?cho dcterms:relation <ARK> ;
   dcterms:isPartOf <SET> .
-?ore edm:aggregatedCHO ?cho .
-?ore edm:object ?s .
+?agg edm:aggregatedCHO ?cho .
+?agg edm:object ?s .
 ?s ?p ?o}
 UNION {?cho dcterms:relation <ARK> ;
   dcterms:isPartOf <SET> .
-?ore edm:aggregatedCHO ?cho .
-?ore edm:preview ?s .
+?agg edm:aggregatedCHO ?cho .
+?agg edm:preview ?s .
 ?s ?p ?o}
 UNION {?cho dcterms:relation <ARK> ;
   dcterms:isPartOf <SET> .
