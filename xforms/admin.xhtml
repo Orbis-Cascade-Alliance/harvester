@@ -174,12 +174,20 @@ CONSTRUCT {
 			<!-- get the list of repositories from the SPARQL endpoint on xforms-model-construct-done -->
 			<xforms:action ev:event="xforms-model-construct-done">
 				<!-- get authentication roles -->
-				<xforms:insert context="instance('control-instance')" nodeset="status" position="after"
-					origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"/>
-				<xforms:setvalue ref="instance('control-instance')/repository" value="instance('control-instance')/request-security/role" if="not(xxforms:is-user-in-role('harvester-admin'))"/>
-				<xforms:var name="pub"
-					select="if (xxforms:is-user-in-role('harvester-admin')) then '?pub' else concat('&lt;', instance('config')/production_server, 'contact#', instance('control-instance')/request-security/role, '&gt;')"/>
-				<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', $pub)"/>
+				<xforms:action if="xxforms:is-user-in-role('harvester-admin')">
+					<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', '?pub')"/>
+				</xforms:action>
+				<xforms:action if="not(xxforms:is-user-in-role('harvester-admin'))">
+					<xforms:insert context="instance('control-instance')" nodeset="status" position="after"
+						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"/>
+					<xforms:setvalue ref="instance('control-instance')/repository" value="instance('control-instance')/request-security/role"/>
+					
+					<!-- set the repository based on whether or it is harvester-only -->
+					<xforms:var name="pub" select="if (instance('config')/codes/repository[@marc=instance('control-instance')/repository]/@harvester-only = true()) then concat('&lt;', instance('config')/url, 'agency/', instance('control-instance')/repository, '&gt;') else concat('&lt;', instance('config')/production_server, 'contact#', instance('control-instance')/repository, '&gt;')"/>
+					<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', $pub)"/>
+				</xforms:action>
+				
+				<!-- get OAI-PMH sets -->
 				<xforms:send submission="submit-sparqlQuery"/>
 				<xforms:insert context="instance('set-list')" origin="instance('sparqlResponse')/*"/>
 			</xforms:action>
