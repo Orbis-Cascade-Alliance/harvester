@@ -238,7 +238,7 @@
 
 				</identifier>
 				<datestamp>
-					<xsl:value-of select="substring(prov:generatedAtTime, 1, 10)"/>
+					<xsl:value-of select="substring(prov:generatedAtTime[1], 1, 10)"/>
 				</datestamp>
 				<xsl:for-each select="doap:audience[. = 'primo']">
 					<setSpec>
