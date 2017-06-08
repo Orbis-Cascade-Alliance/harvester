@@ -1,7 +1,6 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude"
-	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:foaf="http://xmlns.com/foaf/0.1/"
-	xmlns:arch="http://purl.org/archival/vocab/arch#">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:fr="http://orbeon.org/oxf/xml/form-runner"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:arch="http://purl.org/archival/vocab/arch#">
 	<head>
 		<title>Orbis Cascade Harvester: Edit Repository Metadata</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
@@ -23,11 +22,11 @@
 			</xforms:instance>
 
 			<xforms:instance id="rdf" xxforms:exclude-result-prefixes="#all">
-				<rdf:RDF/>
+				<rdf:RDF></rdf:RDF>
 			</xforms:instance>
 
 			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
-				<xi:include href="../config.xml"/>
+				<xi:include href="../config.xml"></xi:include>
 			</xforms:instance>
 
 			<!-- XPL configs for read/write to disk -->
@@ -63,39 +62,39 @@ DELETE {?s ?p ?o} WHERE {
 			</xforms:instance>
 
 			<xforms:instance id="sparqlResponse" xxforms:exclude-result-prefixes="#all">
-				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
+				<sparql xmlns="http://www.w3.org/2005/sparql-results#"></sparql>
 			</xforms:instance>
 
 			<!-- ************************* BINDINGS ************************** -->
 			<xforms:bind nodeset="instance('rdf')">
 				<xforms:bind nodeset="arch:Archive">
-					<xforms:bind nodeset="foaf:name" required="true()"/>
-					<xforms:bind nodeset="foaf:homepage/@rdf:resource" required="true()" constraint="matches(., '^https?://')"/>
-				</xforms:bind>				
+					<xforms:bind nodeset="foaf:name" required="true()"></xforms:bind>
+					<xforms:bind nodeset="foaf:homepage/@rdf:resource" required="true()" constraint="matches(., '^https?://')"></xforms:bind>
+				</xforms:bind>
 			</xforms:bind>
 
 			<xforms:bind nodeset="instance('control-instance')">
-				<xforms:bind id="save-trigger" nodeset="save-trigger" type="xs:boolean" readonly=". != true()"/>
+				<xforms:bind id="save-trigger" nodeset="save-trigger" type="xs:boolean" readonly=". != true()"></xforms:bind>
 			</xforms:bind>
 
 			<!-- ************************* SUBMISSIONS ************************** -->
 			<!-- load RDF from filesystem -->
 			<xforms:submission id="load-rdf" serialization="none" method="get"
 				action="file://{instance('config')/repository_path}/harvester/{instance('control-instance')/repository}.rdf" replace="instance" instance="rdf">
-				<xforms:message ev:event="xforms-submit-error" level="modal">Error loading file from filesystem. Be sure that the repository_path in the
-					Harvester config.xml is correct or that a file with the repository name exists.</xforms:message>
+				<xforms:message ev:event="xforms-submit-error" level="modal">Error loading file from filesystem. Be sure that the repository_path in the Harvester config.xml is
+					correct or that a file with the repository name exists.</xforms:message>
 				<xforms:action ev:event="xforms-submit-done">
 					<xforms:setvalue ref="instance('control-instance')/save-trigger" value="true()" if="xxforms:valid(instance('rdf'), true())"></xforms:setvalue>
 				</xforms:action>
 			</xforms:submission>
-			
+
 			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlUpdate')" serialization="text/plain" replace="none" method="post"
 				mediatype="application/sparql-update">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
 				</xforms:action>
 			</xforms:submission>
-			
+
 			<xforms:submission id="post-new" action="{instance('config')/sparql/store}?default" ref="instance('rdf')" replace="none" method="post" mediatype="application/rdf+xml">
 				<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Successfully posted to endpoint.</xforms:setvalue>
 				<xforms:message ev:event="xforms-submit-error" level="modal">Post to endpoint failed.</xforms:message>
@@ -103,22 +102,22 @@ DELETE {?s ?p ?o} WHERE {
 
 			<!-- **************** DYNAMIC VALIDATION CONTROLS ********************** -->
 			<xforms:action ev:event="xxforms-invalid" ev:observer="rdf">
-				<xforms:setvalue ref="instance('control-instance')/save-trigger" value="false()"/>
+				<xforms:setvalue ref="instance('control-instance')/save-trigger" value="false()"></xforms:setvalue>
 			</xforms:action>
 
 			<xforms:action ev:event="xxforms-valid" ev:observer="rdf">
-				<xforms:setvalue ref="instance('control-instance')/save-trigger" value="true()"/>
+				<xforms:setvalue ref="instance('control-instance')/save-trigger" value="true()"></xforms:setvalue>
 			</xforms:action>
 
 			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
 			<xforms:action ev:event="xforms-model-construct-done">
 				<xforms:action if="not(xxforms:is-user-in-role('harvester-admin'))">
 					<xforms:insert context="instance('control-instance')" nodeset="status" position="after"
-						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"/>
-					<xforms:setvalue ref="instance('control-instance')/repository" value="instance('control-instance')/request-security/role"/>
-					<xforms:send submission="load-rdf"/>
+						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"></xforms:insert>
+					<xforms:setvalue ref="instance('control-instance')/repository" value="instance('control-instance')/request-security/role"></xforms:setvalue>
+					<xforms:send submission="load-rdf"></xforms:send>
 				</xforms:action>
-			</xforms:action>			
+			</xforms:action>
 		</xforms:model>
 	</head>
 
@@ -146,12 +145,11 @@ DELETE {?s ?p ?o} WHERE {
 							<p>
 								<span class="glyphicon glyphicon-info-sign"></span>
 								<strong>Status:</strong>
-								<xforms:output ref="instance('control-instance')/status"/>
+								<xforms:output ref="instance('control-instance')/status"></xforms:output>
 							</p>
 						</div>
 					</xforms:group>
 					<h1>Edit Repository Metadata</h1>
-
 					<xforms:group ref=".[xxforms:is-user-in-role('harvester-admin')]">
 						<div>
 							<xforms:select1 ref="instance('control-instance')/repository">
@@ -159,59 +157,71 @@ DELETE {?s ?p ?o} WHERE {
 								<xforms:alert>Required</xforms:alert>
 								<xforms:item>
 									<xforms:label>Select...</xforms:label>
-									<xforms:value/>
+									<xforms:value></xforms:value>
 								</xforms:item>
-								<xforms:itemset
-									nodeset="xxforms:sort(distinct-values(instance('config')/codes/repository[@harvester-only=true()]/@marc), ., 'text', 'ascending')">
-									<xforms:label ref="."/>
-									<xforms:value ref="."/>
+								<xforms:itemset nodeset="xxforms:sort(distinct-values(instance('config')/codes/repository[@harvester-only=true()]/@marc), ., 'text', 'ascending')">
+									<xforms:label ref="."></xforms:label>
+									<xforms:value ref="."></xforms:value>
 								</xforms:itemset>
 								<!-- load the repository RDF from disk on value changed -->
 								<xforms:action ev:event="xforms-value-changed" if="string-length(.) &gt; 0">
-									<xforms:send submission="load-rdf"/>
+									<xforms:send submission="load-rdf"></xforms:send>
 								</xforms:action>
 							</xforms:select1>
 						</div>
 					</xforms:group>
-
 					<xforms:group ref="instance('rdf')/arch:Archive">
-						<div>
-							<xforms:input ref="foaf:name">
-								<xforms:label>Repository Name</xforms:label>
-								<xforms:alert>Required</xforms:alert>
-								<xforms:hint>Officially designated name for the organization</xforms:hint>
-							</xforms:input>
-						</div>
-						<div>
-							<xforms:input ref="foaf:homepage/@rdf:resource">
-								<xforms:label>Website</xforms:label>
-								<xforms:alert>Required; must conform to URL pattern</xforms:alert>
-							</xforms:input>
-						</div>
+						<table class="table">
+							<tr>
+								<td style="width:60%;vertical-align:top">
+									<div>
+										<xforms:input ref="foaf:name">
+											<xforms:label>Repository Name</xforms:label>
+											<xforms:alert>Required</xforms:alert>
+											<xforms:hint>Officially designated name for the organization</xforms:hint>
+										</xforms:input>
+									</div>
+								</td>
+								<td>What is the name of your repository as you would like it to appear in Alliance Primo and/or DPLA? NB: This should include the name of your parent
+									institution in most cases, e.g., Western Washington University, Heritage Resources.</td>
+							</tr>
+							<tr>
+								<td style="width:60%;vertical-align:top">
+									<div>
+										<xforms:input ref="foaf:homepage/@rdf:resource">
+											<xforms:label>Website</xforms:label>
+											<xforms:alert>Required; must conform to URL pattern</xforms:alert>
+										</xforms:input>
+									</div>
+								</td>
+								<td>Please give the URL of your repository. Ideally this is a fairly stable URL that goes to your specific department rather than your overall
+									organization. It must start with 'http'.</td>
+							</tr>
+						</table>
 						<div>
 							<xforms:trigger bind="save-trigger">
 								<xforms:label><span class="glyphicon glyphicon-floppy-disk"></span>Save</xforms:label>
 								<xforms:action ev:event="DOMActivate">
 									<!-- save file back to disk -->
-									<xforms:setvalue ref="instance('save-config')/url" value="concat('file://', instance('config')/repository_path, '/harvester/',  instance('control-instance')/repository, '.rdf')"></xforms:setvalue>
+									<xforms:setvalue ref="instance('save-config')/url"
+										value="concat('file://', instance('config')/repository_path, '/harvester/',  instance('control-instance')/repository, '.rdf')"></xforms:setvalue>
 									<xforms:insert nodeset="instance('dump')"
 										origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/save-rdf.xpl', ('rdf', 'configuration'), (instance('rdf'), instance('save-config')), 'data')"></xforms:insert>
 									<!-- delete graph from triplestore, then repost updates -->
-									<xforms:setvalue ref="instance('sparqlUpdate')" value="replace(instance('sparqlUpdate-templates')/query[@id='delete-repository'], 'URI', instance('rdf')/arch:Archive/@rdf:about)"></xforms:setvalue>									
+									<xforms:setvalue ref="instance('sparqlUpdate')"
+										value="replace(instance('sparqlUpdate-templates')/query[@id='delete-repository'], 'URI', instance('rdf')/arch:Archive/@rdf:about)"></xforms:setvalue>
 									<xforms:send submission="delete-graph"></xforms:send>
-									
 									<!-- repost the RDF -->
 									<xforms:send submission="post-new"></xforms:send>
 								</xforms:action>
 							</xforms:trigger>
 						</div>
 					</xforms:group>
-
 					<!--<fr:xforms-inspector/>-->
 				</div>
 			</div>
 		</div>
 		<!-- footer -->
-		<xi:include href="components/footer.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+		<xi:include href="components/footer.xml" xmlns:xi="http://www.w3.org/2001/XInclude"></xi:include>
 	</body>
 </html>
