@@ -823,6 +823,20 @@ rdfs:label ?label
 			<xsl:when test="$dams = 'omeka'">
 				<xsl:if test="dc:identifier[contains(., 'files/original')]">
 					<xsl:variable name="image_url" select="dc:identifier[contains(., 'files/original')][1]"/>
+					<xsl:variable name="filename" select="tokenize($image_url, '/')[last()]"/>
+					<xsl:variable name="pieces" select="tokenize($filename, '\.')"/>
+					<xsl:variable name="thumbnail_url">
+						<xsl:value-of select="replace(replace($image_url, $filename, ''), '/original/', '/thumbnails/')"/>
+						
+						<xsl:for-each select="$pieces">
+							<xsl:if test="not(position()=last())">
+								<xsl:value-of select="."/>
+								<xsl:text>.</xsl:text>
+							</xsl:if>
+						</xsl:for-each>
+						<!-- extension -->
+						<xsl:text>jpg</xsl:text>
+					</xsl:variable>
 
 					<edm:WebResource rdf:about="{$image_url}">
 						<xsl:if test="string($rights_uri)">
@@ -841,7 +855,7 @@ rdfs:label ?label
 							</xsl:when>
 						</xsl:choose>
 					</edm:WebResource>
-					<edm:WebResource rdf:about="{replace(replace($image_url, '/original/', '/thumbnails/'), '.tif', '.jpg')}">
+					<edm:WebResource rdf:about="{$thumbnail_url}">
 						<xsl:if test="string($rights_uri)">
 							<edm:rights rdf:resource="{$rights_uri}"/>
 						</xsl:if>
@@ -914,7 +928,22 @@ rdfs:label ?label
 			<xsl:when test="$dams = 'omeka'">
 				<xsl:if test="dc:identifier[contains(., 'files/original')]">
 					<xsl:variable name="image_url" select="dc:identifier[contains(., 'files/original')][1]"/>
-					<edm:preview rdf:resource="{replace(replace($image_url, '/original/', '/thumbnails/'), '.tif', '.jpg')}"/>
+					<xsl:variable name="filename" select="tokenize($image_url, '/')[last()]"/>
+					<xsl:variable name="pieces" select="tokenize($filename, '\.')"/>
+					<xsl:variable name="thumbnail_url">
+						<xsl:value-of select="replace(replace($image_url, $filename, ''), '/original/', '/thumbnails/')"/>
+						
+						<xsl:for-each select="$pieces">
+							<xsl:if test="not(position()=last())">
+								<xsl:value-of select="."/>
+								<xsl:text>.</xsl:text>
+							</xsl:if>
+						</xsl:for-each>
+						<!-- extension -->
+						<xsl:text>jpg</xsl:text>
+					</xsl:variable>
+					
+					<edm:preview rdf:resource="{$thumbnail_url}"/>
 					<edm:object rdf:resource="{$image_url}"/>
 					<edm:isShownAt rdf:resource="{$image_url}"/>
 				</xsl:if>
