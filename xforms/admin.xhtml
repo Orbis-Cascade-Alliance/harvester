@@ -54,7 +54,7 @@
 			</xforms:instance>
 
 			<!-- sparql update -->
-			<xforms:instance id="sparql-update-templates">
+			<xforms:instance id="sparqlUpdate-templates">
 				<queries xmlns="">
 					<query id="purge-repositories">
 						<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -65,14 +65,15 @@ DELETE {?s ?p ?o} WHERE { ?s rdf:type arch:Archive . ?s ?p ?o }]]>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX prov:	<http://www.w3.org/ns/prov#>
 PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
-DELETE {?s ?p ?o} WHERE { 
-{?agg prov:wasDerivedFrom <SET> ;
+DELETE {?s ?p ?o} WHERE {
+?set a dcmitype:Collection FILTER (regex(str(?set), '%SETSPEC%') && strStarts(str(?set), '%SERVICE%'))
+{?agg prov:wasDerivedFrom ?set ;
     edm:preview ?s . ?s ?p ?o}
-UNION {?agg prov:wasDerivedFrom <SET> ;
+UNION {?agg prov:wasDerivedFrom ?set ;
     edm:object ?s . ?s ?p ?o}
-UNION {?s dcterms:isPartOf <SET> . ?s ?p ?o }
-UNION {?s prov:wasDerivedFrom <SET> . ?s ?p ?o }
-UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
+UNION {?s dcterms:isPartOf ?set . ?s ?p ?o }
+UNION {?s prov:wasDerivedFrom ?set . ?s ?p ?o }
+UNION {?set a dcmitype:Collection . ?s ?p ?o . FILTER (?s = ?set)}
 }]]></query>
 				</queries>
 			</xforms:instance>
@@ -140,7 +141,7 @@ CONSTRUCT {
 				<xforms:action ev:event="xforms-submit-done">
 					<!-- first purge triples if the RDF has been successfully loaded -->
 					<!-- submit SPARQL/Update to purge arch:Archive triples -->
-					<xforms:setvalue ref="instance('sparqlQuery')" value="instance('sparql-update-templates')/query[@id='purge-repositories']"/>
+					<xforms:setvalue ref="instance('sparqlQuery')" value="instance('sparqlUpdate-templates')/query[@id='purge-repositories']"/>
 					<xforms:send submission="delete-graph"/>
 
 					<xforms:action ev:event="xforms-submit-done">
@@ -368,9 +369,12 @@ CONSTRUCT {
 			<fr:positive-choice>
 				<fr:label>Yes</fr:label>
 				<xforms:action ev:event="DOMActivate">
-					<!-- iterate through repositories with a count greater than 0 -->
+					<!-- isolate the setSpec and OAI-PMH service for deleting the set based on regex instead of precise URI match -->
+					<xforms:var name="service" select="substring-before(instance('control-instance')/set-url, '?')"/>
+					<xforms:var name="setSpec" select="tokenize(substring-after(instance('control-instance')/set-url, '?'), '&amp;')[contains(., 'set=')]"/>
+					
 					<xforms:setvalue ref="instance('sparqlQuery')"
-						value="replace(instance('sparql-update-templates')/query[@id='delete-set'], 'SET', instance('control-instance')/set-url)"/>
+						value="replace(replace(instance('sparqlUpdate-templates')/query[@id='delete-set'], '%SETSPEC%', $setSpec), '%SERVICE%', $service)"/>
 					<xforms:send submission="delete-graph"/>
 					<xforms:action ev:event="xforms-submit-done">
 						<xforms:setvalue ref="instance('control-instance')/status">Set successfully deleted set from triplestore.</xforms:setvalue>

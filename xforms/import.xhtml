@@ -191,13 +191,14 @@ PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX prov:	<http://www.w3.org/ns/prov#>
 PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
 DELETE {?s ?p ?o} WHERE { 
-{?agg prov:wasDerivedFrom <SET> ;
+?set a dcmitype:Collection FILTER (regex(str(?set), '%SETSPEC%') && strStarts(str(?set), '%SERVICE%'))
+{?agg prov:wasDerivedFrom ?set ;
     edm:preview ?s . ?s ?p ?o}
-UNION {?agg prov:wasDerivedFrom <SET> ;
+UNION {?agg prov:wasDerivedFrom ?set ;
     edm:object ?s . ?s ?p ?o}
-UNION {?s dcterms:isPartOf <SET> . ?s ?p ?o }
-UNION {?s prov:wasDerivedFrom <SET> . ?s ?p ?o }
-UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>)}
+UNION {?s dcterms:isPartOf ?set . ?s ?p ?o }
+UNION {?s prov:wasDerivedFrom ?set . ?s ?p ?o }
+UNION {?set a dcmitype:Collection . ?s ?p ?o . FILTER (?s = ?set)}
 }]]></query>
 					<query id="delete-vocab"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 DELETE {?s ?p ?o} WHERE { 
@@ -1803,9 +1804,15 @@ We desire that our information be broadly available for educational and other pu
 				<xforms:action ev:event="DOMActivate">
 					<!-- set SPARQL service -->
 					<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/sparql/update"/>
-					<!-- delete the set from the SPARQL endpoint -->
+					
+					<!-- isolate the setSpec and OAI-PMH service for deleting the set based on regex instead of precise URI match -->
+					<xforms:var name="service" select="substring-before(instance('set')/set, '?')"/>
+					<xforms:var name="setSpec" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')[contains(., 'set=')]"/>
+					
 					<xforms:setvalue ref="instance('sparqlUpdate')"
-						value="replace(instance('sparqlUpdate-templates')/query[@id='delete-set'], 'SET', normalize-space(instance('set')/set))"/>
+						value="replace(replace(instance('sparqlUpdate-templates')/query[@id='delete-set'], '%SETSPEC%', $setSpec), '%SERVICE%', $service)"/>
+					
+					<!-- delete the set from the SPARQL endpoint -->
 					<xforms:send submission="update-graph"/>
 					<!-- call the getRDF web service to transform OAI-PMH into RDF. It will make use to any terms normalized and inserted into Google Sheets -->
 					<xforms:action ev:event="xforms-submit-done">

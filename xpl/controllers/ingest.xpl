@@ -62,6 +62,10 @@
 				<xsl:variable name="production_server" select="/config/production_server"/>
 				<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name='ark']/value"/>
 				<xsl:param name="set" select="normalize-space(doc('input:request')/request/parameters/parameter[name='sets']/value)"/>
+				
+				<!-- derive OAI-PMH service and setSpec -->
+				<xsl:variable name="service" select="substring-before($set, '?')"/>
+				<xsl:variable name="setSpec" select="tokenize(substring-after($set, '?'), '&amp;')[contains(., 'set=')]"/>
 
 				<xsl:template match="/">
 
@@ -79,21 +83,22 @@
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX prov:	<http://www.w3.org/ns/prov#>
 DELETE {?s ?p ?o} WHERE { 
+?set a dcmitype:Collection FILTER (regex(str(?set), '%SETSPEC%') && strStarts(str(?set), '%SERVICE%'))
 {?cho dcterms:relation <ARK> ;
-  dcterms:isPartOf <SET> .
+  dcterms:isPartOf ?set .
 ?agg edm:aggregatedCHO ?cho .
 ?agg edm:object ?s .
 ?s ?p ?o}
 UNION {?cho dcterms:relation <ARK> ;
-  dcterms:isPartOf <SET> .
+  dcterms:isPartOf ?set .
 ?agg edm:aggregatedCHO ?cho .
 ?agg edm:preview ?s .
 ?s ?p ?o}
 UNION {?cho dcterms:relation <ARK> ;
-  dcterms:isPartOf <SET> .
+  dcterms:isPartOf ?set .
 ?s edm:aggregatedCHO ?cho . ?s ?p ?o }
 UNION {?s dcterms:relation <ARK> ;
-  dcterms:isPartOf <SET> .
+  dcterms:isPartOf ?set .
 ?s ?p ?o }
 }]]>
 							</xsl:when>
@@ -103,20 +108,21 @@ UNION {?s dcterms:relation <ARK> ;
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX prov:	<http://www.w3.org/ns/prov#>
 DELETE {?s ?p ?o} WHERE { 
-{?agg prov:wasDerivedFrom <SET> ;
+?set a dcmitype:Collection FILTER (regex(str(?set), '%SETSPEC%') && strStarts(str(?set), '%SERVICE%'))
+{?agg prov:wasDerivedFrom ?set ;
     edm:preview ?s . ?s ?p ?o}
-UNION {?agg prov:wasDerivedFrom <SET> ;
+UNION {?agg prov:wasDerivedFrom ?set ;
     edm:object ?s . ?s ?p ?o}
-UNION {?s dcterms:isPartOf <SET> . ?s ?p ?o }
-UNION {?s prov:wasDerivedFrom <SET> . ?s ?p ?o }
-UNION {<SET> a dcmitype:Collection . ?s ?p ?o . FILTER (?s = <SET>}
+UNION {?s dcterms:isPartOf ?set . ?s ?p ?o }
+UNION {?s prov:wasDerivedFrom ?set . ?s ?p ?o }
+UNION {?set a dcmitype:Collection . ?s ?p ?o . FILTER (?s = ?set)}
 }]]>
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:variable>
 
 					<query>
-						<xsl:value-of select="replace(replace($template, 'SET', $set), 'ARK', concat($production_server, $ark))"/>
+						<xsl:value-of select="replace(replace(replace($template, '%SETSPEC%', $setSpec), 'ARK', concat($production_server, $ark)), '%SERVICE%', $service)"/>
 					</query>
 				</xsl:template>
 			</xsl:stylesheet>
