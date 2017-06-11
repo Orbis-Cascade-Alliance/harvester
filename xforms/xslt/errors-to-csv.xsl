@@ -3,12 +3,16 @@
 	version="2.0">
 	
 	<xsl:template match="/">
-		<xsl:text>id,errors&#x0A;</xsl:text>
+		<xsl:text>id,uri,title,errors&#x0A;</xsl:text>
 		<xsl:apply-templates select="//record"/>
 	</xsl:template>	
 	
 	<xsl:template match="record">
 		<xsl:value-of select="concat('&#x022;', @id, '&#x022;')"/>
+		<xsl:text>,</xsl:text>
+		<xsl:value-of select="concat('&#x022;', uri, '&#x022;')"/>
+		<xsl:text>,</xsl:text>
+		<xsl:value-of select="concat('&#x022;', title, '&#x022;')"/>
 		<xsl:text>,</xsl:text>
 		<xsl:value-of select="concat('&#x022;', string-join(error, ';'), '&#x022;')"/>
 		<xsl:text>&#x0A;</xsl:text>

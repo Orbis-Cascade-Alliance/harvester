@@ -47,15 +47,16 @@
             </xforms:trigger>
         </xforms:group>
         
-        <!-- or just diplay the validation results -->
+        <!-- or just display the validation results -->
         <xforms:group ref=".[not(instance('control-instance')/normalization/*[. = true()])]">
             <xforms:trigger>
                 <xforms:label>CONTINUE</xforms:label>
                 <xforms:action ev:event="DOMActivate">
                     <!-- get the OAI-PMH feed -->
                     <xforms:setvalue ref="instance('control-instance')/oai-service" value="normalize-space(instance('set')/set)"/>
-                    <xforms:send submission="get-oai-pmh"/>
-                    <xforms:toggle case="validation-results"/>
+                    <xforms:send submission="get-oai-pmh"/>                    
+                    
+                    <xforms:toggle case="validation-results"/>                    
                     
                     <xforms:setvalue ref="instance('control-instance')/interfaces/editing/@current" value="false()"/>
                     <xforms:setvalue ref="instance('control-instance')/interfaces/editing/@return" value="true()"/>

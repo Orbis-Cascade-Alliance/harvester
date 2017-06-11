@@ -91,6 +91,10 @@
 					<terms_of_service>false</terms_of_service>
 				</set>
 			</xforms:instance>
+			
+			<xforms:instance id="tempErrorCount">
+				<count xmlns=""/>
+			</xforms:instance>
 
 			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
 				<xi:include href="../config.xml"/>
@@ -324,12 +328,12 @@ OPTIONAL {?c skos:scopeNote ?note .
 			</xforms:instance>
 
 			<!-- download CSV -->
-			<xforms:instance id="csv">
+			<xforms:instance id="csv" xxforms:exclude-result-prefixes="#all">
 				<csv xmlns=""></csv>
 			</xforms:instance>
 
-			<xforms:instance id="csv-download">
-				<csv xmlns=""></csv>
+			<xforms:instance id="csv-download" xxforms:exclude-result-prefixes="#all">
+				<csv xmlns="" filename=""></csv>
 			</xforms:instance>
 
 			<!-- ************************* BINDINGS ************************** -->
@@ -392,6 +396,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 					</xforms:bind>
 				</xforms:bind>
 			</xforms:bind>
+			
+			<xforms:bind nodeset="instance('tempErrorCount')" calculate="instance('control-instance')/validation/error-count" type="xs:integer"/>
 
 			<xforms:bind nodeset="instance('validation')">
 				<xforms:bind nodeset="record">
@@ -420,7 +426,9 @@ OPTIONAL {?c skos:scopeNote ?note .
 				</xforms:bind>
 			</xforms:bind>
 
-			<xforms:bind nodeset="instance('csv-download')" type="xs:base64Binary"/>
+			<xforms:bind nodeset="instance('csv-download')" type="xs:base64Binary">
+				<xforms:bind nodeset="@filename" calculate="concat(instance('control-instance')/oai-set-code, '.csv')"/>
+			</xforms:bind>
 
 			<!-- ************************* SUBMISSIONS ************************** -->
 			<!-- get OAI-PMH feed, perform validation, and return the count (iterating through resumptionTokens if necessary -->
@@ -626,13 +634,6 @@ OPTIONAL {?c skos:scopeNote ?note .
 							<xforms:send submission="get-oai-pmh"/>
 						</xforms:action>
 					</xforms:action>
-					
-					<!--<xforms:action if="instance('control-instance')/validation/error-count &gt; 0">
-						<xforms:insert nodeset="instance('csv')"
-							origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/errors-to-csv.xpl', 'data', instance('validation'), 'data')"/>
-						<xforms:setvalue ref="instance('csv-download')"
-							value="saxon:string-to-base64Binary(saxon:serialize(instance('csv'), 'text'), 'UTF-8')"/>
-					</xforms:action>-->
 				</xforms:action>
 			</xforms:submission>
 
@@ -751,7 +752,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 				</xforms:action>
 			</xforms:submission>
 
-			<!-- **************** DYNAMIC VALIDATION CONTROLS ********************** -->
+			<!-- ********************** DYNAMIC VALIDATION CONTROLS ********************** -->
 			<xforms:action ev:event="xxforms-invalid" ev:observer="set">
 				<xforms:setvalue ref="instance('control-instance')/remediation-page-trigger" value="false()"/>
 				<xforms:setvalue ref="instance('control-instance')/validation-page-trigger" value="false()"/>
@@ -764,6 +765,17 @@ OPTIONAL {?c skos:scopeNote ?note .
 				<xforms:setvalue ref="instance('control-instance')/validation-page-trigger" value="true()"/>
 				<xforms:setvalue ref="instance('control-instance')/enrichment-page-trigger" value="true()"/>
 				<xforms:setvalue ref="instance('control-instance')/validate-trigger" value="true()"/>
+			</xforms:action>
+			
+			<!-- ********************** ERROR COUNT INSTANCE CHANGE: GENERATE CSV ********************** -->
+			<xforms:action ev:event="xxforms-value-changed" ev:observer="tempErrorCount">
+				<!-- generate error report CSV when applicable -->
+				<xforms:action if="instance('tempErrorCount') &gt; 0">
+					<xforms:insert nodeset="instance('csv')"
+						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/errors-to-csv.xpl', 'data', instance('validation'), 'data')"/>
+					<xforms:setvalue ref="instance('csv-download')"
+						value="saxon:string-to-base64Binary(saxon:serialize(instance('csv'), 'text'), 'UTF-8')"/>
+				</xforms:action>
 			</xforms:action>
 
 			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
@@ -972,10 +984,10 @@ OPTIONAL {?c skos:scopeNote ?note .
 														<xforms:label>Primo only</xforms:label>
 														<xforms:value>primo</xforms:value>
 													</xforms:item>
-													<xforms:item>
+													<!--<xforms:item>
 														<xforms:label>Archives West only</xforms:label>
 														<xforms:value>aw</xforms:value>
-													</xforms:item>
+													</xforms:item>-->
 													<xforms:setvalue ev:event="xforms-value-changed" ref="instance('control-instance')/validation-record-view"
 														value="if (instance('set')/target = 'primo') then 'primo' else 'dpla'"/>
 												</xforms:select1>
@@ -1479,17 +1491,18 @@ We desire that our information be broadly available for educational and other pu
 											<div class="bg-danger alert-box text-danger">
 												<span class="glyphicon glyphicon-exclamation-sign"></span>
 												<strong>Alert:</strong>
-												<strong><xforms:output ref="instance('control-instance')/validation/error-count"/></strong> records of
+												<strong>
+													<xforms:output ref="instance('control-instance')/validation/error-count"/></strong> records of
 														<strong><xforms:output ref="instance('control-instance')/validation/total-count"/></strong> total have
-												reported errors. Up to 20 are displayed below.<!-- Please download CSV for full report.--></div>
-
-											<!--<div>												
-												<xforms:output ref="instance('csv-download')" appearance="xxforms:download">
+												reported errors. Up to 20 are displayed below.<!-- Please download CSV for full report.--></div>											
+											<div>												
+												
+												<!--<xforms:output ref="instance('csv-download')" appearance="xxforms:download">
 													<xforms:label>Download CSV</xforms:label>
 													<xforms:mediatype>text/csv</xforms:mediatype>
-													<xforms:filename ref="concat(instance('control-instance')/oai-set-code, '.csv')"></xforms:filename>													
-												</xforms:output>
-											</div>-->
+													<xforms:filename ref="instance('csv-download')/@filename"></xforms:filename>													
+												</xforms:output>-->
+											</div>
 
 											<xforms:repeat nodeset="record[error[@set=false() or not(@set)]][position() &lt;= 20]">
 												<div>
@@ -1787,7 +1800,7 @@ We desire that our information be broadly available for educational and other pu
 						<xforms:output ref="instance('set')/type" id="type"/>
 					</div>
 
-					<!--<fr:xforms-inspector/>-->
+					<fr:xforms-inspector/>
 				</div>
 			</div>
 		</div>
@@ -1866,7 +1879,7 @@ We desire that our information be broadly available for educational and other pu
 		<xxforms:dialog id="destination-info-dialog" appearance="full" level="modal" close="true" draggable="true" visible="false">
 			<xforms:label>Destination Information</xforms:label>
 			<div>
-				<p><strong>Archives West</strong>: Choose only for digital objects associated with a finding aid in Archives West.</p>
+				<!--<p><strong>Archives West</strong>: Choose only for digital objects associated with a finding aid in Archives West.</p>-->
 				<p><strong>Primo</strong>: Digital objects that are described with Dublin Core in an unrestricted system and that you would like to pipe into
 					Alliance Primo.</p>
 				<p><strong>DPLA</strong>: Digital objects that are described with Dublin Core in an unrestricted system and that are part of the United States’
