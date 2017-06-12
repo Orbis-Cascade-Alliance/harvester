@@ -24,6 +24,7 @@
 	xmlns:digest="org.apache.commons.codec.digest.DigestUtils" xmlns:res="http://www.w3.org/2005/sparql-results#"
 	exclude-result-prefixes="oai_dc oai xs harvester atom openSearch gsx digest res" version="2.0">
 	<xsl:output indent="yes" encoding="UTF-8"/>
+	<xsl:include href="../../functions.xsl"/>
 
 	<!-- request parameters -->
 	<xsl:param name="mode" select="doc('input:request')/request/parameters/parameter[name = 'mode']/value"/>
@@ -450,15 +451,15 @@ rdfs:label ?label
 							<edm:TimeSpan>
 								<edm:begin>
 									<xsl:attribute name="rdf:datatype">
-										<xsl:value-of select="harvester:date_dataType($begin)"/>
+										<xsl:value-of select="harvester:date_dataType($dams, $begin)"/>
 									</xsl:attribute>
-									<xsl:value-of select="harvester:parseDateTime($begin)"/>
+									<xsl:value-of select="harvester:parseDateTime($dams, $begin)"/>
 								</edm:begin>
 								<edm:end>
 									<xsl:attribute name="rdf:datatype">
-										<xsl:value-of select="harvester:date_dataType($end)"/>
+										<xsl:value-of select="harvester:date_dataType($dams, $end)"/>
 									</xsl:attribute>
-									<xsl:value-of select="harvester:parseDateTime($end)"/>
+									<xsl:value-of select="harvester:parseDateTime($dams, $end)"/>
 								</edm:end>
 							</edm:TimeSpan>
 						</dcterms:date>
@@ -480,15 +481,15 @@ rdfs:label ?label
 							<edm:TimeSpan>
 								<edm:begin>
 									<xsl:attribute name="rdf:datatype">
-										<xsl:value-of select="harvester:date_dataType($begin)"/>
+										<xsl:value-of select="harvester:date_dataType($dams, $begin)"/>
 									</xsl:attribute>
-									<xsl:value-of select="harvester:parseDateTime($begin)"/>
+									<xsl:value-of select="harvester:parseDateTime($dams, $begin)"/>
 								</edm:begin>
 								<edm:end>
 									<xsl:attribute name="rdf:datatype">
-										<xsl:value-of select="harvester:date_dataType($end)"/>
+										<xsl:value-of select="harvester:date_dataType($dams, $end)"/>
 									</xsl:attribute>
-									<xsl:value-of select="harvester:parseDateTime($end)"/>
+									<xsl:value-of select="harvester:parseDateTime($dams, $end)"/>
 								</edm:end>
 							</edm:TimeSpan>
 						</dcterms:date>
@@ -497,12 +498,12 @@ rdfs:label ?label
 			</xsl:when>
 			<xsl:otherwise>
 				<dcterms:date>
-					<xsl:if test="string(harvester:date_dataType($date))">
+					<xsl:if test="string(harvester:date_dataType($dams, $date))">
 						<xsl:attribute name="rdf:datatype">
-							<xsl:value-of select="harvester:date_dataType($date)"/>
+							<xsl:value-of select="harvester:date_dataType($dams, $date)"/>
 						</xsl:attribute>
 					</xsl:if>
-					<xsl:value-of select="harvester:parseDateTime($date)"/>
+					<xsl:value-of select="harvester:parseDateTime($dams, $date)"/>
 				</dcterms:date>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -1024,92 +1025,6 @@ rdfs:label ?label
 		</xsl:if>
 	</xsl:template>
 
-	<!-- FUNCTIONS -->
-	<xsl:function name="harvester:cleanText">
-		<xsl:param name="val"/>
-		<xsl:param name="element"/>
-
-		<xsl:variable name="html-stripped" select="replace(replace($val, '&lt;[^&gt;]+&gt;', ' '), '\\s+', ' ')"/>
-
-		<xsl:choose>
-			<xsl:when
-				test="$element = 'subject' or $element = 'creator' or $element = 'contributor' or $element = 'spatial' or $element = 'coverage' or $element = 'title' or $element = 'rights' or $element = 'description' or $element = 'language'">
-				<!-- do not strip trailing period from these elements -->
-				<xsl:value-of select="$html-stripped"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:choose>
-					<!-- strip trailing period -->
-					<xsl:when test="substring($html-stripped, string-length($html-stripped), 1) = '.'">
-						<xsl:value-of select="substring($html-stripped, 1, string-length($html-stripped) - 1)"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="$html-stripped"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:otherwise>
-		</xsl:choose>
-
-	</xsl:function>
-
-	<xsl:function name="harvester:date_dataType">
-		<xsl:param name="val"/>
-
-		<xsl:choose>
-			<!-- replace dateTime with the xs:date when not January 1: otherwise this is only a year -->
-			<xsl:when test="$val castable as xs:dateTime">
-				<xsl:variable name="date" select="substring($val, 1, 10)"/>
-				<xsl:choose>
-					<xsl:when test="substring($date, 6) = '01-01' and $dams = 'digital-commons'">http://www.w3.org/2001/XMLSchema#gYear</xsl:when>
-					<xsl:otherwise>http://www.w3.org/2001/XMLSchema#date</xsl:otherwise>
-				</xsl:choose>
-			</xsl:when>
-			<xsl:when test="$val castable as xs:date">http://www.w3.org/2001/XMLSchema#date</xsl:when>
-			<xsl:when test="$val castable as xs:gYearMonth">http://www.w3.org/2001/XMLSchema#gYearMonth</xsl:when>
-			<xsl:when test="$val castable as xs:gYear">http://www.w3.org/2001/XMLSchema#gYear</xsl:when>
-		</xsl:choose>
-	</xsl:function>
-
-	<xsl:function name="harvester:parseDateTime">
-		<xsl:param name="val"/>
-
-		<xsl:choose>
-			<xsl:when test="$val castable as xs:dateTime">
-				<xsl:variable name="date" select="substring($val, 1, 10)"/>
-
-				<xsl:choose>
-					<xsl:when test="substring($date, 6) = '01-01' and $dams = 'digital-commons'">
-						<xsl:value-of select="substring($date, 1, 4)"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="$date"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="$val"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:function>
-
-	<xsl:function name="harvester:parseRightsStatement">
-		<xsl:param name="id"/>
-
-		<xsl:choose>
-			<xsl:when test="substring($id, 1, 3) = 'RS_'">
-				<xsl:value-of select="concat('http://rightsstatements.org/vocab/', substring-after($id, '_'), '/1.0/')"/>
-			</xsl:when>
-			<xsl:when test="substring($id, 1, 3) = 'CC_'">
-				<xsl:choose>
-					<xsl:when test="substring-after($id, '_') = 'pdm'">
-						<xsl:text>https://creativecommons.org/share-your-work/public-domain/pdm/</xsl:text>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="concat('https://creativecommons.org/licenses/', substring-after($id, '_'), '/4.0/')"/>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:when>
-		</xsl:choose>
-	</xsl:function>
+	
 
 </xsl:stylesheet>

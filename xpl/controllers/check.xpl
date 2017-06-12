@@ -22,6 +22,8 @@
 		</p:input>
 		<p:output name="data" id="request"/>
 	</p:processor>
+	
+	<!-- Step 1: evaluate whether this set has already been connected to Primo or DPLA -->
 
 	<!-- generate URL Generator config -->
 	<p:processor name="oxf:unsafe-xslt">
