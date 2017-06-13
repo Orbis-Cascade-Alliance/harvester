@@ -40,7 +40,7 @@
 					<initial-page>true</initial-page>
 					<uri></uri>
 					<search-results></search-results>
-					<definition></definition>					
+					<definition></definition>
 					<remediation>
 						<rights>false</rights>
 						<type>false</type>
@@ -91,9 +91,9 @@
 					<terms_of_service>false</terms_of_service>
 				</set>
 			</xforms:instance>
-			
+
 			<xforms:instance id="tempErrorCount">
-				<count xmlns=""/>
+				<count xmlns=""></count>
 			</xforms:instance>
 
 			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
@@ -333,7 +333,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 			</xforms:instance>
 
 			<xforms:instance id="csv-download" xxforms:exclude-result-prefixes="#all">
-				<csv xmlns="" filename=""></csv>
+				<csv xmlns="" filename="" mediatype="text/csv"></csv>
 			</xforms:instance>
 
 			<!-- ************************* BINDINGS ************************** -->
@@ -369,7 +369,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 					<xforms:bind nodeset="rightsStatement-set"
 						calculate="instance('control-instance')/remediation/rights=true() and string-length(instance('set')/rights) &gt; 0" type="xs:boolean"/>
 					<xforms:bind nodeset="rightsText-set"
-						calculate="instance('control-instance')/remediation/rights=true() and string-length(instance('set')/rightsText) &gt; 0" type="xs:boolean"/>
+						calculate="instance('control-instance')/remediation/rights=true() and string-length(instance('set')/rightsText) &gt; 0"
+						type="xs:boolean"/>
 					<xforms:bind nodeset="type-set"
 						calculate="instance('control-instance')/remediation/type=true() and string-length(instance('set')/type) &gt; 0" type="xs:boolean"/>
 				</xforms:bind>
@@ -396,13 +397,14 @@ OPTIONAL {?c skos:scopeNote ?note .
 					</xforms:bind>
 				</xforms:bind>
 			</xforms:bind>
-			
+
 			<xforms:bind nodeset="instance('tempErrorCount')" calculate="instance('control-instance')/validation/error-count" type="xs:integer"/>
 
 			<xforms:bind nodeset="instance('validation')">
 				<xforms:bind nodeset="record">
 					<!--<xforms:bind nodeset="error[@type='format']/@set" calculate="instance('control-instance')/validation/format-set" type="xs:boolean"/>-->
-					<xforms:bind nodeset="error[@type='rightsStatement']/@set" calculate="instance('control-instance')/validation/rightsStatement-set" type="xs:boolean"/>
+					<xforms:bind nodeset="error[@type='rightsStatement']/@set" calculate="instance('control-instance')/validation/rightsStatement-set"
+						type="xs:boolean"/>
 					<xforms:bind nodeset="error[@type='rightsText']/@set" calculate="instance('control-instance')/validation/rightsText-set" type="xs:boolean"/>
 					<xforms:bind nodeset="error[@type='type']/@set" calculate="instance('control-instance')/validation/type-set" type="xs:boolean"/>
 				</xforms:bind>
@@ -474,7 +476,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<!-- insert errors for invalid or missing fields -->
 								<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No title')"
 									if="not($binding/dc:title)"/>
-								
+
 								<!-- these validation scenarios should only been applied if the target is not merely 'aw' -->
 								<xforms:action if="not(instance('set')/target = 'aw')">
 									<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('error', 'No date')"
@@ -484,7 +486,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 										if="not($binding/dc:rights[matches(normalize-space(.), '^https?://creativecommons.org') or matches(normalize-space(.), '^https?://rightsstatements.org')])"/>
 									<xforms:insert context="instance('validation')/record[last()]"
 										origin="xforms:element('error', (xforms:attribute('set', instance('control-instance')/validation/rightsText-set), xforms:attribute('type', 'rightsText'), 'No free-text rights statement'))"
-										if="not($binding/dc:rights[not(matches(normalize-space(.), '^https?://creativecommons.org')) and not(matches(normalize-space(.), '^https?://rightsstatements.org'))])"/>
+										if="not($binding/dc:rights[not(matches(normalize-space(.), '^https?://creativecommons.org')) and not(matches(normalize-space(.), '^https?://rightsstatements.org'))])"
+									/>
 								</xforms:action>
 
 								<!-- test potential mime-types versus controlled list -->
@@ -497,7 +500,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('format', $val)"/>
 									</xforms:action>
 								</xforms:action>
-								
+
 								<!-- dcterms:format not required
 									<xforms:insert context="instance('validation')/record[last()]"
 									origin="xforms:element('error', (xforms:attribute('set', instance('control-instance')/validation/format-set), xforms:attribute('type', 'format'), 'No valid format (MIME type) detected.'))"
@@ -513,14 +516,14 @@ OPTIONAL {?c skos:scopeNote ?note .
 										<xforms:insert context="instance('validation')/record[last()]" origin="xforms:element('dcmitype', $val)"/>
 									</xforms:action>
 								</xforms:action>
-								
+
 								<!-- only validate DCMI Type when the target is not exclusively Archives West -->
 								<xforms:action if="not(instance('set')/target = 'aw')">
 									<xforms:insert context="instance('validation')/record[last()]"
 										origin="xforms:element('error', (xforms:attribute('set', instance('control-instance')/validation/type-set), xforms:attribute('type', 'type'), 'No DCMI Type detected.'))"
 										if="instance('control-instance')/record_has_type = false()"/>
 								</xforms:action>
-								
+
 
 								<!-- parse and insert entities into relevant lists, if applicable -->
 								<!-- types/genres: normalize to AAT -->
@@ -626,7 +629,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 									origin="xforms:element('error', concat('ID ', $id, ' - More than one URI detected in dc:identifier'))"/>
 							</xforms:action>
 						</xforms:action>
-						
+
 						<!-- for a multipage feed, check for the existence of a resumptionToken for iteration -->
 						<xforms:action if="instance('oai-response')//oai:resumptionToken">
 							<xforms:setvalue ref="instance('control-instance')/oai-service"
@@ -766,15 +769,14 @@ OPTIONAL {?c skos:scopeNote ?note .
 				<xforms:setvalue ref="instance('control-instance')/enrichment-page-trigger" value="true()"/>
 				<xforms:setvalue ref="instance('control-instance')/validate-trigger" value="true()"/>
 			</xforms:action>
-			
+
 			<!-- ********************** ERROR COUNT INSTANCE CHANGE: GENERATE CSV ********************** -->
 			<xforms:action ev:event="xxforms-value-changed" ev:observer="tempErrorCount">
 				<!-- generate error report CSV when applicable -->
 				<xforms:action if="instance('tempErrorCount') &gt; 0">
 					<xforms:insert nodeset="instance('csv')"
 						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/errors-to-csv.xpl', 'data', instance('validation'), 'data')"/>
-					<xforms:setvalue ref="instance('csv-download')"
-						value="saxon:string-to-base64Binary(saxon:serialize(instance('csv'), 'text'), 'UTF-8')"/>
+					<xforms:setvalue ref="instance('csv-download')" value="saxon:string-to-base64Binary(saxon:serialize(instance('csv'), 'text'), 'UTF-8')"/>
 				</xforms:action>
 			</xforms:action>
 
@@ -1044,20 +1046,34 @@ OPTIONAL {?c skos:scopeNote ?note .
 										</div>
 										<div class="subsection">
 											<h4>Contribution Agreement</h4>
-											<p>By choosing "DPLA and Primo" or "DPLA Only" in the Destination(s) box above, I am acting on behalf of my institution to authorize the Orbis Cascade Alliance (Alliance) to harvest the metadata and associated records (including images and other information) for the set specified in "Set URL" (above) to enable the Alliance to share all of this information with users broadly, detailed below.</p>
+											<p>By choosing "DPLA and Primo" or "DPLA Only" in the Destination(s) box above, I am acting on behalf of my
+												institution to authorize the Orbis Cascade Alliance (Alliance) to harvest the metadata and associated records
+												(including images and other information) for the set specified in "Set URL" (above) to enable the Alliance to
+												share all of this information with users broadly, detailed below.</p>
 
-<p>If I chose "Primo Only" in the Destination(s) box above, I am acting on behalf of my institution to authorize the Orbis Cascade Alliance (Alliance) to harvest the metadata for the set specified in "Set URL" (above) for the purpose of aggregating in Alliance Primo, which means that the information will be widely available through Alliance members’ Primo and other discovery interfaces.  I understand that the Alliance will not share this metadata with the Digital Public Library of America.</p>
+											<p>If I chose "Primo Only" in the Destination(s) box above, I am acting on behalf of my institution to authorize the
+												Orbis Cascade Alliance (Alliance) to harvest the metadata for the set specified in "Set URL" (above) for the
+												purpose of aggregating in Alliance Primo, which means that the information will be widely available through
+												Alliance members’ Primo and other discovery interfaces. I understand that the Alliance will not share this
+												metadata with the Digital Public Library of America.</p>
 
-<p>
-By selecting DPLA and Primo, in addition to the permission granted through Primo above, the institution acknowledges that the Alliance will additionally share the information with the Digital Public Library of America (DPLA), under the terms of the agreement established between the DPLA and the Alliance, which grants rights to DPLA to make the information available through their interfaces throughout the world. Under current terms, I understand that the digital collections metadata -- but not the digital collections themselves -- will be made available under a <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero (CC0) Dedication</a>. For information made available under “No Copyright” or appropriate Creative Commons licenses, my institution acknowledges that this information may be broadly re-used by users around the world.</p>
+											<p> By selecting DPLA and Primo, in addition to the permission granted through Primo above, the institution
+												acknowledges that the Alliance will additionally share the information with the Digital Public Library of
+												America (DPLA), under the terms of the agreement established between the DPLA and the Alliance, which grants
+												rights to DPLA to make the information available through their interfaces throughout the world. Under current
+												terms, I understand that the digital collections metadata -- but not the digital collections themselves -- will
+												be made available under a <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero
+													(CC0) Dedication</a>. For information made available under “No Copyright” or appropriate Creative Commons
+												licenses, my institution acknowledges that this information may be broadly re-used by users around the
+												world.</p>
 
-<p>In all cases, I agree that:<br/>
-My institution has taken best efforts to gain permission or a waiver from any parties who hold interests in intellectual property rights in such information (including metadata and images).
-The information we have provided may not always appear as a complete record to end users of Primo and/or DPLA.
-We desire that our information be broadly available for educational and other purposes.</p>
+											<p>In all cases, I agree that:<br /> My institution has taken best efforts to gain permission or a waiver from any
+												parties who hold interests in intellectual property rights in such information (including metadata and images).
+												The information we have provided may not always appear as a complete record to end users of Primo and/or DPLA.
+												We desire that our information be broadly available for educational and other purposes.</p>
 
 
-												<xforms:input ref="terms_of_service" appearance="full">
+											<xforms:input ref="terms_of_service" appearance="full">
 												<xforms:label>Agree</xforms:label>
 											</xforms:input>
 										</div>
@@ -1078,7 +1094,8 @@ We desire that our information be broadly available for educational and other pu
 							<div class="row">
 								<div class="col-md-6">
 									<p>Use this interface to apply global genre, format, language, rights, and/or DCMI type values to all records in a set.</p>
-									<p>If you have questions about the definition or appropriate contents for any of these fields, please consult the <a href="https://www.orbiscascade.org/digital-collections-documentation">Alliance’s Dublin Core Best Practices</a>.</p>
+									<p>If you have questions about the definition or appropriate contents for any of these fields, please consult the <a
+											href="https://www.orbiscascade.org/digital-collections-documentation">Alliance’s Dublin Core Best Practices</a>.</p>
 								</div>
 								<div class="col-md-6 text-right">
 									<xi:include href="components/remediation-buttons.xml"/>
@@ -1255,12 +1272,13 @@ We desire that our information be broadly available for educational and other pu
 									<h4>Rights</h4>
 									<xforms:select1 ref="rights" appearance="full">
 										<xforms:item>
-											<xforms:label>I do not want to apply the same rights statement(s) to every record in this set to be compliant with the Dublin Core Best Practices</xforms:label>
+											<xforms:label>I do not want to apply the same rights statement(s) to every record in this set to be compliant with
+												the Dublin Core Best Practices</xforms:label>
 											<xforms:value value="false()"/>
 										</xforms:item>
 										<xforms:item>
-											<xforms:label>I want to apply the same rights statement(s) to all records in this set to be compliant with the Dublin Core Best Practices. I would like to
-												apply:</xforms:label>
+											<xforms:label>I want to apply the same rights statement(s) to all records in this set to be compliant with the
+												Dublin Core Best Practices. I would like to apply:</xforms:label>
 											<xforms:value value="true()"/>
 										</xforms:item>
 										<xforms:action ev:event="xforms-value-changed">
@@ -1273,7 +1291,8 @@ We desire that our information be broadly available for educational and other pu
 										<div>
 											<xforms:select1 ref="instance('set')/rights">
 												<xforms:label>Standardized Rights Statement</xforms:label>
-												<xforms:hint>Required (if not already present in the set) standardized rights statement from rightsstatement.org or Creative Commons license</xforms:hint>
+												<xforms:hint>Required (if not already present in the set) standardized rights statement from rightsstatement.org
+													or Creative Commons license</xforms:hint>
 												<xforms:item>
 													<xforms:label>Select below...</xforms:label>
 													<xforms:value/>
@@ -1287,7 +1306,8 @@ We desire that our information be broadly available for educational and other pu
 										<div>
 											<xforms:textarea ref="instance('set')/rightsText">
 												<xforms:label>Free-text Rights Statement</xforms:label>
-												<xforms:hint>Required (if not already present in the set) free-text rights statement that augments and enhances the standardized rights statement</xforms:hint>
+												<xforms:hint>Required (if not already present in the set) free-text rights statement that augments and enhances
+													the standardized rights statement</xforms:hint>
 											</xforms:textarea>
 										</div>
 									</xforms:group>
@@ -1494,15 +1514,13 @@ We desire that our information be broadly available for educational and other pu
 												<strong>
 													<xforms:output ref="instance('control-instance')/validation/error-count"/></strong> records of
 														<strong><xforms:output ref="instance('control-instance')/validation/total-count"/></strong> total have
-												reported errors. Up to 20 are displayed below.<!-- Please download CSV for full report.--></div>											
-											<div>												
-												
-												<!--<xforms:output ref="instance('csv-download')" appearance="xxforms:download">
-													<xforms:label>Download CSV</xforms:label>
-													<xforms:mediatype>text/csv</xforms:mediatype>
-													<xforms:filename ref="instance('csv-download')/@filename"></xforms:filename>													
-												</xforms:output>-->
-											</div>
+												reported errors. Up to 20 are displayed below. Please <xforms:output ref="instance('csv-download')"
+													appearance="xxforms:download">
+													<xforms:label>download CSV</xforms:label>
+													<xforms:mediatype ref="instance('csv-download')/@mediatype"/>
+													<xforms:filename ref="instance('csv-download')/@filename"/>
+												</xforms:output> for full report.</div>
+											<div> </div>
 
 											<xforms:repeat nodeset="record[error[@set=false() or not(@set)]][position() &lt;= 20]">
 												<div>
@@ -1511,7 +1529,8 @@ We desire that our information be broadly available for educational and other pu
 													<h4>
 														<small class="expand {$hash}-button">
 															<xforms:trigger appearance="minimal">
-																<xforms:label><span class="glyphicon glyphicon-triangle-right toggle-glyph"></span></xforms:label>
+																<xforms:label><span class="glyphicon glyphicon-triangle-right toggle-glyph"
+																	></span></xforms:label>
 																<xforms:action ev:event="DOMActivate">
 																	<xforms:var name="params"
 																		select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')"/>
@@ -1756,8 +1775,11 @@ We desire that our information be broadly available for educational and other pu
 								</xforms:trigger>
 							</div>
 							<hr />
-							<p>If you chose to send your set to DPLA, please note that the Alliance is not yet a hub; objects will not appear in DPLA until the application process is complete and DPLA has ingested them.</p>
-							<p>If you chose to send your set to Alliance Primo, please note that this is not yet in production. Primo publishing is scheduled to run nightly, so your set should be able to be viewed in the Primo sandbox tomorrow. The sets are being actively tested in order to write normalization rules and measure outcomes against objectives.</p>
+							<p>If you chose to send your set to DPLA, please note that the Alliance is not yet a hub; objects will not appear in DPLA until the
+								application process is complete and DPLA has ingested them.</p>
+							<p>If you chose to send your set to Alliance Primo, please note that this is not yet in production. Primo publishing is scheduled to
+								run nightly, so your set should be able to be viewed in the Primo sandbox tomorrow. The sets are being actively tested in order
+								to write normalization rules and measure outcomes against objectives.</p>
 							<xforms:group ref=".[instance('set')/target='both' or instance('set')/target='dpla']">
 								<div>
 									<xforms:trigger appearance="minimal">
@@ -1778,8 +1800,8 @@ We desire that our information be broadly available for educational and other pu
 							</xforms:group>
 							<div>
 								<xforms:trigger appearance="minimal">
-									<xforms:label>Contribue another set <span class="glyphicon glyphicon-repeat"></span></xforms:label>t
-									<xforms:load resource="../admin/import" show="replace" ev:event="DOMActivate"/>
+									<xforms:label>Contribue another set <span class="glyphicon glyphicon-repeat"></span></xforms:label>t <xforms:load
+										resource="../admin/import" show="replace" ev:event="DOMActivate"/>
 								</xforms:trigger>
 							</div>
 						</xforms:case>
@@ -1817,14 +1839,11 @@ We desire that our information be broadly available for educational and other pu
 				<xforms:action ev:event="DOMActivate">
 					<!-- set SPARQL service -->
 					<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/sparql/update"/>
-					
 					<!-- isolate the setSpec and OAI-PMH service for deleting the set based on regex instead of precise URI match -->
 					<xforms:var name="service" select="substring-before(instance('set')/set, '?')"/>
-					<xforms:var name="setSpec" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')[contains(., 'set=')]"/>
-					
-					<xforms:setvalue ref="instance('sparqlUpdate')"
+					<xforms:var name="setSpec" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')[contains(., 'set=')]"/> <xforms:setvalue
+						ref="instance('sparqlUpdate')"
 						value="replace(replace(instance('sparqlUpdate-templates')/query[@id='delete-set'], '%SETSPEC%', $setSpec), '%SERVICE%', $service)"/>
-					
 					<!-- delete the set from the SPARQL endpoint -->
 					<xforms:send submission="update-graph"/>
 					<!-- call the getRDF web service to transform OAI-PMH into RDF. It will make use to any terms normalized and inserted into Google Sheets -->
@@ -1833,12 +1852,12 @@ We desire that our information be broadly available for educational and other pu
 						<xforms:delete nodeset="instance('rdf')/*"/>
 						<!-- generate RDF for a genre from remediation page -->
 						<xforms:action if="string(instance('set')/genre)">
-							<xforms:var name="genre" select="instance('set')/genre"/>
-							
-							<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]" origin="instance('concept-template')"/>
+							<xforms:var name="genre" select="instance('set')/genre"/> <xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]"
+								origin="instance('concept-template')"/>
 							<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="$genre"/>
-							<xforms:setvalue ref="instance('rdf')/*[last()]/skos:prefLabel" value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri=$genre]/res:binding[@name='label']/res:literal"/>
-						</xforms:action>						
+							<xforms:setvalue ref="instance('rdf')/*[last()]/skos:prefLabel"
+								value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri=$genre]/res:binding[@name='label']/res:literal"/>
+						</xforms:action>
 						<!-- generate RDF for genres and creators/contributors on the enrichment page -->
 						<xforms:action xxforms:iterate="instance('type-list')/type[@new = true() and string(@uri)]">
 							<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]" origin="instance('concept-template')"/>

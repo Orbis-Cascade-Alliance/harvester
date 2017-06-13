@@ -38,7 +38,6 @@
 	<page path="/harvester/test" model="config.xml" view="xpl/views/pages/test.xpl"/>
 	<page path="/harvester/test/view" model="xpl/controllers/getRDF.xpl" view="xpl/controllers/view.xpl"/>
 	
-	
 	<!-- ****************
 	* ADMIN INTERFACE *
 	***************** -->
