@@ -31,17 +31,17 @@
 
 	<xsl:template name="body">
 		<xsl:variable name="default-query"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX arch:	<http://purl.org/archival/vocab/arch#>
+PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX doap:	<http://usefulinc.com/ns/doap#>
 PREFIX dpla:	<http://dp.la/terms/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
-PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
-PREFIX vcard:	<http://www.w3.org/2006/vcard/ns#>
-PREFIX arch:	<http://purl.org/archival/vocab/arch#>
-PREFIX nwda:	<https://github.com/Orbis-Cascade-Alliance/nwda-editor#>
+PREFIX prov:	<http://www.w3.org/ns/prov#>
 PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
-PREFIX doap:	<http://usefulinc.com/ns/doap#>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
 
 SELECT * WHERE {
   ?s ?p ?o
