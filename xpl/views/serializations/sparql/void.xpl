@@ -26,17 +26,15 @@
 			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 				<!-- config variables -->
 				<xsl:variable name="sparql_endpoint" select="/config/sparql/query"/>
+				
+				<!-- only need to count ore:Aggregations with a doap:audience of 'dpla' -->
 				<xsl:variable name="query"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX dpla:	<http://dp.la/terms/>
-PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
-PREFIX arch:	<http://purl.org/archival/vocab/arch#>
+PREFIX doap:	<http://usefulinc.com/ns/doap#>
 
-SELECT (count(?s) as ?count) WHERE {
-{?s a arch:Archive}
-  UNION {?s a dpla:SourceResource}
-  UNION {?s a ore:Aggregation}
-  UNION {?s a edm:View}
+SELECT (count(?agg) as ?count) WHERE {
+  ?agg a ore:Aggregation ;
+       doap:audience "dpla" .
 }]]></xsl:variable>
 				
 				<xsl:variable name="service">

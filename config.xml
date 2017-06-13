@@ -19,7 +19,7 @@
 	</vocab_sparql>
 	<geonames_api_key>orbiscascade</geonames_api_key>	
 	<limit>24</limit>
-	<dpla_limit>10000</dpla_limit>
+	<dpla_limit>5000</dpla_limit>
 	<oai-pmh_limit>100</oai-pmh_limit>
 	<codes>
 		<repository marc="idbb" harvester-only="false" exlibris=""/>

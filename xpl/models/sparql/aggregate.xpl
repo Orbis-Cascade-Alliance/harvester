@@ -45,20 +45,30 @@
 				<xsl:variable name="query"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX dpla:	<http://dp.la/terms/>
+PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
-PREFIX xsd:	<http://www.w3.org/2001/XMLSchema>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
 PREFIX vcard:	<http://www.w3.org/2006/vcard/ns#>
 PREFIX arch:	<http://purl.org/archival/vocab/arch#>
 PREFIX nwda:	<https://github.com/Orbis-Cascade-Alliance/nwda-editor#>
+PREFIX prov:	<http://www.w3.org/ns/prov#>
+PREFIX doap:	<http://usefulinc.com/ns/doap#>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
 
-DESCRIBE ?s WHERE {
-  {?s a arch:Archive}
-  UNION {?s a dpla:SourceResource}
-  UNION {?s a ore:Aggregation}
-  UNION {?s a edm:WebResource}
-} LIMIT %LIMIT% OFFSET %OFFSET%]]></xsl:variable>
+DESCRIBE * WHERE {
+  ?agg a ore:Aggregation ;
+                edm:aggregatedCHO ?cho ;
+                prov:generatedAtTime ?mod ;
+                doap:audience "dpla" .
+                OPTIONAL {?agg edm:object ?reference}
+                OPTIONAL {?agg edm:preview ?thumbnail}
+  ?cho dcterms:isPartOf ?collection
+       OPTIONAL {?cho dcterms:creator ?creator . ?creator a edm:Agent}
+       OPTIONAL {?cho dcterms:contributor ?contributor . ?contributor a edm:Agent}
+       OPTIONAL {?cho edm:hasType ?type . ?type a skos:Concept}
+} ORDER BY DESC(?mod) LIMIT %LIMIT% OFFSET %OFFSET%]]></xsl:variable>
 				
 				<xsl:variable name="service" select="concat($sparql_endpoint, '?query=', encode-for-uri(replace(replace($query, '%OFFSET%', string($offset)), '%LIMIT%', string($limit))), '&amp;output=', $output)"/>
 				
