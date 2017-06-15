@@ -35,6 +35,7 @@
 					<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX dpla:	<http://dp.la/terms/>
+PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
@@ -43,11 +44,20 @@ PREFIX vcard:	<http://www.w3.org/2006/vcard/ns#>
 PREFIX arch:	<http://purl.org/archival/vocab/arch#>
 PREFIX nwda:	<https://github.com/Orbis-Cascade-Alliance/nwda-editor#>
 PREFIX prov:	<http://www.w3.org/ns/prov#>
+PREFIX doap:	<http://usefulinc.com/ns/doap#>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
+
 DESCRIBE * WHERE {
-  {<URI> edm:aggregatedCHO ?cho }
-  UNION {?s a ore:Aggregation ; edm:object ?obj ; edm:preview ?prev
-  FILTER (?s = <URI>) }
-}]]>
+  BIND (<URI> as ?agg)
+  ?agg a ore:Aggregation ;
+                edm:aggregatedCHO ?cho .
+                OPTIONAL {?agg edm:object ?reference}
+                OPTIONAL {?agg edm:preview ?thumbnail}
+  ?cho dcterms:isPartOf ?collection
+       OPTIONAL {?cho dcterms:creator ?creator . ?creator a edm:Agent}
+       OPTIONAL {?cho dcterms:contributor ?contributor . ?contributor a edm:Agent}
+       OPTIONAL {?cho edm:hasType ?type . ?type a skos:Concept}
+} LIMIT 1]]>
 				</xsl:variable>
 				
 				<xsl:variable name="service">
