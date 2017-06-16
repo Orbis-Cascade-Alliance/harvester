@@ -26,8 +26,13 @@
 					<repository></repository>
 					<repository_uri></repository_uri>
 					<sparql-service></sparql-service>
-					<heading>local.personalNames+all</heading>
+					<action/>
 				</controls>
+			</xforms:instance>
+			
+			<!-- bind repository instance to control instance so xxforms-value-changed always triggers the lookups -->
+			<xforms:instance id="repository">
+				<repository/>
 			</xforms:instance>
 
 			<xforms:instance id="config" xxforms:exclude-result-prefixes="#all">
@@ -37,9 +42,42 @@
 			<!-- SPARQL templates -->
 			<xforms:instance id="sparqlQuery-templates">
 				<queries xmlns="">
-					<query id="get-literals"><![CDATA[
-						
-]]></query>
+					<query id="get-agent-literals"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
+
+SELECT DISTINCT ?term WHERE {
+  ?agg edm:dataProvider <REPO> ; 
+       edm:aggregatedCHO ?cho .
+  {?cho dcterms:creator ?term}
+  UNION {?cho dcterms:contributor ?term}
+  FILTER (datatype(?term) = xsd:string)
+} ORDER BY ASC(?term)]]></query>
+					<query id="get-genre-literals"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
+
+SELECT DISTINCT ?term WHERE {
+  ?agg edm:dataProvider <REPO> ; 
+       edm:aggregatedCHO ?cho .
+  ?cho edm:hasType ?term FILTER (datatype(?term) = xsd:string)
+} ORDER BY ASC(?term)]]></query>
+					<query id="get-vocabs"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX dcam:	<http://purl.org/dc/dcam/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs:	<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?label ?uri WHERE {
+?s dcterms:source "REPO" ;
+rdf:type TYPE;
+skos:exactMatch ?uri ;
+rdfs:label ?label
+}]]></query>
 				</queries>
 			</xforms:instance>
 
@@ -67,7 +105,7 @@ INSERT DATA
 				</queries>
 			</xforms:instance>
 
-			<xforms:instance id="sparqlQuery">
+			<xforms:instance id="sparqlQuery" xxforms:exclude-result-prefixes="#all">
 				<query xmlns=""></query>
 			</xforms:instance>
 
@@ -75,44 +113,77 @@ INSERT DATA
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
 			</xforms:instance>
 			
+			<!-- lists for controlled vocabulary normalization -->
+			<xforms:instance id="type-list" xxforms:exclude-result-prefixes="#all">
+				<types repository="" xmlns=""></types>
+			</xforms:instance>
+			
+			<xforms:instance id="place-list" xxforms:exclude-result-prefixes="#all">
+				<places repository="" xmlns=""></places>
+			</xforms:instance>
+			
+			<xforms:instance id="agent-list" xxforms:exclude-result-prefixes="#all">
+				<agents repository="" xmlns=""></agents>
+			</xforms:instance>
+
 			<!-- lists of existing vocabularies -->
 			<xforms:instance id="type-vocabs" xxforms:exclude-result-prefixes="#all">
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="place-vocabs" xxforms:exclude-result-prefixes="#all">
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="agent-vocabs" xxforms:exclude-result-prefixes="#all">
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
 			</xforms:instance>
-			
+
 			<!-- RDF templates -->
 			<xforms:instance id="concept-template" xxforms:exclude-result-prefixes="#all">
 				<skos:Concept rdf:about="">
 					<skos:prefLabel xml:lang="en"/>
 				</skos:Concept>
 			</xforms:instance>
-			
+
 			<xforms:instance id="agent-template" xxforms:exclude-result-prefixes="#all">
 				<edm:Agent rdf:about="">
 					<skos:prefLabel xml:lang="en"/>
 				</edm:Agent>
 			</xforms:instance>
 
-			<!-- ************************* SUBMISSIONS ************************** -->
+			<!-- dump instance -->
+			<xforms:instance id="dump" xxforms:exclude-result-prefixes="#all">
+				<dump xmlns=""></dump>
+			</xforms:instance>
+
+			<!-- ************************* BINDINGS ************************** -->
 			<xforms:bind nodeset="instance('control-instance')">
 				<xforms:bind nodeset="repository_uri"
 					calculate="if (instance('config')/codes/repository[@marc=instance('control-instance')/repository]/@harvester-only = true()) then concat(instance('config')/url, 'agency/', instance('control-instance')/repository) else concat(instance('config')/production_server, 'contact#', instance('control-instance')/repository)"
 				/>
 			</xforms:bind>
+			
+			<xforms:bind nodeset="instance('repository')" calculate="instance('control-instance')/repository"/>
 
 			<!-- ************************* SUBMISSIONS ************************** -->
 			<!-- SPARQL queries -->
-			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
+			<xforms:submission id="submit-sparqlQuery" action="{instance('control-instance')/sparql-service}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
 				ref="instance('sparqlResponse')" replace="instance" method="get">
 				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
+				
+				<xforms:action ev:event="xforms-submit-done">
+					<!-- if there's an action, then move the results into the appropriate vocabulary list -->
+					<xforms:action if="instance('control-instance')/action = 'type'">
+						<xforms:insert context="instance('type-vocabs')" origin="instance('sparqlResponse')/res:results"/>
+					</xforms:action>
+					<xforms:action if="instance('control-instance')/action = 'place'">
+						<xforms:insert context="instance('place-vocabs')" origin="instance('sparqlResponse')/res:results"/>
+					</xforms:action>
+					<xforms:action if="instance('control-instance')/action = 'agent'">
+						<xforms:insert context="instance('agent-vocabs')" origin="instance('sparqlResponse')/res:results"/>
+					</xforms:action>
+				</xforms:action>
 			</xforms:submission>
 
 			<xforms:submission id="update-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlQuery')" serialization="text/plain"
@@ -121,17 +192,111 @@ INSERT DATA
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
 				</xforms:action>
 			</xforms:submission>
-
+			
 			<!-- ************************* XFORMS-MODEL-CONSTRUCT-DONE ************************** -->
-			<!-- get the list of repositories from the SPARQL endpoint on xforms-model-construct-done -->
 			<xforms:action ev:event="xforms-model-construct-done">
 				<xforms:action if="not(xxforms:is-user-in-role('harvester-admin'))">
 					<xforms:insert context="instance('control-instance')" nodeset="status" position="after"
-						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"/>
-					<xforms:setvalue ref="instance('control-instance')/repository" value="instance('control-instance')/request-security/role"/>
+						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"/>		
+					<xforms:setvalue ref="instance('control-instance')/repository" value="instance('control-instance')/request-security/remote-user"/>
 				</xforms:action>
 			</xforms:action>
+			
+			<!-- ********************** TRIGGER LOOKUPS ON XXFORMS-VALUE-CHANGED ********************** -->
+			<xforms:action ev:event="xxforms-value-changed" ev:observer="repository">
+				<xforms:var name="repository" select="instance('control-instance')/repository"/>
+				<!-- clear previous lists -->
+				<xforms:delete nodeset="instance('type-list')/*"/>
+				<xforms:delete nodeset="instance('agent-list')/*"/>
+				<!--<xforms:delete nodeset="instance('place-list')/*"/>-->
+				
+				<!-- 1. Set repository code for each list of literals so the SPARQL vocab lookup mechanisms function within XBL -->
+				<xforms:setvalue ref="instance('type-list')/@repository" value="$repository"/>
+				<xforms:setvalue ref="instance('agent-list')/@repository" value="$repository"/>
+				<!--<xforms:setvalue ref="instance('place-list')/@repository" value="$repository"/>-->
+				
+				<!-- 2. submit SPARQL queries in order to get relevant vocabulary lookups -->
+				<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/query"/>
+				
+				<!-- Genres -->
+				<xforms:setvalue ref="instance('control-instance')/action">type</xforms:setvalue>
+				<xforms:setvalue ref="instance('sparqlQuery')"
+					value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', $repository), 'TYPE', 'skos:Concept')"/>
+				<xforms:send submission="submit-sparqlQuery"/>										
+				
+				<!-- Agents -->
+				<xforms:setvalue ref="instance('control-instance')/action">agent</xforms:setvalue>
+				<xforms:setvalue ref="instance('sparqlQuery')"
+					value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', $repository), 'TYPE', 'edm:Agent')"/>
+				<xforms:send submission="submit-sparqlQuery"/>
+				
+				<!-- Places: disabled for now -->
+				<!--<xforms:setvalue ref="instance('control-instance')/action">place</xforms:setvalue>
+										<xforms:setvalue ref="instance('sparqlQuery')"
+											value="replace(replace(instance('sparqlQuery-templates')/query[@id='get-vocabs'], 'REPO', $repository), 'TYPE', 'edm:Place')"/>
+										<xforms:send submission="submit-sparqlQuery"/>-->
+				
+				<!-- reset action -->
+				<xforms:setvalue ref="instance('control-instance')/action"/>
+				
+				<!-- 3. submit SPARQL queries to extract literals, mapping to existent matches from the vocab endpoint -->
+				<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/sparql/query"/>
+				
+				<!-- get agent literals from SPARQL and iterate through to create a list for URI matching -->
+				<xforms:setvalue ref="instance('sparqlQuery')"
+					value="replace(instance('sparqlQuery-templates')/query[@id='get-agent-literals'], 'REPO', instance('control-instance')/repository_uri)"/>
+				<xforms:send submission="submit-sparqlQuery"/>
+				
+				<xforms:action xxforms:iterate="instance('sparqlResponse')//res:result">
+					<xforms:var name="val" select="data(context()/res:binding[@name='term']/res:literal)"/>
+					
+					<xforms:action if="string-length($val) &gt; 0">
+						<xforms:action if="instance('agent-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]">
+							<xforms:var name="uri"
+								select="instance('agent-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri"/>
+							<xforms:insert context="instance('agent-list')" nodeset="./child::node()[last()]"
+								origin="xforms:element('agent', (xforms:attribute('uri', $uri), xforms:attribute('new', false()), xforms:attribute('prefLabel', ''), $val))"
+								if="not(instance('agent-list')/agent = $val)"/>
+						</xforms:action>
+						<xforms:action if="not(instance('agent-vocabs')//res:result[res:binding[@name='label']/res:literal = $val])">
+							<xforms:insert context="instance('agent-list')" nodeset="./child::node()[last()]"
+								origin="xforms:element('agent', (xforms:attribute('uri', ''), xforms:attribute('new', true()), xforms:attribute('prefLabel', ''), $val))"
+								if="not(instance('agent-list')/agent = $val)"/>
+						</xforms:action>
+					</xforms:action>
+				</xforms:action>
+				
+				<!-- get genre literals from SPARQL and iterate through to create a list for URI matching -->
+				<xforms:setvalue ref="instance('sparqlQuery')"
+					value="replace(instance('sparqlQuery-templates')/query[@id='get-genre-literals'], 'REPO', instance('control-instance')/repository_uri)"/>
+				<xforms:send submission="submit-sparqlQuery"/>
+				
+				<xforms:action xxforms:iterate="instance('sparqlResponse')//res:result">
+					<xforms:var name="val" select="data(context()/res:binding[@name='term']/res:literal)"/>
+					
+					<xforms:action if="string-length($val) &gt; 0">
+						<xforms:action if="instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]">
+							<xforms:var name="uri"
+								select="instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val]/res:binding[@name='uri']/res:uri"/>
+							<xforms:insert context="instance('type-list')" nodeset="./child::node()[last()]"
+								origin="xforms:element('type', (xforms:attribute('uri', $uri), xforms:attribute('new', false()), xforms:attribute('prefLabel', ''), $val))"
+								if="not(instance('type-list')/type = $val)"/>
+						</xforms:action>
+						<xforms:action if="not(instance('type-vocabs')//res:result[res:binding[@name='label']/res:literal = $val])">
+							<xforms:insert context="instance('type-list')" nodeset="./child::node()[last()]"
+								origin="xforms:element('type', (xforms:attribute('uri', ''), xforms:attribute('new', true()), xforms:attribute('prefLabel', ''), $val))"
+								if="not(instance('type-list')/type = $val)"/>
+						</xforms:action>
+					</xforms:action>
+				</xforms:action>
+			</xforms:action>	
+		
 		</xforms:model>
+		
+		<!-- include XBL for AAT and VIAF lookups -->
+		<xi:include href="xbl/type/type.xbl" xi:omit-xml-base="true"/>
+		<xi:include href="xbl/agent/agent.xbl" xi:omit-xml-base="true"/>
+		<!--<xi:include href="xbl/place/place.xbl" xi:omit-xml-base="true"/>-->
 	</head>
 	<body style="font-family:'Gentium Book Basic'">
 		<div class="container">
@@ -170,7 +335,7 @@ INSERT DATA
 										<xforms:value/>
 									</xforms:item>
 									<xforms:itemset
-										nodeset="xxforms:sort(distinct-values(instance('config')//repository), ., 'text', 'ascending')">
+										nodeset="xxforms:sort(distinct-values(instance('config')/dams//repository), ., 'text', 'ascending')">
 										<xforms:label ref="."/>
 										<xforms:value ref="."/>
 									</xforms:itemset>
@@ -178,9 +343,84 @@ INSERT DATA
 							</div>
 						</div>
 					</xforms:group>
+
 					
 					<div class="subsection">
-						<h4>Vocabularies</h4>
+						<h1>Post-harvest enrichment</h1>
+						<p>Insert some general description here!</p>
+						
+						<xforms:group ref=".[string(instance('control-instance')/repository)]">
+							<xforms:trigger>
+								<xforms:label>Enrich Creators and Contributors</xforms:label>
+								<xforms:toggle case="agents-normalization" ev:event="DOMActivate"/>
+							</xforms:trigger>
+							<xforms:trigger>
+								<xforms:label>Enrich Genres</xforms:label>
+								<xforms:toggle case="types-normalization" ev:event="DOMActivate"/>
+							</xforms:trigger>
+							
+							<xforms:switch>
+								<xforms:case id="agents-normalization">
+									<xforms:group ref="instance('agent-list')">									
+										<div>
+											<h2>Match creator &amp; contributor values to VIAF</h2>
+											<p>Your creators/contributors are listed below.</p>
+											<p>If your creator/contributor values are listed with blue links, they automatically matched Library of Congress
+												preferred labels in VIAF. Click a blue link to view the matched VIAF record. To dismiss a match, click the "x"
+												icon to the right of the blue link. </p>
+											<p>If your creator/contributor values are listed with a VIAF search box, they do not match Library of Congress
+												preferred labels in VIAF and cannot be enriched as is. To find a match and enrich a value: </p>
+											<ul>
+												<li>Select whether the value is a "Personal" or "Corporate" name.</li>
+												<li>Type a variation of your creator/contributor value in the "Search VIAF" box and click the "Search VIAF"
+													button. If potential matches are found, they will display as a list of names below the search box.</li>
+												<li>Click a name from the list, and it will appear below the "Name" box.</li>
+												<li>Click the blue icon, after the name, to review the name's VIAF authority record.</li>
+												<li>If this is the VIAF record you want, click the "Select" button to match your creator/contributor value with
+													the VIAF record. A blue VIAF URI will replace the VIAF search box when your value has been matched.</li>
+											</ul>
+											<p>If no match is found in VIAF, then the original creator/contributor value from your set will be preserved in the
+												DPLA and/or Primo output.</p>
+											
+											<hr />
+											<!-- display XBL components for VIAF lookups -->
+											<xforms:group ref=".[count(agent) &gt; 0]">
+												<xforms:repeat nodeset="xxforms:sort(agent, ., 'text', 'ascending')">
+													<harvester:agent/>
+												</xforms:repeat>
+											</xforms:group>
+											<xforms:group ref=".[count(agent) = 0]">
+												<p>No creators or contributors to match to controlled vocabulary systems.</p>
+											</xforms:group>
+										</div>
+									</xforms:group>
+								</xforms:case>
+								<xforms:case id="types-normalization">
+									<xforms:group ref="instance('type-list')">
+										<div>
+											<h2>Match genre values to the Getty Art &amp; Architecture Thesaurus</h2>
+											<p>You can choose to search the Getty AAT to associate a genre label to a URI. If no clear match is found in the
+												AAT, then the textual label from your set will be preserved in the DPLA or Primo output. To dismiss matches that
+												were made previously, click the 'x' to the right of the URI.</p>
+											
+											<hr />
+											<!-- display XBL components for AAT lookups -->
+											<xforms:group ref=".[count(type) &gt; 0]">
+												<xforms:repeat nodeset="xxforms:sort(type, ., 'text', 'ascending')">
+													<harvester:type/>
+												</xforms:repeat>
+											</xforms:group>
+											<xforms:group ref=".[count(type) = 0]">
+												<p>No dc:types (excluding those that match DCMI Types) available to link to the AAT.</p>
+											</xforms:group>
+										</div>
+									</xforms:group>
+								</xforms:case>
+							</xforms:switch>
+						</xforms:group>
+						
+						
+						<fr:xforms-inspector/>
 					</div>
 				</div>
 			</div>

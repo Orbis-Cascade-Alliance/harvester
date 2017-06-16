@@ -23,8 +23,8 @@
 				<xsl:template match="/">
 					<config>
 						<role>harvester-admin</role>
-						<xsl:for-each select="distinct-values(//repository)">
-							<role><xsl:value-of select="."/></role>
+						<xsl:for-each select="/config/codes/repository">
+							<role><xsl:value-of select="@marc"/></role>
 						</xsl:for-each>
 					</config>
 				</xsl:template>

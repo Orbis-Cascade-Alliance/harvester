@@ -268,7 +268,7 @@
 					<!-- ***************** MODEL ***************-->
 					<xforms:model id="agent-model">
 						<xforms:instance id="config">
-							<xi:include href="../../../config.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+							<xi:include href="../../../config.xml" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns=""/>
 						</xforms:instance>
 
 						<!-- instances -->
@@ -291,7 +291,7 @@
 
 						<!-- interface type radio button -->
 						<xforms:instance id="interface-type">
-							<interface>viaf</interface>
+							<interface xmlns="">viaf</interface>
 						</xforms:instance>
 
 						<!-- SPARQL Update -->
@@ -320,17 +320,17 @@ INSERT DATA
 						</xforms:instance>
 
 						<xforms:instance id="sparqlUpdate">
-							<query/>
+							<query xmlns=""/>
 						</xforms:instance>
 
 						<!-- SNAC XML response -->
 						<xforms:instance id="snac-response" exclude-result-prefixed="#all">
-							<crossQueryResult/>
+							<crossQueryResult xmlns=""/>
 						</xforms:instance>
 
 						<!-- VIAF XML response -->
 						<xforms:instance id="viaf-response">
-							<searchRetrieveResponse/>
+							<searchRetrieveResponse xmlns=""/>
 						</xforms:instance>
 
 						<!-- submissions -->

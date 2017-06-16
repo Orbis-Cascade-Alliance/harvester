@@ -1,10 +1,10 @@
 <xbl:xbl xmlns="http://www.w3.org/1999/xhtml" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:ev="http://www.w3.org/2001/xml-events"
 	xmlns:xxforms="http://orbeon.org/oxf/xml/xforms" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xbl="http://www.w3.org/ns/xbl"
-	xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+	xmlns:xxbl="http://orbeon.org/oxf/xml/xbl" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:res="http://www.w3.org/2005/sparql-results#"
 	xmlns:harvester="https://github.com/Orbis-Cascade-Alliance/harvester">
 	<xbl:binding id="harvester-type" element="harvester|type">
 		<xbl:template>
-			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">				
+			<xforms:group xbl:attr="model context ref bind" xxbl:scope="outer">
 				<xbl:content includes="xforms|label,xforms|help,xforms|hint,xforms|alert"/>
 				<xforms:group xxbl:scope="inner">
 					<xforms:var name="binding" as="node()?">
@@ -12,30 +12,36 @@
 					</xforms:var>
 
 					<xforms:action ev:event="xforms-enabled" ev:target="#observer">
-						<xforms:setvalue ref="instance('search-query')" value="$binding/text()"/>	
+						<xforms:setvalue ref="instance('search-query')" value="$binding/text()"/>
 						<xforms:setvalue ref="instance('control-instance')/repository" value="$binding/parent::node()/@repository"/>
 					</xforms:action>
-						
+
 					<div class="term">
 						<h4>
 							<xforms:output ref="$binding"/>
 						</h4>
 						<xforms:group ref=".[string-length($binding/@uri) &gt; 0]">
 							<xforms:trigger appearance="minimal">
-								<xforms:label><xforms:output ref="$binding/@uri"/> <span class="glyphicon glyphicon-new-window"/></xforms:label>							
+								<xforms:label>
+									<xforms:output ref="$binding/@uri"/>
+									<span class="glyphicon glyphicon-new-window"/>
+								</xforms:label>
 								<xforms:load ev:event="DOMActivate" resource="{$binding/@uri}" show="new"/>
 							</xforms:trigger>
 							<xforms:trigger appearance="minimal">
-								<xforms:label><span class="glyphicon glyphicon-remove"/></xforms:label>
+								<xforms:label>
+									<span class="glyphicon glyphicon-remove"/>
+								</xforms:label>
 								<xforms:action ev:event="DOMActivate">
 									<!-- set the @uri value to empty to show the lookup mechanism again and reset all relevant values -->
 									<xforms:setvalue ref="$binding/@uri"/>
 									<xforms:setvalue ref="instance('control-instance')/uri"/>
 									<xforms:setvalue ref="instance('control-instance')/definition"/>
 									<xforms:delete nodeset="instance('getty-response')/*"/>
-									
+
 									<!-- TODO: SPARQL/Update to remove Term-URI pair -->
-									<xforms:var name="hash" select="concat(instance('config')/url, 'vocab/', digest(concat(instance('control-instance')/repository, ':', $binding), 'MD5', 'hex'))"/>
+									<xforms:var name="hash"
+										select="concat(instance('config')/url, 'vocab/', digest(concat(instance('control-instance')/repository, ':', $binding), 'MD5', 'hex'))"/>
 									<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/update"/>
 									<xforms:setvalue ref="instance('sparqlUpdate')"
 										value="replace(instance('sparqlUpdate-templates')/query[@id='delete-vocab'], 'URI', $hash)"/>
@@ -43,8 +49,8 @@
 								</xforms:action>
 							</xforms:trigger>
 						</xforms:group>
-						
-						
+
+
 						<xforms:group ref=".[not(string($binding/@uri))]">
 							<div>
 								<!--<radiogroup>
@@ -88,13 +94,13 @@
 												<xforms:label>Search AAT</xforms:label>
 											</xforms:trigger>
 										</div>
-										
+
 										<xforms:group ref=".[string-length(instance('control-instance')/search-results)] &gt; 0">
 											<p class="text-muted">
-												<xforms:output ref="instance('control-instance')/search-results)"/>
+												<xforms:output ref="instance('control-instance')/search-results"/>
 											</p>
 										</xforms:group>
-										
+
 										<xforms:group ref=".[count(instance('getty-response')//res:result) &gt; 0]">
 											<xforms:select1 ref="instance('control-instance')/uri" appearance="compact" length="20">
 												<xforms:label>Term</xforms:label>
@@ -102,41 +108,48 @@
 													<xforms:label ref="res:binding[@name='label']/res:literal"/>
 													<xforms:value ref="res:binding[@name='c']/res:uri"/>
 												</xforms:itemset>
-												
+
 												<!-- update the scopeNote on value-changed -->
-												<xforms:setvalue ref="instance('control-instance')/definition" value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri =
-													instance('control-instance')/uri]/res:binding[@name='def']/res:literal" ev:event="xforms-value-changed"/>
+												<xforms:setvalue ref="instance('control-instance')/definition"
+													value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri =
+													instance('control-instance')/uri]/res:binding[@name='def']/res:literal"
+													ev:event="xforms-value-changed"/>
 											</xforms:select1>
 											<xforms:trigger>
 												<xforms:label>Select</xforms:label>
 												<xforms:action ev:event="DOMActivate">
 													<!-- set @uri, which switches to other interface -->
-													<xforms:setvalue ref="$binding/@uri" value="instance('control-instance')/uri"/>		
+													<xforms:setvalue ref="$binding/@uri" value="instance('control-instance')/uri"/>
 													<xforms:setvalue ref="$binding/@new" value="true()"/>
-													<xforms:setvalue ref="$binding/@prefLabel" value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri =
+													<xforms:setvalue ref="$binding/@prefLabel"
+														value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri =
 														instance('control-instance')/uri]/res:binding[@name='label']/res:literal"/>
-													
+
 													<!-- TODO: SPARQL/Update to insert Term-URI pair -->
 													<!-- create a unique id for the URI to avoid blank nodes -->
-													<xforms:var name="hash" select="concat(instance('config')/url, 'vocab/', digest(concat(instance('control-instance')/repository, ':', $binding), 'MD5', 'hex'))"/>
+													<xforms:var name="hash"
+														select="concat(instance('config')/url, 'vocab/', digest(concat(instance('control-instance')/repository, ':', $binding), 'MD5', 'hex'))"/>
 													<xforms:var name="match" select="$binding/@uri"/>
 													<xforms:var name="label" select="$binding"/>
-													
+
 													<!-- set the SPARQL/Update to insert the vocabulary -->
-													<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/vocab_sparql/update"/>
+													<xforms:setvalue ref="instance('control-instance')/sparql-service"
+														value="instance('config')/vocab_sparql/update"/>
 													<xforms:setvalue ref="instance('sparqlUpdate')"
 														value="replace(replace(replace(replace(instance('sparqlUpdate-templates')/query[@id='insert-vocab'], 'URI', $hash), 'LABEL', $label), 'REPO', instance('control-instance')/repository), 'MATCH', $match)"/>
 													<xforms:send submission="update-graph"/>
 												</xforms:action>
 											</xforms:trigger>
-											
+
 											<xforms:group ref="instance('control-instance')[string-length(definition) &gt; 0]">
 												<div>
 													<xforms:output ref="definition">
 														<xforms:label>Definition</xforms:label>
 													</xforms:output>
 													<xforms:trigger appearance="minimal">
-														<xforms:label><span class="glyphicon glyphicon-new-window"/></xforms:label>
+														<xforms:label>
+															<span class="glyphicon glyphicon-new-window"/>
+														</xforms:label>
 														<xforms:hint ref="uri"/>
 														<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
 													</xforms:trigger>
@@ -145,22 +158,22 @@
 										</xforms:group>
 									</xforms:case>
 									<xforms:case id="ignore"/>
-								</xforms:switch>							
+								</xforms:switch>
 							</div>
 						</xforms:group>
-						
+
 						<hr/>
 					</div>
-					
+
 
 					<!--<xforms:output ref="instance('sparqlQuery')"/>
 					<fr:xforms-inspector xmlns:fr="http://orbeon.org/oxf/xml/form-runner" />-->
 					<!-- ***************** MODEL ***************-->
 					<xforms:model id="type-model">
 						<xforms:instance id="config">
-							<xi:include href="../../../config.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+							<xi:include href="../../../config.xml" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns=""/>
 						</xforms:instance>
-						
+
 						<!-- instances -->
 						<xforms:instance id="control-instance">
 							<control xmlns="">
@@ -180,7 +193,7 @@
 
 						<!-- interface type radio button -->
 						<xforms:instance id="interface-type">
-							<interface>aat</interface>
+							<interface xmlns="">aat</interface>
 						</xforms:instance>
 
 						<xforms:instance id="sparqlQueryTemplate">
@@ -197,9 +210,9 @@ OPTIONAL {?c skos:scopeNote ?note .
 ?note rdf:value ?def FILTER langMatches(lang(?def), "en")}} LIMIT 100]]>
 							</query>
 						</xforms:instance>
-						
+
 						<xforms:instance id="sparqlUpdate-templates">
-							<queries xmlns="">								
+							<queries xmlns="">
 								<query id="delete-vocab"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 DELETE {?s ?p ?o} WHERE { 
 ?s ?p ?o . FILTER (?s = <URI>)
@@ -225,9 +238,9 @@ INSERT DATA
 						<xforms:instance id="sparqlQuery">
 							<query xmlns=""/>
 						</xforms:instance>
-						
+
 						<xforms:instance id="sparqlUpdate">
-							<query></query>
+							<query xmlns=""/>
 						</xforms:instance>
 
 						<xforms:instance id="getty-response">
@@ -253,15 +266,17 @@ INSERT DATA
 							<!-- set the search results text -->
 							<xforms:action ev:event="xforms-submit-done">
 								<xforms:var name="total" select="count(instance('getty-response')//res:result)"/>
-								<xforms:setvalue if="$total = 0" ref="instance('control-instance')/search-results)">No results found for query.</xforms:setvalue>
-								<xforms:setvalue if="$total &gt; 0 and $total &lt;= 100" ref="instance('control-instance')/search-results)" value="concat('Displaying ', $total, ' result(s).')"/>
-								<xforms:setvalue if="$total &gt; 100" ref="instance('control-instance')/search-results)" value="concat('Displaying first 100 of ', $total, ' result(s).')"/>
+								<xforms:setvalue if="$total = 0" ref="instance('control-instance')/search-results">No results found for query.</xforms:setvalue>
+								<xforms:setvalue if="$total &gt; 0 and $total &lt;= 100" ref="instance('control-instance')/search-results"
+									value="concat('Displaying ', $total, ' result(s).')"/>
+								<xforms:setvalue if="$total &gt; 100" ref="instance('control-instance')/search-results"
+									value="concat('Displaying first 100 of ', $total, ' result(s).')"/>
 							</xforms:action>
 						</xforms:submission>
-						
+
 						<!-- update vocab graph -->
-						<xforms:submission id="update-graph" action="{instance('control-instance')/sparql-service}" ref="instance('sparqlUpdate')" serialization="text/plain"
-							replace="none" method="post" mediatype="application/sparql-update">
+						<xforms:submission id="update-graph" action="{instance('control-instance')/sparql-service}" ref="instance('sparqlUpdate')"
+							serialization="text/plain" replace="none" method="post" mediatype="application/sparql-update">
 							<xforms:action ev:event="xforms-submit-error">
 								<xforms:message level="modal">SPARQL update failed.</xforms:message>
 							</xforms:action>
