@@ -412,76 +412,8 @@ WHERE { ?agg edm:dataProvider <REPO> ;
 							</div>
 							<div class="col-md-6 text-right">
 								<xforms:trigger>
-									<xforms:label>Replace</xforms:label>
-									<xforms:action ev:event="DOMActivate">
-										<!-- delete any existing nodes within the RDF concepts -->
-										<xforms:delete nodeset="instance('rdf')/*"/>
-										
-										<!-- set the sparql-service -->
-										<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/sparql/update"/>
-										
-										<!-- iterate through all new matches for creators, contributors, and genres.-->
-										<xforms:action xxforms:iterate="instance('creator-list')/creator[@new = true() and string(@uri)]">
-											<xforms:var name="uri" select="context()/@uri"/>
-											<xforms:var name="literal" select="data(.)"/>
-											<xforms:var name="prop" select="concat('dcterms:', local-name())"/>
-											<!-- 1. insert RDF template -->
-											<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]"
-												origin="instance('agent-template')"/>
-											<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="$uri"/>
-											
-											<!-- 2. set and execute SPARQL/Update -->
-											<xforms:setvalue ref="instance('sparqlQuery')"
-												value="replace(replace(replace(replace(instance('sparqlUpdate-templates')/query[@id='replace-literal-with-uri'], 'LITERAL', $literal), 'PROP', $prop), 'URI', $uri), 'REPO', instance('control-instance')/repository_uri)"
-											/>
-											<xforms:send submission="update-graph"/>
-											
-											<!-- 3. set @new to false() -->
-											<xforms:setvalue ref="@new" value="false()"/>
-										</xforms:action>
-										<xforms:action xxforms:iterate="instance('contributor-list')/contributor[@new = true() and string(@uri)]">
-											<xforms:var name="uri" select="context()/@uri"/>
-											<xforms:var name="literal" select="data(.)"/>
-											<xforms:var name="prop" select="concat('dcterms:', local-name())"/>
-											
-											<!-- 1. insert RDF template -->
-											<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]"
-												origin="instance('agent-template')"/>
-											<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="$uri"/>
-											<xforms:setvalue ref="instance('rdf')/*[last()]/skos:prefLabel" value="context()/@prefLabel"/>
-											
-											<!-- 2. set and execute SPARQL/Update -->
-											<xforms:setvalue ref="instance('sparqlQuery')"
-												value="replace(replace(replace(replace(instance('sparqlUpdate-templates')/query[@id='replace-literal-with-uri'], 'LITERAL', $literal), 'PROP', $prop), 'URI', $uri), 'REPO', instance('control-instance')/repository_uri)"
-											/>
-											<xforms:send submission="update-graph"/>
-											
-											<!-- 3. set @new to false() -->
-											<xforms:setvalue ref="@new" value="false()"/>
-										</xforms:action>
-										<xforms:action xxforms:iterate="instance('type-list')/type[@new = true() and string(@uri)]">
-											<xforms:var name="uri" select="context()/@uri"/>
-											<xforms:var name="literal" select="data(.)"/>
-											
-											<!-- 1. insert RDF template -->
-											<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]"
-												origin="instance('concept-template')"/>
-											<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="$uri"/>
-											<xforms:setvalue ref="instance('rdf')/*[last()]/skos:prefLabel" value="context()/@prefLabel"/>
-											
-											<!-- 2. set and execute SPARQL/Update -->
-											<xforms:setvalue ref="instance('sparqlQuery')"
-												value="replace(replace(replace(replace(instance('sparqlUpdate-templates')/query[@id='replace-literal-with-uri'], 'LITERAL', $literal), 'PROP', 'edm:hasType'), 'URI', $uri), 'REPO', instance('control-instance')/repository_uri)"
-											/>
-											<xforms:send submission="update-graph"/>
-											
-											<!-- 3. set @new to false() -->
-											<xforms:setvalue ref="@new" value="false()"/>
-										</xforms:action>
-										
-										<!-- after the SPARQL/Updates have been executed to replace literals with URIs and generate the concept list, submit the concept list -->
-										<xforms:send submission="post-rdf"/>
-									</xforms:action>
+									<xforms:label>Replace terms with URIs</xforms:label>
+									<xforms:dispatch target="replace-triples-dialog" name="fr-show" ev:event="DOMActivate"/>
 								</xforms:trigger>
 							</div>
 
@@ -554,13 +486,98 @@ WHERE { ?agg edm:dataProvider <REPO> ;
 									</xforms:group>
 								</xforms:case>
 							</xforms:switch>
+							
+							<div class="col-md-12 text-right">
+								<xforms:trigger>
+									<xforms:label>Replace terms with URIs</xforms:label>
+									<xforms:dispatch target="replace-triples-dialog" name="fr-show" ev:event="DOMActivate"/>
+								</xforms:trigger>
+							</div>
 						</xforms:group>
-
-
-						<fr:xforms-inspector/>
+						<!--<fr:xforms-inspector/>-->
 					</div>
 				</div>
 			</div>
 		</div>
+		
+		<fr:alert-dialog id="replace-triples-dialog">
+			<fr:label>Replace terms with URIs</fr:label>
+			<fr:message>Depending on the number of matches made, it may take a few moments to replace the text-based terms with controlled vocabulary URIs. Proceed?</fr:message>
+			<fr:negative-choice>
+				<fr:label>No</fr:label>
+			</fr:negative-choice>
+			<fr:positive-choice>
+				<fr:label>Yes</fr:label>
+				<xforms:action ev:event="DOMActivate">
+					<!-- delete any existing nodes within the RDF concepts -->
+					<xforms:delete nodeset="instance('rdf')/*"/>
+					
+					<!-- set the sparql-service -->
+					<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/sparql/update"/>
+					
+					<!-- iterate through all new matches for creators, contributors, and genres.-->
+					<xforms:action xxforms:iterate="instance('creator-list')/creator[@new = true() and string(@uri)]">
+						<xforms:var name="uri" select="context()/@uri"/>
+						<xforms:var name="literal" select="data(.)"/>
+						<xforms:var name="prop" select="concat('dcterms:', local-name())"/>
+						<!-- 1. insert RDF template -->
+						<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]"
+							origin="instance('agent-template')"/>
+						<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="$uri"/>
+						
+						<!-- 2. set and execute SPARQL/Update -->
+						<xforms:setvalue ref="instance('sparqlQuery')"
+							value="replace(replace(replace(replace(instance('sparqlUpdate-templates')/query[@id='replace-literal-with-uri'], 'LITERAL', $literal), 'PROP', $prop), 'URI', $uri), 'REPO', instance('control-instance')/repository_uri)"
+						/>
+						<xforms:send submission="update-graph"/>
+						
+						<!-- 3. set @new to false() -->
+						<xforms:setvalue ref="@new" value="false()"/>
+					</xforms:action>
+					<xforms:action xxforms:iterate="instance('contributor-list')/contributor[@new = true() and string(@uri)]">
+						<xforms:var name="uri" select="context()/@uri"/>
+						<xforms:var name="literal" select="data(.)"/>
+						<xforms:var name="prop" select="concat('dcterms:', local-name())"/>
+						
+						<!-- 1. insert RDF template -->
+						<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]"
+							origin="instance('agent-template')"/>
+						<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="$uri"/>
+						<xforms:setvalue ref="instance('rdf')/*[last()]/skos:prefLabel" value="context()/@prefLabel"/>
+						
+						<!-- 2. set and execute SPARQL/Update -->
+						<xforms:setvalue ref="instance('sparqlQuery')"
+							value="replace(replace(replace(replace(instance('sparqlUpdate-templates')/query[@id='replace-literal-with-uri'], 'LITERAL', $literal), 'PROP', $prop), 'URI', $uri), 'REPO', instance('control-instance')/repository_uri)"
+						/>
+						<xforms:send submission="update-graph"/>
+						
+						<!-- 3. set @new to false() -->
+						<xforms:setvalue ref="@new" value="false()"/>
+					</xforms:action>
+					<xforms:action xxforms:iterate="instance('type-list')/type[@new = true() and string(@uri)]">
+						<xforms:var name="uri" select="context()/@uri"/>
+						<xforms:var name="literal" select="data(.)"/>
+						
+						<!-- 1. insert RDF template -->
+						<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]"
+							origin="instance('concept-template')"/>
+						<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="$uri"/>
+						<xforms:setvalue ref="instance('rdf')/*[last()]/skos:prefLabel" value="context()/@prefLabel"/>
+						
+						<!-- 2. set and execute SPARQL/Update -->
+						<xforms:setvalue ref="instance('sparqlQuery')"
+							value="replace(replace(replace(replace(instance('sparqlUpdate-templates')/query[@id='replace-literal-with-uri'], 'LITERAL', $literal), 'PROP', 'edm:hasType'), 'URI', $uri), 'REPO', instance('control-instance')/repository_uri)"
+						/>
+						<xforms:send submission="update-graph"/>
+						
+						<!-- 3. set @new to false() -->
+						<xforms:setvalue ref="@new" value="false()"/>
+					</xforms:action>
+					
+					<!-- after the SPARQL/Updates have been executed to replace literals with URIs and generate the concept list, submit the concept list -->
+					<xforms:send submission="post-rdf"/>
+				</xforms:action>
+			</fr:positive-choice>
+		</fr:alert-dialog>
 	</body>
 </html>
