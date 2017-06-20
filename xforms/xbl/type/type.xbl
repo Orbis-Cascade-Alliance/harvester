@@ -197,7 +197,7 @@
 						</xforms:instance>
 
 						<xforms:instance id="sparqlQueryTemplate">
-							<query><![CDATA[PREFIX gvp: <http://vocab.getty.edu/ontology#>
+							<query xmlns=""><![CDATA[PREFIX gvp: <http://vocab.getty.edu/ontology#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX luc: <http://www.ontotext.com/owlim/lucene#>
 PREFIX aat: <http://vocab.getty.edu/aat/>

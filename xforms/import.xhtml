@@ -1841,8 +1841,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 					<xforms:setvalue ref="instance('control-instance')/sparql-service" value="instance('config')/sparql/update"/>
 					<!-- isolate the setSpec and OAI-PMH service for deleting the set based on regex instead of precise URI match -->
 					<xforms:var name="service" select="substring-before(instance('set')/set, '?')"/>
-					<xforms:var name="setSpec" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')[contains(., 'set=')]"/> <xforms:setvalue
-						ref="instance('sparqlUpdate')"
+					<xforms:var name="setSpec" select="tokenize(substring-after(instance('set')/set, '?'), '&amp;')[contains(., 'set=')]"/>
+					<xforms:setvalue ref="instance('sparqlUpdate')"
 						value="replace(replace(instance('sparqlUpdate-templates')/query[@id='delete-set'], '%SETSPEC%', $setSpec), '%SERVICE%', $service)"/>
 					<!-- delete the set from the SPARQL endpoint -->
 					<xforms:send submission="update-graph"/>
@@ -1852,8 +1852,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 						<xforms:delete nodeset="instance('rdf')/*"/>
 						<!-- generate RDF for a genre from remediation page -->
 						<xforms:action if="string(instance('set')/genre)">
-							<xforms:var name="genre" select="instance('set')/genre"/> <xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]"
-								origin="instance('concept-template')"/>
+							<xforms:var name="genre" select="instance('set')/genre"/>
+							<xforms:insert context="instance('rdf')" nodeset="./child::node()[last()]" origin="instance('concept-template')"/>
 							<xforms:setvalue ref="instance('rdf')/*[last()]/@rdf:about" value="$genre"/>
 							<xforms:setvalue ref="instance('rdf')/*[last()]/skos:prefLabel"
 								value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri=$genre]/res:binding[@name='label']/res:literal"/>
