@@ -84,9 +84,9 @@
 						<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
 						<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
 						<link rel="stylesheet" href="{$display_path}ui/css/style.css"/>
-						<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"/>
+						<!--<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"/>
 						<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"/>
-						<script type="text/javascript" src="{$display_path}ui/javascript/display_functions.js"/>
+						<script type="text/javascript" src="{$display_path}ui/javascript/display_functions.js"/>-->
 					</head>
 					<body>
 						<xsl:call-template name="header"/>
@@ -139,7 +139,7 @@
 					<xsl:apply-templates select="parent::node()/dpla:SourceResource[@rdf:about = $cho_uri]">
 						<xsl:with-param name="reference" select="$reference"/>
 						<xsl:with-param name="thumbnail" select="$thumbnail"/>
-						<xsl:with-param name="hasCoords" select="false()" as="xs:boolean"/>
+						<!--<xsl:with-param name="hasCoords" select="false()" as="xs:boolean"/>-->
 					</xsl:apply-templates>
 
 					<!-- images -->
@@ -148,12 +148,12 @@
 					/>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:variable name="hasCoords" as="xs:boolean">
+					<!--<xsl:variable name="hasCoords" as="xs:boolean">
 						<xsl:choose>
 							<xsl:when test="descendant::geo:lat and descendant::geo:long">true</xsl:when>
 							<xsl:otherwise>false</xsl:otherwise>
 						</xsl:choose>
-					</xsl:variable>
+					</xsl:variable>-->
 
 					<xsl:apply-templates select="descendant::dpla:SourceResource">
 						<xsl:with-param name="reference"
@@ -168,10 +168,10 @@
 									edm:preview/@rdf:resource
 								else
 									edm:preview/edm:WebResource/@rdf:about"/>
-						<xsl:with-param name="hasCoords" select="$hasCoords"/>
+						<!--<xsl:with-param name="hasCoords" select="$hasCoords"/>-->
 					</xsl:apply-templates>
 
-					<xsl:if test="$hasCoords = true()">
+					<!--<xsl:if test="$hasCoords = true()">
 						<div class="hidden">
 							<span id="lat">
 								<xsl:value-of select="descendant::geo:lat"/>
@@ -180,7 +180,7 @@
 								<xsl:value-of select="descendant::geo:long"/>
 							</span>
 						</div>
-					</xsl:if>
+					</xsl:if>-->
 				</xsl:otherwise>
 			</xsl:choose>
 
@@ -215,7 +215,7 @@
 	<xsl:template match="dpla:SourceResource">
 		<xsl:param name="thumbnail"/>
 		<xsl:param name="reference"/>
-		<xsl:param name="hasCoords" as="xs:boolean"/>
+		<!--<xsl:param name="hasCoords" as="xs:boolean"/>-->
 		<div class="col-md-12">
 			<xsl:if test="not(string($output))">
 				<h2>
@@ -256,8 +256,24 @@
 				</div>
 			</xsl:when>
 			<xsl:otherwise>
-
-				<xsl:choose>
+				<div class="col-md-6">
+					<dl class="dl-horizontal">
+						<xsl:apply-templates select="*[not(name() = 'dcterms:title')]">
+							<xsl:sort select="local-name()"/>
+						</xsl:apply-templates>
+					</dl>
+				</div>
+				<div class="col-md-6">
+					<xsl:apply-templates select="//edm:WebResource[@rdf:about = $thumbnail]" mode="display-image">
+						<xsl:with-param name="size">thumbnail</xsl:with-param>
+					</xsl:apply-templates>
+					<xsl:apply-templates select="//edm:WebResource[@rdf:about = $reference]" mode="display-image">
+						<xsl:with-param name="size">reference</xsl:with-param>
+					</xsl:apply-templates>
+				</div>
+				
+				<!-- disabling map rendering -->
+				<!--<xsl:choose>
 					<xsl:when test="$hasCoords = true()">
 						<div class="col-md-12">
 							<dl class="dl-horizontal">
@@ -267,11 +283,12 @@
 							</dl>
 						</div>
 						<div class="col-md-6">
-							<xsl:if test="string($reference)">
-								<xsl:apply-templates select="descendant::edm:WebResource[@rdf:about = $reference]" mode="display-image">
-									<xsl:with-param name="size">reference</xsl:with-param>
-								</xsl:apply-templates>
-							</xsl:if>
+							<xsl:apply-templates select="//edm:WebResource[@rdf:about = $thumbnail]" mode="display-image">
+								<xsl:with-param name="size">thumbnail</xsl:with-param>
+							</xsl:apply-templates>
+							<xsl:apply-templates select="//edm:WebResource[@rdf:about = $reference]" mode="display-image">
+								<xsl:with-param name="size">reference</xsl:with-param>
+							</xsl:apply-templates>
 						</div>
 						<div class="col-md-6">
 							<div id="map"/>
@@ -294,7 +311,7 @@
 							</xsl:apply-templates>
 						</div>
 					</xsl:otherwise>
-				</xsl:choose>
+				</xsl:choose>-->
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
