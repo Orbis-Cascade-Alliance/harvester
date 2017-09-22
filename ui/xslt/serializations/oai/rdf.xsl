@@ -678,7 +678,7 @@ rdfs:label ?label
 				<!-- conditionals for ignoring or processing specific properties differently -->
 				<xsl:choose>
 					<xsl:when test="$property = 'creator' or $property = 'contributor'">
-						<xsl:if test="not(contains(lower-case($val), 'unknown'))">
+						<xsl:if test="not(contains(lower-case($val), 'unknown')) and not(contains(lower-case($val), 'unidentified'))">
 							<xsl:element name="dcterms:{$property}" namespace="http://purl.org/dc/terms/">
 								<xsl:choose>
 									<xsl:when test="$agents//res:result[res:binding[@name = 'label']/res:literal = $val]">
