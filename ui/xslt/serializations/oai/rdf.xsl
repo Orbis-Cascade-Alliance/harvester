@@ -903,6 +903,44 @@ rdfs:label ?label
 							</xsl:choose>
 						</edm:WebResource>
 					</xsl:when>
+					<xsl:when test="$repository = 'orpr'">
+						<!-- thumbail -->
+						<xsl:if test="dc:description[matches(., '.jpg$')]">
+							<edm:WebResource rdf:about="{dc:description[matches(., '.jpg$')][1]}">
+								<xsl:if test="string($rights_uri)">
+									<edm:rights rdf:resource="{$rights_uri}"/>
+								</xsl:if>
+								<dcterms:format>image/jpeg</dcterms:format>
+							</edm:WebResource>
+							
+							<edm:WebResource rdf:about="{substring-before(dc:description[matches(., '.jpg$')][1], '/thumb')}">
+								<xsl:if test="string($rights_uri)">
+									<edm:rights rdf:resource="{$rights_uri}"/>
+								</xsl:if>
+								<xsl:choose>
+									<xsl:when test="string($format)">
+										<dcterms:format>
+											<xsl:value-of select="$format"/>
+										</dcterms:format>
+									</xsl:when>
+									<xsl:when test="string-length($content-type) &gt; 0">
+										<dcterms:format>
+											<xsl:value-of select="$content-type"/>
+										</dcterms:format>
+									</xsl:when>
+								</xsl:choose>
+							</edm:WebResource>
+							
+							<xsl:if test="dc:type = 'Image' or dc:type = 'StillImage' or $type = 'Image' or $type = 'StillImage'">
+								<edm:WebResource rdf:about="{substring-before(dc:description[matches(., '.jpg$')][1], '/thumb')}.jpg">
+									<xsl:if test="string($rights_uri)">
+										<edm:rights rdf:resource="{$rights_uri}"/>
+									</xsl:if>
+									<dcterms:format>image/jpeg</dcterms:format>
+								</edm:WebResource>
+							</xsl:if>
+						</xsl:if>
+					</xsl:when>
 				</xsl:choose>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -969,6 +1007,15 @@ rdfs:label ?label
 						<edm:preview rdf:resource="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getthumbnail/collection/$1/id/$2')}"/>
 						<edm:object rdf:resource="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}"/>
 						<edm:isShownAt rdf:resource="{replace($cho_uri, 'cview/archives.html#!doc:page:(.*)/(.*)', 'utils/getstream/collection/$1/id/$2')}"/>
+					</xsl:when>
+					<xsl:when test="$repository = 'orpr'">
+						<xsl:if test="dc:description[matches(., '.jpg$')]">
+							<edm:preview rdf:resource="{dc:description[matches(., '.jpg$')][1]}"/>
+							<edm:isShownAt rdf:resource="{substring-before(dc:description[matches(., '.jpg$')][1], '/thumb')}"/>
+							<xsl:if test="dc:type = 'Image' or dc:type = 'StillImage' or $type = 'Image' or $type = 'StillImage'">
+								<edm:object rdf:resource="{substring-before(dc:description[matches(., '.jpg$')][1], '/thumb')}.jpg"/>
+							</xsl:if>
+						</xsl:if>
 					</xsl:when>
 				</xsl:choose>
 			</xsl:otherwise>
