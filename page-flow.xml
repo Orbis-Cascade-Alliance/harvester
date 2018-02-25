@@ -10,7 +10,7 @@
 	<page path="/harvester/" model="xpl/models/sparql/index.xpl" view="xpl/views/pages/index.xpl"/>
 	
 	<!-- **** SERIALIZATIONS **** -->	
-	<page path="/harvester/record/.*" model="xpl/models/sparql/get-record.xpl" view="xpl/views/serializations/rdf/html.xpl"/>
+	<page path="/harvester/record/.*" model="xpl/models/sparql/get-record.xpl" view="xpl/views/serializations/rdf/html.xpl"/>	
 	<page path="/harvester/agency/.*" model="xpl/models/rdf/get-agency.xpl" view="xpl/views/serializations/rdf/html.xpl"/>
 	<page path="/harvester/results" model="xpl/models/sparql/query.xpl" view="xpl/controllers/view.xpl"/>
 	<page path="/harvester/feed" model="xpl/models/sparql/atom.xpl" view="xpl/views/serializations/sparql/atom.xpl"/>
@@ -18,6 +18,7 @@
 	
 	<page path="/harvester/apis/ask" model="xpl/models/sparql/ask.xpl" view="xpl/views/apis/ask.xpl"/>
 	<page path="/harvester/apis/get" view="xpl/controllers/conneg-get.xpl"/>
+	<page path="/harvester/apis/redirect" view="xpl/controllers/redirect.xpl"/>
 	<page path="/harvester/apis/count" model="xpl/models/sparql/count.xpl" view="xpl/views/apis/count.xpl"/>	
 	
 	<!-- **** SPARQL **** -->
