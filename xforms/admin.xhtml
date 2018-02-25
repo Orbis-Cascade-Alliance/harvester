@@ -3,7 +3,7 @@
 	xmlns:fr="http://orbeon.org/oxf/xml/form-runner" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"
 	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
 	xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/"
-	xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:res="http://www.w3.org/2005/sparql-results#">
+	xmlns:prov="http://www.w3.org/ns/prov#" xmlns:doap="http://usefulinc.com/ns/doap#" xmlns:res="http://www.w3.org/2005/sparql-results#">
 	<head>
 		<title>Orbis Cascade Harvester: Admin</title>
 		<link rel="stylesheet" href="/fr/style/bootstrap/css/bootstrap.css" type="text/css" />
@@ -20,7 +20,7 @@
 				<controls xmlns="">
 					<status></status>
 					<set-url></set-url>
-					<repository/>
+					<repository></repository>
 				</controls>
 			</xforms:instance>
 
@@ -28,6 +28,16 @@
 				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/"
 					xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:foaf="http://purl.org/dc/terms/"
 					xmlns:doap="http://usefulinc.com/ns/doap#"/>
+			</xforms:instance>
+			
+			<xforms:instance id="partial-set-list" xxforms:exclude-result-prefixes="#all">
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/"
+					xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:foaf="http://purl.org/dc/terms/"
+					xmlns:doap="http://usefulinc.com/ns/doap#"/>
+			</xforms:instance>
+			
+			<xforms:instance id="repo-list">
+				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
 			</xforms:instance>
 
 			<xforms:instance id="controls">
@@ -78,9 +88,9 @@ UNION {?set a dcmitype:Collection . ?s ?p ?o . FILTER (?s = ?set)}
 				</queries>
 			</xforms:instance>
 
+		<!-- SPARQL query to get sets for all or a particular repository -->
 			<xforms:instance id="list-sets">
-				<query>
-					<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+				<query><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
 PREFIX arch:	<http://purl.org/archival/vocab/arch#>
@@ -88,6 +98,7 @@ PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
 PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
 PREFIX doap:	<http://usefulinc.com/ns/doap#>
 PREFIX ore:	<http://www.openarchives.org/ore/terms/>
+PREFIX prov:	<http://www.w3.org/ns/prov#>
 
 CONSTRUCT {
 ?set rdf:type dcmitype:Collection ; 
@@ -96,22 +107,46 @@ CONSTRUCT {
   dcterms:publisher %PUB% ;
   doap:audience ?target ;
   foaf:name ?name ;
-  dcterms:extent ?count
+  dcterms:extent ?count ;
+  prov:generatedAtTime ?date
 } WHERE {
 ?set a dcmitype:Collection ;
   dcterms:title ?title ;
   dcterms:publisher %PUB% .
   %PUB% foaf:name ?name 
  	{ 
-      SELECT ?set ?target ( count(?cho) as ?count ) { 
+      SELECT ?set ?target ?date ( count(?cho) as ?count ) { 
    		?cho dcterms:isPartOf ?set .
 		 ?agg a ore:Aggregation ;
 			edm:aggregatedCHO ?cho ;
-			doap:audience ?target
- 		} GROUP BY ?set ?target
+			doap:audience ?target ;
+			prov:generatedAtTime ?date
+ 		} GROUP BY ?set ?target ?date
 	}
 } ORDER BY ?name ?title ?title]]>
 				</query>
+			</xforms:instance>
+			
+			<!-- get all repositories that have published at least one CHO (for a restricted list for CSV downloads -->
+			<xforms:instance id="get-current-repositories">
+				<query><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX arch:	<http://purl.org/archival/vocab/arch#>
+PREFIX dcmitype:	<http://purl.org/dc/dcmitype/>
+PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX doap:	<http://usefulinc.com/ns/doap#>
+PREFIX dpla:	<http://dp.la/terms/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX foaf:	<http://xmlns.com/foaf/0.1/>
+PREFIX ore:	<http://www.openarchives.org/ore/terms/>
+PREFIX prov:	<http://www.w3.org/ns/prov#>
+PREFIX skos:	<http://www.w3.org/2004/02/skos/core#>
+PREFIX xsd:	<http://www.w3.org/2001/XMLSchema#>
+
+SELECT DISTINCT ?repo ?name WHERE {
+  ?repo a arch:Archive ;
+          foaf:name ?name .
+  ?set dcterms:publisher ?repo
+} ORDER BY ?name]]></query>
 			</xforms:instance>
 
 			<xforms:instance id="sparqlQuery">
@@ -122,6 +157,19 @@ CONSTRUCT {
 				<sparql></sparql>
 			</xforms:instance>
 
+			<!-- download CSV -->
+			<xforms:instance id="csv" xxforms:exclude-result-prefixes="#all">
+				<csv xmlns=""></csv>
+			</xforms:instance>
+
+			<xforms:instance id="csv-part-download" xxforms:exclude-result-prefixes="#all">
+				<csv xmlns="" filename="" mediatype="text/csv"></csv>
+			</xforms:instance>
+
+			<xforms:instance id="csv-full-download" xxforms:exclude-result-prefixes="#all">
+				<csv xmlns="" filename="" mediatype="text/csv"></csv>
+			</xforms:instance>
+
 			<!-- ************************* BINDINGS ************************** -->
 			<xforms:bind nodeset="instance('config')">
 				<xforms:bind nodeset="codes">
@@ -129,6 +177,18 @@ CONSTRUCT {
 						<xforms:bind nodeset="@harvester-only" type="xs:boolean"/>
 					</xforms:bind>
 				</xforms:bind>
+			</xforms:bind>
+
+			<xforms:bind nodeset="instance('csv-part-download')" type="xs:base64Binary">
+				<xforms:bind nodeset="@filename"
+					calculate="concat(if (contains(instance('control-instance')/repository, '#')) then substring-after(instance('control-instance')/repository, '#') else tokenize(instance('control-instance')/repository, '/')[last()], '.csv')"
+				/>
+			</xforms:bind>
+			
+			<xforms:bind nodeset="instance('csv-full-download')" type="xs:base64Binary">
+				<xforms:bind nodeset="@filename"
+					calculate="concat(if (string-length(instance('control-instance')/repository) &gt; 0) then instance('control-instance')/repository else 'all', '.csv')"
+				/>
 			</xforms:bind>
 
 			<!-- ************************* SUBMISSIONS ************************** -->
@@ -143,12 +203,10 @@ CONSTRUCT {
 					<!-- submit SPARQL/Update to purge arch:Archive triples -->
 					<xforms:setvalue ref="instance('sparqlQuery')" value="instance('sparqlUpdate-templates')/query[@id='purge-repositories']"/>
 					<xforms:send submission="delete-graph"/>
-
 					<xforms:action ev:event="xforms-submit-done">
 						<!-- post RDF and then refresh the repository list -->
 						<xforms:send submission="post-rdf"/>
 					</xforms:action>
-
 				</xforms:action>
 			</xforms:submission>
 
@@ -161,7 +219,7 @@ CONSTRUCT {
 			<!-- SPARQL queries -->
 			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
 				ref="instance('sparqlResponse')" replace="instance" method="get">
-				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
+				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>				
 			</xforms:submission>
 
 			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlQuery')" serialization="text/plain"
@@ -182,15 +240,27 @@ CONSTRUCT {
 					<xforms:insert context="instance('control-instance')" nodeset="status" position="after"
 						origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/get-authentication.xpl', 'dump', instance('dump'), 'data')"/>
 					<xforms:setvalue ref="instance('control-instance')/repository" value="instance('control-instance')/request-security/role"/>
-					
+
 					<!-- set the repository based on whether or it is harvester-only -->
-					<xforms:var name="pub" select="if (instance('config')/codes/repository[@marc=instance('control-instance')/repository]/@harvester-only = true()) then concat('&lt;', instance('config')/url, 'agency/', instance('control-instance')/repository, '&gt;') else concat('&lt;', instance('config')/production_server, 'contact#', instance('control-instance')/repository, '&gt;')"/>
+					<xforms:var name="pub"
+						select="if (instance('config')/codes/repository[@marc=instance('control-instance')/repository]/@harvester-only = true()) then concat('&lt;', instance('config')/url, 'agency/', instance('control-instance')/repository, '&gt;') else concat('&lt;', instance('config')/production_server, 'contact#', instance('control-instance')/repository, '&gt;')"/>
 					<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', $pub)"/>
 				</xforms:action>
-				
+
 				<!-- get OAI-PMH sets -->
 				<xforms:send submission="submit-sparqlQuery"/>
 				<xforms:insert context="instance('set-list')" origin="instance('sparqlResponse')/*"/>
+				<!-- set the 'full' download for the CSV, which may be all.csv or for a repo if a partner account is logged in -->
+				<xforms:insert nodeset="instance('csv')"
+					origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/sets-to-csv.xpl', 'data', instance('set-list'), 'data')"/>
+				<xforms:setvalue ref="instance('csv-full-download')" value="saxon:string-to-base64Binary(saxon:serialize(instance('csv'), 'text'), 'UTF-8')"/>
+				
+				<!-- if the user is the harvester-admin, then get the list of repositories -->
+				<xforms:action if="xxforms:is-user-in-role('harvester-admin')">
+					<xforms:setvalue ref="instance('sparqlQuery')" value="instance('get-current-repositories')"/>
+					<xforms:send submission="submit-sparqlQuery"/>
+					<xforms:insert context="instance('repo-list')" origin="instance('sparqlResponse')/*"/>
+				</xforms:action>
 			</xforms:action>
 		</xforms:model>
 	</head>
@@ -302,6 +372,11 @@ CONSTRUCT {
 																<xforms:output ref="foaf:name"/>
 															</xforms:group>
 														</dd>
+														<dt>Harvest Date</dt>
+														<dd>
+															<xforms:output ref="format-dateTime(prov:generatedAtTime, '[MNn] [D1], [Y0001]. [H01]:[m01]:[s01]')"
+															/>
+														</dd>
 													</dl>
 												</div>
 											</td>
@@ -350,9 +425,58 @@ CONSTRUCT {
 						<li>
 							<a href="import"><span class="glyphicon glyphicon-import"></span>Import OAI-PMH</a>
 						</li>
-						<xforms:group ref=".[xxforms:is-user-in-role('harvester-admin') or instance('config')/codes/repository[@marc = instance('control-instance')/repository]/@harvester-only=true()]">
+						<xforms:group
+							ref=".[xxforms:is-user-in-role('harvester-admin') or instance('config')/codes/repository[@marc = instance('control-instance')/repository]/@harvester-only=true()]">
 							<li>
 								<a href="edit"><span class="glyphicon glyphicon-pencil"></span>Edit Repository Metadata</a>
+							</li>
+						</xforms:group>
+						<li>
+							<xforms:output ref="instance('csv-full-download')" appearance="xxforms:download">
+								<xforms:label><span class="glyphicon glyphicon-download-alt"/> Download CSV of all sets</xforms:label>
+								<xforms:mediatype ref="instance('csv-full-download')/@mediatype"/>
+								<xforms:filename ref="instance('csv-full-download')/@filename"/>
+							</xforms:output>							
+						</li>
+						<xforms:group ref=".[xxforms:is-user-in-role('harvester-admin')]">
+							<li>
+								<strong>Download CSV for a selected repository:</strong>
+								<br/>
+								<xforms:select1 ref="instance('control-instance')/repository" class="small-list">									
+									<xforms:item>
+										<xforms:label>Select...</xforms:label>
+										<xforms:value/>
+									</xforms:item>
+									<xforms:itemset
+										nodeset="instance('repo-list')//res:result">
+										<xforms:label ref="res:binding[@name='name']/res:literal"/>
+										<xforms:value ref="res:binding[@name='repo']/res:uri"/>
+									</xforms:itemset>
+									<!-- set the @repository of the controlled vocabulary lists -->
+									<xforms:action ev:event="xforms-value-changed">
+										<xforms:var name="pub" select="concat('&lt;', instance('control-instance')/repository, '&gt;')"/>
+										<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', $pub)"/>
+										<!-- submit sparql query -->
+										<xforms:send submission="submit-sparqlQuery"/>
+										<xforms:action ev:event="xforms-submit-done">
+											<!-- delete everything from partial set list and then reinsert new sets -->
+											<xforms:delete nodeset="instance('partial-set-list')/*"/>
+											<xforms:insert context="instance('partial-set-list')" origin="instance('sparqlResponse')/*"/>
+											<xforms:insert nodeset="instance('csv')"
+												origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/sets-to-csv.xpl', 'data', instance('partial-set-list'), 'data')"
+											/>
+											<xforms:setvalue ref="instance('csv-part-download')"
+												value="saxon:string-to-base64Binary(saxon:serialize(instance('csv'), 'text'), 'UTF-8')"/>
+										</xforms:action>										
+									</xforms:action>
+								</xforms:select1>
+								<xforms:group ref=".[string-length(instance('control-instance')/repository) &gt; 0]">
+									<xforms:output ref="instance('csv-part-download')" appearance="xxforms:download" class="download-inline">
+										<xforms:label><span class="glyphicon glyphicon-download-alt"/></xforms:label>
+										<xforms:mediatype ref="instance('csv-part-download')/@mediatype"/>
+										<xforms:filename ref="instance('csv-part-download')/@filename"/>
+									</xforms:output>
+								</xforms:group>								
 							</li>
 						</xforms:group>
 					</ul>
@@ -372,7 +496,6 @@ CONSTRUCT {
 					<!-- isolate the setSpec and OAI-PMH service for deleting the set based on regex instead of precise URI match -->
 					<xforms:var name="service" select="substring-before(instance('control-instance')/set-url, '?')"/>
 					<xforms:var name="setSpec" select="tokenize(substring-after(instance('control-instance')/set-url, '?'), '&amp;')[contains(., 'set=')]"/>
-					
 					<xforms:setvalue ref="instance('sparqlQuery')"
 						value="replace(replace(instance('sparqlUpdate-templates')/query[@id='delete-set'], '%SETSPEC%', $setSpec), '%SERVICE%', $service)"/>
 					<xforms:send submission="delete-graph"/>
@@ -380,20 +503,18 @@ CONSTRUCT {
 						<xforms:setvalue ref="instance('control-instance')/status">Set successfully deleted set from triplestore.</xforms:setvalue>
 						<!-- refresh the set list -->
 						<xforms:delete nodeset="instance('set-list')/*"/>
-						
 						<xforms:action if="xxforms:is-user-in-role('harvester-admin')">
 							<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', '?pub')"/>
 						</xforms:action>
-						<xforms:action if="not(xxforms:is-user-in-role('harvester-admin'))">							
+						<xforms:action if="not(xxforms:is-user-in-role('harvester-admin'))">
 							<!-- set the repository based on whether or it is harvester-only -->
-							<xforms:var name="pub" select="if (instance('config')/codes/repository[@marc=instance('control-instance')/repository]/@harvester-only = true()) then concat('&lt;', instance('config')/url, 'agency/', instance('control-instance')/repository, '&gt;') else concat('&lt;', instance('config')/production_server, 'contact#', instance('control-instance')/repository, '&gt;')"/>
+							<xforms:var name="pub"
+								select="if (instance('config')/codes/repository[@marc=instance('control-instance')/repository]/@harvester-only = true()) then concat('&lt;', instance('config')/url, 'agency/', instance('control-instance')/repository, '&gt;') else concat('&lt;', instance('config')/production_server, 'contact#', instance('control-instance')/repository, '&gt;')"/>
 							<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('list-sets'), '%PUB%', $pub)"/>
 						</xforms:action>
-						
 						<!-- get OAI-PMH sets -->
 						<xforms:send submission="submit-sparqlQuery"/>
 						<xforms:insert context="instance('set-list')" origin="instance('sparqlResponse')/*"/>
-						
 					</xforms:action>
 				</xforms:action>
 			</fr:positive-choice>

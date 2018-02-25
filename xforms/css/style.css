@@ -20,6 +20,16 @@
     width: 30em;
     margin-bottom: 2px;
 }
+.orbeon .small-list {
+    display:inline
+}
+.orbeon .small-list select {
+    width:10em;
+    margin-bottom:2px;
+}
+.orbeon .download-inline {
+    display:inline
+}
 .orbeon .xforms-select1-appearance-compact select {
     width: 50em;
     margin-bottom: 2px;
