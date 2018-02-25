@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<p:pipeline xmlns:p="http://www.orbeon.com/oxf/pipeline" xmlns:oxf="http://www.orbeon.com/oxf/processors">
+<p:pipeline xmlns:p="http://www.orbeon.com/oxf/pipeline" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:res="http://www.w3.org/2005/sparql-results#">
 
 	<p:param type="input" name="data"/>
 	<p:param type="output" name="data"/>
@@ -86,11 +86,23 @@ SELECT ?agg WHERE {
 				<p:output name="data" id="sparqlResponse"/>
 			</p:processor>
 			
-			<p:processor name="oxf:pipeline">
-				<p:input name="data" href="#sparqlResponse"/>
-				<p:input name="config" href="303-redirect.xpl"/>		
-				<p:output name="data" ref="data"/>
-			</p:processor>
+			<!-- check to see if there is indeed an ore:Aggregation URI -->
+			<p:choose href="#sparqlResponse">
+				<p:when test="count(//res:result) = 1">
+					<p:processor name="oxf:pipeline">
+						<p:input name="data" href="#sparqlResponse"/>
+						<p:input name="config" href="303-redirect.xpl"/>		
+						<p:output name="data" ref="data"/>
+					</p:processor>
+				</p:when>
+				<p:otherwise>
+					<p:processor name="oxf:pipeline">
+						<p:input name="data" href="#uri-config"/>
+						<p:input name="config" href="400-bad-request.xpl"/>		
+						<p:output name="data" ref="data"/>
+					</p:processor>
+				</p:otherwise>
+			</p:choose>
 		</p:otherwise>
 	</p:choose>
 </p:pipeline>
