@@ -9,24 +9,26 @@
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
 
 	<xsl:template match="/">
-		<xsl:text>title,set,publisher,publisher_uri,count,target,date&#x0A;</xsl:text>
+		<xsl:text>Publisher,"OAI URI","Digital Objects in Set","Set Title","Date most recently contributed","# for DPLA","# for Primo","for Archives West?"&#x0A;</xsl:text>
 		<xsl:apply-templates select="//dcmitype:Collection"/>
 	</xsl:template>
 
 	<xsl:template match="dcmitype:Collection">		
-		<xsl:value-of select="concat('&#x022;', dcterms:title, '&#x022;')"/>
+		<xsl:value-of select="concat('&#x022;', foaf:name, '&#x022;')"/>
 		<xsl:text>,</xsl:text>
 		<xsl:value-of select="concat('&#x022;', @rdf:about, '&#x022;')"/>
 		<xsl:text>,</xsl:text>
-		<xsl:value-of select="concat('&#x022;', foaf:name, '&#x022;')"/>
-		<xsl:text>,</xsl:text>
-		<xsl:value-of select="concat('&#x022;', dcterms:publisher/@rdf:resource, '&#x022;')"/>
-		<xsl:text>,</xsl:text>
 		<xsl:value-of select="concat('&#x022;', dcterms:extent, '&#x022;')"/>
+		<xsl:text>,</xsl:text>		
+		<xsl:value-of select="concat('&#x022;', dcterms:title, '&#x022;')"/>
 		<xsl:text>,</xsl:text>
-		<xsl:value-of select="concat('&#x022;', string-join(doap:audience, ';'), '&#x022;')"/>
+		<xsl:value-of select="concat('&#x022;', format-dateTime(prov:generatedAtTime, '[Y0001][M01][D01]'), '&#x022;')"/>
 		<xsl:text>,</xsl:text>
-		<xsl:value-of select="concat('&#x022;', format-dateTime(prov:generatedAtTime, '[MNn] [D1], [Y0001]. [H01]:[m01]:[s01]'), '&#x022;')"/>
+		<xsl:value-of select="if (doap:audience = 'dpla') then dcterms:extent else 0"/>
+		<xsl:text>,</xsl:text>
+		<xsl:value-of select="if (doap:audience = 'primo') then dcterms:extent else 0"/>
+		<xsl:text>,</xsl:text>
+		<xsl:value-of select="if (doap:audience = 'aw') then 'yes' else 'no'"/>
 		<xsl:text>&#x0A;</xsl:text>
 	</xsl:template>
 </xsl:stylesheet>
