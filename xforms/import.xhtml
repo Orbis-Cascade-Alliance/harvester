@@ -1087,267 +1087,282 @@ OPTIONAL {?c skos:scopeNote ?note .
 							</div>
 						</xforms:case>
 						<xforms:case id="remediation">
-							<h2>Would you like to edit records in this set?</h2>
-							<h3>
-								<xforms:output ref="instance('oai-set')//oai:set[oai:setSpec = instance('control-instance')/oai-set-code]/oai:setName"/>
-							</h3>
-							<div class="row">
-								<div class="col-md-6">
-									<p>Use this interface to apply global genre, format, language, rights, and/or DCMI type values to all records in a set.</p>
-									<p>If you have questions about the definition or appropriate contents for any of these fields, please consult the <a
-											href="https://www.orbiscascade.org/digital-collections-documentation">Alliance’s Dublin Core Best Practices</a>.</p>
+							<!-- prevent the user from moving forward if there's a setSpec error -->
+							<xforms:group ref=".[string-length(instance('control-instance')/error) &gt; 0]">
+								<h2>Error extracting Set Metadata</h2>
+								<p>The set ID, <code><xforms:output ref="instance('control-instance')/oai-set-code"/></code>, cannot be matched with metadata
+									within the OAI-PMH <a href="{instance('control-instance')/oai-service}" target="_blank">ListSets</a> response. Please double
+									check the set ID provided in the URL.</p>
+							</xforms:group>
+							<xforms:group ref=".[string-length(instance('control-instance')/error) = 0]">
+								<h2>Would you like to edit records in this set?</h2>
+								<h3>
+									<xforms:output ref="instance('oai-set')//oai:set[oai:setSpec = instance('control-instance')/oai-set-code]/oai:setName"/>
+								</h3>
+								<div class="row">
+									<div class="col-md-6">
+										<p>Use this interface to apply global genre, format, language, rights, and/or DCMI type values to all records in a
+											set.</p>
+										<p>If you have questions about the definition or appropriate contents for any of these fields, please consult the <a
+												href="https://www.orbiscascade.org/digital-collections-documentation">Alliance’s Dublin Core Best
+											Practices</a>.</p>
+									</div>
+									<div class="col-md-6 text-right">
+										<xi:include href="components/remediation-buttons.xml"/>
+									</div>
 								</div>
-								<div class="col-md-6 text-right">
-									<xi:include href="components/remediation-buttons.xml"/>
-								</div>
-							</div>
-							<hr />
-							<xforms:group ref="instance('control-instance')/remediation">
-								<div>
-									<h4>Genre</h4>
-									<xforms:select1 ref="genre" appearance="full">
-										<xforms:item>
-											<xforms:label>I do not want to apply the same genre to every record in this set</xforms:label>
-											<xforms:value value="false()"/>
-										</xforms:item>
-										<xforms:item>
-											<xforms:label>I want to apply the same genre to all records in this set. I would like to apply:</xforms:label>
-											<xforms:value value="true()"/>
-										</xforms:item>
-										<xforms:setvalue ref="instance('set')/genre" ev:event="xforms-value-changed"/>
-									</xforms:select1>
-									<xforms:group ref=".[genre = true()]">
-										<div>
-											<!-- display Getty AAT lookup mechanism -->
-											<xforms:group ref=".[string-length(instance('set')/genre) = 0]">
-												<xforms:input ref="instance('search-query')">
-													<xforms:hint>The nature or genre of the resource.</xforms:hint>
-												</xforms:input>
-												<xforms:trigger>
-													<xforms:action ev:event="DOMActivate">
-														<xforms:var name="search_query" select="string-join(tokenize(instance('search-query'), ' '), ' AND ')"/>
-														<xforms:setvalue ref="instance('sparqlQuery')"
-															value="normalize-space(replace(instance('sparqlQuery-templates')/query[@id='query-getty'], 'SEARCH_QUERY', $search_query))"/>
-														<xforms:send submission="query-getty"/>
-													</xforms:action>
-													<xforms:label>Search AAT</xforms:label>
-												</xforms:trigger>
-												<xforms:group ref=".[string-length(instance('control-instance')/search-results)] &gt; 0">
-													<p class="text-muted">
-														<xforms:output ref="instance('control-instance')/search-results"/>
-													</p>
-												</xforms:group>
-												<xforms:group ref=".[count(instance('getty-response')//res:result) &gt; 0]">
-													<xforms:select1 ref="instance('control-instance')/uri" appearance="compact" length="20">
-														<xforms:label>Term</xforms:label>
-														<xforms:hint>Click on a genre heading to read the genre's definition, below.</xforms:hint>
-														<xforms:itemset nodeset="instance('getty-response')//res:result">
-															<xforms:label ref="res:binding[@name='label']/res:literal"/>
-															<xforms:value ref="res:binding[@name='c']/res:uri"/>
-														</xforms:itemset>
-
-														<!-- update the scopeNote on value-changed -->
-														<xforms:setvalue ref="instance('control-instance')/definition"
-															value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri =
-															instance('control-instance')/uri]/res:binding[@name='def']/res:literal"
-															ev:event="xforms-value-changed"/>
-													</xforms:select1>
-													<xforms:trigger>
-														<xforms:label>Select</xforms:label>
-														<xforms:action ev:event="DOMActivate">
-															<!-- set @uri, which switches to other interface -->
-															<xforms:setvalue ref="instance('set')/genre" value="instance('control-instance')/uri"/>
-														</xforms:action>
-													</xforms:trigger>
-
-													<xforms:group ref="instance('control-instance')[string-length(definition) &gt; 0]">
-														<div>
-															<xforms:output ref="definition">
-																<xforms:label>Definition</xforms:label>
-															</xforms:output>
-															<xforms:trigger appearance="minimal">
-																<xforms:label>
-																	<span class="glyphicon glyphicon-new-window"></span>
-																</xforms:label>
-																<xforms:hint ref="uri"/>
-																<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
-															</xforms:trigger>
-														</div>
-													</xforms:group>
-												</xforms:group>
-											</xforms:group>
-
-											<!-- and display removal if applicable -->
-											<xforms:group ref=".[string-length(instance('set')/genre) &gt; 0]">
-												<xforms:trigger appearance="minimal">
-													<xforms:label>
-														<xforms:output ref="instance('set')/genre"/>
-														<span class="glyphicon glyphicon-new-window"></span>
-													</xforms:label>
-													<xforms:load ev:event="DOMActivate" resource="{instance('set')/genre}" show="new"/>
-												</xforms:trigger>
-												<xforms:trigger appearance="minimal">
-													<xforms:label>
-														<span class="glyphicon glyphicon-remove"></span>
-													</xforms:label>
-													<xforms:action ev:event="DOMActivate">
-														<!-- set the @uri value to empty to show the lookup mechanism again and reset all relevant values -->
-														<xforms:setvalue ref="instance('set')/genre"/>
-														<xforms:setvalue ref="instance('control-instance')/uri"/>
-														<xforms:setvalue ref="instance('control-instance')/definition"/>
-														<xforms:delete nodeset="instance('getty-response')/*"/>
-													</xforms:action>
-												</xforms:trigger>
-											</xforms:group>
-										</div>
-									</xforms:group>
-									<hr />
-								</div>
-
-								<xforms:group
-									ref=".[not(instance('control-instance')/dams = 'dspace') and not(instance('control-instance')/dams = 'digital-commons')]">
+								<hr />
+								<xforms:group ref="instance('control-instance')/remediation">
 									<div>
-										<h4>Format</h4>
-										<xforms:select1 ref="format" appearance="full">
+										<h4>Genre</h4>
+										<xforms:select1 ref="genre" appearance="full">
 											<xforms:item>
-												<xforms:label>I do not want to apply the same format to every record in this set</xforms:label>
+												<xforms:label>I do not want to apply the same genre to every record in this set</xforms:label>
 												<xforms:value value="false()"/>
 											</xforms:item>
 											<xforms:item>
-												<xforms:label>I want to apply the same format to all records in this set. I would like to apply:</xforms:label>
+												<xforms:label>I want to apply the same genre to all records in this set. I would like to apply:</xforms:label>
 												<xforms:value value="true()"/>
 											</xforms:item>
-											<xforms:setvalue ref="instance('set')/format" ev:event="xforms-value-changed"/>
+											<xforms:setvalue ref="instance('set')/genre" ev:event="xforms-value-changed"/>
 										</xforms:select1>
-										<xforms:group ref=".[format = true()]">
+										<xforms:group ref=".[genre = true()]">
 											<div>
-												<xforms:select1 ref="instance('set')/format">
-													<xforms:hint>The MIME type of the resource.</xforms:hint>
+												<!-- display Getty AAT lookup mechanism -->
+												<xforms:group ref=".[string-length(instance('set')/genre) = 0]">
+													<xforms:input ref="instance('search-query')">
+														<xforms:hint>The nature or genre of the resource.</xforms:hint>
+													</xforms:input>
+													<xforms:trigger>
+														<xforms:action ev:event="DOMActivate">
+															<xforms:var name="search_query"
+																select="string-join(tokenize(instance('search-query'), ' '), ' AND ')"/>
+															<xforms:setvalue ref="instance('sparqlQuery')"
+																value="normalize-space(replace(instance('sparqlQuery-templates')/query[@id='query-getty'], 'SEARCH_QUERY', $search_query))"/>
+															<xforms:send submission="query-getty"/>
+														</xforms:action>
+														<xforms:label>Search AAT</xforms:label>
+													</xforms:trigger>
+													<xforms:group ref=".[string-length(instance('control-instance')/search-results)] &gt; 0">
+														<p class="text-muted">
+															<xforms:output ref="instance('control-instance')/search-results"/>
+														</p>
+													</xforms:group>
+													<xforms:group ref=".[count(instance('getty-response')//res:result) &gt; 0]">
+														<xforms:select1 ref="instance('control-instance')/uri" appearance="compact" length="20">
+															<xforms:label>Term</xforms:label>
+															<xforms:hint>Click on a genre heading to read the genre's definition, below.</xforms:hint>
+															<xforms:itemset nodeset="instance('getty-response')//res:result">
+																<xforms:label ref="res:binding[@name='label']/res:literal"/>
+																<xforms:value ref="res:binding[@name='c']/res:uri"/>
+															</xforms:itemset>
+
+															<!-- update the scopeNote on value-changed -->
+															<xforms:setvalue ref="instance('control-instance')/definition"
+																value="instance('getty-response')//res:result[res:binding[@name='c']/res:uri =
+																instance('control-instance')/uri]/res:binding[@name='def']/res:literal"
+																ev:event="xforms-value-changed"/>
+														</xforms:select1>
+														<xforms:trigger>
+															<xforms:label>Select</xforms:label>
+															<xforms:action ev:event="DOMActivate">
+																<!-- set @uri, which switches to other interface -->
+																<xforms:setvalue ref="instance('set')/genre" value="instance('control-instance')/uri"/>
+															</xforms:action>
+														</xforms:trigger>
+
+														<xforms:group ref="instance('control-instance')[string-length(definition) &gt; 0]">
+															<div>
+																<xforms:output ref="definition">
+																	<xforms:label>Definition</xforms:label>
+																</xforms:output>
+																<xforms:trigger appearance="minimal">
+																	<xforms:label>
+																		<span class="glyphicon glyphicon-new-window"></span>
+																	</xforms:label>
+																	<xforms:hint ref="uri"/>
+																	<xforms:load ev:event="DOMActivate" resource="{uri}" show="new"/>
+																</xforms:trigger>
+															</div>
+														</xforms:group>
+													</xforms:group>
+												</xforms:group>
+
+												<!-- and display removal if applicable -->
+												<xforms:group ref=".[string-length(instance('set')/genre) &gt; 0]">
+													<xforms:trigger appearance="minimal">
+														<xforms:label>
+															<xforms:output ref="instance('set')/genre"/>
+															<span class="glyphicon glyphicon-new-window"></span>
+														</xforms:label>
+														<xforms:load ev:event="DOMActivate" resource="{instance('set')/genre}" show="new"/>
+													</xforms:trigger>
+													<xforms:trigger appearance="minimal">
+														<xforms:label>
+															<span class="glyphicon glyphicon-remove"></span>
+														</xforms:label>
+														<xforms:action ev:event="DOMActivate">
+															<!-- set the @uri value to empty to show the lookup mechanism again and reset all relevant values -->
+															<xforms:setvalue ref="instance('set')/genre"/>
+															<xforms:setvalue ref="instance('control-instance')/uri"/>
+															<xforms:setvalue ref="instance('control-instance')/definition"/>
+															<xforms:delete nodeset="instance('getty-response')/*"/>
+														</xforms:action>
+													</xforms:trigger>
+												</xforms:group>
+											</div>
+										</xforms:group>
+										<hr />
+									</div>
+
+									<xforms:group
+										ref=".[not(instance('control-instance')/dams = 'dspace') and not(instance('control-instance')/dams = 'digital-commons')]">
+										<div>
+											<h4>Format</h4>
+											<xforms:select1 ref="format" appearance="full">
+												<xforms:item>
+													<xforms:label>I do not want to apply the same format to every record in this set</xforms:label>
+													<xforms:value value="false()"/>
+												</xforms:item>
+												<xforms:item>
+													<xforms:label>I want to apply the same format to all records in this set. I would like to
+														apply:</xforms:label>
+													<xforms:value value="true()"/>
+												</xforms:item>
+												<xforms:setvalue ref="instance('set')/format" ev:event="xforms-value-changed"/>
+											</xforms:select1>
+											<xforms:group ref=".[format = true()]">
+												<div>
+													<xforms:select1 ref="instance('set')/format">
+														<xforms:hint>The MIME type of the resource.</xforms:hint>
+														<xforms:item>
+															<xforms:label>Select below...</xforms:label>
+															<xforms:value/>
+														</xforms:item>
+														<xforms:itemset nodeset="instance('formats')//format">
+															<xforms:label ref="."/>
+															<xforms:value ref="."/>
+														</xforms:itemset>
+													</xforms:select1>
+												</div>
+											</xforms:group>
+											<hr />
+										</div>
+									</xforms:group>
+
+									<div>
+										<h4>Language</h4>
+										<xforms:select1 ref="language" appearance="full">
+											<xforms:item>
+												<xforms:label>I do not want to apply the same language to every record in this set</xforms:label>
+												<xforms:value value="false()"/>
+											</xforms:item>
+											<xforms:item>
+												<xforms:label>I want to apply the same language to all records in this set. I would like to
+													apply:</xforms:label>
+												<xforms:value value="true()"/>
+											</xforms:item>
+											<xforms:setvalue ref="instance('set')/language" ev:event="xforms-value-changed"/>
+										</xforms:select1>
+										<xforms:group ref=".[language = true()]">
+											<div>
+												<xforms:select1 ref="instance('set')/language">
+													<xforms:hint>The language of the resource.</xforms:hint>
 													<xforms:item>
 														<xforms:label>Select below...</xforms:label>
 														<xforms:value/>
 													</xforms:item>
-													<xforms:itemset nodeset="instance('formats')//format">
-														<xforms:label ref="."/>
-														<xforms:value ref="."/>
+													<xforms:itemset nodeset="instance('languages')//language">
+														<xforms:label ref="name"/>
+														<xforms:value ref="code"/>
 													</xforms:itemset>
 												</xforms:select1>
 											</div>
 										</xforms:group>
 										<hr />
 									</div>
+									<div>
+										<h4>Rights</h4>
+										<xforms:select1 ref="rights" appearance="full">
+											<xforms:item>
+												<xforms:label>I do not want to apply the same rights statement(s) to every record in this set to be compliant
+													with the Dublin Core Best Practices</xforms:label>
+												<xforms:value value="false()"/>
+											</xforms:item>
+											<xforms:item>
+												<xforms:label>I want to apply the same rights statement(s) to all records in this set to be compliant with the
+													Dublin Core Best Practices. I would like to apply:</xforms:label>
+												<xforms:value value="true()"/>
+											</xforms:item>
+											<xforms:action ev:event="xforms-value-changed">
+												<xforms:setvalue ref="instance('set')/rights"/>
+												<xforms:setvalue ref="instance('set')/rightsText"/>
+											</xforms:action>
+
+										</xforms:select1>
+										<xforms:group ref=".[rights = true()]">
+											<div>
+												<xforms:select1 ref="instance('set')/rights">
+													<xforms:label>Standardized Rights Statement</xforms:label>
+													<xforms:hint>Required (if not already present in the set) standardized rights statement from
+														rightsstatement.org or Creative Commons license</xforms:hint>
+													<xforms:item>
+														<xforms:label>Select below...</xforms:label>
+														<xforms:value/>
+													</xforms:item>
+													<xforms:itemset nodeset="instance('rights-statements')//statement">
+														<xforms:label ref="."/>
+														<xforms:value ref="@value"/>
+													</xforms:itemset>
+												</xforms:select1>
+											</div>
+											<div>
+												<xforms:textarea ref="instance('set')/rightsText">
+													<xforms:label>Free-text Rights Statement</xforms:label>
+													<xforms:hint>Required (if not already present in the set) free-text rights statement that augments and
+														enhances the standardized rights statement</xforms:hint>
+												</xforms:textarea>
+											</div>
+										</xforms:group>
+										<hr />
+									</div>
+									<div>
+										<h4>Type</h4>
+										<xforms:select1 ref="type" appearance="full">
+											<xforms:item>
+												<xforms:label>I do not want to apply the same type to every record in this set</xforms:label>
+												<xforms:value value="false()"/>
+											</xforms:item>
+											<xforms:item>
+												<xforms:label>I want to apply the same type to all records in this set. I would like to apply:</xforms:label>
+												<xforms:value value="true()"/>
+											</xforms:item>
+											<xforms:setvalue ref="instance('set')/type" ev:event="xforms-value-changed"/>
+										</xforms:select1>
+										<xforms:group ref=".[type = true()]">
+											<div>
+												<xforms:select1 ref="instance('set')/type">
+													<xforms:label>DCMI Type</xforms:label>
+													<xforms:hint>Type of resource according to Dublin Core Metadata Initiative controlled
+														vocabulary</xforms:hint>
+													<xforms:item>
+														<xforms:label>Select below...</xforms:label>
+														<xforms:value/>
+													</xforms:item>
+													<xforms:itemset nodeset="instance('dcmi-types')//type">
+														<xforms:label ref="."/>
+														<xforms:value ref="@value"/>
+													</xforms:itemset>
+												</xforms:select1>
+											</div>
+										</xforms:group>
+									</div>
 								</xforms:group>
 
-								<div>
-									<h4>Language</h4>
-									<xforms:select1 ref="language" appearance="full">
-										<xforms:item>
-											<xforms:label>I do not want to apply the same language to every record in this set</xforms:label>
-											<xforms:value value="false()"/>
-										</xforms:item>
-										<xforms:item>
-											<xforms:label>I want to apply the same language to all records in this set. I would like to apply:</xforms:label>
-											<xforms:value value="true()"/>
-										</xforms:item>
-										<xforms:setvalue ref="instance('set')/language" ev:event="xforms-value-changed"/>
-									</xforms:select1>
-									<xforms:group ref=".[language = true()]">
-										<div>
-											<xforms:select1 ref="instance('set')/language">
-												<xforms:hint>The language of the resource.</xforms:hint>
-												<xforms:item>
-													<xforms:label>Select below...</xforms:label>
-													<xforms:value/>
-												</xforms:item>
-												<xforms:itemset nodeset="instance('languages')//language">
-													<xforms:label ref="name"/>
-													<xforms:value ref="code"/>
-												</xforms:itemset>
-											</xforms:select1>
-										</div>
-									</xforms:group>
-									<hr />
-								</div>
-								<div>
-									<h4>Rights</h4>
-									<xforms:select1 ref="rights" appearance="full">
-										<xforms:item>
-											<xforms:label>I do not want to apply the same rights statement(s) to every record in this set to be compliant with
-												the Dublin Core Best Practices</xforms:label>
-											<xforms:value value="false()"/>
-										</xforms:item>
-										<xforms:item>
-											<xforms:label>I want to apply the same rights statement(s) to all records in this set to be compliant with the
-												Dublin Core Best Practices. I would like to apply:</xforms:label>
-											<xforms:value value="true()"/>
-										</xforms:item>
-										<xforms:action ev:event="xforms-value-changed">
-											<xforms:setvalue ref="instance('set')/rights"/>
-											<xforms:setvalue ref="instance('set')/rightsText"/>
-										</xforms:action>
-
-									</xforms:select1>
-									<xforms:group ref=".[rights = true()]">
-										<div>
-											<xforms:select1 ref="instance('set')/rights">
-												<xforms:label>Standardized Rights Statement</xforms:label>
-												<xforms:hint>Required (if not already present in the set) standardized rights statement from rightsstatement.org
-													or Creative Commons license</xforms:hint>
-												<xforms:item>
-													<xforms:label>Select below...</xforms:label>
-													<xforms:value/>
-												</xforms:item>
-												<xforms:itemset nodeset="instance('rights-statements')//statement">
-													<xforms:label ref="."/>
-													<xforms:value ref="@value"/>
-												</xforms:itemset>
-											</xforms:select1>
-										</div>
-										<div>
-											<xforms:textarea ref="instance('set')/rightsText">
-												<xforms:label>Free-text Rights Statement</xforms:label>
-												<xforms:hint>Required (if not already present in the set) free-text rights statement that augments and enhances
-													the standardized rights statement</xforms:hint>
-											</xforms:textarea>
-										</div>
-									</xforms:group>
-									<hr />
-								</div>
-								<div>
-									<h4>Type</h4>
-									<xforms:select1 ref="type" appearance="full">
-										<xforms:item>
-											<xforms:label>I do not want to apply the same type to every record in this set</xforms:label>
-											<xforms:value value="false()"/>
-										</xforms:item>
-										<xforms:item>
-											<xforms:label>I want to apply the same type to all records in this set. I would like to apply:</xforms:label>
-											<xforms:value value="true()"/>
-										</xforms:item>
-										<xforms:setvalue ref="instance('set')/type" ev:event="xforms-value-changed"/>
-									</xforms:select1>
-									<xforms:group ref=".[type = true()]">
-										<div>
-											<xforms:select1 ref="instance('set')/type">
-												<xforms:label>DCMI Type</xforms:label>
-												<xforms:hint>Type of resource according to Dublin Core Metadata Initiative controlled vocabulary</xforms:hint>
-												<xforms:item>
-													<xforms:label>Select below...</xforms:label>
-													<xforms:value/>
-												</xforms:item>
-												<xforms:itemset nodeset="instance('dcmi-types')//type">
-													<xforms:label ref="."/>
-													<xforms:value ref="@value"/>
-												</xforms:itemset>
-											</xforms:select1>
-										</div>
-									</xforms:group>
+								<div class="text-right">
+									<xi:include href="components/remediation-buttons.xml"/>
 								</div>
 							</xforms:group>
-
-							<div class="text-right">
-								<xi:include href="components/remediation-buttons.xml"/>
-							</div>
 						</xforms:case>
 						<xforms:case id="agents-normalization">
 							<xforms:group ref="instance('agent-list')">
