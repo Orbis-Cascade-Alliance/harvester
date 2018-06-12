@@ -13,7 +13,18 @@
 		<xsl:apply-templates select="//dcmitype:Collection"/>
 	</xsl:template>
 
-	<xsl:template match="dcmitype:Collection">		
+	<xsl:template match="dcmitype:Collection">
+		<xsl:variable name="dates" as="item()">
+			<dates>
+				<xsl:for-each select="prov:generatedAtTime">
+					<xsl:sort select="xs:dateTime(.)" order="ascending"/>
+					<date>
+						<xsl:value-of select="."/>
+					</date>
+				</xsl:for-each>
+			</dates>			
+		</xsl:variable>
+		
 		<xsl:value-of select="concat('&#x022;', foaf:name, '&#x022;')"/>
 		<xsl:text>,</xsl:text>
 		<xsl:value-of select="concat('&#x022;', @rdf:about, '&#x022;')"/>
@@ -22,7 +33,7 @@
 		<xsl:text>,</xsl:text>		
 		<xsl:value-of select="concat('&#x022;', dcterms:title, '&#x022;')"/>
 		<xsl:text>,</xsl:text>
-		<xsl:value-of select="concat('&#x022;', format-dateTime(prov:generatedAtTime, '[Y0001][M01][D01]'), '&#x022;')"/>
+		<xsl:value-of select="concat('&#x022;', format-dateTime($dates/date[last()], '[Y0001][M01][D01]'), '&#x022;')"/>
 		<xsl:text>,</xsl:text>
 		<xsl:value-of select="if (doap:audience = 'dpla') then dcterms:extent else 0"/>
 		<xsl:text>,</xsl:text>
