@@ -21,7 +21,7 @@
 					<status></status>
 					<set-url></set-url>
 					<repository></repository>
-					<delete-uri/>
+					<delete-uri></delete-uri>
 				</controls>
 			</xforms:instance>
 
@@ -30,13 +30,13 @@
 					xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:foaf="http://purl.org/dc/terms/"
 					xmlns:doap="http://usefulinc.com/ns/doap#"/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="partial-set-list">
 				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/"
 					xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:foaf="http://purl.org/dc/terms/"
 					xmlns:doap="http://usefulinc.com/ns/doap#"/>
 			</xforms:instance>
-			
+
 			<xforms:instance id="repo-list">
 				<sparql xmlns="http://www.w3.org/2005/sparql-results#"/>
 			</xforms:instance>
@@ -85,14 +85,13 @@ UNION {?s dcterms:isPartOf ?set . ?s ?p ?o }
 UNION {?s prov:wasDerivedFrom ?set . ?s ?p ?o }
 UNION {?set a dcmitype:Collection . ?s ?p ?o . FILTER (?s = ?set)}
 }]]></query>
-				</queries>
-				<query id="delete-object"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+					<query id="delete-object"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 DELETE {?s ?p ?o} WHERE { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }]]>
-					
-				</query>
+					</query>
+				</queries>
 			</xforms:instance>
 
-		<!-- SPARQL query to get sets for all or a particular repository -->
+			<!-- SPARQL query to get sets for all or a particular repository -->
 			<xforms:instance id="list-sets">
 				<query><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms:	<http://purl.org/dc/terms/>
@@ -130,7 +129,7 @@ CONSTRUCT {
 } ORDER BY ?name ?title ?title]]>
 				</query>
 			</xforms:instance>
-			
+
 			<!-- get all repositories that have published at least one CHO (for a restricted list for CSV downloads -->
 			<xforms:instance id="get-current-repositories">
 				<query><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -188,7 +187,7 @@ SELECT DISTINCT ?repo ?name WHERE {
 					calculate="concat(if (contains(instance('control-instance')/repository, '#')) then substring-after(instance('control-instance')/repository, '#') else tokenize(instance('control-instance')/repository, '/')[last()], '.csv')"
 				/>
 			</xforms:bind>
-			
+
 			<xforms:bind nodeset="instance('csv-full-download')" type="xs:base64Binary">
 				<xforms:bind nodeset="@filename"
 					calculate="concat(if (string-length(instance('control-instance')/repository) &gt; 0) then instance('control-instance')/repository else 'all', '.csv')"
@@ -223,14 +222,15 @@ SELECT DISTINCT ?repo ?name WHERE {
 			<!-- SPARQL queries -->
 			<xforms:submission id="submit-sparqlQuery" action="{instance('config')/sparql/query}?query={encode-for-uri(instance('sparqlQuery'))}&amp;output=xml"
 				ref="instance('sparqlResponse')" replace="instance" method="get">
-				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>				
+				<xforms:message ev:event="xforms-submit-error" level="modal">SPARQL query failed.</xforms:message>
 			</xforms:submission>
 
 			<xforms:submission id="delete-graph" action="{instance('config')/sparql/update}" ref="instance('sparqlQuery')" serialization="text/plain"
 				replace="none" method="post" mediatype="application/sparql-update">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
-					<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Successfully deleted triples from endpoint.</xforms:setvalue>
+					<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Successfully deleted triples from
+						endpoint.</xforms:setvalue>
 				</xforms:action>
 			</xforms:submission>
 
@@ -259,7 +259,7 @@ SELECT DISTINCT ?repo ?name WHERE {
 				<xforms:insert nodeset="instance('csv')"
 					origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/sets-to-csv.xpl', 'data', instance('set-list'), 'data')"/>
 				<xforms:setvalue ref="instance('csv-full-download')" value="saxon:string-to-base64Binary(saxon:serialize(instance('csv'), 'text'), 'UTF-8')"/>
-				
+
 				<!-- if the user is the harvester-admin, then get the list of repositories -->
 				<xforms:action if="xxforms:is-user-in-role('harvester-admin')">
 					<xforms:setvalue ref="instance('sparqlQuery')" value="instance('get-current-repositories')"/>
@@ -438,22 +438,21 @@ SELECT DISTINCT ?repo ?name WHERE {
 						</xforms:group>
 						<li>
 							<xforms:output ref="instance('csv-full-download')" appearance="xxforms:download">
-								<xforms:label><span class="glyphicon glyphicon-download-alt"/> Download CSV of all sets</xforms:label>
+								<xforms:label><span class="glyphicon glyphicon-download-alt"></span> Download CSV of all sets</xforms:label>
 								<xforms:mediatype ref="instance('csv-full-download')/@mediatype"/>
 								<xforms:filename ref="instance('csv-full-download')/@filename"/>
-							</xforms:output>							
+							</xforms:output>
 						</li>
 						<xforms:group ref=".[xxforms:is-user-in-role('harvester-admin')]">
 							<li>
 								<strong>Download CSV for a selected repository:</strong>
-								<br/>
-								<xforms:select1 ref="instance('control-instance')/repository" class="small-list">									
+								<br />
+								<xforms:select1 ref="instance('control-instance')/repository" class="small-list">
 									<xforms:item>
 										<xforms:label>Select...</xforms:label>
 										<xforms:value/>
 									</xforms:item>
-									<xforms:itemset
-										nodeset="instance('repo-list')//res:result">
+									<xforms:itemset nodeset="instance('repo-list')//res:result">
 										<xforms:label ref="res:binding[@name='name']/res:literal"/>
 										<xforms:value ref="res:binding[@name='repo']/res:uri"/>
 									</xforms:itemset>
@@ -468,38 +467,38 @@ SELECT DISTINCT ?repo ?name WHERE {
 											<xforms:delete nodeset="instance('partial-set-list')/*"/>
 											<xforms:insert context="instance('partial-set-list')" origin="instance('sparqlResponse')/*"/>
 											<xforms:insert nodeset="instance('csv')"
-												origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/sets-to-csv.xpl', 'data', instance('partial-set-list'), 'data')"
-											/>
+												origin="xxforms:call-xpl('oxf:/apps/harvester/xpl/xforms/sets-to-csv.xpl', 'data', instance('partial-set-list'), 'data')"/>
 											<xforms:setvalue ref="instance('csv-part-download')"
 												value="saxon:string-to-base64Binary(saxon:serialize(instance('csv'), 'text'), 'UTF-8')"/>
-										</xforms:action>										
+										</xforms:action>
 									</xforms:action>
 								</xforms:select1>
 								<xforms:group ref=".[string-length(instance('control-instance')/repository) &gt; 0]">
 									<xforms:output ref="instance('csv-part-download')" appearance="xxforms:download" class="download-inline">
-										<xforms:label><span class="glyphicon glyphicon-download-alt"/></xforms:label>
+										<xforms:label><span class="glyphicon glyphicon-download-alt"></span></xforms:label>
 										<xforms:mediatype ref="instance('csv-part-download')/@mediatype"/>
 										<xforms:filename ref="instance('csv-part-download')/@filename"/>
 									</xforms:output>
-								</xforms:group>								
+								</xforms:group>
 							</li>
 						</xforms:group>
-						
+
 						<!-- this control will delete all triples for a given URI -->
 						<li>
 							<xforms:input ref="instance('control-instance')/delete-uri" class="small-list">
 								<xforms:label>URI</xforms:label>
 							</xforms:input>
-							<br/>
+							<br />
 							<xforms:trigger>
 								<xforms:label>Delete</xforms:label>
 								<xforms:action ev:event="DOMActivate">
-									<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('sparqlUpdate-templates')/query[@id='delete-object'], 'URI', instance('control-instance')/delete-uri)"/>
+									<xforms:setvalue ref="instance('sparqlQuery')"
+										value="replace(instance('sparqlUpdate-templates')/query[@id='delete-object'], 'URI', instance('control-instance')/delete-uri)"/>
 									<xforms:send submission="delete-graph"/>
 								</xforms:action>
 							</xforms:trigger>
 						</li>
-						
+
 					</ul>
 				</div>
 			</div>
