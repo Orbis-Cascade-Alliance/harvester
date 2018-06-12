@@ -21,16 +21,17 @@
 					<status></status>
 					<set-url></set-url>
 					<repository></repository>
+					<delete-uri/>
 				</controls>
 			</xforms:instance>
 
-			<xforms:instance id="set-list" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="set-list">
 				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/"
 					xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:foaf="http://purl.org/dc/terms/"
 					xmlns:doap="http://usefulinc.com/ns/doap#"/>
 			</xforms:instance>
 			
-			<xforms:instance id="partial-set-list" xxforms:exclude-result-prefixes="#all">
+			<xforms:instance id="partial-set-list">
 				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/"
 					xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:foaf="http://purl.org/dc/terms/"
 					xmlns:doap="http://usefulinc.com/ns/doap#"/>
@@ -66,8 +67,7 @@
 			<!-- sparql update -->
 			<xforms:instance id="sparqlUpdate-templates">
 				<queries xmlns="">
-					<query id="purge-repositories">
-						<![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+					<query id="purge-repositories"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX arch:	<http://purl.org/archival/vocab/arch#>
 DELETE {?s ?p ?o} WHERE { ?s rdf:type arch:Archive . ?s ?p ?o }]]>
 					</query>
@@ -86,6 +86,10 @@ UNION {?s prov:wasDerivedFrom ?set . ?s ?p ?o }
 UNION {?set a dcmitype:Collection . ?s ?p ?o . FILTER (?s = ?set)}
 }]]></query>
 				</queries>
+				<query id="delete-object"><![CDATA[PREFIX rdf:	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+DELETE {?s ?p ?o} WHERE { <URI> ?p ?o . ?s ?p ?o . FILTER (?s = <URI>) }]]>
+					
+				</query>
 			</xforms:instance>
 
 		<!-- SPARQL query to get sets for all or a particular repository -->
@@ -226,6 +230,7 @@ SELECT DISTINCT ?repo ?name WHERE {
 				replace="none" method="post" mediatype="application/sparql-update">
 				<xforms:action ev:event="xforms-submit-error">
 					<xforms:message level="modal">SPARQL update failed.</xforms:message>
+					<xforms:setvalue ev:event="xforms-submit-done" ref="instance('control-instance')/status">Successfully deleted triples from endpoint.</xforms:setvalue>
 				</xforms:action>
 			</xforms:submission>
 
@@ -479,6 +484,22 @@ SELECT DISTINCT ?repo ?name WHERE {
 								</xforms:group>								
 							</li>
 						</xforms:group>
+						
+						<!-- this control will delete all triples for a given URI -->
+						<li>
+							<xforms:input ref="instance('control-instance')/delete-uri" class="small-list">
+								<xforms:label>URI</xforms:label>
+							</xforms:input>
+							<br/>
+							<xforms:trigger>
+								<xforms:label>Delete</xforms:label>
+								<xforms:action ev:event="DOMActivate">
+									<xforms:setvalue ref="instance('sparqlQuery')" value="replace(instance('sparqlUpdate-templates')/query[@id='delete-object'], 'URI', instance('control-instance')/delete-uri)"/>
+									<xforms:send submission="delete-graph"/>
+								</xforms:action>
+							</xforms:trigger>
+						</li>
+						
 					</ul>
 				</div>
 			</div>
