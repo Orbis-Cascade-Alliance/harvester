@@ -76,8 +76,23 @@
 							4. Finally, delete the dpla:SourceResource linked via dcterms:isPartOf to the finding aid ARK URI (if provided), or dcterms:relation of the set if the ARK is not provided. -->
 
 					<xsl:variable name="template">
-						<xsl:choose>
-							<!-- if the ARK URI is provided, delete triples with a combination of dcterms:relation the ARK URI and dcterms:isPartOf with the set URI -->
+						<![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
+PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
+PREFIX prov:	<http://www.w3.org/ns/prov#>
+DELETE {?s ?p ?o} WHERE { 
+?set a dcmitype:Collection FILTER (regex(str(?set), '%SETSPEC%') && strStarts(str(?set), '%SERVICE%'))
+{?agg prov:wasDerivedFrom ?set ;
+    edm:preview ?s . ?s ?p ?o}
+UNION {?agg prov:wasDerivedFrom ?set ;
+    edm:object ?s . ?s ?p ?o}
+UNION {?s dcterms:isPartOf ?set . ?s ?p ?o }
+UNION {?s prov:wasDerivedFrom ?set . ?s ?p ?o }
+UNION {?set a dcmitype:Collection . ?s ?p ?o . FILTER (?s = ?set)}
+}]]>
+						
+						<!-- delete the entire set, regardless of ARK -->
+						<!--<xsl:choose>
+							<!-\- if the ARK URI is provided, delete triples with a combination of dcterms:relation the ARK URI and dcterms:isPartOf with the set URI -\->
 							<xsl:when test="string($ark)">
 								<![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
@@ -102,7 +117,7 @@ UNION {?s dcterms:relation <ARK> ;
 ?s ?p ?o }
 }]]>
 							</xsl:when>
-							<!-- if the ARK is not provided, delete all triples associated with the set, as it is presumed all ARKs from the set will be harvested -->
+							<!-\- if the ARK is not provided, delete all triples associated with the set, as it is presumed all ARKs from the set will be harvested -\->
 							<xsl:otherwise>
 								<![CDATA[ PREFIX dcterms:	<http://purl.org/dc/terms/>
 PREFIX edm:	<http://www.europeana.eu/schemas/edm/>
@@ -118,7 +133,7 @@ UNION {?s prov:wasDerivedFrom ?set . ?s ?p ?o }
 UNION {?set a dcmitype:Collection . ?s ?p ?o . FILTER (?s = ?set)}
 }]]>
 							</xsl:otherwise>
-						</xsl:choose>
+						</xsl:choose>-->
 					</xsl:variable>
 
 					<query>
