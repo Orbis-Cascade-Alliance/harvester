@@ -31,7 +31,7 @@
 	<xsl:param name="output" select="doc('input:request')/request/parameters/parameter[name = 'output']/value"/>
 	<xsl:param name="set" select="normalize-space(doc('input:request')/request/parameters/parameter[name = 'sets']/value)"/>
 	<xsl:param name="repository" select="doc('input:request')/request/parameters/parameter[name = 'repository']/value"/>
-	<xsl:param name="ark" select="doc('input:request')/request/parameters/parameter[name = 'ark']/value"/>
+	<xsl:param name="ark-param" select="doc('input:request')/request/parameters/parameter[name = 'ark']/value"/>
 	<xsl:param name="target" select="doc('input:request')/request/parameters/parameter[name = 'target']/value"/>
 	<xsl:param name="rightsStatement" select="doc('input:request')/request/parameters/parameter[name = 'rights']/value"/>
 	<xsl:param name="rightsText" select="doc('input:request')/request/parameters/parameter[name = 'rightsText']/value"/>
@@ -161,8 +161,8 @@ rdfs:label ?label
 
 	<xsl:template match="oai:record">
 		<xsl:choose>
-			<xsl:when test="string($ark)">
-				<xsl:apply-templates select="oai:metadata/*[dc:relation[contains(., $ark)]][dc:identifier[matches(., 'https?://')]]"/>
+			<xsl:when test="string($ark-param)">
+				<xsl:apply-templates select="oai:metadata/*[dc:relation[contains(., $ark-param)]][dc:identifier[matches(., 'https?://')]]"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:apply-templates select="oai:metadata/*[dc:identifier[matches(., 'https?://')]]"/>
