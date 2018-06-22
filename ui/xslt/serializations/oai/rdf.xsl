@@ -365,16 +365,25 @@ rdfs:label ?label
 			<xsl:choose>
 				<xsl:when test="$target = 'dpla'">
 					<doap:audience>dpla</doap:audience>
+					<xsl:if test="string($ark)">
+						<doap:audience>aw</doap:audience>
+					</xsl:if>
 				</xsl:when>
 				<xsl:when test="$target = 'primo'">
 					<doap:audience>primo</doap:audience>
+					<xsl:if test="string($ark)">
+						<doap:audience>aw</doap:audience>
+					</xsl:if>
 				</xsl:when>
-				<xsl:when test="$target = 'aw' or string($ark)">
+				<xsl:when test="$target = 'aw'">
 					<doap:audience>aw</doap:audience>
 				</xsl:when>
 				<xsl:otherwise>
 					<doap:audience>dpla</doap:audience>
 					<doap:audience>primo</doap:audience>
+					<xsl:if test="string($ark)">
+						<doap:audience>aw</doap:audience>
+					</xsl:if>
 				</xsl:otherwise>
 			</xsl:choose>
 
