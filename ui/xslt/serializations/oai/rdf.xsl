@@ -369,7 +369,7 @@ rdfs:label ?label
 				<xsl:when test="$target = 'primo'">
 					<doap:audience>primo</doap:audience>
 				</xsl:when>
-				<xsl:when test="$target = 'aw'">
+				<xsl:when test="$target = 'aw' or string($ark)">
 					<doap:audience>aw</doap:audience>
 				</xsl:when>
 				<xsl:otherwise>
