@@ -32,9 +32,7 @@
 				<dcterms:publisher>
 					<xsl:value-of select="publisher"/>
 				</dcterms:publisher>
-				<void:sparqlEndpoint>
-					<xsl:value-of select="concat($url, 'query')"/>
-				</void:sparqlEndpoint>
+				<void:sparqlEndpoint rdf:resource="{concat($url, 'query')}"/>
 				<!--<dcterms:license rdf:resource="{template/license}"/>-->
 				
 				<xsl:if test="number($numFound) &gt; 0">
