@@ -318,6 +318,16 @@ SELECT DISTINCT ?repo ?name WHERE {
 												<h4>
 													<xforms:output ref="dcterms:title"/>
 												</h4>
+												
+												<xforms:group ref=".[count(prov:generatedAtTime) &gt; 1]">
+													<div class="alert alert-danger alert-box">
+														<p><span class="glyphicon glyphicon-warning-sign"></span>
+															<strong>Warning! </strong><span>More than 1 date, implies set was not properly deleted before reingestion.</span>
+														</p>
+													</div>
+												</xforms:group>
+												
+												
 												<div>
 													<dl class="dl-horizontal">
 														<dt>URI</dt>
@@ -379,14 +389,21 @@ SELECT DISTINCT ?repo ?name WHERE {
 														</dd>
 														<dt>Harvest Date</dt>
 														<dd>
-															<xforms:output ref="format-dateTime(prov:generatedAtTime, '[MNn] [D1], [Y0001]. [H01]:[m01]:[s01]')"
-															/>
+															<xforms:repeat nodeset="xxforms:sort(prov:generatedAtTime, ., 'text', 'ascending')">
+																<xforms:var name="position" select="position()"/>
+																
+																<xforms:output ref="format-dateTime(., '[MNn] [D1], [Y0001]. [H01]:[m01]:[s01]')"
+																/>			
+																<xforms:group ref=".[not($position = count(../prov:generatedAtTime))]">
+																	<span>, </span>
+																</xforms:group>
+															</xforms:repeat>
 														</dd>
 													</dl>
 												</div>
 											</td>
 											<td>
-												<xforms:output value="format-number(dcterms:extent, '###,###')"/>
+												<xforms:output value="format-number(dcterms:extent[1], '###,###')"/>
 											</td>
 											<td>
 												<xforms:trigger appearance="minimal">

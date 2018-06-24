@@ -9,7 +9,11 @@
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
 
 	<xsl:template match="/">
-		<xsl:text>Publisher,"OAI URI","Digital Objects in Set","Set Title","Date most recently contributed","# for DPLA","# for Primo","for Archives West?"&#x0A;</xsl:text>
+		<xsl:text>Publisher,"OAI URI","Digital Objects in Set","Set Title","Date most recently contributed","# for DPLA","# for Primo","for Archives West?"</xsl:text>
+		<xsl:if test="//dcmitype:Collection[count(prov:generatedAtTime) &gt; 1]">
+			<xsl:text>,"Error"</xsl:text>
+		</xsl:if>
+		<xsl:text>&#x0A;</xsl:text>
 		<xsl:apply-templates select="//dcmitype:Collection"/>
 	</xsl:template>
 
@@ -29,7 +33,7 @@
 		<xsl:text>,</xsl:text>
 		<xsl:value-of select="concat('&#x022;', @rdf:about, '&#x022;')"/>
 		<xsl:text>,</xsl:text>
-		<xsl:value-of select="concat('&#x022;', dcterms:extent, '&#x022;')"/>
+		<xsl:value-of select="concat('&#x022;', max(dcterms:extent), '&#x022;')"/>
 		<xsl:text>,</xsl:text>		
 		<xsl:value-of select="concat('&#x022;', dcterms:title, '&#x022;')"/>
 		<xsl:text>,</xsl:text>
@@ -40,6 +44,9 @@
 		<xsl:value-of select="if (doap:audience = 'primo') then dcterms:extent else 0"/>
 		<xsl:text>,</xsl:text>
 		<xsl:value-of select="if (doap:audience = 'aw') then 'yes' else 'no'"/>
+		<xsl:if test="count(prov:generatedAtTime) &gt; 1">
+			<xsl:text>,"More than 1 date, implies set was not properly deleted before reingestion."</xsl:text>
+		</xsl:if>
 		<xsl:text>&#x0A;</xsl:text>
 	</xsl:template>
 </xsl:stylesheet>

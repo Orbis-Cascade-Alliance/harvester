@@ -98,9 +98,6 @@ body{
 .alert-box{
     width: 50%;
     margin: 20px auto;
-    padding: 5px;
-    border-radius: 10px;
-    border: 1px solid red;
 }
 .error-record {
     border-radius: 10px;

@@ -826,8 +826,8 @@ OPTIONAL {?c skos:scopeNote ?note .
 			<xforms:group ref=".[instance('control-instance')/error = true()]">
 				<div class="row">
 					<div class="col-md-12">
-						<div class="bg-danger alert-box">
-							<span class="glyphicon glyphicon-exclamation-sign"></span>
+						<div class="alert alert-danger alert-box">
+							<span class="glyphicon glyphicon-alert"></span>
 							<strong>Alert:</strong>
 							<xforms:output ref="instance('control-instance')/error-message"/>. </div>
 					</div>
@@ -1538,9 +1538,9 @@ OPTIONAL {?c skos:scopeNote ?note .
 								<xforms:group ref=".[instance('control-instance')/validation/error-count &gt; 0]">
 									<div class="row">
 										<div class="col-md-12">
-											<h3>Errors</h3>
-											<div class="bg-danger alert-box text-danger">
-												<span class="glyphicon glyphicon-exclamation-sign"></span>
+											<h3>Errors</h3>											
+											<div class="alert alert-danger alert-box">
+												<span class="glyphicon glyphicon-alert"></span>
 												<strong>Alert:</strong>
 												<strong>
 													<xforms:output ref="instance('control-instance')/validation/error-count"/></strong> records of

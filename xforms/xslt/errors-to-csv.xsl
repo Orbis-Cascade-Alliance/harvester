@@ -3,7 +3,8 @@
 	version="2.0">
 	
 	<xsl:template match="/">
-		<xsl:text>id,uri,title,errors&#x0A;</xsl:text>
+		<xsl:text>id,uri,title,errors</xsl:text>
+		<xsl:text>&#x0A;</xsl:text>
 		<xsl:apply-templates select="//record"/>
 	</xsl:template>	
 	
