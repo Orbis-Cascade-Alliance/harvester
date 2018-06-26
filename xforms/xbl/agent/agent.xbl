@@ -265,6 +265,9 @@
 						</xforms:group>
 						<hr/>
 					</div>
+					
+					<!--<fr:xforms-inspector xmlns:fr="http://orbeon.org/oxf/xml/form-runner"/>-->
+					
 					<!-- ***************** MODEL ***************-->
 					<xforms:model id="agent-model">
 						<xforms:instance id="config">
@@ -272,7 +275,7 @@
 						</xforms:instance>
 
 						<!-- instances -->
-						<xforms:instance id="control-instance">
+						<xforms:instance id="control-instance" xxforms:exclude-result-prefixes="#all">
 							<control xmlns="">
 								<local-message/>
 								<uri/>
@@ -319,12 +322,12 @@ INSERT DATA
 							</queries>
 						</xforms:instance>
 
-						<xforms:instance id="sparqlUpdate">
+						<xforms:instance id="sparqlUpdate" xxforms:exclude-result-prefixes="#all">
 							<query xmlns=""/>
 						</xforms:instance>
 
 						<!-- SNAC XML response -->
-						<xforms:instance id="snac-response" exclude-result-prefixed="#all">
+						<xforms:instance id="snac-response" xxforms:exclude-result-prefixes="#all">
 							<crossQueryResult xmlns=""/>
 						</xforms:instance>
 

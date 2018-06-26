@@ -164,7 +164,7 @@
 
 						<hr/>
 					</div>
-
+					
 
 					<!--<xforms:output ref="instance('sparqlQuery')"/>
 					<fr:xforms-inspector xmlns:fr="http://orbeon.org/oxf/xml/form-runner" />-->
@@ -175,7 +175,7 @@
 						</xforms:instance>
 
 						<!-- instances -->
-						<xforms:instance id="control-instance">
+						<xforms:instance id="control-instance" xxforms:exclude-result-prefixes="#all">
 							<control xmlns="">
 								<local-message/>
 								<uri/>
@@ -235,11 +235,11 @@ INSERT DATA
 							</queries>
 						</xforms:instance>
 
-						<xforms:instance id="sparqlQuery">
+						<xforms:instance id="sparqlQuery" xxforms:exclude-result-prefixes="#all">
 							<query xmlns=""/>
 						</xforms:instance>
 
-						<xforms:instance id="sparqlUpdate">
+						<xforms:instance id="sparqlUpdate" xxforms:exclude-result-prefixes="#all">
 							<query xmlns=""/>
 						</xforms:instance>
 

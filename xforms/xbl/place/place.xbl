@@ -154,7 +154,7 @@
 						</xforms:instance>
 						
 						<!-- instances -->
-						<xforms:instance id="control-instance">
+						<xforms:instance id="control-instance" xxforms:exclude-result-prefixes="#all">
 							<control xmlns="">
 								<local-message/>
 								<uri/>
@@ -200,7 +200,7 @@ INSERT DATA
 							</queries>
 						</xforms:instance>
 						
-						<xforms:instance id="sparqlUpdate">
+						<xforms:instance id="sparqlUpdate" xxforms:exclude-result-prefixes="#all">
 							<query></query>
 						</xforms:instance>
 						
