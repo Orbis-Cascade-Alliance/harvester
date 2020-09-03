@@ -645,8 +645,9 @@ OPTIONAL {?c skos:scopeNote ?note .
 							
 							<!-- for a multipage feed, check for the existence of a resumptionToken for iteration -->
 							<xforms:action if="instance('oai-response')//oai:resumptionToken">
+								<xforms:var name="token" select="instance('oai-response')//oai:resumptionToken"/>
 								<xforms:setvalue ref="instance('control-instance')/oai-service"
-									value="concat(instance('oai-response')//descendant::oai:request, '?verb=ListRecords&amp;resumptionToken=', instance('oai-response')//descendant::oai:resumptionToken)"/>
+									value="concat(instance('oai-response')//descendant::oai:request, '?verb=ListRecords&amp;resumptionToken=', encode-for-uri($token))"/>
 								<xforms:send submission="get-oai-pmh"/>
 							</xforms:action>
 						</xforms:action>
@@ -1853,7 +1854,7 @@ OPTIONAL {?c skos:scopeNote ?note .
 						<xforms:output ref="instance('set')/type" id="type"/>
 					</div>
 
-					<!--<fr:xforms-inspector/>-->
+					<fr:xforms-inspector/>
 				</div>
 			</div>
 		</div>
