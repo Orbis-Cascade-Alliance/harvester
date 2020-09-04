@@ -19,6 +19,29 @@
 		<p:output name="data" id="request"/>
 	</p:processor>		
 	
+	<p:processor name="oxf:unsafe-xslt">
+		<p:input name="data" href="#request"/>
+		<p:input name="config">
+			<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+				<xsl:output indent="yes"/>
+				
+				<xsl:param name="doc" select="tokenize(/request/request-url, '/')[last()]"/>				
+				<xsl:variable name="ext" select="substring-after($doc, '.')"/>	
+				
+				<xsl:template match="/">
+					<content-type>
+						<xsl:choose>
+							<xsl:when test="$ext = 'rdf'">application/rdf+xml</xsl:when>
+							<xsl:when test="$ext = 'ttl'">text/turtle</xsl:when>
+							<xsl:when test="$ext = 'jsonld'">application/ld+json</xsl:when>
+						</xsl:choose>
+					</content-type>
+				</xsl:template>
+			</xsl:stylesheet>
+		</p:input>
+		<p:output name="data" id="content-type"/>
+	</p:processor>
+	
 	<!-- generator config for pagination -->
 	<p:processor name="oxf:unsafe-xslt">
 		<p:input name="request" href="#request"/>
@@ -79,11 +102,14 @@ DESCRIBE * WHERE {
 						</url>
 						<content-type>
 							<xsl:choose>
-								<xsl:when test="$output = 'xml'">application/rdf+xml</xsl:when>
+								<xsl:when test="$output = 'xml'">application/xml</xsl:when>
 								<xsl:when test="$output = 'json'">application/json</xsl:when>
-								<xsl:when test="$output = 'text'">text/turtle</xsl:when>
+								<xsl:when test="$output = 'text'">text/plain</xsl:when>
 							</xsl:choose>
 						</content-type>
+						<xsl:if test="$output = 'json' or $output = 'text'">
+							<mode>text</mode>
+						</xsl:if>
 						<encoding>utf-8</encoding>
 					</config>
 				</xsl:template>
@@ -92,8 +118,52 @@ DESCRIBE * WHERE {
 		<p:output name="data" id="url-generator-config"/>
 	</p:processor>
 	
+	<!-- execute SPARQL query -->
 	<p:processor name="oxf:url-generator">
 		<p:input name="config" href="#url-generator-config"/>
-		<p:output name="data" ref="data"/>
+		<p:output name="data" id="model"/>
 	</p:processor>
+	
+	<!-- attach the proper serialization -->
+	<p:choose href="#content-type">
+		<p:when test="content-type= 'application/ld+json'">
+			<p:processor name="oxf:text-converter">
+				<p:input name="data" href="#model"/>
+				<p:input name="config">
+					<config>
+						<content-type>application/ld+json</content-type>
+						<encoding>utf-8</encoding>
+					</config>
+				</p:input>
+				<p:output name="data" ref="data"/>
+			</p:processor>
+		</p:when>
+		<p:when test="content-type= 'application/rdf+xml'">
+			<p:processor name="oxf:xml-converter">
+				<p:input name="data" href="#model"/>
+				<p:input name="config">
+					<config>
+						<content-type>application/rdf+xml</content-type>
+						<encoding>utf-8</encoding>
+						<version>1.0</version>
+						<indent>true</indent>
+						<indent-amount>4</indent-amount>
+					</config>
+				</p:input>
+				<p:output name="data" ref="data"/>
+			</p:processor>
+		</p:when>
+		<p:when test="content-type='text/turtle'">
+			<p:processor name="oxf:text-converter">
+				<p:input name="data" href="#model"/>
+				<p:input name="config">
+					<config>
+						<content-type>text/turtle</content-type>
+						<encoding>utf-8</encoding>
+					</config>
+				</p:input>
+				<p:output name="data" ref="data"/>
+			</p:processor>
+		</p:when>
+	</p:choose>
 </p:config>
