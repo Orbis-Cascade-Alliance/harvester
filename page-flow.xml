@@ -12,7 +12,7 @@
 	<!-- **** SERIALIZATIONS **** -->	
 	<page path="/harvester/record/.*" model="xpl/models/sparql/get-record.xpl" view="xpl/views/serializations/rdf/html.xpl"/>	
 	<page path="/harvester/agency/.*" model="xpl/models/rdf/get-agency.xpl" view="xpl/views/serializations/rdf/html.xpl"/>
-	<page path="/harvester/results" model="xpl/models/sparql/query.xpl" view="xpl/controllers/view.xpl"/>
+	<page path="/harvester/results" model="xpl/models/sparql/cho-preview.xpl" view="xpl/controllers/view.xpl"/>
 	<page path="/harvester/feed" model="xpl/models/sparql/atom.xpl" view="xpl/views/serializations/sparql/atom.xpl"/>
 	<page path="/harvester/oai-pmh/" view="xpl/controllers/oai-pmh.xpl"/>
 	

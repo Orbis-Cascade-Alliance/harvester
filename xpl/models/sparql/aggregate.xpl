@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 	Author: Ethan Gruber
-	Date: October 2016
+	Date: September 2020
 	Function: this reads download "filename" for a page number and extension for initiating a DESCRIBE query
 	that powers the DPLA harvesting as VoID data dumps. The number of objects per page is stored in the config.xml file.
 -->
@@ -77,7 +77,13 @@ DESCRIBE * WHERE {
 						<url>
 							<xsl:value-of select="$service"/>
 						</url>
-						<content-type>application/xml</content-type>
+						<content-type>
+							<xsl:choose>
+								<xsl:when test="$output = 'xml'">application/rdf+xml</xsl:when>
+								<xsl:when test="$output = 'json'">application/json</xsl:when>
+								<xsl:when test="$output = 'text'">text/turtle</xsl:when>
+							</xsl:choose>
+						</content-type>
 						<encoding>utf-8</encoding>
 					</config>
 				</xsl:template>
