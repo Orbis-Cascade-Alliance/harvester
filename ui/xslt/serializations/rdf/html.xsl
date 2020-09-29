@@ -29,13 +29,14 @@
 		</xsl:choose>
 	</xsl:variable>
 	<xsl:variable name="mode" select="
-		if (//rdf:RDF/*/namespace-uri() = 'http://purl.org/archival/vocab/arch#') then
-		'agency'
-		else
-		'default'"/>
+			if (//rdf:RDF/*/namespace-uri() = 'http://purl.org/archival/vocab/arch#') then
+				'agency'
+			else
+				'default'"/>
 
 	<xsl:variable name="namespaces" as="item()*">
 		<namespaces>
+			<namespace prefix="arch" uri="http://purl.org/archival/vocab/arch#"/>
 			<namespace prefix="dc" uri="http://purl.org/dc/elements/1.1/"/>
 			<namespace prefix="dcmitype" uri="http://purl.org/dc/dcmitype/"/>
 			<namespace prefix="dcterms" uri="http://purl.org/dc/terms/"/>
@@ -51,11 +52,14 @@
 		</namespaces>
 	</xsl:variable>
 
+
+
 	<xsl:template match="/">
 		<xsl:choose>
 			<xsl:when test="$output = 'ajax'">
 				<div class="container-fluid">
-					<xsl:apply-templates select="descendant::ore:Aggregation"/>
+					<xsl:apply-templates
+						select="descendant::*[name() = 'ore:Aggregation' or rdf:type/@rdf:resource = 'http://www.openarchives.org/ore/terms/Aggregation']"/>
 				</div>
 			</xsl:when>
 			<xsl:otherwise>
@@ -111,9 +115,11 @@
 			<!-- apply-templates on numFound, if available -->
 			<!--<xsl:apply-templates select="//res:binding[@name = 'numFound']"/>-->
 
-			<xsl:apply-templates select="descendant::dcmitype:Collection" mode="render"/>
-			<xsl:apply-templates select="descendant::ore:Aggregation"/>
-			
+			<xsl:apply-templates select="descendant::*[name() = 'dcmitype:Collection' or rdf:type/@rdf:resource = 'http://purl.org/dc/dcmitype/Collection']"
+				mode="render"/>
+			<xsl:apply-templates
+				select="descendant::*[name() = 'ore:Aggregation' or rdf:type/@rdf:resource = 'http://www.openarchives.org/ore/terms/Aggregation']"/>
+
 			<!-- apply-templates on numFound, if available -->
 			<!--<xsl:apply-templates select="//res:binding[@name = 'numFound']"/>-->
 		</div>
@@ -122,12 +128,13 @@
 	<xsl:template name="agent-body">
 		<div class="container-fluid content">
 			<div class="row">
-				<xsl:apply-templates select="descendant::arch:Archive" mode="render"/>
+				<xsl:apply-templates select="descendant::*[name() = 'arch:Archive' or rdf:type/@rdf:source = 'http://purl.org/archival/vocab/arch#Archive']"
+					mode="render"/>
 			</div>
 		</div>
 	</xsl:template>
 
-	<xsl:template match="ore:Aggregation">
+	<xsl:template match="ore:Aggregation | *[rdf:type/@rdf:resource = 'http://www.openarchives.org/ore/terms/Aggregation']">
 		<div class="row">
 
 			<xsl:choose>
@@ -136,16 +143,15 @@
 					<xsl:variable name="reference" select="edm:object/@rdf:resource"/>
 					<xsl:variable name="thumbnail" select="edm:preview/@rdf:resource"/>
 
-					<xsl:apply-templates select="parent::node()/dpla:SourceResource[@rdf:about = $cho_uri]">
+					<xsl:apply-templates
+						select="parent::node()/*[name() = 'dpla:SourceResource' or rdf:type/@rdf:resource = 'http://dp.la/terms/SourceResource'][@rdf:about = $cho_uri]">
 						<xsl:with-param name="reference" select="$reference"/>
 						<xsl:with-param name="thumbnail" select="$thumbnail"/>
 						<!--<xsl:with-param name="hasCoords" select="false()" as="xs:boolean"/>-->
 					</xsl:apply-templates>
 
 					<!-- images -->
-					<xsl:apply-templates
-						select="parent::node()/edm:WebResource[@rdf:about = $thumbnail] | parent::node()/edm:WebResource[@rdf:about = $reference]" mode="render"
-					/>
+					<xsl:apply-templates select="parent::node()/*[@rdf:about = $thumbnail] | parent::node()/*[@rdf:about = $reference]" mode="render"/>
 				</xsl:when>
 				<xsl:otherwise>
 					<!--<xsl:variable name="hasCoords" as="xs:boolean">
@@ -155,19 +161,19 @@
 						</xsl:choose>
 					</xsl:variable>-->
 
-					<xsl:apply-templates select="descendant::dpla:SourceResource">
+					<xsl:apply-templates select="descendant::*[name() = 'dpla:SourceResource' or rdf:type/@rdf:resource = 'http://dp.la/terms/SourceResource']">
 						<xsl:with-param name="reference"
 							select="
 								if (edm:object/@rdf:resource) then
 									edm:object/@rdf:resource
 								else
-									edm:object/edm:WebResource/@rdf:about"/>
+									edm:object/*[name() = 'edm:WebResource' or rdf:type/@rdf:resource = 'http://www.europeana.eu/schemas/edm/WebResource']/@rdf:about"/>
 						<xsl:with-param name="thumbnail"
 							select="
 								if (edm:preview/@rdf:resource) then
 									edm:preview/@rdf:resource
 								else
-									edm:preview/edm:WebResource/@rdf:about"/>
+									edm:preview/*[name() = 'edm:WebResource' or rdf:type/@rdf:resource = 'http://www.europeana.eu/schemas/edm/WebResource']/@rdf:about"/>
 						<!--<xsl:with-param name="hasCoords" select="$hasCoords"/>-->
 					</xsl:apply-templates>
 
@@ -187,7 +193,13 @@
 		</div>
 	</xsl:template>
 
-	<xsl:template match="edm:WebResource | ore:Aggregation | dcmitype:Collection | arch:Archive" mode="render">
+	<xsl:template
+		match="
+			*[name() = 'edm:WebResource' or rdf:type/@rdf:resource = 'http://www.europeana.eu/schemas/edm/WebResource'] |
+			*[name() = 'ore:Aggregation' or rdf:type/@rdf:resource = 'http://www.openarchives.org/ore/terms/Aggregation'] |
+			*[name() = 'dcmitype:Collection' or rdf:type/@rdf:resource = 'http://purl.org/dc/dcmitype/Collection'] |
+			*[name() = 'arch:Archive' or rdf:type/@rdf:source = 'http://purl.org/archival/vocab/arch#Archive']"
+		mode="render">
 		<xsl:variable name="uri" select="@rdf:about"/>
 
 		<div class="col-md-12">
@@ -206,13 +218,13 @@
 				</xsl:apply-templates>
 			</dl>
 
-			<xsl:if test="self::edm:WebResource and position() = last()">
+			<xsl:if test="(self::edm:WebResource or rdf:type/@rdf:resource = 'http://www.europeana.eu/schemas/edm/WebResource') and position() = last()">
 				<hr/>
 			</xsl:if>
 		</div>
 	</xsl:template>
 
-	<xsl:template match="dpla:SourceResource">
+	<xsl:template match="dpla:SourceResource | *[rdf:type/@rdf:resource = 'http://dp.la/terms/SourceResource']">
 		<xsl:param name="thumbnail"/>
 		<xsl:param name="reference"/>
 		<!--<xsl:param name="hasCoords" as="xs:boolean"/>-->
@@ -243,13 +255,17 @@
 				</div>
 				<div class="col-md-6 text-right">
 					<xsl:if test="string($reference)">
-						<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about = $reference]" mode="display-image">
+						<xsl:apply-templates
+							select="parent::node()/*[name() = 'edm:WebResource' or rdf:type/@rdf:resource = 'http://www.europeana.eu/schemas/edm/WebResource'][@rdf:about = $reference]"
+							mode="display-image">
 							<xsl:with-param name="size">reference</xsl:with-param>
 						</xsl:apply-templates>
 
 					</xsl:if>
 					<xsl:if test="string($thumbnail)">
-						<xsl:apply-templates select="parent::node()/edm:WebResource[@rdf:about = $thumbnail]" mode="display-image">
+						<xsl:apply-templates
+							select="parent::node()/*[name() = 'edm:WebResource' or rdf:type/@rdf:resource = 'http://www.europeana.eu/schemas/edm/WebResource'][@rdf:about = $thumbnail]"
+							mode="display-image">
 							<xsl:with-param name="size">thumbnail</xsl:with-param>
 						</xsl:apply-templates>
 					</xsl:if>
@@ -264,14 +280,18 @@
 					</dl>
 				</div>
 				<div class="col-md-6">
-					<xsl:apply-templates select="//edm:WebResource[@rdf:about = $thumbnail]" mode="display-image">
+					<xsl:apply-templates
+						select="//*[name() = 'edm:WebResource' or rdf:type/@rdf:resource = 'http://www.europeana.eu/schemas/edm/WebResource'][@rdf:about = $thumbnail]"
+						mode="display-image">
 						<xsl:with-param name="size">thumbnail</xsl:with-param>
 					</xsl:apply-templates>
-					<xsl:apply-templates select="//edm:WebResource[@rdf:about = $reference]" mode="display-image">
+					<xsl:apply-templates
+						select="//*[name() = 'edm:WebResource' or rdf:type/@rdf:resource = 'http://www.europeana.eu/schemas/edm/WebResource'][@rdf:about = $reference]"
+						mode="display-image">
 						<xsl:with-param name="size">reference</xsl:with-param>
 					</xsl:apply-templates>
 				</div>
-				
+
 				<!-- disabling map rendering -->
 				<!--<xsl:choose>
 					<xsl:when test="$hasCoords = true()">
@@ -316,7 +336,7 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<xsl:template match="edm:WebResource" mode="display-image">
+	<xsl:template match="*[name() = 'edm:WebResource' or rdf:type/@rdf:resource = 'http://www.europeana.eu/schemas/edm/WebResource']" mode="display-image">
 		<xsl:param name="size"/>
 
 		<div>
@@ -333,22 +353,22 @@
 			</xsl:choose>
 		</div>
 	</xsl:template>
-	
-	<xsl:template match="dcterms:creator|dcterms:contributor">
+
+	<xsl:template match="dcterms:creator | dcterms:contributor">
 		<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
-		
+
 		<dt>
 			<a href="{$propertyUri}" title="{$propertyUri}">
 				<xsl:value-of select="name()"/>
 			</a>
 		</dt>
 		<dd>
-			<xsl:choose>				
+			<xsl:choose>
 				<xsl:when test="@rdf:resource">
 					<xsl:variable name="uri" select="@rdf:resource"/>
 					<xsl:choose>
 						<xsl:when test="//edm:Agent[@rdf:about = $uri]">
-							<xsl:apply-templates select="//edm:Agent[@rdf:about = $uri]"/>						
+							<xsl:apply-templates select="//edm:Agent[@rdf:about = $uri]"/>
 						</xsl:when>
 						<xsl:otherwise>
 							<a href="{@rdf:resource}">
@@ -361,24 +381,24 @@
 					<xsl:apply-templates/>
 				</xsl:otherwise>
 			</xsl:choose>
-		</dd>		
+		</dd>
 	</xsl:template>
-	
+
 	<xsl:template match="edm:hasType">
 		<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
-		
+
 		<dt>
 			<a href="{$propertyUri}" title="{$propertyUri}">
 				<xsl:value-of select="name()"/>
 			</a>
 		</dt>
 		<dd>
-			<xsl:choose>				
+			<xsl:choose>
 				<xsl:when test="@rdf:resource">
 					<xsl:variable name="uri" select="@rdf:resource"/>
 					<xsl:choose>
 						<xsl:when test="//skos:Concept[@rdf:about = $uri]">
-							<xsl:apply-templates select="//skos:Concept[@rdf:about = $uri]"/>						
+							<xsl:apply-templates select="//skos:Concept[@rdf:about = $uri]"/>
 						</xsl:when>
 						<xsl:otherwise>
 							<a href="{@rdf:resource}">
@@ -391,10 +411,10 @@
 					<xsl:apply-templates/>
 				</xsl:otherwise>
 			</xsl:choose>
-		</dd>		
+		</dd>
 	</xsl:template>
-	
-	<xsl:template match="skos:Concept[@rdf:about]|edm:Agent[@rdf:about]|edm:Place[@rdf:about]">
+
+	<xsl:template match="skos:Concept[@rdf:about] | edm:Agent[@rdf:about] | edm:Place[@rdf:about]">
 		<a href="{@rdf:about}">
 			<xsl:value-of select="skos:prefLabel"/>
 		</a>
@@ -413,10 +433,10 @@
 			</dl>
 		</div>
 	</xsl:template>
-	
+
 	<xsl:template match="*">
 		<xsl:variable name="propertyUri" select="nwda:linkProperty(name())"/>
-		
+
 		<dt>
 			<a href="{$propertyUri}" title="{$propertyUri}">
 				<xsl:value-of select="name()"/>
@@ -440,7 +460,7 @@
 	<xsl:template match="res:binding[@name = 'numFound']">
 		<xsl:variable name="limit" select="100"/>
 		<xsl:variable name="numFound" select="res:literal" as="xs:integer"/>
-		
+
 		<div class="row paging">
 			<div class="col-md-6">
 				<xsl:text>Displaying records </xsl:text>
@@ -450,10 +470,10 @@
 				<xsl:text> to </xsl:text>
 				<strong>
 					<xsl:value-of select="
-						if ($numFound &gt; $page * 100) then
-						$page * 100
-						else
-						$numFound"/>
+							if ($numFound &gt; $page * 100) then
+								$page * 100
+							else
+								$numFound"/>
 				</strong>
 				<xsl:text> of </xsl:text>
 				<strong>

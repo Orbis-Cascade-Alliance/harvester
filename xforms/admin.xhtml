@@ -262,6 +262,7 @@ SELECT DISTINCT ?repo ?name WHERE {
 
 				<!-- if the user is the harvester-admin, then get the list of repositories -->
 				<xforms:action if="xxforms:is-user-in-role('harvester-admin')">
+					<xforms:delete nodeset="instance('sparqlResponse')/*"/>
 					<xforms:setvalue ref="instance('sparqlQuery')" value="instance('get-current-repositories')"/>
 					<xforms:send submission="submit-sparqlQuery"/>
 					<xforms:insert context="instance('repo-list')" origin="instance('sparqlResponse')/*"/>
@@ -300,7 +301,7 @@ SELECT DISTINCT ?repo ?name WHERE {
 			<div class="row">
 				<div class="col-md-9">
 					<xforms:group ref="instance('set-list')">
-						<xforms:group ref=".[count(dcmitype:Collection) &gt; 0]">
+						<xforms:group ref=".[count(*[name() = 'dcmitype:Collection' or rdf:type/@rdf:resource = 'http://purl.org/dc/dcmitype/Collection']) &gt; 0]">
 							<h2>Sets</h2>
 							<table class="table">
 								<thead>
@@ -311,7 +312,7 @@ SELECT DISTINCT ?repo ?name WHERE {
 									</tr>
 								</thead>
 								<tbody>
-									<xforms:repeat nodeset="dcmitype:Collection">
+									<xforms:repeat nodeset="*[name() = 'dcmitype:Collection' or rdf:type/@rdf:resource = 'http://purl.org/dc/dcmitype/Collection']">
 										<xforms:var name="uri" select="@rdf:about"/>
 										<tr>
 											<td>
