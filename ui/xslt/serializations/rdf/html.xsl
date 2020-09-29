@@ -119,7 +119,7 @@
 				<xsl:apply-templates select="descendant::*[name() = 'dcmitype:Collection' or rdf:type/@rdf:resource = 'http://purl.org/dc/dcmitype/Collection']"
 					mode="render"/>
 			</div>
-			
+
 			<xsl:apply-templates
 				select="descendant::*[name() = 'ore:Aggregation' or rdf:type/@rdf:resource = 'http://www.openarchives.org/ore/terms/Aggregation']"/>
 
@@ -163,22 +163,23 @@
 							<xsl:otherwise>false</xsl:otherwise>
 						</xsl:choose>
 					</xsl:variable>-->
-					
+
 					<xsl:choose>
 						<xsl:when test="descendant::*[name() = 'dpla:SourceResource' or rdf:type/@rdf:resource = 'http://dp.la/terms/SourceResource']">
-							<xsl:apply-templates select="descendant::*[name() = 'dpla:SourceResource' or rdf:type/@rdf:resource = 'http://dp.la/terms/SourceResource']">
+							<xsl:apply-templates
+								select="descendant::*[name() = 'dpla:SourceResource' or rdf:type/@rdf:resource = 'http://dp.la/terms/SourceResource']">
 								<xsl:with-param name="reference"
 									select="
-									if (edm:object/@rdf:resource) then
-									edm:object/@rdf:resource
-									else
-									edm:object/*[name() = 'edm:WebResource' or rdf:type/@rdf:resource = 'http://www.europeana.eu/schemas/edm/WebResource']/@rdf:about"/>
+										if (edm:object/@rdf:resource) then
+											edm:object/@rdf:resource
+										else
+											edm:object/*[name() = 'edm:WebResource' or rdf:type/@rdf:resource = 'http://www.europeana.eu/schemas/edm/WebResource']/@rdf:about"/>
 								<xsl:with-param name="thumbnail"
 									select="
-									if (edm:preview/@rdf:resource) then
-									edm:preview/@rdf:resource
-									else
-									edm:preview/*[name() = 'edm:WebResource' or rdf:type/@rdf:resource = 'http://www.europeana.eu/schemas/edm/WebResource']/@rdf:about"/>
+										if (edm:preview/@rdf:resource) then
+											edm:preview/@rdf:resource
+										else
+											edm:preview/*[name() = 'edm:WebResource' or rdf:type/@rdf:resource = 'http://www.europeana.eu/schemas/edm/WebResource']/@rdf:about"/>
 								<!--<xsl:with-param name="hasCoords" select="$hasCoords"/>-->
 							</xsl:apply-templates>
 						</xsl:when>
@@ -186,7 +187,7 @@
 							<xsl:variable name="cho_uri" select="edm:aggregatedCHO/@rdf:resource"/>
 							<xsl:variable name="reference" select="edm:object/@rdf:resource"/>
 							<xsl:variable name="thumbnail" select="edm:preview/@rdf:resource"/>
-							
+
 							<xsl:apply-templates
 								select="parent::node()/*[name() = 'dpla:SourceResource' or rdf:type/@rdf:resource = 'http://dp.la/terms/SourceResource'][@rdf:about = $cho_uri]">
 								<xsl:with-param name="reference" select="$reference"/>
@@ -196,7 +197,7 @@
 						</xsl:otherwise>
 					</xsl:choose>
 
-					
+
 
 					<!--<xsl:if test="$hasCoords = true()">
 						<div class="hidden">
@@ -369,7 +370,9 @@
 					<img src="{@rdf:about}" alt="{$size} file URL is not displayable in the browser" title="{@rdf:about}" style="max-width:100%"/>
 				</xsl:when>
 				<xsl:otherwise>
-					<a href="{@rdf:about}"/>
+					<a href="{@rdf:about}">
+						<xsl:value-of select="@rdf:about"/>
+					</a>
 				</xsl:otherwise>
 			</xsl:choose>
 		</div>

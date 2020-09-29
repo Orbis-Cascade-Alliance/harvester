@@ -10,14 +10,14 @@
 
 	<xsl:template match="/">
 		<xsl:text>Publisher,"OAI URI","Digital Objects in Set","Set Title","Date most recently contributed","# for DPLA","# for Primo","for Archives West?"</xsl:text>
-		<xsl:if test="//dcmitype:Collection[count(prov:generatedAtTime) &gt; 1]">
+		<xsl:if test="//*[name() = 'dcmitype:Collection' or rdf:type/@rdf:resource = 'http://purl.org/dc/dcmitype/Collection'][count(prov:generatedAtTime) &gt; 1]">
 			<xsl:text>,"Error"</xsl:text>
 		</xsl:if>
 		<xsl:text>&#x0A;</xsl:text>
-		<xsl:apply-templates select="//dcmitype:Collection"/>
+		<xsl:apply-templates select="//*[name() = 'dcmitype:Collection' or rdf:type/@rdf:resource = 'http://purl.org/dc/dcmitype/Collection']" mode="collection"/>
 	</xsl:template>
 
-	<xsl:template match="dcmitype:Collection">
+	<xsl:template match="*" mode="collection">
 		<xsl:variable name="dates" as="item()">
 			<dates>
 				<xsl:for-each select="prov:generatedAtTime">
